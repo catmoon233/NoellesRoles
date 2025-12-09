@@ -1,0 +1,79 @@
+{
+  "announcement.goals.jester": "Find and co-operate with the Killers.",
+  "announcement.role.jester": "Jester",
+
+  "announcement.goals.morphling": "Fool everyone.",
+  "announcement.role.morphling": "Morphling",
+
+  "announcement.goals.awesome_binglus": "Awesome Binglu",
+  "announcement.role.awesome_binglus": "Awesome Binglus",
+
+  "announcement.goals.conductor": "Use the master key to open up every door on the train!",
+  "announcement.role.conductor": "Conductor",
+
+  "announcement.goals.the_insane_damned_paranoid_killer": "I hear dead people.",
+  "announcement.role.the_insane_damned_paranoid_killer": "The Insane Damned Paranoid Killer Of Doom Death Destruction And Waffles",
+  "announcement.win.the_insane_damned_paranoid_killer": "Killers Win!",
+
+
+  "announcement.goals.bartender": "See players that drink through walls!",
+  "announcement.role.bartender": "Bartender",
+
+  "announcement.goals.phantom": "Turn invisible; but watch out for collisions.",
+  "announcement.role.phantom": "Phantom",
+
+  "announcement.goals.noisemaker": "Alert players of your location upon death.",
+  "announcement.role.noisemaker": "Noisemaker",
+
+  "announcement.goals.voodoo": "Choose another player to go down with you.",
+  "announcement.role.voodoo": "Voodoo",
+
+  "announcement.goals.swapper": "Swap places with other players.",
+  "announcement.role.swapper": "Swapper",
+  "hud.swapper.first_player_selection": "Select first player to swap",
+  "hud.swapper.second_player_selection": "Select second player to swap",
+
+  "announcement.goals.coroner": "Get information from dead bodies.",
+  "announcement.role.coroner": "Coroner",
+  "announcement.win.coroner": "Passengers Win!",
+  "hud.coroner.sanity_requirements": "50% sanity required to use ability",
+  "hud.coroner.death_info": "Died %ss ago to ",
+  "hud.coroner.role_info": "Their role was ",
+
+  "announcement.goals.executioner": "Become a killer once your target dies (to a non-killer).",
+  "announcement.role.executioner": "Executioner",
+
+  "announcement.goals.trapper": "Check other player's roles.",
+  "announcement.role.trapper": "Trapper",
+
+  "announcement.goals.recaller": "Teleport to anywhere on the train!",
+  "announcement.role.recaller": "Recaller",
+
+  "announcement.goals.vulture": "Eat bodies to turn into a killer.",
+  "announcement.role.vulture": "Vulture",
+  "hud.vulture.eat": "Press %s to eat!",
+  "hud.vulture.already_consumed": "This body has been consumed.",
+
+
+  "item.noellesroles.fake_revolver": "Fake Revolver",
+  "item.noellesroles.master_key": "Master Key",
+  "item.noellesroles.fake_knife": "Fake Knife",
+  "item.noellesroles.defense_vial": "Defense Vial",
+  "item.noellesroles.defense_vial.tooltip": "Right click on drink trays to use\nClears all poison applied to trays\nProtects anyone who drinks a defensed drink one extra hit of life.",
+
+  "death_reason.trainmurdermystery.gun_shot": "a bullet.",
+  "death_reason.trainmurdermystery.knife_stab": "a knife!",
+  "death_reason.trainmurdermystery.generic": "unknown causes.",
+  "death_reason.trainmurdermystery.bat_hit": "blunt force!",
+  "death_reason.trainmurdermystery.grenade": "an explosion!",
+  "death_reason.trainmurdermystery.poison": "poison!",
+  "death_reason.trainmurdermystery.fell_out_of_train": "being ran over.",
+  "death_reason.noellesroles.voodoo": "voodoo magic.",
+
+  "tip.phantom": "Use %s to go invisible!",
+  "tip.recaller.place": "Use %s to save your location!",
+  "tip.recaller.teleport": "Use %s to teleport!",
+  "tip.vulture": "%s/%s bodies eaten.",
+  "tip.recaller.not_enough_money": "100\uE781 required to teleport.",
+  "tip.noellesroles.cooldown": "Ability usable in %ss"
+}

@@ -1,0 +1,32 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.agmas.noellesroles.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "GiveCoinsOnMoodCompletionMixin",
+    "bartender.BartenderPlayerShopComponentMixin",
+    "bartender.BartenderReseterMixin",
+    "bartender.CocktailItemMixin",
+    "bartender.DefenseVialApplyMixin",
+    "bartender.PoisonToHealsMixin",
+    "coroner.CoronerAddDeathReasonMixin",
+    "executioner.ExecutionerConfirmMixin",
+    "executioner.NoTargetBackfireMixin",
+    "host.MasterKeyDropMixin",
+    "host.MasterKeySmallDoorMixin",
+    "host.MasterKeyTrainDoorMixin",
+    "host.MoneyIncreaseMixin",
+    "jester.JesterItemEntityMixin",
+    "jester.JesterJestMixin",
+    "morphling.MorphlingReseterMixin",
+    "noisemaker.NoisemakerKillMixin",
+    "voodoo.VoodooVooMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
