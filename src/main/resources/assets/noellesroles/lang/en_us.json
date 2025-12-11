@@ -40,8 +40,16 @@
   "hud.coroner.death_info": "Died %ss ago to ",
   "hud.coroner.role_info": "Their role was ",
 
-  "announcement.goals.executioner": "Become a killer once your target dies (to a non-killer).",
+  "announcement.goals.executioner": "Become a killer once your target dies (to a non-killer). Unlock killer shop after target death (can only buy knives).",
   "announcement.role.executioner": "Executioner",
+  "hud.executioner.select_target": "Open inventory to select target",
+  "hud.executioner.target": "Target: %s",
+  "hud.executioner.target_dead": "Target dead - Shop unlocked",
+  "hud.executioner.no_target": "No target selected",
+  "message.executioner.shop_unlocked": "Target dead, killer shop unlocked!",
+  "message.executioner.shop_locked": "Shop locked, wait for target to die.",
+  "message.executioner.only_knife": "Executioner can only buy knives.",
+  "message.executioner.insufficient_balance": "Insufficient balance.",
 
   "announcement.goals.trapper": "Check other player's roles.",
   "announcement.role.trapper": "Trapper",
@@ -53,7 +61,9 @@
   "announcement.role.vulture": "Vulture",
   "hud.vulture.eat": "Press %s to eat!",
   "hud.vulture.already_consumed": "This body has been consumed.",
-
+  "hud.pagination.prev": "Prev",
+  "hud.pagination.next": "Next",
+  "hud.pagination.page": "Page %s/%s",
 
   "item.noellesroles.fake_revolver": "Fake Revolver",
   "item.noellesroles.master_key": "Master Key",
@@ -75,5 +85,6 @@
   "tip.recaller.teleport": "Use %s to teleport!",
   "tip.vulture": "%s/%s bodies eaten.",
   "tip.recaller.not_enough_money": "100\uE781 required to teleport.",
-  "tip.noellesroles.cooldown": "Ability usable in %ss"
+  "tip.noellesroles.cooldown": "Ability usable in %ss",
+  "hud.voodoo.tip": "Voodoo deaths must be triggered by another player!"
 }

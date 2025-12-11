@@ -1,11 +1,8 @@
 package org.agmas.noellesroles;
 
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.item.FakeKnifeItem;
 
