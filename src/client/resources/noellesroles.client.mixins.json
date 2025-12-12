@@ -8,13 +8,15 @@
     "bartender.BartenderShopMixin",
     "bartender.DefenseVialHandMixin",
     "coroner.CoronerHudMixin",
+    "executioner.ExecutionerScreenMixin",
+    "executioner.ExecutionerShopScreenMixin",
     "morphling.MorphlingRendererMixin",
     "morphling.MorphlingRoleNameRendererMixin",
     "morphling.MorphlingScreenMixin",
     "phantom.PhantomHudMixin",
     "recaller.RecallerHudMixin",
     "swapper.SwapperScreenMixin",
-    "voodoo.VoodoScreenMixin",
+    "voodoo.VoodooScreenMixin",
     "vulture.VultureHudMixin"
   ],
   "injectors": {

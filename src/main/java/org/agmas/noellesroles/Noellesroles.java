@@ -27,21 +27,28 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Vec3d;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.bartender.BartenderPlayerComponent;
+import org.agmas.noellesroles.commands.SetRoleMaxCommand;
+import org.agmas.noellesroles.commands.ConfigCommand;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
+import org.agmas.noellesroles.packet.ExecutionerSelectTargetC2SPacket;
 import org.agmas.noellesroles.packet.MorphC2SPacket;
 import org.agmas.noellesroles.packet.SwapperC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
@@ -91,7 +98,7 @@ public class Noellesroles implements ModInitializer {
     //public static Role TRAPPER =TMMRoles.registerRole(new Role(TRAPPER_ID, new Color(132, 186, 167).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
     public static Role CORONER =TMMRoles.registerRole(new Role(CORONER_ID, new Color(122, 122, 122).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
 
-    public static Role EXECUTIONER =TMMRoles.registerRole(new Role(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),false,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
+    public static Role EXECUTIONER =TMMRoles.registerRole(new Role(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),false,true,Role.MoodType.FAKE, Integer.MAX_VALUE,true));
     public static Role RECALLER = TMMRoles.registerRole(new Role(RECALLER_ID, new Color(158, 255, 255).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
 
     public static Role VULTURE =TMMRoles.registerRole(new Role(VULTURE_ID, new Color(181, 103, 0).getRGB(),false,false,Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
@@ -100,6 +107,7 @@ public class Noellesroles implements ModInitializer {
     public static final CustomPayload.Id<SwapperC2SPacket> SWAP_PACKET = SwapperC2SPacket.ID;
     public static final CustomPayload.Id<AbilityC2SPacket> ABILITY_PACKET = AbilityC2SPacket.ID;
     public static final CustomPayload.Id<VultureEatC2SPacket> VULTURE_PACKET = VultureEatC2SPacket.ID;
+    public static final CustomPayload.Id<ExecutionerSelectTargetC2SPacket> EXECUTIONER_SELECT_TARGET_PACKET = ExecutionerSelectTargetC2SPacket.ID;
     public static final ArrayList<Role> VANNILA_ROLES = new ArrayList<>();
     public static final ArrayList<Identifier> VANNILA_ROLE_IDS = new ArrayList<>();
 
@@ -116,18 +124,29 @@ public class Noellesroles implements ModInitializer {
         NoellesRolesConfig.HANDLER.load();
         ModItems.init();
 
-        Harpymodloader.setRoleMaximum(CONDUCTOR_ID,1);
-        Harpymodloader.setRoleMaximum(EXECUTIONER_ID,1);
-        Harpymodloader.setRoleMaximum(VULTURE_ID,1);
-        Harpymodloader.setRoleMaximum(JESTER_ID,1);
+        Harpymodloader.setRoleMaximum(CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
+        Harpymodloader.setRoleMaximum(EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
+        Harpymodloader.setRoleMaximum(VULTURE_ID, NoellesRolesConfig.HANDLER.instance().vultureMax);
+        Harpymodloader.setRoleMaximum(JESTER_ID, NoellesRolesConfig.HANDLER.instance().jesterMax);
+        Harpymodloader.setRoleMaximum(MORPHLING_ID, NoellesRolesConfig.HANDLER.instance().morphlingMax);
+        Harpymodloader.setRoleMaximum(BARTENDER_ID, NoellesRolesConfig.HANDLER.instance().bartenderMax);
+        Harpymodloader.setRoleMaximum(NOISEMAKER_ID, NoellesRolesConfig.HANDLER.instance().noisemakerMax);
+        Harpymodloader.setRoleMaximum(PHANTOM_ID, NoellesRolesConfig.HANDLER.instance().phantomMax);
+        Harpymodloader.setRoleMaximum(AWESOME_BINGLUS_ID, NoellesRolesConfig.HANDLER.instance().awesomeBinglusMax);
+        Harpymodloader.setRoleMaximum(SWAPPER_ID, NoellesRolesConfig.HANDLER.instance().swapperMax);
+        Harpymodloader.setRoleMaximum(VOODOO_ID, NoellesRolesConfig.HANDLER.instance().voodooMax);
+        Harpymodloader.setRoleMaximum(CORONER_ID, NoellesRolesConfig.HANDLER.instance().coronerMax);
+        Harpymodloader.setRoleMaximum(RECALLER_ID, NoellesRolesConfig.HANDLER.instance().recallerMax);
 
         PayloadTypeRegistry.playC2S().register(MorphC2SPacket.ID, MorphC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(AbilityC2SPacket.ID, AbilityC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(VultureEatC2SPacket.ID, VultureEatC2SPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(ExecutionerSelectTargetC2SPacket.ID, ExecutionerSelectTargetC2SPacket.CODEC);
 
         registerEvents();
-
+        SetRoleMaxCommand.register();
+        ConfigCommand.register();
         registerPackets();
         //NoellesRolesEntities.init();
 
@@ -140,7 +159,7 @@ public class Noellesroles implements ModInitializer {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.getWorld());
             if (gameWorldComponent.isRole(playerEntity,Noellesroles.JESTER)) {
                 PlayerPsychoComponent component =  PlayerPsychoComponent.KEY.get(playerEntity);
-                if (component.getPsychoTicks() > GameConstants.getInTicks(0,44)) {
+                if (component.getPsychoTicks() > GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().jesterMaxPsychoTicks)) {
                     return false;
                 }
             }
@@ -154,10 +173,7 @@ public class Noellesroles implements ModInitializer {
         }));
         CanSeePoison.EVENT.register((player)->{
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
-            if (gameWorldComponent.isRole((PlayerEntity) player, Noellesroles.BARTENDER)) {
-                return true;
-            }
-            return false;
+            return gameWorldComponent.isRole((PlayerEntity) player, Noellesroles.BARTENDER);
         });
         ModdedRoleAssigned.EVENT.register((player,role)->{
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(player);
@@ -165,21 +181,12 @@ public class Noellesroles implements ModInitializer {
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
             if (role.equals(EXECUTIONER)) {
                 ExecutionerPlayerComponent executionerPlayerComponent = (ExecutionerPlayerComponent) ExecutionerPlayerComponent.KEY.get(player);
-                executionerPlayerComponent.won = false;
-                List<UUID> innocentPlayers = new ArrayList<>();
-                gameWorldComponent.getRoles().forEach((uuid,role1)->{
-                    if (role1.isInnocent()) {
-                        innocentPlayers.add(uuid);
-                    }
-                });
-                Collections.shuffle(innocentPlayers);
-                executionerPlayerComponent.target = innocentPlayers.getFirst();
-                executionerPlayerComponent.sync();
+                executionerPlayerComponent.reset();
             }
             if (role.equals(VULTURE)) {
                 VulturePlayerComponent vulturePlayerComponent = VulturePlayerComponent.KEY.get(player);
                 vulturePlayerComponent.reset();
-                vulturePlayerComponent.bodiesRequired = (int)((player.getWorld().getPlayers().size()/3f) - Math.floor(player.getWorld().getPlayers().size()/6f));
+                vulturePlayerComponent.bodiesRequired = NoellesRolesConfig.HANDLER.instance().vultureBodiesRequired;
                 vulturePlayerComponent.sync();
             }
             if (role.equals(JESTER)) {
@@ -240,7 +247,7 @@ public class Noellesroles implements ModInitializer {
             if (context.player().getWorld().getPlayerByUuid(payload.player()) == null) return;
 
             if (gameWorldComponent.isRole(context.player(), VOODOO)) {
-                abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, 30);
+                abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().voodooCooldown);
                 abilityPlayerComponent.sync();
                 VoodooPlayerComponent voodooPlayerComponent = (VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(context.player());
                 voodooPlayerComponent.setTarget(payload.player());
@@ -264,7 +271,7 @@ public class Noellesroles implements ModInitializer {
                 if (!playerBodyEntities.isEmpty()) {
                     BodyDeathReasonComponent bodyDeathReasonComponent = BodyDeathReasonComponent.KEY.get(playerBodyEntities.getFirst());
                     if (!bodyDeathReasonComponent.vultured) {
-                        abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, 20);
+                        abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().vultureEatCooldown);
                         VulturePlayerComponent vulturePlayerComponent = VulturePlayerComponent.KEY.get(context.player());
                         vulturePlayerComponent.bodiesEaten++;
                         vulturePlayerComponent.sync();
@@ -303,19 +310,37 @@ public class Noellesroles implements ModInitializer {
                             if (context.player().getWorld().getPlayerByUuid(payload.player2()) != null) {
                                 PlayerEntity player1 = context.player().getWorld().getPlayerByUuid(payload.player2());
                                 PlayerEntity player2 = context.player().getWorld().getPlayerByUuid(payload.player());
-                                Vec3d swapperPos = context.player().getWorld().getPlayerByUuid(payload.player2()).getPos();
-                                Vec3d swappedPos = context.player().getWorld().getPlayerByUuid(payload.player()).getPos();
+                                Vec3d swapperPos = Objects.requireNonNull(context.player().getWorld().getPlayerByUuid(payload.player2())).getPos();
+                                Vec3d swappedPos = Objects.requireNonNull(context.player().getWorld().getPlayerByUuid(payload.player())).getPos();
                                 if (!context.player().getWorld().isSpaceEmpty(player1)) return;
                                 if (!context.player().getWorld().isSpaceEmpty(player2)) return;
-                                context.player().getWorld().getPlayerByUuid(payload.player2()).refreshPositionAfterTeleport(swappedPos.x, swappedPos.y, swappedPos.z);
-                                context.player().getWorld().getPlayerByUuid(payload.player()).refreshPositionAfterTeleport(swapperPos.x, swapperPos.y, swapperPos.z);
+                                Objects.requireNonNull(context.player().getWorld().getPlayerByUuid(payload.player2())).refreshPositionAfterTeleport(swappedPos.x, swappedPos.y, swappedPos.z);
+                                Objects.requireNonNull(context.player().getWorld().getPlayerByUuid(payload.player())).refreshPositionAfterTeleport(swapperPos.x, swapperPos.y, swapperPos.z);
                             }
                         }
                     }
                 }
                 AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(context.player());
-                abilityPlayerComponent.cooldown = GameConstants.getInTicks(1, 0);
+                abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().swapperSwapCooldown);
                 abilityPlayerComponent.sync();
+            }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(Noellesroles.EXECUTIONER_SELECT_TARGET_PACKET, (payload, context) -> {
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(context.player().getWorld());
+            if (gameWorldComponent.isRole(context.player(), EXECUTIONER)) {
+                ExecutionerPlayerComponent executionerPlayerComponent = ExecutionerPlayerComponent.KEY.get(context.player());
+                if (executionerPlayerComponent.targetSelected) return; // 已经选择过目标
+                
+                if (payload.target() != null) {
+                    PlayerEntity targetPlayer = context.player().getWorld().getPlayerByUuid(payload.target());
+                    if (targetPlayer != null && GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
+                        // 确保目标是平民阵营
+                        if (gameWorldComponent.getRole(targetPlayer).isInnocent()) {
+                            executionerPlayerComponent.setTarget(payload.target());
+                        }
+                    }
+                }
             }
         });
 
@@ -326,20 +351,20 @@ public class Noellesroles implements ModInitializer {
                 RecallerPlayerComponent recallerPlayerComponent = RecallerPlayerComponent.KEY.get(context.player());
                 PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
                 if (!recallerPlayerComponent.placed) {
-                    abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,10);
+                    abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().recallerMarkCooldown);
                     recallerPlayerComponent.setPosition();
                 }
                 else if (playerShopComponent.balance >= 100) {
                     playerShopComponent.balance -= 100;
                     playerShopComponent.sync();
-                    abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,30);
+                    abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().recallerTeleportCooldown);
                     recallerPlayerComponent.teleport();
                 }
 
             }
             if (gameWorldComponent.isRole(context.player(), PHANTOM) && abilityPlayerComponent.cooldown <= 0) {
-                context.player().addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 30 * 20,0,true,false,true));
-                abilityPlayerComponent.cooldown = GameConstants.getInTicks(1, 30);
+                context.player().addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, NoellesRolesConfig.HANDLER.instance().phantomInvisibilityDuration * 20, 0, true, false, true));
+                abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().phantomInvisibilityCooldown);
             }
         });
     }

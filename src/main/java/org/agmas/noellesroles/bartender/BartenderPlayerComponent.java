@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.bartender;
 
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
@@ -56,7 +57,7 @@ public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTick
 
 
     public boolean startGlow() {
-        setGlowTicks(GameConstants.getInTicks(0,40));
+        setGlowTicks(GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().bartenderGlowDuration));
         this.sync();
         return true;
     }

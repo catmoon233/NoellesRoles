@@ -23,7 +23,7 @@ public abstract class JesterJestMixin {
                 PlayerPsychoComponent component = PlayerPsychoComponent.KEY.get(victim);
                 if (component.getPsychoTicks() <= 0) {
                     component.startPsycho();
-                    component.psychoTicks = GameConstants.getInTicks(0, 45);
+                    component.psychoTicks = GameConstants.getInTicks(0, org.agmas.noellesroles.config.NoellesRolesConfig.HANDLER.instance().jesterJestTime);
                     component.armour = 0;
                     ci.cancel();
                 }
