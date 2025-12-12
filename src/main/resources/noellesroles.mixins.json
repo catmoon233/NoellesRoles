@@ -12,7 +12,7 @@
     "bartender.PoisonToHealsMixin",
     "coroner.CoronerAddDeathReasonMixin",
     "executioner.ExecutionerConfirmMixin",
-    "executioner.NoTargetBackfireMixin",
+    "executioner.ExecutionerShopMixin",
     "host.MasterKeyDropMixin",
     "host.MasterKeySmallDoorMixin",
     "host.MasterKeyTrainDoorMixin",
