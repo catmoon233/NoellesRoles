@@ -49,6 +49,10 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven {
+        name = "Mojang"
+        url = "https://libraries.minecraft.net/"
+    }
 
 }
 

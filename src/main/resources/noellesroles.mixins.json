@@ -13,7 +13,6 @@
     "coroner.CoronerAddDeathReasonMixin",
     "executioner.ExecutionerConfirmMixin",
     "executioner.ExecutionerShopMixin",
-    "executioner.ExecutionerShopRestrictionMixin",
     "host.MasterKeyDropMixin",
     "host.MasterKeySmallDoorMixin",
     "host.MasterKeyTrainDoorMixin",

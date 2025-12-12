@@ -141,7 +141,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
 
     @Override
     public void addDrawableChild(ButtonWidget button) {
-
+        super.addDrawableChild(button);
     }
 
     @Override
@@ -151,6 +151,6 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
 
     @Override
     public void clearChildren() {
-
+        super.clearChildren();
     }
 }

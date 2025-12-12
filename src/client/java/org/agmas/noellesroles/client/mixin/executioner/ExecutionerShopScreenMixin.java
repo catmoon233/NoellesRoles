@@ -42,16 +42,6 @@ public abstract class ExecutionerShopScreenMixin extends LimitedHandledScreen<Pl
             
             // 检查商店是否已解锁
             if (executionerComponent.shopUnlocked) {
-                List<ShopEntry> entries = new ArrayList<>();
-                entries.add(new ShopEntry(TMMItems.KNIFE.getDefaultStack(), 250, ShopEntry.Type.WEAPON));
-                int apart = 36;
-                int x = width / 2 - (entries.size()) * apart / 2 + 9;
-                int shouldBeY = (((LimitedInventoryScreen)(Object)this).height - 32) / 2;
-                int y = shouldBeY + 80;
-
-                for(int i = 0; i < entries.size(); ++i) {
-                    addDrawableChild(new LimitedInventoryScreen.StoreItemWidget((LimitedInventoryScreen) (Object)this, x + apart * i, y, (ShopEntry)entries.get(i), i));
-                }
             }
         }
     }

@@ -30,7 +30,7 @@ public class VoodooPlayerWidget extends ButtonWidget{
     public final PlayerListEntry targetPlayerEntry;
 
 
-    public VoodooPlayerWidget(LimitedInventoryScreen screen, int x, int y, UUID targetUUID, PlayerListEntry targetPlayerEntry, World world, int index) {
+    public VoodooPlayerWidget(LimitedInventoryScreen screen, int x, int y, UUID targetUUID, PlayerListEntry targetPlayerEntry, int index) {
         super(x, y, 16, 16, Text.literal(""), (a) -> {
             ClientPlayNetworking.send(new MorphC2SPacket(targetUUID));
         }, DEFAULT_NARRATION_SUPPLIER);

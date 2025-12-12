@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Mixin(LimitedInventoryScreen.class)
-public abstract class VoodoScreenMixin extends LimitedHandledScreen<PlayerScreenHandler> implements PlayerPaginationHelper.ScreenWithChildren {
+public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScreenHandler> implements PlayerPaginationHelper.ScreenWithChildren {
     @Unique
     private static final PlayerPaginationHelper.PaginationTextProvider TEXT_PROVIDER = new PlayerPaginationHelper.PaginationTextProvider() {
         @Override
@@ -52,7 +52,7 @@ public abstract class VoodoScreenMixin extends LimitedHandledScreen<PlayerScreen
     @Unique
     private RoleScreenHelper<UUID> roleScreenHelper;
 
-    public VoodoScreenMixin(PlayerScreenHandler handler, PlayerInventory inventory, Text title) {
+    public VoodooScreenMixin(PlayerScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
     }
 
@@ -91,7 +91,7 @@ public abstract class VoodoScreenMixin extends LimitedHandledScreen<PlayerScreen
 
         VoodooPlayerWidget widget = new VoodooPlayerWidget(
             (LimitedInventoryScreen) (Object) this,
-            x, y, playerUUID, playerListEntry, player.getWorld(), index
+            x, y, playerUUID, playerListEntry, index
         );
         addDrawableChild(widget);
         return widget;
@@ -120,7 +120,7 @@ public abstract class VoodoScreenMixin extends LimitedHandledScreen<PlayerScreen
         playerUuids.removeIf(uuid -> uuid.equals(player.getUuid()));
         playerUuids.removeIf(uuid -> {
             PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(uuid);
-            return entry != null && entry.getGameMode() == GameMode.ADVENTURE;
+            return entry == null || entry.getGameMode() != GameMode.ADVENTURE;
         });
         return playerUuids;
     }
@@ -137,7 +137,7 @@ public abstract class VoodoScreenMixin extends LimitedHandledScreen<PlayerScreen
 
     @Override
     public void addDrawableChild(ButtonWidget button) {
-
+        super.addDrawableChild(button);
     }
 
     @Override
@@ -147,6 +147,6 @@ public abstract class VoodoScreenMixin extends LimitedHandledScreen<PlayerScreen
 
     @Override
     public void clearChildren() {
-
+        super.clearChildren();
     }
 }

@@ -39,31 +39,9 @@ public abstract class ExecutionerShopMixin {
             
             // 检查商店是否已解锁
             if (!executionerComponent.shopUnlocked) {
-                player.sendMessage(Text.translatable("message.executioner.shop_locked").formatted(Formatting.RED), true);
                 ci.cancel();
                 return;
             }
-            // 自定义Executioner商店逻辑
-            if (index == 0) {
-                if (balance >= 100) {
-                    this.balance -= 100;
-                    sync();
-                    player.giveItemStack(TMMItems.KNIFE.getDefaultStack());
-                    PlayerEntity var6 = this.player;
-                    if (var6 instanceof ServerPlayerEntity) {
-                        ServerPlayerEntity player = (ServerPlayerEntity) var6;
-                        player.networkHandler.sendPacket(new PlaySoundS2CPacket(Registries.SOUND_EVENT.getEntry(TMMSounds.UI_SHOP_BUY), SoundCategory.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F, 0.9F + this.player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
-                    }
-                } else {
-                    this.player.sendMessage(Text.literal("Purchase Failed").formatted(Formatting.DARK_RED), true);
-                    PlayerEntity var4 = this.player;
-                    if (var4 instanceof ServerPlayerEntity) {
-                        ServerPlayerEntity player = (ServerPlayerEntity) var4;
-                        player.networkHandler.sendPacket(new PlaySoundS2CPacket(Registries.SOUND_EVENT.getEntry(TMMSounds.UI_SHOP_BUY_FAIL), SoundCategory.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F, 0.9F + this.player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
-                    }
-                }
-            }
-            ci.cancel();
         }
     }
 }

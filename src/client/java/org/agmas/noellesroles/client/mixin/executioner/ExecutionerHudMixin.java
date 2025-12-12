@@ -54,7 +54,7 @@ public abstract class ExecutionerHudMixin {
 
                     // 如果目标已经死亡，显示等待状态
                     if (executionerPlayerComponent.won) {
-                        Text status = Text.literal("目标已死亡 - 等待转变");
+                        Text status = Text.literal("目标已死亡");
                         context.drawTextWithShadow(renderer, status, -renderer.getWidth(status) / 2, 44, Colors.YELLOW);
                     }
 

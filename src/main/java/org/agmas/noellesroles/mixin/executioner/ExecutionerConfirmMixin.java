@@ -55,9 +55,6 @@ public class ExecutionerConfirmMixin {
                 // 给予商店余额（可选）
                 PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(executioner);
                 playerShopComponent.setBalance(200);
-                
-                // 发送消息通知玩家商店已解锁
-                executioner.sendMessage(net.minecraft.text.Text.translatable("message.executioner.shop_unlocked"));
             }
         }
     }
