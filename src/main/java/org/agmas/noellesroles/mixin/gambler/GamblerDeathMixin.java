@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.gambler;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -9,8 +10,11 @@ import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
@@ -24,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static dev.doctor4t.trainmurdermystery.game.GameFunctions.getSpawnPos;
 import static dev.doctor4t.trainmurdermystery.game.GameFunctions.roomToPlayer;
@@ -34,7 +39,8 @@ public class GamblerDeathMixin {
 
 	@Inject(method = "killPlayer(Lnet/minecraft/entity/player/PlayerEntity;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Identifier;)V", at = @At("HEAD"), cancellable = true)
 	private static void onGamblerDeath(PlayerEntity victim, boolean spawnBody, PlayerEntity killer, Identifier identifier, CallbackInfo ci) {
-		GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.getWorld());
+		final var world = victim.getWorld();
+		GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(world);
 		
 		if (gameWorldComponent.isRole(victim, Noellesroles.GAMBLER)) {
 			GamblerPlayerComponent gamblerPlayerComponent = GamblerPlayerComponent.KEY.get(victim);
@@ -96,11 +102,21 @@ public class GamblerDeathMixin {
 			}
 			// 1%保留给用户自定义 (99)
 			else {
-				// 用户可以在这里添加自定义逻辑
-				// 默认情况下正常死亡
+
+				if (world instanceof ServerWorld serverWorld) {
+					final var players = serverWorld.getPlayers();
+					players.forEach(
+							player -> {
+								player.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE.value(), 1.2F, 1.4F);
+							}
+					);
+					GameRoundEndComponent.KEY.get(serverWorld).setRoundEndData(players, GameFunctions.WinStatus.GAMBLER);
+
+					GameFunctions.stopGame(serverWorld);
+				}
 				return;
 			}
-			victim.getWorld().getPlayers().forEach(
+			world.getPlayers().forEach(
 					player -> {
 						player.playSound(NRSounds.GAMBER_DEATH, 0.5F, 1.3F);
 					}
