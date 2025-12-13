@@ -17,9 +17,15 @@ public abstract class JesterItemEntityMixin {
 
     @Inject(method = "onPlayerCollision", at = @At("HEAD"), cancellable = true)
     private void jesterJest(PlayerEntity player, CallbackInfo ci) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
-        if (!player.isCreative() && gameWorldComponent.isRole(player, Noellesroles.JESTER)) {
-            ci.cancel();
+        try {
+
+
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+            if (!player.isCreative() && gameWorldComponent.isRole(player, Noellesroles.JESTER)) {
+                ci.cancel();
+            }
+        }catch (Exception exception){
+
         }
     }
 

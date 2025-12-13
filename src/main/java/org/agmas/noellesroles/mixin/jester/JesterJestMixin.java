@@ -17,6 +17,9 @@ public abstract class JesterJestMixin {
 
     @Inject(method = "killPlayer(Lnet/minecraft/entity/player/PlayerEntity;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Identifier;)V", at = @At("HEAD"), cancellable = true)
     private static void jesterJest(PlayerEntity victim, boolean spawnBody, PlayerEntity killer, Identifier identifier, CallbackInfo ci) {
+        try {
+
+
         if (killer != null && killer.isAlive() && victim instanceof PlayerEntity) {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.getWorld());
             if (gameWorldComponent.isRole(victim, Noellesroles.JESTER) && !gameWorldComponent.isRole(killer, Noellesroles.JESTER) && gameWorldComponent.isInnocent(killer)) {
@@ -28,6 +31,9 @@ public abstract class JesterJestMixin {
                     ci.cancel();
                 }
             }
+        }
+        }catch (Exception ignored){
+
         }
     }
 

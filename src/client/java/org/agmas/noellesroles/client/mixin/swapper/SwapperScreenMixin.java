@@ -55,10 +55,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
         super(handler, inventory, title);
     }
 
-    @Overwrite
-    protected void drawBackground(DrawContext drawContext, float v, int i, int i1) {
 
-    }
 
     @Unique
     private RoleScreenHelper<AbstractClientPlayerEntity> getRoleScreenHelper() {

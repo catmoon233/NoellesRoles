@@ -56,10 +56,6 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
         super(handler, inventory, title);
     }
 
-    @Overwrite
-    protected void drawBackground(DrawContext drawContext, float v, int i, int i1) {
-
-    }
 
     @Unique
     private RoleScreenHelper<UUID> getRoleScreenHelper() {
