@@ -112,7 +112,6 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
         }
 
         return client.world.getPlayers().stream()
-            .filter(p -> !p.getUuid().equals(player.getUuid()))
             .filter(this::isPlayerInAdventureMode)
             .collect(Collectors.toList());
     }
@@ -120,10 +119,6 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
     @Unique
     private boolean isPlayerInAdventureMode(AbstractClientPlayerEntity targetPlayer) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null) {
-            return false;
-        }
-
         PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(targetPlayer.getUuid());
         return entry != null && entry.getGameMode() == GameMode.ADVENTURE;
     }

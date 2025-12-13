@@ -56,8 +56,13 @@ public class NoellesRolesConfig {
     public int coronerMax = 1;
     @SerialEntry(comment = "Maximum number of Recallers allowed")
     public int recallerMax = 1;
-
+    @SerialEntry(comment = "Maximum number of Broadcasters allowed")
+    public int broadcasterMax = 1;
+    
     // Skills configuration
+    @SerialEntry(comment = "Broadcaster - Broadcast message display duration in seconds")
+    public int broadcasterMessageDuration = 10;
+
     @SerialEntry(comment = "Morphling - Morph duration in seconds")
     public int morphlingMorphDuration = 35;
     @SerialEntry(comment = "Morphling - Morph cooldown in seconds")

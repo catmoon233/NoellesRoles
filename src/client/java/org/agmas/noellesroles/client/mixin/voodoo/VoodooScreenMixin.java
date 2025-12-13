@@ -22,9 +22,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Mixin(LimitedInventoryScreen.class)
 public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScreenHandler> implements PlayerPaginationHelper.ScreenWithChildren {
@@ -99,7 +99,7 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
 
     @Unique
     private void drawVoodooTip(DrawContext context, java.awt.Point point) {
-        ConfigWorldComponent configComponent = (ConfigWorldComponent) ConfigWorldComponent.KEY.get(player.getWorld());
+        ConfigWorldComponent configComponent = ConfigWorldComponent.KEY.get(player.getWorld());
         if (!configComponent.naturalVoodoosAllowed) {
             MinecraftClient client = MinecraftClient.getInstance();
             Text text = Text.translatable("hud.voodoo.tip");
@@ -116,13 +116,13 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
             return List.of();
         }
 
-        List<UUID> playerUuids = new ArrayList<>(client.player.networkHandler.getPlayerUuids());
-        playerUuids.removeIf(uuid -> uuid.equals(player.getUuid()));
-        playerUuids.removeIf(uuid -> {
-            PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(uuid);
-            return entry == null || entry.getGameMode() != GameMode.ADVENTURE;
-        });
-        return playerUuids;
+        return client.player.networkHandler.getPlayerUuids().stream()
+                .filter(uuid -> !uuid.equals(player.getUuid()))
+                .filter(uuid -> {
+                    PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(uuid);
+                    return entry != null && entry.getGameMode() == GameMode.ADVENTURE;
+                })
+                .collect(Collectors.toList());
     }
 
     @Inject(method = "render", at = @At("HEAD"))
