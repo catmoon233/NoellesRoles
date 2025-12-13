@@ -59,6 +59,8 @@
   "hud.vulture.eat": "按下 %s 键来吃掉尸体",
   "hud.vulture.already_consumed": "这具尸体已经被吃掉了",
 
+  "announcement.goals.gambler": "死亡时有50%概率变成杀手或正义阵营",
+  "announcement.role.gambler": "赌徒",
 
   "item.noellesroles.fake_revolver": "假左轮手枪",
   "item.noellesroles.master_key": "万能钥匙",
@@ -99,5 +101,6 @@
   "hud.pagination.prev": "上一页",
   "hud.pagination.next": "下一页",
   "hud.pagination.page": "第 %s/%s 页",
-  "hud.voodoo.tip": "巫毒死亡必须由其他玩家触发！"
+  "hud.voodoo.tip": "巫毒死亡必须由其他玩家触发！",
+  "subtitles.gamber_died": "赌徒死亡笑声"
 }

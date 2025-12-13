@@ -7,6 +7,7 @@ import org.agmas.noellesroles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.broadcaster.BroadcasterPlayerComponent;
 import org.agmas.noellesroles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.recaller.RecallerPlayerComponent;
 import org.agmas.noellesroles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.morphling.MorphlingPlayerComponent;
@@ -23,6 +24,7 @@ public class NoellesRolesComponents implements EntityComponentInitializer, World
     }
 
     public void registerEntityComponentFactories(@NotNull EntityComponentFactoryRegistry registry) {
+        registry.beginRegistration(PlayerEntity.class, GamblerPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(GamblerPlayerComponent::new);
         registry.beginRegistration(PlayerEntity.class, MorphlingPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(MorphlingPlayerComponent::new);
         registry.beginRegistration(PlayerEntity.class, BartenderPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(BartenderPlayerComponent::new);
         registry.beginRegistration(PlayerEntity.class, VoodooPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(VoodooPlayerComponent::new);

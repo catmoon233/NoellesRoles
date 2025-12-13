@@ -87,7 +87,7 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
 
         VoodooPlayerWidget widget = new VoodooPlayerWidget(
             (LimitedInventoryScreen) (Object) this,
-            x, y, playerUUID, playerListEntry, index
+            x, y, playerUUID, playerListEntry, player.getWorld(),index
         );
         addDrawableChild(widget);
         return widget;
@@ -116,7 +116,7 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
                 .filter(uuid -> !uuid.equals(player.getUuid()))
                 .filter(uuid -> {
                     PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(uuid);
-                    return entry != null && entry.getGameMode() == GameMode.ADVENTURE;
+                    return entry != null ;
                 })
                 .collect(Collectors.toList());
     }

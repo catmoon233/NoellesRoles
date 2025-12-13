@@ -59,6 +59,8 @@
   "hud.vulture.eat": "Press %s to eat!",
   "hud.vulture.already_consumed": "This body has been consumed.",
 
+  "announcement.goals.gambler": "Take a 50/50 chance on death.",
+  "announcement.role.gambler": "Gambler",
 
   "item.noellesroles.fake_revolver": "Fake Revolver",
   "item.noellesroles.master_key": "Master Key",

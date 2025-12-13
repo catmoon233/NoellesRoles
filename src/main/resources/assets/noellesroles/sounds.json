@@ -1,0 +1,8 @@
+{
+	"block.cargo_box.close": {
+		"sounds": [
+			"noellesroles:gamber_died.ogg"
+		],
+		"subtitle": "subtitles.gamber_died"
+	}
+}
