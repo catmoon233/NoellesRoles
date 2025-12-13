@@ -47,7 +47,7 @@ public abstract class InstinctMixin {
     }
 
     @Inject(method = "getInstinctHighlight", at = @At("HEAD"), cancellable = true)
-    private static void b(Entity target, CallbackInfoReturnable<Integer> cir) {
+    private static void getInstinctHighlightColor(Entity target, CallbackInfoReturnable<Integer> cir) {
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
         if (target instanceof PlayerEntity) {
             if (!((PlayerEntity)target).isSpectator()) {
@@ -68,7 +68,7 @@ public abstract class InstinctMixin {
         if (target instanceof PlayerEntity) {
             if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.EXECUTIONER)) {
                 ExecutionerPlayerComponent executionerPlayerComponent = (ExecutionerPlayerComponent) ExecutionerPlayerComponent.KEY.get((PlayerEntity) MinecraftClient.getInstance().player);
-                if (executionerPlayerComponent.target != null && executionerPlayerComponent.target.equals(target.getUuid())) {
+                if (executionerPlayerComponent.target.equals(target.getUuid())) {
                     cir.setReturnValue(Color.YELLOW.getRGB());
                     cir.cancel();
                 }

@@ -30,7 +30,7 @@ public class VoodooPlayerWidget extends ButtonWidget{
     public final PlayerListEntry targetPlayerEntry;
 
 
-    public VoodooPlayerWidget(LimitedInventoryScreen screen, int x, int y, UUID targetUUID, PlayerListEntry targetPlayerEntry, int index) {
+    public VoodooPlayerWidget(LimitedInventoryScreen screen, int x, int y, UUID targetUUID, PlayerListEntry targetPlayerEntry, World world, int index) {
         super(x, y, 16, 16, Text.literal(""), (a) -> {
             ClientPlayNetworking.send(new MorphC2SPacket(targetUUID));
         }, DEFAULT_NARRATION_SUPPLIER);
@@ -42,16 +42,12 @@ public class VoodooPlayerWidget extends ButtonWidget{
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
         VoodooPlayerComponent voodooPlayerComponent = (VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(MinecraftClient.getInstance().player);
-        Text playerName = targetPlayerEntry.getDisplayName();
-        if (playerName == null) {
-            playerName = Text.literal(targetPlayerEntry.getProfile().getName());
-        }
         if ((AbilityPlayerComponent.KEY.get(MinecraftClient.getInstance().player)).cooldown == 0) {
             context.drawGuiTexture(ShopEntry.Type.TOOL.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
             PlayerSkinDrawer.draw(context, targetPlayerEntry.getSkinTextures().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.drawTooltip(MinecraftClient.getInstance().textRenderer, playerName, this.getX() - 4 - MinecraftClient.getInstance().textRenderer.getWidth(playerName) / 2, this.getY() - 9);
+
             }
 
             if (voodooPlayerComponent.target.equals(targetUUID)) {
@@ -67,7 +63,6 @@ public class VoodooPlayerWidget extends ButtonWidget{
             PlayerSkinDrawer.draw(context, targetPlayerEntry.getSkinTextures().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.drawTooltip(MinecraftClient.getInstance().textRenderer, playerName, this.getX() - 4 - MinecraftClient.getInstance().textRenderer.getWidth(playerName) / 2, this.getY() - 9);
             }
 
             if (voodooPlayerComponent.target.equals(targetUUID)) {

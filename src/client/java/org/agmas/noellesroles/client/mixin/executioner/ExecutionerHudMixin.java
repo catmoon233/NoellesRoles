@@ -1,16 +1,26 @@
 package org.agmas.noellesroles.client.mixin.executioner;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.PlayerSkinDrawer;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
+import net.minecraft.util.Formatting;
+import org.agmas.harpymodloader.Harpymodloader;
+import org.agmas.harpymodloader.client.HarpymodloaderClient;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.NoellesrolesClient;
+import org.agmas.noellesroles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,10 +28,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * Executioner HUD显示Mixin
- * 在屏幕中央显示当前选定的目标玩家
- */
 @Mixin(RoleNameRenderer.class)
 public abstract class ExecutionerHudMixin {
 
@@ -29,10 +35,11 @@ public abstract class ExecutionerHudMixin {
 
     @Shadow private static Text nametag;
 
+
     @Inject(method = "renderHud", at = @At("HEAD"))
-    private static void renderExecutionerTarget(TextRenderer renderer, ClientPlayerEntity player, DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+    private static void executionerHudRenderer(TextRenderer renderer, ClientPlayerEntity player, DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
-        
+
         // 检查是否是Executioner角色且存活
         if (MinecraftClient.getInstance().player != null && gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.EXECUTIONER) && TMMClient.isPlayerAliveAndInSurvival()) {
             // 检查是否已经转变为杀手
@@ -72,6 +79,11 @@ public abstract class ExecutionerHudMixin {
                 }
             }
         }
+        }
+
+    @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getDisplayName()Lnet/minecraft/text/Text;"))
+    private static void executionerGetTarget(TextRenderer renderer, ClientPlayerEntity player, DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci, @Local PlayerEntity target) {
+        NoellesrolesClient.target = target;
     }
 }
 

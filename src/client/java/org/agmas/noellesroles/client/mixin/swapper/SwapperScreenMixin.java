@@ -1,7 +1,10 @@
 package org.agmas.noellesroles.client.mixin.swapper;
 
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedHandledScreen;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
+import net.fabricmc.loader.impl.util.log.Log;
+import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -11,19 +14,25 @@ import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.world.GameMode;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.MorphlingPlayerWidget;
 import org.agmas.noellesroles.client.PlayerPaginationHelper;
 import org.agmas.noellesroles.client.RoleScreenHelper;
 import org.agmas.noellesroles.client.SwapperPlayerWidget;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Mixin(LimitedInventoryScreen.class)
 public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScreenHandler> implements PlayerPaginationHelper.ScreenWithChildren {
@@ -61,12 +70,12 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
     private RoleScreenHelper<AbstractClientPlayerEntity> getRoleScreenHelper() {
         if (roleScreenHelper == null) {
             roleScreenHelper = new RoleScreenHelper<>(
-                player,
-                Noellesroles.SWAPPER,
-                this::createSwapperWidget,
-                TEXT_PROVIDER,
-                this::drawSwapperSelectionHint,
-                this::getEligiblePlayers
+                    player,
+                    Noellesroles.SWAPPER,
+                    this::createSwapperWidget,
+                    TEXT_PROVIDER,
+                    this::drawSwapperSelectionHint,
+                    this::getEligiblePlayers
             );
         }
         return roleScreenHelper;
@@ -75,8 +84,8 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
     @Unique
     private SwapperPlayerWidget createSwapperWidget(int x, int y, AbstractClientPlayerEntity playerEntity, int index) {
         SwapperPlayerWidget widget = new SwapperPlayerWidget(
-            (LimitedInventoryScreen) (Object) this,
-            x, y, playerEntity, index
+                (LimitedInventoryScreen) (Object) this,
+                x, y, playerEntity, index
         );
         addDrawableChild(widget);
         return widget;
@@ -98,7 +107,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
 
         int textWidth = client.textRenderer.getWidth(text);
         context.drawTextWithShadow(client.textRenderer, text,
-            point.x - textWidth / 2, point.y + 40, color);
+                point.x - textWidth / 2, point.y + 40, color);
     }
 
     @Unique
@@ -109,8 +118,8 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
         }
 
         return client.world.getPlayers().stream()
-            .filter(this::isPlayerInAdventureMode)
-            .collect(Collectors.toList());
+                .filter(this::isPlayerInAdventureMode)
+                .collect(Collectors.toList());
     }
 
     @Unique

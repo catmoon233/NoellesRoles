@@ -8,7 +8,6 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
-import org.agmas.noellesroles.config.NoellesRolesConfig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -70,14 +69,14 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
     }
 
     public boolean startMorph(UUID id) {
-        setMorphTicks(GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphDuration));
+        setMorphTicks(GameConstants.getInTicks(0,35));
         disguise = id;
         this.sync();
         return true;
     }
 
     public void stopMorph() {
-        this.morphTicks = -GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphCooldown);
+        this.morphTicks = -GameConstants.getInTicks(0,20);
     }
 
     public int getMorphTicks() {

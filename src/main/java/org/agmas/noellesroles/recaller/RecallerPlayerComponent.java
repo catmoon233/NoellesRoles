@@ -54,13 +54,9 @@ public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTicki
 
 
     public void teleport() {
-        // Apply maximum distance limit
-//        double distance = Math.sqrt(Math.pow(player.getX() - x, 2) + Math.pow(player.getY() - y, 2) + Math.pow(player.getZ() - z, 2));
-//        if (distance <= org.agmas.noellesroles.config.NoellesRolesConfig.HANDLER.instance().recallerMaxDistance) {
-            player.refreshPositionAfterTeleport(x, y, z);
-            placed = false;
-            this.sync();
-     //   }
+        player.refreshPositionAfterTeleport(x,y,z);
+        placed = false;
+        this.sync();
     }
 
 

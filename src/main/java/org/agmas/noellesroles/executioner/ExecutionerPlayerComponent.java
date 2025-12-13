@@ -1,10 +1,13 @@
 package org.agmas.noellesroles.executioner;
 
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
@@ -14,13 +17,11 @@ import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
-/**
- * Executioner角色组件 - 管理目标选择和胜利状态
- *
- * <p>Executioner需要选择一个平民阵营的玩家作为目标，当目标死亡后转变为杀手。
- */
 public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
     public static final ComponentKey<ExecutionerPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "executioner"), ExecutionerPlayerComponent.class);
     private final PlayerEntity player;
@@ -56,7 +57,7 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
         if (target != null && !won) {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
             if (!gameWorldComponent.isRole(player, Noellesroles.EXECUTIONER)) return;
-            
+
             PlayerEntity targetPlayer = player.getWorld().getPlayerByUuid(target);
             if (targetPlayer == null || GameFunctions.isPlayerEliminated(targetPlayer)) {
                 // 目标死亡，解锁商店

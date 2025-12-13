@@ -18,15 +18,13 @@ public abstract class JesterJestMixin {
     @Inject(method = "killPlayer(Lnet/minecraft/entity/player/PlayerEntity;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Identifier;)V", at = @At("HEAD"), cancellable = true)
     private static void jesterJest(PlayerEntity victim, boolean spawnBody, PlayerEntity killer, Identifier identifier, CallbackInfo ci) {
         try {
-
-
-        if (killer != null && killer.isAlive() && victim instanceof PlayerEntity) {
+        if (killer != null) {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.getWorld());
             if (gameWorldComponent.isRole(victim, Noellesroles.JESTER) && !gameWorldComponent.isRole(killer, Noellesroles.JESTER) && gameWorldComponent.isInnocent(killer)) {
                 PlayerPsychoComponent component = PlayerPsychoComponent.KEY.get(victim);
                 if (component.getPsychoTicks() <= 0) {
                     component.startPsycho();
-                    component.psychoTicks = GameConstants.getInTicks(0, org.agmas.noellesroles.config.NoellesRolesConfig.HANDLER.instance().jesterJestTime);
+                    component.psychoTicks = GameConstants.getInTicks(0, 45);
                     component.armour = 0;
                     ci.cancel();
                 }
