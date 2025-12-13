@@ -2,6 +2,8 @@
 
 New roles for [The Last Voyage of the Harpy Express](https://modrinth.com/modpack/harpy-express) created by [doctor4t](https://www.youtube.com/@doctor4t).
 
+[中文介绍](https://yuwan886.github.io/mc-tools/role_intro.html)
+
 Role List:
 
 ## Killers & Non-Innocents
