@@ -77,17 +77,17 @@ public class NoellesRolesConfig {
     @SerialEntry(comment = "Bartender - Glow duration in seconds")
     public int bartenderGlowDuration = 40;
 
-    @SerialEntry(comment = "Recaller - Maximum recall distance in blocks")
-    public int recallerMaxDistance = 50;
-
-    @SerialEntry(comment = "Vulture - Bodies required to win")
-    public int vultureBodiesRequired = 2;
-
-    @SerialEntry(comment = "Jester - Time to complete jest in seconds")
-    public int jesterJestTime = 60;
-
-    @SerialEntry(comment = "Jester - Maximum psycho ticks before death")
-    public int jesterMaxPsychoTicks = 44;
+//    @SerialEntry(comment = "Recaller - Maximum recall distance in blocks")
+//    public int recallerMaxDistance = 50;
+//
+//    @SerialEntry(comment = "Vulture - Bodies required to win")
+//    public int vultureBodiesRequired = 2;
+//
+//    @SerialEntry(comment = "Jester - Time to complete jest in seconds")
+//    public int jesterJestTime = 60;
+//
+//    @SerialEntry(comment = "Jester - Maximum psycho ticks before death")
+//    public int jesterMaxPsychoTicks = 44;
 
     @SerialEntry(comment = "Recaller - Recall mark cooldown in seconds")
     public int recallerMarkCooldown = 10;
