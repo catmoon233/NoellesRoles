@@ -8,6 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -56,7 +57,7 @@ public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTick
 
 
     public boolean startGlow() {
-        setGlowTicks(GameConstants.getInTicks(0,40));
+        setGlowTicks(GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().bartenderGlowDuration));
         this.sync();
         return true;
     }

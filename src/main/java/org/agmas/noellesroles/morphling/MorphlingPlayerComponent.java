@@ -16,6 +16,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -69,14 +70,14 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
     }
 
     public boolean startMorph(UUID id) {
-        setMorphTicks(GameConstants.getInTicks(0,35));
+        setMorphTicks(GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphDuration));
         disguise = id;
         this.sync();
         return true;
     }
 
     public void stopMorph() {
-        this.morphTicks = -GameConstants.getInTicks(0,20);
+        this.morphTicks = -GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphCooldown);
     }
 
     public int getMorphTicks() {

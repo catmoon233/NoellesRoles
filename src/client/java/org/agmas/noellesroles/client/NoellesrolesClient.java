@@ -9,6 +9,7 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -31,9 +32,13 @@ import net.minecraft.text.Text;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
+import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
+import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
 import org.agmas.noellesroles.packet.MorphC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
+import org.agmas.noellesroles.client.screen.BroadcasterInputScreen;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -47,15 +52,30 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static PlayerBodyEntity targetBody;
 
     public static Map<UUID, UUID> SHUFFLED_PLAYER_ENTRIES_CACHE = Maps.newHashMap();
-
+    public static String currentBroadcastMessage = null;
+    public static int broadcastMessageTicks = 0;
 
     @Override
     public void onInitializeClient() {
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key." + Noellesroles.MOD_ID + ".ability", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
 
+        ClientPlayNetworking.registerGlobalReceiver(BroadcastMessageS2CPacket.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                if (context.client().player != null) {
+                    currentBroadcastMessage = payload.message();
+                    broadcastMessageTicks = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().broadcasterMessageDuration);
+                }
+            });
+        });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             insanityTime++;
+            if (broadcastMessageTicks > 0) {
+                broadcastMessageTicks--;
+                if (broadcastMessageTicks <= 0) {
+                    currentBroadcastMessage = null;
+                }
+            }
             if (insanityTime >= 20*6) {
                 insanityTime = 0;
                 List<UUID> keys = new ArrayList<UUID>(TMMClient.PLAYER_ENTRIES_CACHE.keySet());
@@ -75,6 +95,9 @@ public class NoellesrolesClient implements ClientModInitializer {
                     if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.VULTURE)) {
                         if (targetBody == null) return;
                         ClientPlayNetworking.send(new VultureEatC2SPacket(targetBody.getUuid()));
+                        return;
+                    } else if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.BROADCASTER)) {
+                        client.setScreen(new BroadcasterInputScreen(client.currentScreen));
                         return;
                     }
                     ClientPlayNetworking.send(new AbilityC2SPacket());
