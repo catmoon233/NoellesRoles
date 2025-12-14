@@ -13,7 +13,7 @@ import org.agmas.noellesroles.item.FakeKnifeItem;
 
 public class ModItems {
     public static void init() {
-        GameConstants.ITEM_COOLDOWNS.put(FAKE_REVOLVER, GameConstants.getInTicks(0,8));
+        //GameConstants.ITEM_COOLDOWNS.put(FAKE_REVOLVER, GameConstants.getInTicks(0,8));
     }
 
     public static final Item FAKE_KNIFE = register(
@@ -27,6 +27,10 @@ public class ModItems {
     public static final Item MASTER_KEY = register(
             new Item(new Item.Settings().maxCount(1)),
             "master_key"
+    );
+    public static final Item MASTER_KEY_P = register(
+            new Item(new Item.Settings().maxCount(1)),
+            "master_key_p"
     );
     public static final Item DELUSION_VIAL = register(
             new Item(new Item.Settings().maxCount(1)),

@@ -1,0 +1,91 @@
+package org.agmas.noellesroles.repack.items;
+
+import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.world.World;
+import org.agmas.noellesroles.repack.HSRConstants;
+import org.agmas.noellesroles.repack.HSRItems;
+import org.agmas.noellesroles.repack.HSRSounds;
+import org.agmas.noellesroles.repack.ToxinUsePayload;
+import org.jetbrains.annotations.NotNull;
+
+public class ToxinItem extends Item {
+    public ToxinItem(Item.Settings settings) {
+        super(settings);
+    }
+
+    public TypedActionResult<ItemStack> use(World world, @NotNull PlayerEntity user, Hand hand) {
+        ItemStack itemStack = user.getStackInHand(hand);
+        user.setCurrentHand(hand);
+        return TypedActionResult.consume(itemStack);
+    }
+
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if (!user.isSpectator()) {
+            if (remainingUseTicks < this.getMaxUseTime(stack, user) - 10 && user instanceof PlayerEntity) {
+                PlayerEntity attacker = (PlayerEntity)user;
+                if (world.isClient) {
+                    HitResult collision = getToxinTarget(attacker);
+                    if (collision instanceof EntityHitResult) {
+                        EntityHitResult entityHitResult = (EntityHitResult)collision;
+                        Entity target1 = entityHitResult.getEntity();
+                        if (user instanceof ServerPlayerEntity player) {
+                            if (target1 instanceof PlayerEntity target) {
+                                if (!((double) target.distanceTo(player) > (double) 3.0F)) {
+                                    ((PlayerPoisonComponent) PlayerPoisonComponent.KEY.get(target)).setPoisonTicks(HSRConstants.toxinPoisonTime, player.getUuid());
+                                    player.playSound(HSRSounds.ITEM_SYRINGE_STAB, 0.15F, 1.0F);
+                                    player.swingHand(Hand.MAIN_HAND);
+                                    if (!player.isCreative()) {
+                                        player.getMainHandStack().decrement(1);
+                                        player.getItemCooldownManager().set(HSRItems.TOXIN, (Integer) HSRConstants.ITEM_COOLDOWNS.get(HSRItems.TOXIN));
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                    return;
+                }
+            }
+
+        }
+    }
+
+    public static HitResult getToxinTarget(PlayerEntity user) {
+        return ProjectileUtil.getCollision(user, (entity) -> {
+            boolean var10000;
+            if (entity instanceof PlayerEntity player) {
+                if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                    var10000 = true;
+                    return var10000;
+                }
+            }
+
+            var10000 = false;
+            return var10000;
+        }, (double)3.0F);
+    }
+
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.SPEAR;
+    }
+
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+        return 72000;
+    }
+}

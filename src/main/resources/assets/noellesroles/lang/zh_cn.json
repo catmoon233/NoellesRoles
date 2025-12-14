@@ -64,12 +64,18 @@
 
   "item.noellesroles.fake_revolver": "假左轮手枪",
   "item.noellesroles.master_key": "万能钥匙",
+  "item.noellesroles.master_key_p": "乘务员钥匙",
   "item.noellesroles.fake_knife": "假匕首",
   "item.noellesroles.defense_vial": "去毒试剂",
   "item.noellesroles.defense_vial.tooltip": "在食物或饮料托盘上右键使用\n清除托盘上所有已施加的毒药\n食用者可额外承受一次伤害",
   "item.noellesroles.delusion_vial": "幻觉试剂",
   "item.noellesroles.delusion_vial.tooltip": "在食物或饮料托盘上右键使用\n食用者获得假中毒效果\n实际不会造成任何效果",
-
+  "tip.master_key_invisible_count": "当玩家少于 %s 人时，万能钥匙看起来像撬锁器。",
+  "announcement.goals.broadcaster": "向所有玩家广播消息。",
+  "announcement.role.broadcaster": "广播员",
+  "message.broadcaster.broadcast": "%s 广播：%s",
+  "message.broadcaster.example_message": "小心！杀手就在附近！",
+  "message.broadcaster.insufficient_funds": "金钱不足（需要150）",
   "death_reason.trainmurdermystery.gun_shot": "被子弹击中。",
   "death_reason.trainmurdermystery.knife_stab": "被刀刺死",
   "death_reason.trainmurdermystery.generic": "未知",
@@ -102,5 +108,35 @@
   "hud.pagination.next": "下一页",
   "hud.pagination.page": "第 %s/%s 页",
   "hud.voodoo.tip": "巫毒死亡必须由其他玩家触发！",
-  "subtitles.gamber_died": "赌徒死亡笑声"
+  "subtitles.gamber_died": "赌徒死亡笑声",
+
+  "announcement.goals.poisoner": "与你的杀手同伴合作，将他们全部毒杀。",
+  "announcement.role.poisoner": "投毒者！",
+  "announcement.win.poisoner": "杀手方胜利！",
+
+  "announcement.goals.bandit": "在时间耗尽前劫掠并消灭所有平民。",
+  "announcement.role.bandit": "匪徒！",
+  "announcement.win.bandit": "杀手方胜利！",
+
+  "announcement.goals.doctor": "人们生病了，治愈他们。",
+  "announcement.role.doctor": "医生！",
+  "announcement.win.doctor": "乘客方胜利！",
+
+  "announcement.goals.attendant": "检查乘客状况。",
+  "announcement.role.attendant": "乘务员！",
+  "announcement.win.attendant": "乘客方胜利！",
+
+  "item.noellesroles.antidote": "解毒剂",
+  "item.noellesroles.antidote.tooltip": "右键点击并按住一秒，靠近你的病人\n治愈后，2分钟内无法再次使用",
+
+  "item.noellesroles.toxin": "毒素",
+  "item.noellesroles.toxin.tooltip": "右键点击并按住一秒，靠近你的目标\n毒素将在短暂延迟后生效\n一次性使用",
+
+  "item.noellesroles.master_key": "万能钥匙",
+  "item.noellesroles.master_key.tooltip": "可以打开任何室内房间\n可使用三次",
+
+  "item.noellesroles.bandit_revolver": "左轮手枪",
+  "item.noellesroles.bandit_revolver.tooltip": "瞄准，右键点击射击\n一击致命，击杀后有概率掉落",
+
+  "tip.cooldown": "冷却中：%s"
 }

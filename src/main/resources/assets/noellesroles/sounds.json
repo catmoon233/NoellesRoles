@@ -4,5 +4,10 @@
 			"noellesroles:gamber_died.ogg"
 		],
 		"subtitle": "subtitles.gamber_died"
+	},
+	"item.syringe.stab": {
+		"sounds": [
+			"harpysimpleroles:item/syringe_stab"
+		]
 	}
 }
