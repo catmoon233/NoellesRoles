@@ -19,6 +19,7 @@
     "framing.FramingPassiveIncomeMixin",
     "framing.FramingRolesShopComponentMixin",
     "gambler.GamblerDeathMixin",
+    "ghost.GhostSoundMixin",
     "host.MasterKeyDropMixin",
     "host.MasterKeySmallDoorMixin",
     "host.MasterKeyTrainDoorMixin",

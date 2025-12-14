@@ -83,5 +83,9 @@
   "screen.broadcaster.title": "广播消息",
   "subtitles.gamber_died": "赌徒死亡笑声",
   "tip.broadcaster": "按 %s 广播消息！",
-  "tip.broadcaster.with_cost": "按 %s 广播（消耗：%d）"
+  "tip.broadcaster.with_cost": "按 %s 广播（消耗：%d）",
+  "announcement.role.ghost": "小透明",
+  "announcement.goals.ghost": "杀手无法看到你的发光边框，你发出的声音别人听不到。",
+  "message.error.executioner.invalid_target": "目标必须是无辜者！",
+  "message.error.executioner.target_not_found": "未找到目标玩家或其已死亡！"
 }

@@ -66,6 +66,8 @@ public class NoellesRolesConfig {
     public int broadcasterMax = 1;
     @SerialEntry(comment = "Maximum number of Gamblers allowed")
     public int gamblerMax = 1;
+    @SerialEntry(comment = "Maximum number of Ghosts allowed")
+    public int ghostMax = 1;
 
     // Skills configuration
     @SerialEntry(comment = "Broadcaster - Broadcast message display duration in seconds")

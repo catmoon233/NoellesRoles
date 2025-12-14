@@ -86,5 +86,10 @@
   "tip.recaller.not_enough_money": "100\uE781 required to teleport.",
   "tip.noellesroles.cooldown": "Ability usable in %ss",
   "tip.master_key_invisible_count": "Master Keys look like lockpicks with less than %s people.",
-  "tip.master_key_invisible": "Master Keys look like lockpicks."
+  "tip.master_key_invisible": "Master Keys look like lockpicks.",
+  "announcement.role.ghost": "Ghost",
+  "announcement.goals.ghost": "Killers cannot see your glowing outline, and sounds you make cannot be heard by others."
+,
+  "message.error.executioner.invalid_target": "Target must be an innocent!",
+  "message.error.executioner.target_not_found": "Target player not found or already dead!"
 }
