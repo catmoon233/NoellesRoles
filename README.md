@@ -1,76 +1,43 @@
-# You will need doctor4t's train mod placed inside the "libs" folder (alongside HarpyModLoader). Please install it yourself.
+## 杀手
 
-New roles for [The Last Voyage of the Harpy Express](https://modrinth.com/modpack/harpy-express) created by [doctor4t](https://www.youtube.com/@doctor4t).
+| 角色名称 | 能力 |
+| ----- | ----- |
+| **变形者** | 可以在冷却时间后**变形**成任何**活着的**玩家。 |
+| **幽灵** | 可以在冷却时间后获得**暂时隐形**。注意：你的**物品仍然可见**！|
+| **交换者** | 可以在冷却时间后将地图上**两名玩家**的位置进行**交换**。 |
+| **亡语杀手** | 可以**听到死人**的声音。 |
 
-[中文介绍](https://yuwan886.github.io/mc-tools/role_intro.html)
+## 中立
 
-Role List:
+| 角色名称 | 能力 |
+| ----- | ----- |
+| **秃鹫** | 通过**吃掉尸体**来转变为**杀手**！**仅在玩家人数超过 8 人时启用**。 |
+| **小丑** | 拥有**假刀**和**假左轮手枪**。被射击时会进入**疯狂模式**，但没有护盾，因此再被射击一次就会死亡。**可能会意外击杀杀手队友，导致游戏结束**，务必配合！|
+| **刽子手** | 游戏开始时获得一个**目标**。如果目标**死亡**，刽子手会变为**杀手**。|
+| **赌徒** | 被杀死后有33%概率变成杀手阵营，33%概率变成正义阵营，33%概率直接死亡，1%概率触发影藏结局，在自己的房间复活|
 
-## Killers & Non-Innocents
+## 平民
 
-- Jester
-  - Wins with the killers, but cannot use any killer menus.
-  - Has a fake knife and a fake revolver
-  - **When shot, goes psycho mode**. Does not have a shield, so one more shot will kill the jester.
-  - Can accidentaly kill their killer teammates and end the game, make sure to co-operate!
+| 角色名称 | 能力 |
+| ----- | ----- |
+| **列车长** | 拥有**万能钥匙**。当列车长死亡后，这把钥匙会**掉落**。请务必让所有人知道你拥有它，否则杀手可以用它来洗清嫌疑！ |
+| **酒保** | 可以**暂时**透视看到**饮酒**的人。酒保可以看到**毒药**和**中毒的**玩家。可以花费 100 块（每完成一个任务获得 50 块）购买**防御药剂**。防御药剂能让饮用者获得**额外一次**受击机会（类似于疯狂护甲）。 |
+| **大嗓门** | 死亡时，你的**尸体**会**发光**。|
+| **召回者** | **保存**一个位置，稍后可以**传送**回去。使用你的能力键传送回保存的位置，花费 100 块（每完成一个任务获得 50 块）。 |
+| **验尸官** | 可以查看尸体的**死亡时间**和**死亡原因**。（在**旁观者模式**下也可以使用！） |
+| **巫毒** | **选择**一个人，让TA与你**一起死亡**。 |
+| **记者** | 携带着大量的**便条**。 |
+| **广播员** | 向全体玩家发送消息，消耗 150 块 |
 
-- Executioner
-  - Gains a target at the start of the game
-  - If the target dies to a civillian or natural causes, the Executioner becomes a random Killer role.
-  - If the target dies to a killer, the executioner re-targets.
+## 配置与命令
 
-- Morphling
-  - Can morph into any **alive** player on a cooldown.
+以下命令可用于配置游戏角色和游戏设置。
 
-- Phantom
-  - Can gain temporary invisibility on a cooldown. Watch out- your items are still visible! (ps. may break with mods that add extra things to your character)
-
-- Swapper
-  - Can swap two people around the map on a cooldown.
-
-## Civillians
-
-- Host
-  - Has a key to every door on the train.
-  - This key will drop after the host dies- make sure everyone knows you have it, or the killers can clear themselves with it!
-
-- Bartender
-  - See people who drink through walls temporarily.
-  - Bartender can see poison and poisoned players
-  - Bartender can buy a "defense vial" for 100 dollars (50 dollars per task done)
-    - Defense vial can make drinks give whoever drinks them an extra hit (like psycho armor)
-
-- Noisemaker
-  - On death, your body will glow.
-
-- Coroner
-  - See the time of death and death reason of bodies. (also enabled in spectator mode!)
-
-- Voodoo
-  - Choose one person to die alongside you.
-
-## ???? (disabled by default, turn on a config option to get them back on!)
-
-- Awesome Binglus
-  - Awesome Binglu
-  - Spawns with a lot of notes
-- The Insane Damned Paranoid Killer Of Doom Death Destruction And Waffles
-  - Killer Role
-  - Can hear ghosts
-
-## Extras
-  - Coroner's ability can be used by spectators when looking at a body
-  - (Configurable) Players will start morphing skins and have a hidden name when having extremely low mood.
-
-## Config Note
-Use /setEnabledRole and /listRoles (from HarpyModLoader) to enable or disable roles.
-
-
-"Why _Noelle's_ Roles?" because i had a noelle deltarune minecraft skin at the time of making this mod and i thought it was funny
-
-**Special Thanks:**
-
-- eyelego for the "Master Key" item art
-- DragonSlayr15001 for the Mood icons
-- Alazi for russian translation
-- All the testers in this mod's discord, for giving out so many cool ideas!
+| 命令 | 参数 | 描述 |
+| ----- | ----- | ----- |
+| `setEnabledRole` | `<roleid> <boolean>` | 启用或禁用特定角色 |
+| `listRoles` | 无 | 列出所有可用角色及其启用状态 |
+| `noellesroles setmax` | `<roleid> <int>` | 设置角色的最大数量 |
+| `noellesroles config` | `<reload/reset>` | 重新加载或重置配置 |
+| `tmm:start` | `<mode> <int>` | 选择游戏模式和时长 |
+| `tmm:setrolecount` | `killer <int>` | 设置杀手阵营人数 |

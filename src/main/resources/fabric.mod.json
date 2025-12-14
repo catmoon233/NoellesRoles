@@ -25,19 +25,20 @@
   },
 
   "custom": {
-    "cardinal-components": [
-      "noellesroles:morphling",
-      "noellesroles:bartender",
-      "noellesroles:ability",
-      "noellesroles:voodoo",
-      "noellesroles:config",
-      "noellesroles:body_death_reason",
-      "noellesroles:gambler",
-      "noellesroles:executioner",
-      "noellesroles:recaller",
-      "noellesroles:vulture",
-      "noellesroles:broadcaster"
-    ]
+  "cardinal-components": [
+    "noellesroles:morphling",
+    "noellesroles:bartender",
+    "noellesroles:ability",
+    "noellesroles:voodoo",
+    "noellesroles:config",
+    "noellesroles:body_death_reason",
+    "noellesroles:gambler",
+    "noellesroles:executioner",
+    "noellesroles:recaller",
+    "noellesroles:vulture",
+    "noellesroles:broadcaster",
+    "noellesroles:ghost"
+  ]
   },
   "mixins": [
     "noellesroles.mixins.json",

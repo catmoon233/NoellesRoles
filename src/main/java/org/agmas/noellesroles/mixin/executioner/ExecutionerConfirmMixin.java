@@ -41,7 +41,7 @@ public class ExecutionerConfirmMixin {
             }
             ExecutionerPlayerComponent executionerPlayerComponent = ExecutionerPlayerComponent.KEY.get(executioner);
             PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(executioner);
-            if (executionerPlayerComponent.target.equals(victim.getUuid()) && !invalidKill) {
+            if (executionerPlayerComponent.target != null && executionerPlayerComponent.target.equals(victim.getUuid()) && !invalidKill) {
                 executionerPlayerComponent.won = true;
                 ArrayList<Role> shuffledKillerRoles = new ArrayList<>(TMMRoles.ROLES);
                 shuffledKillerRoles.removeIf(role -> Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller() || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()));

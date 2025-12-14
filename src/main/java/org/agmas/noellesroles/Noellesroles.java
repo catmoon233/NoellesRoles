@@ -88,6 +88,7 @@ public class Noellesroles implements ModInitializer {
     public static Identifier BETTER_VIGILANTE_ID = Identifier.of(MOD_ID, "better_vigilante");
     public static Identifier BROADCASTER_ID = Identifier.of(MOD_ID, "broadcaster");
     public static Identifier GAMBLER_ID = Identifier.of(MOD_ID, "gambler");
+    public static Identifier GHOST_ID = Identifier.of(MOD_ID, "ghost");
 
 
     public static Identifier POISONER_ID = Identifier.of(MOD_ID, "poisoner");
@@ -125,6 +126,7 @@ public class Noellesroles implements ModInitializer {
     public static Role BETTER_VIGILANTE =TMMRoles.registerRole(new Role(BETTER_VIGILANTE_ID, new Color(0, 255, 255).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
     //public static Role GUESSER =TMMRoles.registerRole(new Role(GUESSER_ID, new Color(158, 43, 25, 191).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
     public static Role GAMBLER =TMMRoles.registerRole(new Role(GAMBLER_ID, new Color(128, 0, 128).getRGB(),false,false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
+    public static Role GHOST = TMMRoles.registerRole(new Role(GHOST_ID, new Color(200, 200, 200).getRGB(),true,false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
 
     public static final CustomPayload.Id<MorphC2SPacket> MORPH_PACKET = MorphC2SPacket.ID;
     public static final CustomPayload.Id<SwapperC2SPacket> SWAP_PACKET = SwapperC2SPacket.ID;
@@ -174,6 +176,7 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(RECALLER_ID, NoellesRolesConfig.HANDLER.instance().recallerMax);
         Harpymodloader.setRoleMaximum(BROADCASTER_ID, NoellesRolesConfig.HANDLER.instance().broadcasterMax);
         Harpymodloader.setRoleMaximum(GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
+        Harpymodloader.setRoleMaximum(GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
         PayloadTypeRegistry.playC2S().register(ExecutionerSelectTargetC2SPacket.ID, ExecutionerSelectTargetC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BroadcasterC2SPacket.ID, BroadcasterC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(org.agmas.noellesroles.packet.BroadcastMessageS2CPacket.ID, org.agmas.noellesroles.packet.BroadcastMessageS2CPacket.CODEC);
@@ -250,10 +253,12 @@ public class Noellesroles implements ModInitializer {
                 executionerPlayerComponent.sync();
             }
             if (role.equals(VULTURE)) {
-                VulturePlayerComponent vulturePlayerComponent = VulturePlayerComponent.KEY.get(player);
-                vulturePlayerComponent.reset();
-                vulturePlayerComponent.bodiesRequired = (int)((player.getWorld().getPlayers().size()/3f) - Math.floor(player.getWorld().getPlayers().size()/6f));
-                vulturePlayerComponent.sync();
+                if (VulturePlayerComponent.KEY.isProvidedBy(player)) {
+                    VulturePlayerComponent vulturePlayerComponent = VulturePlayerComponent.KEY.get(player);
+                    vulturePlayerComponent.reset();
+                    vulturePlayerComponent.bodiesRequired = (int)((player.getWorld().getPlayers().size()/3f) - Math.floor(player.getWorld().getPlayers().size()/6f));
+                    vulturePlayerComponent.sync();
+                }
             }
             if (role.equals(DOCTOR)) {
                 player.giveItemStack(HSRItems.ANTIDOTE.getDefaultStack());
@@ -272,6 +277,11 @@ public class Noellesroles implements ModInitializer {
                 org.agmas.noellesroles.gambler.GamblerPlayerComponent gamblerPlayerComponent = org.agmas.noellesroles.gambler.GamblerPlayerComponent.KEY.get(player);
                 gamblerPlayerComponent.reset();
                 gamblerPlayerComponent.sync();
+            }
+            if (role.equals(GHOST)) {
+                org.agmas.noellesroles.ghost.GhostPlayerComponent ghostPlayerComponent = org.agmas.noellesroles.ghost.GhostPlayerComponent.KEY.get(player);
+                ghostPlayerComponent.reset();
+                ghostPlayerComponent.sync();
             }
             if (role.equals(BETTER_VIGILANTE)) {
                 player.giveItemStack(TMMItems.GRENADE.getDefaultStack());
@@ -427,7 +437,11 @@ public class Noellesroles implements ModInitializer {
                     if (targetPlayer != null && GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
                         if (gameWorldComponent.getRole(targetPlayer).isInnocent()) {
                             executionerPlayerComponent.setTarget(payload.target());
+                        } else {
+                            context.player().sendMessage(Text.translatable("message.error.executioner.invalid_target"), true);
                         }
+                    } else {
+                        context.player().sendMessage(Text.translatable("message.error.executioner.target_not_found"), true);
                     }
                 }
             }

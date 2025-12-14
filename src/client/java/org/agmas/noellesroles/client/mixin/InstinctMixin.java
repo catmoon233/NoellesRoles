@@ -91,6 +91,13 @@ public abstract class InstinctMixin {
                     cir.cancel();
                 }
             }
+            // 小透明：杀手无法看到高亮
+            if (!((PlayerEntity)target).isSpectator() && TMMClient.isInstinctEnabled()) {
+                if (gameWorldComponent.isRole((PlayerEntity) target, Noellesroles.GHOST) && TMMClient.isKiller() && TMMClient.isPlayerAliveAndInSurvival()) {
+                    cir.setReturnValue(-1);
+                    cir.cancel();
+                }
+            }
             if (!((PlayerEntity)target).isSpectator() && TMMClient.isInstinctEnabled()) {
                 if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.JESTER) && TMMClient.isPlayerAliveAndInSurvival()) {
                     cir.setReturnValue(Color.PINK.getRGB());
