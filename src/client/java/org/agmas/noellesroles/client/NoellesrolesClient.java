@@ -20,6 +20,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -29,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.world.GameMode;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
@@ -60,8 +62,11 @@ public class NoellesrolesClient implements ClientModInitializer {
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key." + Noellesroles.MOD_ID + ".ability", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
 
         ClientPlayNetworking.registerGlobalReceiver(BroadcastMessageS2CPacket.ID, (payload, context) -> {
-            context.client().execute(() -> {
-                if (context.client().player != null) {
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null) {
+                    if (isPlayerInAdventureMode(client.player))return;
+
                     currentBroadcastMessage = payload.message();
                     broadcastMessageTicks = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().broadcasterMessageDuration);
                 }
@@ -69,6 +74,7 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (isPlayerInAdventureMode(client.player))return;
             insanityTime++;
             if (broadcastMessageTicks > 0) {
                 broadcastMessageTicks--;
@@ -115,5 +121,11 @@ public class NoellesrolesClient implements ClientModInitializer {
         if (itemStack.isOf(item)) {
             list.addAll(TextUtils.getTooltipForItem(item, Style.EMPTY.withColor(TMMItemTooltips.REGULAR_TOOLTIP_COLOR)));
         }
+    }
+
+    private boolean isPlayerInAdventureMode(AbstractClientPlayerEntity targetPlayer) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(targetPlayer.getUuid());
+        return entry != null && entry.getGameMode() == GameMode.ADVENTURE;
     }
 }
