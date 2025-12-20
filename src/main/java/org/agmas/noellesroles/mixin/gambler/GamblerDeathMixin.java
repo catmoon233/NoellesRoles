@@ -68,7 +68,7 @@ public class GamblerDeathMixin {
 				gamblerPlayerComponent.sync();
 				
 				// 变成正义阵营（vigilante）
-				victim.giveItemStack(TMMItems.NOTE.getDefaultStack());
+				victim.giveItemStack(TMMItems.REVOLVER.getDefaultStack());
 				gameWorldComponent.addRole(victim, TMMRoles.VIGILANTE);
 				ModdedRoleAssigned.EVENT.invoker().assignModdedRole(victim,TMMRoles.VIGILANTE);
 				if (Harpymodloader.VANNILA_ROLES.contains(gameWorldComponent.getRole(victim))) {

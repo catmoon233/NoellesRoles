@@ -12,6 +12,7 @@ import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.ExecutionerPlayerWidget;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,6 +37,11 @@ public abstract class ExecutionerScreenMixin extends LimitedHandledScreen<Player
 
     @Inject(method = "init", at = @At("TAIL"))
     void addExecutionerTargetSelection(CallbackInfo ci) {
+        // 检查是否启用了手动选择目标功能
+        if (!NoellesRolesConfig.HANDLER.instance().executionerCanSelectTarget) {
+            return; // 如果未启用，则不显示选择界面
+        }
+        
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
         
         // 检查是否是Executioner角色

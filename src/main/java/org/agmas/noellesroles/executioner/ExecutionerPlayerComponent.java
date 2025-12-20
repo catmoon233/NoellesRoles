@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.executioner;
 
+import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
@@ -10,6 +11,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -46,6 +48,7 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
         this.target = null;
         this.targetSelected = false;
         this.shopUnlocked = false;
+        //assignRandomTarget();
     }
 
     public void sync() {
@@ -54,18 +57,70 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
 
     public void serverTick() {
         // 如果目标已经死亡且executioner尚未获胜，解锁商店并重置目标
+        if (target==null){
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+            if (gameWorldComponent == null)return;
+            if (!gameWorldComponent.isRunning())return;
+            if (!gameWorldComponent.isRole(player, Noellesroles.EXECUTIONER)) return;
+            assignRandomTarget(); // 分配新目标
+
+        }
         if (target != null && !won) {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+            if (gameWorldComponent == null)return;
+            if (!gameWorldComponent.isRunning())return;
             if (!gameWorldComponent.isRole(player, Noellesroles.EXECUTIONER)) return;
 
             PlayerEntity targetPlayer = player.getWorld().getPlayerByUuid(target);
             if (targetPlayer == null || GameFunctions.isPlayerEliminated(targetPlayer)) {
-                // 目标死亡，解锁商店
+                // 目标死亡，解锁商店并分配新目标
                 this.shopUnlocked = true;
                 this.target = null;
                 this.targetSelected = false;
+                assignRandomTarget(); // 分配新目标
                 sync();
             }
+        }
+    }
+
+    /**
+     * 自动分配随机目标（仅限平民阵营）
+     */
+    public void assignRandomTarget() {
+        // 如果配置允许手动选择目标，则不自动分配
+        if (NoellesRolesConfig.HANDLER.instance().executionerCanSelectTarget) {
+            return;
+        }
+        
+        // 如果已经有目标或者已经获胜，则不需要分配新目标
+        if (target != null || won) {
+            return;
+        }
+        
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+        if (gameWorldComponent== null)return;
+        List<PlayerEntity> eligibleTargets = new ArrayList<>();
+        
+        // 获取所有存活的平民玩家
+        for (PlayerEntity p : player.getWorld().getPlayers()) {
+            if (p.getUuid().equals(player.getUuid())) {
+                continue; // 跳过自己
+            }
+            if (!GameFunctions.isPlayerAliveAndSurvival(p)) {
+                continue; // 只考虑存活玩家
+            }
+            final var role = gameWorldComponent.getRole(p);
+            if (role!=null&& role.isInnocent()) { // 只考虑平民阵营
+                eligibleTargets.add(p);
+            }
+        }
+        
+        // 随机选择一个目标
+        if (!eligibleTargets.isEmpty()) {
+            Collections.shuffle(eligibleTargets);
+            this.target = eligibleTargets.getFirst().getUuid();
+            this.targetSelected = true;
+            this.sync();
         }
     }
 
@@ -75,6 +130,11 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
      * @param target 目标玩家的UUID
      */
     public void setTarget(UUID target) {
+        // 只有在配置允许手动选择目标时才能使用此方法
+        if (!NoellesRolesConfig.HANDLER.instance().executionerCanSelectTarget) {
+            return;
+        }
+        
         this.target = target;
         this.targetSelected = true;
         this.sync();

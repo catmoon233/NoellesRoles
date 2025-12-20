@@ -65,9 +65,9 @@ public abstract class SimpleRoleCompat extends LimitedHandledScreen<PlayerScreen
 
         if (gameWorldComponent.isRole(this.player, Noellesroles.POISONER)) {
 
-            cir.setReturnValue( POISONER_SHOP_ENTRIES);
+            cir.setReturnValue( new ArrayList<>());
         } else if (gameWorldComponent.isRole(this.player, Noellesroles.BANDIT)) {
-            cir.setReturnValue( BANDIT_SHOP_ENTRIES);
+            cir.setReturnValue( new ArrayList<>());
         }
 
     }

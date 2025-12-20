@@ -69,6 +69,9 @@ public class NoellesRolesConfig {
     @SerialEntry(comment = "Maximum number of Ghosts allowed")
     public int ghostMax = 1;
 
+    @SerialEntry(comment = "Whether Executioners can manually select their targets. If disabled, targets will be assigned randomly.")
+    public boolean executionerCanSelectTarget = false;
+
     // Skills configuration
     @SerialEntry(comment = "Broadcaster - Broadcast message display duration in seconds")
     public int broadcasterMessageDuration = 10;

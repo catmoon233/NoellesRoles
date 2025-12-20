@@ -33,7 +33,7 @@
   "announcement.role.swapper": "交换者",
   "hud.swapper.first_player_selection": "选择第一个交换的玩家",
   "hud.swapper.second_player_selection": "选择第二个交换的玩家",
-
+  "Morphling.tip": "变形剩余 %s 结束",
   "announcement.goals.coroner": "从尸体上获取信息",
   "announcement.role.coroner": "验尸官",
   "announcement.win.coroner": "乘客胜利",
@@ -41,7 +41,7 @@
   "hud.coroner.death_info": "死于 %s 秒前，死因是",
   "hud.coroner.role_info": "身份是 ",
 
-  "announcement.goals.executioner": "当你的目标死于非杀手之手后，你将随机获得其他杀手身份。",
+  "announcement.goals.executioner": "当你的目标死于非杀手之手后，你将随机获得其他杀手身份并获得200金币奖励，然后会分配到一个新的目标。",
   "announcement.role.executioner": "刽子手",
   "hud.executioner.target": "目标乘客 %s",
 

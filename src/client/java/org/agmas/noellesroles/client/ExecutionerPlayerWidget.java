@@ -9,6 +9,7 @@ import net.minecraft.client.gui.PlayerSkinDrawer;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.packet.ExecutionerSelectTargetC2SPacket;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,11 @@ public class ExecutionerPlayerWidget extends ButtonWidget {
 
     public ExecutionerPlayerWidget(int x, int y, @NotNull AbstractClientPlayerEntity targetCandidate, int index) {
         super(x, y, 16, 16, targetCandidate.getName(), (a) -> {
+            // 检查是否启用了手动选择目标功能
+            if (!NoellesRolesConfig.HANDLER.instance().executionerCanSelectTarget) {
+                return; // 如果未启用，则忽略点击事件
+            }
+            
             ExecutionerPlayerComponent component = ExecutionerPlayerComponent.KEY.get(MinecraftClient.getInstance().player);
             if (!component.targetSelected) {
                 ClientPlayNetworking.send(new ExecutionerSelectTargetC2SPacket(targetCandidate.getUuid()));

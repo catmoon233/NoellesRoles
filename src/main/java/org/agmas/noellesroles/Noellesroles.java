@@ -59,6 +59,7 @@ import org.agmas.noellesroles.repack.*;
 import org.agmas.noellesroles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.vulture.VulturePlayerComponent;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
@@ -191,6 +192,7 @@ public class Noellesroles implements ModInitializer {
         ConfigCommand.register();
         registerPackets();
         HSRItems.init();
+
         HSRSounds.init();
 
 
@@ -249,6 +251,8 @@ public class Noellesroles implements ModInitializer {
             if (role.equals(EXECUTIONER)) {
                 ExecutionerPlayerComponent executionerPlayerComponent = (ExecutionerPlayerComponent) ExecutionerPlayerComponent.KEY.get(player);
                 executionerPlayerComponent.won = false;
+                PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(player);
+                playerShopComponent.setBalance(100);
                 executionerPlayerComponent.reset();
                 executionerPlayerComponent.sync();
             }
@@ -427,6 +431,11 @@ public class Noellesroles implements ModInitializer {
         });
 
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.EXECUTIONER_SELECT_TARGET_PACKET, (payload, context) -> {
+            // 检查是否启用了手动选择目标功能
+            if (!NoellesRolesConfig.HANDLER.instance().executionerCanSelectTarget) {
+                return; // 如果未启用，则忽略该数据包
+            }
+            
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(context.player().getWorld());
             if (gameWorldComponent.isRole(context.player(), EXECUTIONER)) {
                 ExecutionerPlayerComponent executionerPlayerComponent = ExecutionerPlayerComponent.KEY.get(context.player());

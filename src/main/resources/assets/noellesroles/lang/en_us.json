@@ -41,7 +41,7 @@
   "hud.coroner.death_info": "Died %ss ago to ",
   "hud.coroner.role_info": "Their role was ",
 
-  "announcement.goals.executioner": "Become a killer once your target dies (to a non-killer).",
+  "announcement.goals.executioner": "Become a killer once your target dies (to a non-killer). After killing your target, you gain 200 coins and a new random target is assigned.",
   "announcement.role.executioner": "Executioner",
   "hud.executioner.target": "Executioner Target: %s",
 

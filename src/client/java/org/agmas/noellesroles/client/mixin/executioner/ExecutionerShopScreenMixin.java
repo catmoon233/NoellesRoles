@@ -15,9 +15,9 @@ import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+// import org.spongepowered.asm.mixin.injection.At;
+// import org.spongepowered.asm.mixin.injection.Inject;
+// import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,17 +32,17 @@ public abstract class ExecutionerShopScreenMixin extends LimitedHandledScreen<Pl
         super(handler, inventory, title);
     }
 
-    @Inject(method = "init", at = @At("HEAD"))
-    void onInit(CallbackInfo ci) {
-        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.getWorld());
-        
-        // 检查是否是Executioner角色
-        if (gameWorldComponent.isRole(player, Noellesroles.EXECUTIONER)) {
-            ExecutionerPlayerComponent executionerComponent = ExecutionerPlayerComponent.KEY.get(player);
-            
-            // 检查商店是否已解锁
-            if (executionerComponent.shopUnlocked) {
-            }
-        }
-    }
+    // @Inject(method = "init", at = @At("HEAD"))
+    // void onInit(CallbackInfo ci) {
+    //     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.getWorld());
+    //     
+    //     // 检查是否是Executioner角色
+    //     if (gameWorldComponent.isRole(player, Noellesroles.EXECUTIONER)) {
+    //         ExecutionerPlayerComponent executionerComponent = ExecutionerPlayerComponent.KEY.get(player);
+    //         
+    //         // 检查商店是否已解锁
+    //         if (executionerComponent.shopUnlocked) {
+    //         }
+    //     }
+    // }
 }

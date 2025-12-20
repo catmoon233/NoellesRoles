@@ -44,22 +44,12 @@ public abstract class MorphlingScreenMixin extends LimitedHandledScreen<PlayerSc
     }
 
 
-    @Inject(method = "init", at = @At("TAIL"))
-    void renderMorphlingHeads(CallbackInfo ci) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
-        if (gameWorldComponent.isRole(player,Noellesroles.MORPHLING)) {
-            List<AbstractClientPlayerEntity> entries = MinecraftClient.getInstance().world.getPlayers();
-            entries.removeIf((e) -> e.getUuid().equals(player.getUuid()));
-            int apart = 36;
-            int x = ((LimitedInventoryScreen)(Object)this).width / 2 - (entries.size()) * apart / 2 + 9;
-            int shouldBeY = (((LimitedInventoryScreen)(Object)this).height - 32) / 2;
-            int y = shouldBeY + 80;
-
-            for(int i = 0; i < entries.size(); ++i) {
-                MorphlingPlayerWidget child = new MorphlingPlayerWidget(((LimitedInventoryScreen)(Object)this), x + apart * i, y, entries.get(i), i);
-                addDrawableChild(child);
-            }
-        }
-    }
+//    @Inject(method = "init", at = @At("TAIL"))
+//    void renderMorphlingHeads(CallbackInfo ci) {
+//        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+//        if (gameWorldComponent.isRole(player,Noellesroles.MORPHLING)) {
+//
+//        }
+//    }
 
 }

@@ -47,6 +47,7 @@ public class VoodooPlayerWidget extends ButtonWidget{
             PlayerSkinDrawer.draw(context, targetPlayerEntry.getSkinTextures().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
+                context.drawTooltip(MinecraftClient.getInstance().textRenderer, targetPlayerEntry.getDisplayName(), this.getX() - 4 - MinecraftClient.getInstance().textRenderer.getWidth(targetPlayerEntry.getDisplayName()) / 2, this.getY() - 9);
 
             }
 

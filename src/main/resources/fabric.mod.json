@@ -21,8 +21,12 @@
     ],
     "cardinal-components": [
       "org.agmas.noellesroles.NoellesRolesComponents"
+    ],
+    "voicechat": [
+      "org.agmas.noellesroles.voice.NoellesrolesVoiceChatPlugin"
     ]
   },
+
 
   "custom": {
   "cardinal-components": [

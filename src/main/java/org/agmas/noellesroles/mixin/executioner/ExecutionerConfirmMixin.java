@@ -50,7 +50,7 @@ public class ExecutionerConfirmMixin {
 
                 gameWorldComponent.addRole(executioner,shuffledKillerRoles.getFirst());
                 ModdedRoleAssigned.EVENT.invoker().assignModdedRole(executioner,shuffledKillerRoles.getFirst());
-                playerShopComponent.setBalance(200);
+                playerShopComponent.setBalance(playerShopComponent.balance + 50); // 增加余额而不是设置为固定值
                 if (Harpymodloader.VANNILA_ROLES.contains(gameWorldComponent.getRole(executioner))) {
                     ServerPlayNetworking.send((ServerPlayerEntity) executioner, new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS.indexOf(TMMRoles.KILLER), gameWorldComponent.getAllKillerTeamPlayers().size(), 0));
                 } else {

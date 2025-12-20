@@ -9,7 +9,6 @@ import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.GameMode;
 import org.agmas.noellesroles.Noellesroles;
 
 public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
@@ -25,12 +24,12 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
 
     public void paranoidEvent(MicrophonePacketEvent event) {
         VoicechatServerApi api = event.getVoicechat();
-        ServerPlayerEntity spectator = ((ServerPlayerEntity)event.getSenderConnection().getPlayer().getPlayer());
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(spectator.getWorld());
-        if (spectator.interactionManager.getGameMode().equals(GameMode.SPECTATOR)) {
-            spectator.getWorld().getPlayers().forEach((p) -> {
-                if (gameWorldComponent.isRole(p, Noellesroles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES) && GameFunctions.isPlayerAliveAndSurvival(p)) {
-                    if (spectator.distanceTo(p) <= api.getVoiceChatDistance()) {
+        ServerPlayerEntity players = ((ServerPlayerEntity)event.getSenderConnection().getPlayer().getPlayer());
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(players.getWorld());
+        //if (players.interactionManager.getGameMode().equals(GameMode.SPECTATOR)) {
+            players.getWorld().getPlayers().forEach((p) -> {
+                if (gameWorldComponent.isRole(players, Noellesroles.NOISEMAKER) && GameFunctions.isPlayerAliveAndSurvival(p)) {
+                    if (players.distanceTo(p) <= api.getVoiceChatDistance()*3) {
                         VoicechatConnection con = api.getConnectionOf(p.getUuid());
                         api.sendLocationalSoundPacketTo(con, event.getPacket().locationalSoundPacketBuilder()
                                         .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
@@ -38,8 +37,17 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
                                         .build());
                     }
                 }
+//                if (gameWorldComponent.isRole(p, Noellesroles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES) && GameFunctions.isPlayerAliveAndSurvival(p)) {
+//                    if (players.distanceTo(p) <= api.getVoiceChatDistance()) {
+//                        VoicechatConnection con = api.getConnectionOf(p.getUuid());
+//                        api.sendLocationalSoundPacketTo(con, event.getPacket().locationalSoundPacketBuilder()
+//                                        .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
+//                                        .distance((float)api.getVoiceChatDistance())
+//                                        .build());
+//                    }
+//                }
             });
-        }
+       // }
     }
 
     @Override

@@ -7,10 +7,12 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
+import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -35,12 +37,14 @@ import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
 import org.agmas.noellesroles.packet.MorphC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 import org.agmas.noellesroles.client.screen.BroadcasterInputScreen;
+import org.agmas.noellesroles.repack.HSRConstants;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -59,6 +63,132 @@ public class NoellesrolesClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        for (Role role : TMMRoles.ROLES){
+            if (role.identifier().equals(Noellesroles.MORPHLING_ID)){
+                role.addChild(
+                        limitedInventoryScreen -> {
+                            List<AbstractClientPlayerEntity> entries = MinecraftClient.getInstance().world.getPlayers();
+                            entries.removeIf((e) -> e.getUuid().equals(MinecraftClient.getInstance().player.getUuid()));
+                            int apart = 36;
+                            int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
+                            int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
+                            int y = shouldBeY + 80;
+
+                            for(int i = 0; i < entries.size(); ++i) {
+                                MorphlingPlayerWidget child = new MorphlingPlayerWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i);
+                                    limitedInventoryScreen.addDrawableChild(child);
+                            }
+
+                        }
+                );
+            }
+            
+            // 添加Executioner商店入口
+            if (role.identifier().equals(Noellesroles.EXECUTIONER_ID)) {
+                role.addChild(
+                        limitedInventoryScreen -> {
+                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
+                            
+                            // 检查是否是Executioner角色
+                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.EXECUTIONER)) {
+                                ExecutionerPlayerComponent executionerComponent = ExecutionerPlayerComponent.KEY.get(MinecraftClient.getInstance().player);
+                                
+                                // 检查商店是否已解锁
+                                if (executionerComponent.shopUnlocked) {
+                                    // 可以在这里添加商店相关的UI元素
+                                }
+                            }
+                        }
+                );
+            }
+            
+            // 添加Framing角色商店入口
+            if (role.identifier().equals(Noellesroles.JESTER_ID) ) {
+                role.addChild(
+                        limitedInventoryScreen -> {
+                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
+                            if (
+                                gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.JESTER)) {
+                                List<ShopEntry> entries = Noellesroles.FRAMING_ROLES_SHOP;
+                                int apart = 36;
+                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
+                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
+                                int y = shouldBeY - 46;
+
+                                for(int i = 0; i < entries.size(); ++i) {
+                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
+                                }
+                            }
+                        }
+                );
+            }
+            if (role.identifier().equals(Noellesroles.POISONER_ID)){
+                role.addChild(
+                        limitedInventoryScreen -> {
+                List<ShopEntry> entries = HSRConstants.POISONER_SHOP_ENTRIES;
+                int apart = 38;
+                int x = limitedInventoryScreen.width / 2 - entries.size() * apart / 2 + 9;
+                int y = limitedInventoryScreen.height - 46;
+                for(int i = 0; i < entries.size(); ++i) {
+                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, (ShopEntry)entries.get(i), i));
+                }
+            });
+            }
+            if (role.identifier().equals(Noellesroles.BANDIT_ID)){
+                role.addChild(
+                        limitedInventoryScreen -> {
+                List<ShopEntry> entries = HSRConstants.BANDIT_SHOP_ENTRIES;
+                int apart = 38;
+                int x = limitedInventoryScreen.width / 2 - entries.size() * apart / 2 + 9;
+                int y = limitedInventoryScreen.height - 46;
+                for(int i = 0; i < entries.size(); ++i) {
+                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, (ShopEntry)entries.get(i), i));
+                }
+            });
+            }
+            
+            // 添加Bartender角色商店入口
+            if (role.identifier().equals(Noellesroles.BARTENDER_ID)) {
+                role.addChild(
+                        limitedInventoryScreen -> {
+                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
+                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.BARTENDER)) {
+                                List<ShopEntry> entries = new ArrayList<>();
+                                entries.add(new ShopEntry(ModItems.DEFENSE_VIAL.getDefaultStack(), 250, ShopEntry.Type.POISON));
+                                int apart = 36;
+                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
+                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
+                                int y = shouldBeY - 46;
+
+                                for(int i = 0; i < entries.size(); ++i) {
+                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
+                                }
+                            }
+                        }
+                );
+            }
+            
+            // 添加Noisemaker角色商店入口
+            if (role.identifier().equals(Noellesroles.NOISEMAKER_ID)) {
+                role.addChild(
+                        limitedInventoryScreen -> {
+                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
+                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.NOISEMAKER)) {
+                                List<ShopEntry> entries = new ArrayList<>();
+                                entries.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultStack(), 75, ShopEntry.Type.TOOL));
+                                int apart = 36;
+                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
+                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
+                                int y = shouldBeY - 46;
+
+                                for(int i = 0; i < entries.size(); ++i) {
+                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
+                                }
+                            }
+                        }
+                );
+            }
+        }
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key." + Noellesroles.MOD_ID + ".ability", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
 
         ClientPlayNetworking.registerGlobalReceiver(BroadcastMessageS2CPacket.ID, (payload, context) -> {
@@ -125,7 +255,10 @@ public class NoellesrolesClient implements ClientModInitializer {
 
     private boolean isPlayerInAdventureMode(AbstractClientPlayerEntity targetPlayer) {
         MinecraftClient client = MinecraftClient.getInstance();
-        PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(targetPlayer.getUuid());
-        return entry != null && entry.getGameMode() == GameMode.ADVENTURE;
+        if (client.player != null) {
+            PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(targetPlayer.getUuid());
+            return entry != null && entry.getGameMode() == GameMode.ADVENTURE;
+        }
+        return false;
     }
 }
