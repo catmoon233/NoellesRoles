@@ -70,6 +70,8 @@ public class NoellesRolesConfig {
     public int ghostMax = 1;
     @SerialEntry(comment = "Maximum number of Thieves allowed")
     public int thiefMax = 1;
+    @SerialEntry(comment = "Maximum number of Sheriffs allowed")
+    public int sheriffMax = 1;
 
     @SerialEntry(comment = "Whether Executioners can manually select their targets. If disabled, targets will be assigned randomly.")
     public boolean executionerCanSelectTarget = false;

@@ -24,6 +24,8 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.ItemCooldownManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -85,6 +87,8 @@ public class Noellesroles implements ModInitializer {
     public static Identifier BROADCASTER_ID = Identifier.of(MOD_ID, "broadcaster");
     public static Identifier GAMBLER_ID = Identifier.of(MOD_ID, "gambler");
     public static Identifier GHOST_ID = Identifier.of(MOD_ID, "ghost");
+    public static Identifier SHERIFF_ID = Identifier.of(MOD_ID, "sheriff");
+    public static Identifier PHOTOGRAPHER_ID = Identifier.of(MOD_ID, "photographer");
     public static Identifier THIEF_ID = Identifier.of(MOD_ID, "thief");
 
 
@@ -96,6 +100,8 @@ public class Noellesroles implements ModInitializer {
     public static Role POISONER = TMMRoles.registerRole(new Role(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
     public static Role BANDIT = TMMRoles.registerRole(new Role(BANDIT_ID, (new Color(196, 54, 18)).getRGB(), false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
     public static Role DOCTOR = TMMRoles.registerRole(new Role(DOCTOR_ID, (new Color(0, 255, 255)).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+    public static Role PHOTOGRAPHER = TMMRoles.registerRole(new Role(PHOTOGRAPHER_ID, (new Color(0, 128, 255)).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+
     public static Role ATTENDANT = TMMRoles.registerRole(new Role(ATTENDANT_ID, (new Color(198, 185, 36)).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
     public static Identifier THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Identifier.of(MOD_ID, "the_insane_damned_paranoid_killer");
     public static Role BROADCASTER = TMMRoles.registerRole(new Role(BROADCASTER_ID, new Color(0, 255, 0).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
@@ -125,6 +131,7 @@ public class Noellesroles implements ModInitializer {
     public static Role GAMBLER =TMMRoles.registerRole(new Role(GAMBLER_ID, new Color(128, 0, 128).getRGB(),false,false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
     public static Role GHOST = TMMRoles.registerRole(new Role(GHOST_ID, new Color(200, 200, 200).getRGB(),true,false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
     public static Role THIEF = TMMRoles.registerRole(new Role(THIEF_ID, new Color(139, 69, 19).getRGB(),false,false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
+    public static Role SHERIFF = TMMRoles.registerRole(new Role(SHERIFF_ID, new Color(0, 0, 255).getRGB(),true,false, Role.MoodType.REAL, TMMRoles.VIGILANTE.getMaxSprintTime(),false));
 
     public static final CustomPayload.Id<MorphC2SPacket> MORPH_PACKET = MorphC2SPacket.ID;
     public static final CustomPayload.Id<SwapperC2SPacket> SWAP_PACKET = SwapperC2SPacket.ID;
@@ -179,6 +186,7 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
         Harpymodloader.setRoleMaximum(GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
         Harpymodloader.setRoleMaximum(THIEF_ID, NoellesRolesConfig.HANDLER.instance().thiefMax);
+        Harpymodloader.setRoleMaximum(SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         PayloadTypeRegistry.playC2S().register(ExecutionerSelectTargetC2SPacket.ID, ExecutionerSelectTargetC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BroadcasterC2SPacket.ID, BroadcasterC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(BroadcastMessageS2CPacket.ID, BroadcastMessageS2CPacket.CODEC);
@@ -229,6 +237,36 @@ public class Noellesroles implements ModInitializer {
                 NOISEMAKER_ID, entries
         );
         }
+        {
+            List<ShopEntry> entries = new ArrayList<>();
+            entries.add(new ShopEntry(ModItems.SHERIFF_GUN_MAINTENANCE.getDefaultStack(), 150, ShopEntry.Type.TOOL));
+
+            ShopContent.customEntries.put(
+                SHERIFF_ID, entries
+        );
+        }
+        {
+            List<ShopEntry> entries = new ArrayList<>();
+            entries.add(new ShopEntry(ModItems.SHERIFF_GUN_MAINTENANCE.getDefaultStack(), 50, ShopEntry.Type.TOOL) {
+                            @Override
+                            public boolean onBuy(@NotNull PlayerEntity player) {
+                                final var item = player.getWorld().getRegistryManager().get(Registries.ITEM.getKey()).get(Identifier.tryParse("exposure_polaroid:instant_color_slide"));
+                                if (item != null) {
+                                    final var defaultStack = item.getDefaultStack();
+                                    player.giveItemStack(defaultStack);
+                                    return true;
+                                }
+                                return false;
+                            }
+                        }
+            );
+
+            ShopContent.customEntries.put(
+                PHOTOGRAPHER_ID, entries
+        );
+        }
+
+
 //        PayloadTypeRegistry.playC2S().register(AntidoteUsePayload.ID, AntidoteUsePayload.CODEC);
 //        PayloadTypeRegistry.playC2S().register(ToxinUsePayload.ID, ToxinUsePayload.CODEC);
 //        PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID, BanditRevolverShootPayload.CODEC);
@@ -295,6 +333,12 @@ public class Noellesroles implements ModInitializer {
             if (role.equals(DOCTOR)) {
                 player.giveItemStack(HSRItems.ANTIDOTE.getDefaultStack());
             }
+            if (role.equals(PHOTOGRAPHER)) {
+                final var item = player.getWorld().getRegistryManager().get(Registries.ITEM.getKey()).get(Identifier.tryParse("exposure_polaroid:instant_camera"));
+                if (item != null){
+                final var defaultStack = item.getDefaultStack();
+                player.giveItemStack(defaultStack);
+            }}
 
             if (role.equals(BANDIT)) {
                 player.giveItemStack(HSRItems.BANDIT_REVOLVER.getDefaultStack());
@@ -314,6 +358,12 @@ public class Noellesroles implements ModInitializer {
                 org.agmas.noellesroles.ghost.GhostPlayerComponent ghostPlayerComponent = org.agmas.noellesroles.ghost.GhostPlayerComponent.KEY.get(player);
                 ghostPlayerComponent.reset();
                 ghostPlayerComponent.sync();
+            }
+            if (role.equals(SHERIFF)) {
+                player.giveItemStack(TMMItems.REVOLVER.getDefaultStack());
+                org.agmas.noellesroles.sheriff.SheriffPlayerComponent sheriffPlayerComponent = org.agmas.noellesroles.sheriff.SheriffPlayerComponent.KEY.get(player);
+                sheriffPlayerComponent.reset();
+                sheriffPlayerComponent.sync();
             }
             if (role.equals(BETTER_VIGILANTE)) {
                 player.giveItemStack(TMMItems.GRENADE.getDefaultStack());

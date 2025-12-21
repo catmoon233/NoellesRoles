@@ -12,11 +12,15 @@ import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.agmas.noellesroles.repack.AntidoteUsePayload;
 import org.agmas.noellesroles.repack.HSRConstants;
@@ -25,7 +29,7 @@ import org.agmas.noellesroles.repack.HSRSounds;
 import org.jetbrains.annotations.NotNull;
 
 public class AntidoteItem extends Item {
-    public AntidoteItem(Item.Settings settings) {
+    public AntidoteItem(Settings settings) {
         super(settings);
     }
 
@@ -50,6 +54,8 @@ public class AntidoteItem extends Item {
                                 if (!((double)target.distanceTo(player) > (double)3.0F)) {
                                     ((PlayerPoisonComponent)PlayerPoisonComponent.KEY.get(target)).reset();
                                     target.playSound(HSRSounds.ITEM_SYRINGE_STAB, 0.4F, 1.0F);
+                                    final var blockPos = target.getBlockPos();
+                                    ((ServerWorld) world).playSound(blockPos.getX(), blockPos.getY(), blockPos.getZ(), SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.PLAYERS,1.4F, 1.0F,false);
                                     player.swingHand(Hand.MAIN_HAND);
                                     if (!player.isCreative()) {
                                         player.getItemCooldownManager().set(HSRItems.ANTIDOTE, (Integer) HSRConstants.ITEM_COOLDOWNS.get(HSRItems.ANTIDOTE));

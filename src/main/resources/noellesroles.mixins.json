@@ -32,6 +32,8 @@
     "morphling.MorphlingReseterMixin",
     "noisemaker.NoisemakerKillMixin",
     "noisemaker.NoisemakerPlayerShopComponentMixin",
+    "sheriff.SheriffRevolverMixin",
+    "sheriff.SheriffShopMixin",
     "thief.DelayedCoinDisplayMixin",
     "thief.ThiefDeathCoinMixin",
     "thief.ThiefsHonorMixin",

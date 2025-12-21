@@ -10,11 +10,14 @@ import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.recaller.RecallerPlayerComponent;
+import org.agmas.noellesroles.sheriff.SheriffPlayerComponent;
 import org.agmas.noellesroles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.ghost.GhostPlayerComponent;
 import org.jetbrains.annotations.NotNull;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
 import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
@@ -25,6 +28,7 @@ public class NoellesRolesComponents implements EntityComponentInitializer, World
     
     public NoellesRolesComponents() {
     }
+	public static final ComponentKey<SheriffPlayerComponent> SheriffComp = ComponentRegistry.getOrCreate(Noellesroles.id("sheriff"), SheriffPlayerComponent.class);
 
     public void registerEntityComponentFactories(@NotNull EntityComponentFactoryRegistry registry) {
         registry.beginRegistration(PlayerEntity.class, GamblerPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(GamblerPlayerComponent::new);
@@ -39,7 +43,10 @@ public class NoellesRolesComponents implements EntityComponentInitializer, World
         registry.beginRegistration(PlayerEntity.class, GhostPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(GhostPlayerComponent::new);
         registry.beginRegistration(PlayerEntity.class, VulturePlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(VulturePlayerComponent::new);
         registry.beginRegistration(PlayerEntity.class, ThiefPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(ThiefPlayerComponent::new);
-    }
+        registry.beginRegistration(PlayerEntity.class, SheriffComp).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(SheriffPlayerComponent::new);
+
+
+	}
 
     @Override
     public void registerWorldComponentFactories(WorldComponentFactoryRegistry worldComponentFactoryRegistry) {

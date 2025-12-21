@@ -7,9 +7,9 @@ import dev.doctor4t.trainmurdermystery.item.RevolverItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.item.FakeKnifeItem;
+import org.agmas.noellesroles.sheriff.SheriffGunMaintenanceItem;
 
 public class ModItems {
     public static void init() {
@@ -44,6 +44,11 @@ public class ModItems {
             new Item(new Item.Settings().maxCount(1)),
             "role_mine"
     );
+    public static final Item SHERIFF_GUN_MAINTENANCE = register(
+            new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
+            "sheriff_gun_maintenance"
+    );
+    
     public static Item register(Item item, String id) {
         // Create the identifier for the item.
         Identifier itemID = Identifier.of(Noellesroles.MOD_ID, id);

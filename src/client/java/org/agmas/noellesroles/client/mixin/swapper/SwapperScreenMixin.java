@@ -118,7 +118,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
         }
 
         return client.world.getPlayers().stream()
-                .filter(a->isPlayerInAdventureMode( a) && a.getUuid()!=client.player.getUuid())
+                .filter(a->a.getUuid() !=player.getUuid()&& isPlayerInAdventureMode( a) && a.getUuid()!=client.player.getUuid())
                 .collect(Collectors.toList());
     }
 
