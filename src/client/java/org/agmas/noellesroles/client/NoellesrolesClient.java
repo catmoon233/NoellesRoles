@@ -55,6 +55,7 @@ public class NoellesrolesClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
         for (Role role : TMMRoles.ROLES) {
             if (role.identifier().equals(Noellesroles.MORPHLING_ID)){
                 role.addChild(
@@ -182,6 +183,7 @@ public class NoellesrolesClient implements ClientModInitializer {
 //            }
         }
 
+        Noellesroles.registerShopEntries();
         for (Role role : TMMRoles.ROLES) {
             if (role.identifier().equals(Noellesroles.THIEF_ID)) {
                 role.addChild(limitedInventoryScreen -> {
@@ -206,7 +208,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
-                    if (isPlayerInAdventureMode(client.player))return;
+                    if (!isPlayerInAdventureMode(client.player))return;
 
                     currentBroadcastMessage = payload.message();
                     broadcastMessageTicks = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().broadcasterMessageDuration);
@@ -215,7 +217,7 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (isPlayerInAdventureMode(client.player))return;
+            if (!isPlayerInAdventureMode(client.player))return;
             insanityTime++;
             if (broadcastMessageTicks > 0) {
                 broadcastMessageTicks--;

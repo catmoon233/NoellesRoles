@@ -32,7 +32,6 @@ public class BanditRevolverItem extends Item {
     }
 
     public TypedActionResult<ItemStack> use(@NotNull World world, @NotNull PlayerEntity user, Hand hand) {
-        if (world.isClient) {
             if (!user.isCreative()) {
                 user.getItemCooldownManager().set(HSRItems.BANDIT_REVOLVER, 20);
             }
@@ -52,7 +51,7 @@ public class BanditRevolverItem extends Item {
 
             user.setPitch(user.getPitch() - 4.0F);
             spawnHandParticle();
-        }
+
 
         return TypedActionResult.consume(user.getStackInHand(hand));
     }

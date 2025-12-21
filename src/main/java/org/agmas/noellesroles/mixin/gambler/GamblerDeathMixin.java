@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.gambler;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
@@ -131,7 +132,7 @@ public class GamblerDeathMixin {
 	}
 	private static void teleport(PlayerEntity player){
 
-		Vec3d pos = getSpawnPos(roomToPlayer.getOrDefault(player.getUuid(), 1));
+		Vec3d pos = getSpawnPos(AreasWorldComponent.KEY.get(player.getWorld()),roomToPlayer.getOrDefault(player.getUuid(),1));
 		if (pos != null) {
 			player.requestTeleport(pos.getX(), pos.getY() + 1, pos.getZ());
 		}

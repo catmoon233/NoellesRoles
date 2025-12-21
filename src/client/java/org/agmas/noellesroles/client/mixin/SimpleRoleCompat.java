@@ -54,21 +54,21 @@ public abstract class SimpleRoleCompat extends LimitedHandledScreen<PlayerScreen
 //        }
 //    }
 
-    @Inject(
-            method = "getShopEntries",
-            at = @At(
-                    value = "RETURN"
-            ),
-            cancellable = true)
-    private void redirectGetShopEntries(CallbackInfoReturnable<List<ShopEntry>> cir) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent)GameWorldComponent.KEY.get(this.player.getWorld());
-
-        if (gameWorldComponent.isRole(this.player, Noellesroles.POISONER)) {
-
-            cir.setReturnValue( new ArrayList<>());
-        } else if (gameWorldComponent.isRole(this.player, Noellesroles.BANDIT)) {
-            cir.setReturnValue( new ArrayList<>());
-        }
-
-    }
+//    @Inject(
+//            method = "getShopEntries",
+//            at = @At(
+//                    value = "RETURN"
+//            ),
+//            cancellable = true)
+//    private void redirectGetShopEntries(CallbackInfoReturnable<List<ShopEntry>> cir) {
+//        GameWorldComponent gameWorldComponent = (GameWorldComponent)GameWorldComponent.KEY.get(this.player.getWorld());
+//
+//        if (gameWorldComponent.isRole(this.player, Noellesroles.POISONER)) {
+//
+//            cir.setReturnValue( new ArrayList<>());
+//        } else if (gameWorldComponent.isRole(this.player, Noellesroles.BANDIT)) {
+//            cir.setReturnValue( new ArrayList<>());
+//        }
+//
+//    }
 }

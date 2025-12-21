@@ -40,8 +40,14 @@ public class VoodooPlayerWidget extends ButtonWidget{
     }
 
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderWidget(context, mouseX, mouseY, delta);
-        VoodooPlayerComponent voodooPlayerComponent = (VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(MinecraftClient.getInstance().player);
+        if (targetPlayerEntry== null) {
+            return;
+        }
+        if (MinecraftClient.getInstance().player == null)return;
+
+            super.renderWidget(context, mouseX, mouseY, delta);
+            VoodooPlayerComponent voodooPlayerComponent = (VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(MinecraftClient.getInstance().player);
+
         if ((AbilityPlayerComponent.KEY.get(MinecraftClient.getInstance().player)).cooldown == 0) {
             context.drawGuiTexture(ShopEntry.Type.TOOL.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
             PlayerSkinDrawer.draw(context, targetPlayerEntry.getSkinTextures().texture(), this.getX(), this.getY(), 16);
