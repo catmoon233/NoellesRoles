@@ -23,7 +23,8 @@
     "swapper.SwapperScreenMixin",
     "voodoo.VoodooScreenMixin",
     "vulture.VultureEatenBodyMixin",
-    "vulture.VultureHudMixin"
+    "vulture.VultureHudMixin",
+    "thief.ThiefHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1

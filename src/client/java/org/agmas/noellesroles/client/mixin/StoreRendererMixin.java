@@ -28,7 +28,8 @@ public abstract class StoreRendererMixin {
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), Noellesroles.EXECUTIONER)
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), Noellesroles.JESTER)
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), Noellesroles.NOISEMAKER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), Noellesroles.BROADCASTER)) {
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), Noellesroles.BROADCASTER)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), Noellesroles.THIEF)) {
             int balance = ((PlayerShopComponent)PlayerShopComponent.KEY.get(player)).balance;
             if (view.getTarget() != (float)balance) {
                 offsetDelta = (float)balance > view.getTarget() ? 0.6F : -0.6F;

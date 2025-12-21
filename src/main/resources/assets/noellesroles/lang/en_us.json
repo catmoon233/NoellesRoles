@@ -63,6 +63,7 @@
   "item.noellesroles.master_key": "Master Key",
   "message.error.executioner.invalid_target": "Target must be an innocent!",
   "message.error.executioner.target_not_found": "Target player not found or already dead!",
+  "message.noellesroles.insufficient_funds": "You don't have enough coins!",
   "tip.master_key_invisible_count": "Master Keys look like lockpicks with less than %s people.",
   "tip.master_key_invisible": "Master Keys look like lockpicks.",
   "tip.noellesroles.cooldown": "Ability usable in %ss",
@@ -70,5 +71,12 @@
   "tip.recaller.not_enough_money": "100\uE781 required to teleport.",
   "tip.recaller.place": "Use %s to save your location!",
   "tip.recaller.teleport": "Use %s to teleport!",
-  "tip.vulture": "%s/%s bodies eaten."
+  "tip.vulture": "%s/%s bodies eaten.",
+  "announcement.goals.thief": "Steal coins from other players.",
+  "announcement.role.thief": "Thief",
+  "message.thief.insufficient_funds": "You don't have enough coins!",
+  "message.thief.honor_purchased": "Thief's Honor purchased!",
+  "message.thief.stole": "Stole %s coins!",
+  "tip.thief.steal": "Right-click to steal coins",
+  "tip.thief.blackout_active": "Blackout active"
 }

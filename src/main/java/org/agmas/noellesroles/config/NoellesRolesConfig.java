@@ -68,6 +68,8 @@ public class NoellesRolesConfig {
     public int gamblerMax = 1;
     @SerialEntry(comment = "Maximum number of Ghosts allowed")
     public int ghostMax = 1;
+    @SerialEntry(comment = "Maximum number of Thieves allowed")
+    public int thiefMax = 1;
 
     @SerialEntry(comment = "Whether Executioners can manually select their targets. If disabled, targets will be assigned randomly.")
     public boolean executionerCanSelectTarget = false;
@@ -119,4 +121,13 @@ public class NoellesRolesConfig {
 
     @SerialEntry(comment = "Swapper - Swap cooldown in seconds")
     public int swapperSwapCooldown = 60;
+
+    @SerialEntry(comment = "Thief - Steal cooldown in seconds")
+    public int thiefStealCooldown = 60;
+
+    @SerialEntry(comment = "Thief - Blackout invisibility duration in seconds")
+    public int thiefBlackoutDuration = 20;
+
+    @SerialEntry(comment = "Thief - Blackout cooldown in seconds (time before can steal again after using blackout)")
+    public int thiefBlackoutCooldown = 30;
 }

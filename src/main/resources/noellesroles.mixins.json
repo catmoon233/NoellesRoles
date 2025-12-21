@@ -6,6 +6,7 @@
   "mixins": [
     "GiveCoinsOnMoodCompletionMixin",
     "MasterKeyDoorMixin",
+    "SimpleRolePurchaseMixin",
     "bartender.BartenderPlayerShopComponentMixin",
     "bartender.BartenderReseterMixin",
     "bartender.CocktailItemMixin",
@@ -31,6 +32,10 @@
     "morphling.MorphlingReseterMixin",
     "noisemaker.NoisemakerKillMixin",
     "noisemaker.NoisemakerPlayerShopComponentMixin",
+    "thief.DelayedCoinDisplayMixin",
+    "thief.ThiefDeathCoinMixin",
+    "thief.ThiefsHonorMixin",
+    "thief.ThiefShopMixin",
     "voodoo.VoodooVooMixin"
   ],
   "injectors": {

@@ -7,6 +7,7 @@ import org.agmas.noellesroles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.broadcaster.BroadcasterPlayerComponent;
 import org.agmas.noellesroles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.recaller.RecallerPlayerComponent;
 import org.agmas.noellesroles.voodoo.VoodooPlayerComponent;
@@ -21,6 +22,7 @@ import org.ladysnake.cca.api.v3.world.WorldComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.world.WorldComponentInitializer;
 
 public class NoellesRolesComponents implements EntityComponentInitializer, WorldComponentInitializer {
+    
     public NoellesRolesComponents() {
     }
 
@@ -36,6 +38,7 @@ public class NoellesRolesComponents implements EntityComponentInitializer, World
         registry.beginRegistration(PlayerEntity.class, BroadcasterPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(BroadcasterPlayerComponent::new);
         registry.beginRegistration(PlayerEntity.class, GhostPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(GhostPlayerComponent::new);
         registry.beginRegistration(PlayerEntity.class, VulturePlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(VulturePlayerComponent::new);
+        registry.beginRegistration(PlayerEntity.class, ThiefPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(ThiefPlayerComponent::new);
     }
 
     @Override

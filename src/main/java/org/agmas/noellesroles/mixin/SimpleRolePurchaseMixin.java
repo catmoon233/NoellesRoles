@@ -32,11 +32,11 @@ public abstract class SimpleRolePurchaseMixin implements AutoSyncedComponent, Se
             ),
             cancellable = true)
     private void redirectPurchase(CallbackInfoReturnable<List<ShopEntry>> cir) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent)GameWorldComponent.KEY.get(this.player.getWorld());
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(this.player.getWorld());
         if (gameWorldComponent.isRole(this.player, Noellesroles.POISONER)) {
-            cir.setReturnValue( HSRConstants.POISONER_SHOP_ENTRIES);
-        } else {
-            cir.setReturnValue( gameWorldComponent.isRole(this.player, Noellesroles.BANDIT) ? HSRConstants.BANDIT_SHOP_ENTRIES : GameConstants.getShopEntries());
+            cir.setReturnValue(HSRConstants.POISONER_SHOP_ENTRIES);
+        } else if (gameWorldComponent.isRole(this.player, Noellesroles.BANDIT)) {
+            cir.setReturnValue(HSRConstants.BANDIT_SHOP_ENTRIES);
         }
     }
 }

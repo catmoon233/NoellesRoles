@@ -68,6 +68,7 @@
   "screen.broadcaster.hint": "输入消息...",
   "screen.broadcaster.send": "发送",
   "screen.broadcaster.title": "广播消息",
+  "message.noellesroles.insufficient_funds": "你的金币不足！",
   "subtitles.gamber_died": "赌徒死亡笑声",
   "tip.broadcaster.with_cost": "按 %s 广播（消耗：%d）",
   "tip.broadcaster": "按 %s 广播消息！",
@@ -76,5 +77,9 @@
   "tip.recaller.not_enough_money": "传送需要 100\uE781。",
   "tip.recaller.place": "按 %s 保存当前位置！",
   "tip.recaller.teleport": "按 %s 传送！",
-  "tip.vulture": "已吃掉 %s/%s 具尸体。"
+  "tip.vulture": "已吃掉 %s/%s 具尸体。",
+  "announcement.goals.thief": "从其他玩家那里偷取金币。",
+  "announcement.role.thief": "小偷",
+  "message.thief.honor_purchased": "购买了小偷的荣誉！",
+  "message.thief.stole": "偷到了 %s 个金币！"
 }

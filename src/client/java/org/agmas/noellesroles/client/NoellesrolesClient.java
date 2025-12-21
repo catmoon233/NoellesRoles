@@ -5,7 +5,6 @@ import dev.doctor4t.ratatouille.util.TextUtils;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
@@ -19,8 +18,6 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.loader.impl.util.log.Log;
-import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -33,18 +30,13 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.world.GameMode;
-import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
-import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
-import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
-import org.agmas.noellesroles.packet.MorphC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 import org.agmas.noellesroles.client.screen.BroadcasterInputScreen;
-import org.agmas.noellesroles.repack.HSRConstants;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -63,7 +55,7 @@ public class NoellesrolesClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        for (Role role : TMMRoles.ROLES){
+        for (Role role : TMMRoles.ROLES) {
             if (role.identifier().equals(Noellesroles.MORPHLING_ID)){
                 role.addChild(
                         limitedInventoryScreen -> {
@@ -189,6 +181,25 @@ public class NoellesrolesClient implements ClientModInitializer {
 //                );
 //            }
         }
+
+        for (Role role : TMMRoles.ROLES) {
+            if (role.identifier().equals(Noellesroles.THIEF_ID)) {
+                role.addChild(limitedInventoryScreen -> {
+                    List<ShopEntry> entries = new ArrayList<>();
+                    entries.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultStack(), 100, ShopEntry.Type.TOOL));                    entries.add(new ShopEntry(ModItems.MASTER_KEY.getDefaultStack(), 200, ShopEntry.Type.TOOL));
+                    entries.add(new ShopEntry(ModItems.FAKE_KNIFE.getDefaultStack(), 1000, ShopEntry.Type.WEAPON));
+                    int apart = 36;
+                    int x = limitedInventoryScreen.width / 2 - entries.size() * apart / 2 + 9;
+                    int y = (limitedInventoryScreen.height - 32) / 2 - 46;
+
+                    for (int i = 0; i < entries.size(); ++i) {
+                        limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
+                    }
+                });
+                break;
+            }
+        }
+
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key." + Noellesroles.MOD_ID + ".ability", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
 
         ClientPlayNetworking.registerGlobalReceiver(BroadcastMessageS2CPacket.ID, (payload, context) -> {
