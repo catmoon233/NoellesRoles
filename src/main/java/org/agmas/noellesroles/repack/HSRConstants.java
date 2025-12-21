@@ -23,12 +23,19 @@ public class HSRConstants {
     public static   List<ShopEntry> BANDIT_SHOP_ENTRIES = new ArrayList<>();
 
 
+
     static {
+      // 毒药/100
       POISONER_SHOP_ENTRIES.add(new ShopEntry(HSRItems.TOXIN.getDefaultStack(), 100, ShopEntry.Type.POISON));
+      // 毒药瓶/75
       POISONER_SHOP_ENTRIES.add(new ShopEntry(TMMItems.POISON_VIAL.getDefaultStack(), 75, ShopEntry.Type.POISON));
+      // 毒蝎子/50
       POISONER_SHOP_ENTRIES.add(new ShopEntry(TMMItems.SCORPION.getDefaultStack(), 50, ShopEntry.Type.POISON));
+      // 爆竹/10
       POISONER_SHOP_ENTRIES.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultStack(), 10, ShopEntry.Type.TOOL));
+      // 开锁器/100
       POISONER_SHOP_ENTRIES.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultStack(), 100, ShopEntry.Type.TOOL));
+      // 黑暗降临/150
       POISONER_SHOP_ENTRIES.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultStack(), 150, ShopEntry.Type.TOOL) {
             public boolean onBuy(@NotNull PlayerEntity player) {
                 return PlayerShopComponent.useBlackout(player);

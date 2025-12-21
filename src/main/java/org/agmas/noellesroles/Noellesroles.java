@@ -14,6 +14,7 @@ import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
@@ -201,6 +202,32 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(DOCTOR_ID, 1);
         Harpymodloader.setRoleMaximum(ATTENDANT_ID, 1);
         Harpymodloader.setRoleMaximum(POISONER_ID, 1);
+
+        ShopContent.customEntries.put(
+                POISONER_ID, HSRConstants.POISONER_SHOP_ENTRIES
+        );
+        ShopContent.customEntries.put(
+                BANDIT_ID, HSRConstants.BANDIT_SHOP_ENTRIES
+        );
+        ShopContent.customEntries.put(
+                JESTER_ID, Noellesroles.FRAMING_ROLES_SHOP
+        );
+        {
+        List<ShopEntry> entries = new ArrayList<>();
+        entries.add(new ShopEntry(ModItems.DEFENSE_VIAL.getDefaultStack(), 250, ShopEntry.Type.POISON));
+
+        ShopContent.customEntries.put(
+                BARTENDER_ID, entries
+        );
+        }
+        {
+            List<ShopEntry> entries = new ArrayList<>();
+            entries.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultStack(), 75, ShopEntry.Type.TOOL));
+
+            ShopContent.customEntries.put(
+                NOISEMAKER_ID, entries
+        );
+        }
 //        PayloadTypeRegistry.playC2S().register(AntidoteUsePayload.ID, AntidoteUsePayload.CODEC);
 //        PayloadTypeRegistry.playC2S().register(ToxinUsePayload.ID, ToxinUsePayload.CODEC);
 //        PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID, BanditRevolverShootPayload.CODEC);

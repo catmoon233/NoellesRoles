@@ -83,111 +83,111 @@ public class NoellesrolesClient implements ClientModInitializer {
                 );
             }
             
-            // 添加Executioner商店入口
-            if (role.identifier().equals(Noellesroles.EXECUTIONER_ID)) {
-                role.addChild(
-                        limitedInventoryScreen -> {
-                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
-                            
-                            // 检查是否是Executioner角色
-                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.EXECUTIONER)) {
-                                ExecutionerPlayerComponent executionerComponent = ExecutionerPlayerComponent.KEY.get(MinecraftClient.getInstance().player);
-                                
-                                // 检查商店是否已解锁
-                                if (executionerComponent.shopUnlocked) {
-                                    // 可以在这里添加商店相关的UI元素
-                                }
-                            }
-                        }
-                );
-            }
-            
-            // 添加Framing角色商店入口
-            if (role.identifier().equals(Noellesroles.JESTER_ID) ) {
-                role.addChild(
-                        limitedInventoryScreen -> {
-                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
-                            if (
-                                gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.JESTER)) {
-                                List<ShopEntry> entries = Noellesroles.FRAMING_ROLES_SHOP;
-                                int apart = 36;
-                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
-                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
-                                int y = shouldBeY - 46;
-
-                                for(int i = 0; i < entries.size(); ++i) {
-                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
-                                }
-                            }
-                        }
-                );
-            }
-            if (role.identifier().equals(Noellesroles.POISONER_ID)){
-                role.addChild(
-                        limitedInventoryScreen -> {
-                List<ShopEntry> entries = HSRConstants.POISONER_SHOP_ENTRIES;
-                int apart = 38;
-                int x = limitedInventoryScreen.width / 2 - entries.size() * apart / 2 + 9;
-                int y = limitedInventoryScreen.height - 46;
-                for(int i = 0; i < entries.size(); ++i) {
-                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, (ShopEntry)entries.get(i), i));
-                }
-            });
-            }
-            if (role.identifier().equals(Noellesroles.BANDIT_ID)){
-                role.addChild(
-                        limitedInventoryScreen -> {
-                List<ShopEntry> entries = HSRConstants.BANDIT_SHOP_ENTRIES;
-                int apart = 38;
-                int x = limitedInventoryScreen.width / 2 - entries.size() * apart / 2 + 9;
-                int y = limitedInventoryScreen.height - 46;
-                for(int i = 0; i < entries.size(); ++i) {
-                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, (ShopEntry)entries.get(i), i));
-                }
-            });
-            }
-            
-            // 添加Bartender角色商店入口
-            if (role.identifier().equals(Noellesroles.BARTENDER_ID)) {
-                role.addChild(
-                        limitedInventoryScreen -> {
-                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
-                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.BARTENDER)) {
-                                List<ShopEntry> entries = new ArrayList<>();
-                                entries.add(new ShopEntry(ModItems.DEFENSE_VIAL.getDefaultStack(), 250, ShopEntry.Type.POISON));
-                                int apart = 36;
-                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
-                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
-                                int y = shouldBeY - 46;
-
-                                for(int i = 0; i < entries.size(); ++i) {
-                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
-                                }
-                            }
-                        }
-                );
-            }
-            
-            // 添加Noisemaker角色商店入口
-            if (role.identifier().equals(Noellesroles.NOISEMAKER_ID)) {
-                role.addChild(
-                        limitedInventoryScreen -> {
-                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
-                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.NOISEMAKER)) {
-                                List<ShopEntry> entries = new ArrayList<>();
-                                entries.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultStack(), 75, ShopEntry.Type.TOOL));
-                                int apart = 36;
-                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
-                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
-                                int y = shouldBeY - 46;
-
-                                for(int i = 0; i < entries.size(); ++i) {
-                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
-                                }
-                            }
-                        }
-                );
-            }
+//            // 添加Executioner商店入口
+//            if (role.identifier().equals(Noellesroles.EXECUTIONER_ID)) {
+//                role.addChild(
+//                        limitedInventoryScreen -> {
+//                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
+//
+//                            // 检查是否是Executioner角色
+//                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.EXECUTIONER)) {
+//                                ExecutionerPlayerComponent executionerComponent = ExecutionerPlayerComponent.KEY.get(MinecraftClient.getInstance().player);
+//
+//                                // 检查商店是否已解锁
+//                                if (executionerComponent.shopUnlocked) {
+//                                    // 可以在这里添加商店相关的UI元素
+//                                }
+//                            }
+//                        }
+//                );
+//            }
+//
+//            // 添加Framing角色商店入口
+//            if (role.identifier().equals(Noellesroles.JESTER_ID) ) {
+//                role.addChild(
+//                        limitedInventoryScreen -> {
+//                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
+//                            if (
+//                                gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.JESTER)) {
+//                                List<ShopEntry> entries = Noellesroles.FRAMING_ROLES_SHOP;
+//                                int apart = 36;
+//                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
+//                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
+//                                int y = shouldBeY - 46;
+//
+//                                for(int i = 0; i < entries.size(); ++i) {
+//                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
+//                                }
+//                            }
+//                        }
+//                );
+//            }
+//            if (role.identifier().equals(Noellesroles.POISONER_ID)){
+//                role.addChild(
+//                        limitedInventoryScreen -> {
+//                List<ShopEntry> entries = HSRConstants.POISONER_SHOP_ENTRIES;
+//                int apart = 38;
+//                int x = limitedInventoryScreen.width / 2 - entries.size() * apart / 2 + 9;
+//                int y = limitedInventoryScreen.height - 46;
+//                for(int i = 0; i < entries.size(); ++i) {
+//                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, (ShopEntry)entries.get(i), i));
+//                }
+//            });
+//            }
+//            if (role.identifier().equals(Noellesroles.BANDIT_ID)){
+//                role.addChild(
+//                        limitedInventoryScreen -> {
+//                List<ShopEntry> entries = HSRConstants.BANDIT_SHOP_ENTRIES;
+//                int apart = 38;
+//                int x = limitedInventoryScreen.width / 2 - entries.size() * apart / 2 + 9;
+//                int y = limitedInventoryScreen.height - 46;
+//                for(int i = 0; i < entries.size(); ++i) {
+//                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, (ShopEntry)entries.get(i), i));
+//                }
+//            });
+//            }
+//
+//            // 添加Bartender角色商店入口
+//            if (role.identifier().equals(Noellesroles.BARTENDER_ID)) {
+//                role.addChild(
+//                        limitedInventoryScreen -> {
+//                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
+//                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.BARTENDER)) {
+//
+//                                int apart = 36;
+//                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
+//                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
+//                                int y = shouldBeY - 46;
+//
+//                                for(int i = 0; i < entries.size(); ++i) {
+//                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
+//                                }
+//                            }
+//                        }
+//                );
+//            }
+//
+//            // 添加Noisemaker角色商店入口
+//            if (role.identifier().equals(Noellesroles.NOISEMAKER_ID)) {
+//                role.addChild(
+//                        limitedInventoryScreen -> {
+//                            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
+//                            if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.NOISEMAKER)) {
+//                                List<ShopEntry> entries = new ArrayList<>();
+//                                entries.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultStack(), 75, ShopEntry.Type.TOOL));
+//
+//                                int apart = 36;
+//                                int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
+//                                int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
+//                                int y = shouldBeY - 46;
+//
+//                                for(int i = 0; i < entries.size(); ++i) {
+//                                    limitedInventoryScreen.addDrawableChild(new LimitedInventoryScreen.StoreItemWidget(limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
+//                                }
+//                            }
+//                        }
+//                );
+//            }
         }
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key." + Noellesroles.MOD_ID + ".ability", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
 
