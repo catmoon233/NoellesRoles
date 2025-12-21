@@ -1,14 +1,11 @@
 package org.agmas.noellesroles;
 
-import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
-import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
@@ -19,19 +16,14 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
-
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.impl.util.log.Log;
-import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.ItemCooldownManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -56,14 +48,14 @@ import org.agmas.noellesroles.framing.FramingShopEntry;
 import org.agmas.noellesroles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.recaller.RecallerPlayerComponent;
-import org.agmas.noellesroles.repack.*;
+import org.agmas.noellesroles.repack.HSRItems;
+import org.agmas.noellesroles.repack.HSRSounds;
 import org.agmas.noellesroles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.vulture.VulturePlayerComponent;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.List;
 
@@ -80,7 +72,7 @@ public class Noellesroles implements ModInitializer {
     public static Identifier PHANTOM_ID = Identifier.of(MOD_ID, "phantom");
     public static Identifier AWESOME_BINGLUS_ID = Identifier.of(MOD_ID, "awesome_binglus");
     public static Identifier SWAPPER_ID = Identifier.of(MOD_ID, "swapper");
-   // public static Identifier GUESSER_ID = Identifier.of(MOD_ID, "guesser");
+    // public static Identifier GUESSER_ID = Identifier.of(MOD_ID, "guesser");
     public static Identifier VOODOO_ID = Identifier.of(MOD_ID, "voodoo");
     public static Identifier TRAPPER_ID = Identifier.of(MOD_ID, "trapper");
     public static Identifier CORONER_ID = Identifier.of(MOD_ID, "coroner");
@@ -97,7 +89,7 @@ public class Noellesroles implements ModInitializer {
     public static Identifier BANDIT_ID = Identifier.of(MOD_ID, "bandit");
     public static Identifier DOCTOR_ID = Identifier.of(MOD_ID, "doctor");
     public static Identifier ATTENDANT_ID = Identifier.of(MOD_ID, "attendant");
-   // public static Role CKILLER = TMMRoles.registerRole(new Role(TMM.id("killer"), 12662840, false, true, Role.MoodType.FAKE, -1, true));
+    // public static Role CKILLER = TMMRoles.registerRole(new Role(TMM.id("killer"), 12662840, false, true, Role.MoodType.FAKE, -1, true));
     public static Role POISONER = TMMRoles.registerRole(new Role(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
     public static Role BANDIT = TMMRoles.registerRole(new Role(BANDIT_ID, (new Color(196, 54, 18)).getRGB(), false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
     public static Role DOCTOR = TMMRoles.registerRole(new Role(DOCTOR_ID, (new Color(0, 255, 255)).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
@@ -113,7 +105,7 @@ public class Noellesroles implements ModInitializer {
 
     public static Role BARTENDER =TMMRoles.registerRole(new Role(BARTENDER_ID, new Color(217,241,240).getRGB(),true,false, Role.MoodType.REAL,TMMRoles.CIVILIAN.getMaxSprintTime(),false));
     public static Role NOISEMAKER =TMMRoles.registerRole(new Role(NOISEMAKER_ID, new Color(200, 255, 0).getRGB(),true,false, Role.MoodType.REAL,TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-    public static Role SWAPPER = TMMRoles.registerRole(new Role(SWAPPER_ID, new Color(57, 4, 170).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
+    public static Role SWAPPER = TMMRoles.registerRole(new Role(SWAPPER_ID, new Color(255, 255, 0).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
     public static Role PHANTOM =TMMRoles.registerRole(new Role(PHANTOM_ID, new Color(80, 5, 5, 192).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
 
     public static Role VOODOO =TMMRoles.registerRole(new Role(VOODOO_ID, new Color(128, 114, 253).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
@@ -139,6 +131,8 @@ public class Noellesroles implements ModInitializer {
     public static final CustomPayload.Id<ExecutionerSelectTargetC2SPacket> EXECUTIONER_SELECT_TARGET_PACKET = ExecutionerSelectTargetC2SPacket.ID;
 
     public static ArrayList<ShopEntry> FRAMING_ROLES_SHOP = new ArrayList<>();
+
+    private static boolean gunsCooled = false;
 
     public static @NotNull Identifier id(String name) {
         return Identifier.of(MOD_ID, name);
@@ -319,7 +313,7 @@ public class Noellesroles implements ModInitializer {
             }
             if (role.equals(JESTER)) {
                 player.giveItemStack(ModItems.FAKE_KNIFE.getDefaultStack());
-               // player.giveItemStack(ModItems.FAKE_REVOLVER.getDefaultStack());
+                // player.giveItemStack(ModItems.FAKE_REVOLVER.getDefaultStack());
             }
             if (role.equals(CONDUCTOR)) {
                 player.giveItemStack(ModItems.MASTER_KEY.getDefaultStack());
@@ -349,6 +343,20 @@ public class Noellesroles implements ModInitializer {
                 Harpymodloader.setRoleMaximum(VULTURE,1);
             } else {
                 Harpymodloader.setRoleMaximum(VULTURE,0);
+            }
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(server.getOverworld());
+            if (gameWorldComponent.isRunning()) {
+                if (!gunsCooled) {
+                    int gunCooldownTicks = 30 * 20;
+                    for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                        ItemCooldownManager itemCooldownManager = player.getItemCooldownManager();
+                        itemCooldownManager.set(TMMItems.REVOLVER, gunCooldownTicks);
+                        itemCooldownManager.set(ModItems.FAKE_REVOLVER, gunCooldownTicks);
+                    }
+                    gunsCooled = true;
+                }
+            } else {
+                gunsCooled = false;
             }
         }));
         if (!NoellesRolesConfig.HANDLER.instance().shitpostRoles) {

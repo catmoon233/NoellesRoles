@@ -233,6 +233,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                         ClientPlayNetworking.send(new VultureEatC2SPacket(targetBody.getUuid()));
                         return;
                     } else if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, Noellesroles.BROADCASTER)) {
+                        if (!isPlayerInAdventureMode(client.player))return;
                         client.setScreen(new BroadcasterInputScreen(client.currentScreen));
                         return;
                     }
