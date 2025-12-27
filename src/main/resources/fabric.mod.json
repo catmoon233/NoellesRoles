@@ -42,8 +42,7 @@
     "noellesroles:vulture",
     "noellesroles:broadcaster",
     "noellesroles:ghost",
-    "noellesroles:thief",
-    "noellesroles:sheriff"
+    "noellesroles:thief"
   ]
   },
   "mixins": [

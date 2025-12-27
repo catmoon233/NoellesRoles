@@ -9,7 +9,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.item.FakeKnifeItem;
-import org.agmas.noellesroles.repack.items.MasterKeyItem;
 import org.agmas.noellesroles.sheriff.SheriffGunMaintenanceItem;
 
 public class ModItems {
@@ -26,11 +25,11 @@ public class ModItems {
             "fake_revolver"
     );
     public static final Item MASTER_KEY = register(
-            new MasterKeyItem(new Item.Settings().maxCount(1)),
+            new Item(new Item.Settings().maxCount(1)),
             "master_key"
     );
     public static final Item MASTER_KEY_P = register(
-            new MasterKeyItem(new Item.Settings().maxCount(1)),
+            new Item(new Item.Settings().maxCount(1)),
             "master_key_p"
     );
     public static final Item DELUSION_VIAL = register(

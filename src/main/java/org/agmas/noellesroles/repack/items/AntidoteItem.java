@@ -43,6 +43,7 @@ public class AntidoteItem extends Item {
         if (!user.isSpectator()) {
             if (remainingUseTicks < this.getMaxUseTime(stack, user) - 10 && user instanceof PlayerEntity) {
                 PlayerEntity attacker = (PlayerEntity)user;
+                if (world.isClient) {
                     HitResult collision = getAntidoteTarget(attacker);
                     if (collision instanceof EntityHitResult) {
                         EntityHitResult entityHitResult = (EntityHitResult) collision;
@@ -62,7 +63,7 @@ public class AntidoteItem extends Item {
 
 
                             }                        }
-
+                    }
 
                     return;
                 }

@@ -25,18 +25,18 @@ public abstract class SimpleRolePurchaseMixin implements AutoSyncedComponent, Se
     @Final
     private PlayerEntity player;
 
-//    @Inject(
-//            method = {"getShopEntries"},
-//            at = @At(
-//                    value = "RETURN"
-//            ),
-//            cancellable = true)
-//    private void redirectPurchase(CallbackInfoReturnable<List<ShopEntry>> cir) {
-//        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(this.player.getWorld());
-//        if (gameWorldComponent.isRole(this.player, Noellesroles.POISONER)) {
-//            cir.setReturnValue(HSRConstants.POISONER_SHOP_ENTRIES);
-//        } else if (gameWorldComponent.isRole(this.player, Noellesroles.BANDIT)) {
-//            cir.setReturnValue(HSRConstants.BANDIT_SHOP_ENTRIES);
-//        }
-//    }
+    @Inject(
+            method = {"getShopEntries"},
+            at = @At(
+                    value = "RETURN"
+            ),
+            cancellable = true)
+    private void redirectPurchase(CallbackInfoReturnable<List<ShopEntry>> cir) {
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(this.player.getWorld());
+        if (gameWorldComponent.isRole(this.player, Noellesroles.POISONER)) {
+            cir.setReturnValue(HSRConstants.POISONER_SHOP_ENTRIES);
+        } else if (gameWorldComponent.isRole(this.player, Noellesroles.BANDIT)) {
+            cir.setReturnValue(HSRConstants.BANDIT_SHOP_ENTRIES);
+        }
+    }
 }

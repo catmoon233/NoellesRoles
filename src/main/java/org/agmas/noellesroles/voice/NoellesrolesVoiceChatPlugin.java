@@ -1,6 +1,9 @@
 package org.agmas.noellesroles.voice;
 
-import de.maxhenkel.voicechat.api.*;
+import de.maxhenkel.voicechat.api.VoicechatApi;
+import de.maxhenkel.voicechat.api.VoicechatConnection;
+import de.maxhenkel.voicechat.api.VoicechatPlugin;
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
 import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -21,23 +24,19 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
 
     public void paranoidEvent(MicrophonePacketEvent event) {
         VoicechatServerApi api = event.getVoicechat();
-        final var player = event.getSenderConnection().getPlayer();
-        if (player==null)return;
-        ServerPlayerEntity players = ((ServerPlayerEntity) player.getPlayer());
+        ServerPlayerEntity players = ((ServerPlayerEntity)event.getSenderConnection().getPlayer().getPlayer());
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(players.getWorld());
-        if (gameWorldComponent==null)return;
         //if (players.interactionManager.getGameMode().equals(GameMode.SPECTATOR)) {
             players.getWorld().getPlayers().forEach((p) -> {
-                if (p!=players) {
-                    if (gameWorldComponent.isRole(players, Noellesroles.NOISEMAKER) && GameFunctions.isPlayerAliveAndSurvival(p) && GameFunctions.isPlayerAliveAndSurvival(players)) {
-                        if (players.distanceTo(p) <= api.getVoiceChatDistance() * 1.5) {
-                            VoicechatConnection con = api.getConnectionOf(p.getUuid());
-                            api.sendLocationalSoundPacketTo(con, event.getPacket().locationalSoundPacketBuilder()
-                                    .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
-                                    .distance((float) api.getVoiceChatDistance() *1.5f)
-                                    .build());
-                        }
+                if (gameWorldComponent.isRole(players, Noellesroles.NOISEMAKER) && GameFunctions.isPlayerAliveAndSurvival(p)) {
+                    if (players.distanceTo(p) <= api.getVoiceChatDistance()*3) {
+                        VoicechatConnection con = api.getConnectionOf(p.getUuid());
+                        api.sendLocationalSoundPacketTo(con, event.getPacket().locationalSoundPacketBuilder()
+                                        .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
+                                        .distance((float)api.getVoiceChatDistance())
+                                        .build());
                     }
+                }
 //                if (gameWorldComponent.isRole(p, Noellesroles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES) && GameFunctions.isPlayerAliveAndSurvival(p)) {
 //                    if (players.distanceTo(p) <= api.getVoiceChatDistance()) {
 //                        VoicechatConnection con = api.getConnectionOf(p.getUuid());
@@ -47,7 +46,6 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
 //                                        .build());
 //                    }
 //                }
-                }
             });
        // }
     }

@@ -212,20 +212,6 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ATTENDANT_ID, 1);
         Harpymodloader.setRoleMaximum(POISONER_ID, 1);
 
-        registerShopEntries();
-
-
-//        PayloadTypeRegistry.playC2S().register(AntidoteUsePayload.ID, AntidoteUsePayload.CODEC);
-//        PayloadTypeRegistry.playC2S().register(ToxinUsePayload.ID, ToxinUsePayload.CODEC);
-//        PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID, BanditRevolverShootPayload.CODEC);
-//        ServerPlayNetworking.registerGlobalReceiver(AntidoteUsePayload.ID, new AntidoteUsePayload.Receiver());
-//        ServerPlayNetworking.registerGlobalReceiver(ToxinUsePayload.ID, new ToxinUsePayload.Receiver());
-//        ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID, new BanditRevolverShootPayload.Receiver());
-        //NoellesRolesEntities.init();
-
-    }
-
-    public static void registerShopEntries() {
         ShopContent.customEntries.put(
                 POISONER_ID, HSRConstants.POISONER_SHOP_ENTRIES
         );
@@ -279,7 +265,18 @@ public class Noellesroles implements ModInitializer {
                 PHOTOGRAPHER_ID, entries
         );
         }
+
+
+//        PayloadTypeRegistry.playC2S().register(AntidoteUsePayload.ID, AntidoteUsePayload.CODEC);
+//        PayloadTypeRegistry.playC2S().register(ToxinUsePayload.ID, ToxinUsePayload.CODEC);
+//        PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID, BanditRevolverShootPayload.CODEC);
+//        ServerPlayNetworking.registerGlobalReceiver(AntidoteUsePayload.ID, new AntidoteUsePayload.Receiver());
+//        ServerPlayNetworking.registerGlobalReceiver(ToxinUsePayload.ID, new ToxinUsePayload.Receiver());
+//        ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID, new BanditRevolverShootPayload.Receiver());
+        //NoellesRolesEntities.init();
+
     }
+
 
 
     public void registerEvents() {
