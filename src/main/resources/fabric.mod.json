@@ -14,13 +14,15 @@
       "org.agmas.noellesroles.client.NoellesrolesDataGenerator"
     ],
     "client": [
-      "org.agmas.noellesroles.client.NoellesrolesClient"
+      "org.agmas.noellesroles.client.NoellesrolesClient",
+      "org.agmas.noellesroles.client.RicesRoleRhapsodyClient"
     ],
     "main": [
-      "org.agmas.noellesroles.Noellesroles"
+      "org.agmas.noellesroles.Noellesroles",
+      "org.agmas.noellesroles.RicesRoleRhapsody"
     ],
     "cardinal-components": [
-      "org.agmas.noellesroles.NoellesRolesComponents"
+      "org.agmas.noellesroles.component.ModComponents"
     ],
     "voicechat": [
       "org.agmas.noellesroles.voice.NoellesrolesVoiceChatPlugin"
@@ -42,15 +44,29 @@
     "noellesroles:vulture",
     "noellesroles:broadcaster",
     "noellesroles:ghost",
-    "noellesroles:thief"
+    "noellesroles:thief",
+    "noellesroles:ability",
+    "noellesroles:avenger",
+    "noellesroles:conspirator",
+    "noellesroles:slippery_ghost",
+    "noellesroles:telegrapher",
+    "noellesroles:boxer",
+    "noellesroles:postman",
+    "noellesroles:detective",
+    "noellesroles:stalker",
+    "noellesroles:athlete",
+    "noellesroles:admirer",
+    "noellesroles:trapper",
+    "noellesroles:star",
+    "noellesroles:veteran",
+    "noellesroles:singer",
+    "noellesroles:psychologist",
+    "noellesroles:puppeteer"
   ]
   },
   "mixins": [
-    "noellesroles.mixins.json",
-    {
-      "config": "noellesroles.client.mixins.json",
-      "environment": "client"
-    }
+    "noellesroles.mixins.json"
+
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",

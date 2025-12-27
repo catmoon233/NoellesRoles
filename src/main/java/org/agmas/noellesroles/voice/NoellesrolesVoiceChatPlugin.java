@@ -10,6 +10,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.role.ModRoles;
 
 public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
     @Override
@@ -28,8 +29,8 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(players.getWorld());
         //if (players.interactionManager.getGameMode().equals(GameMode.SPECTATOR)) {
             players.getWorld().getPlayers().forEach((p) -> {
-                if (gameWorldComponent.isRole(players, Noellesroles.NOISEMAKER) && GameFunctions.isPlayerAliveAndSurvival(p)) {
-                    if (players.distanceTo(p) <= api.getVoiceChatDistance()*3) {
+                if (p!=players&&gameWorldComponent.isRole(players, ModRoles.NOISEMAKER)  && GameFunctions.isPlayerAliveAndSurvival( players)) {
+                    if (players.distanceTo(p) <= api.getVoiceChatDistance()*1.25) {
                         VoicechatConnection con = api.getConnectionOf(p.getUuid());
                         api.sendLocationalSoundPacketTo(con, event.getPacket().locationalSoundPacketBuilder()
                                         .position(api.createPosition(p.getX(), p.getY(), p.getZ()))

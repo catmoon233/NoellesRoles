@@ -25,6 +25,7 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 
 public  record BanditRevolverShootPayload(int target) implements CustomPayload {
@@ -63,7 +64,7 @@ public  record BanditRevolverShootPayload(int target) implements CustomPayload {
                             if (game.isInnocent(player) && player.getRandom().nextFloat() <= game.getBackfireChance()) {
                                 backfire = true;
                                 GameFunctions.killPlayer(player, true, player, GameConstants.DeathReasons.GUN);
-                            } else if (game.isRole(player, Noellesroles.BANDIT)) {
+                            } else if (game.isRole(player, ModRoles.BANDIT)) {
                                 if (player.getRandom().nextFloat() <= 0.2F) {
                                     Scheduler.schedule(() -> {
                                         if (player.getInventory().contains((s) -> s.isIn(TMMItemTags.GUNS))) {

@@ -1,0 +1,47 @@
+package org.agmas.noellesroles.roles.gambler;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.util.Identifier;
+import org.agmas.noellesroles.Noellesroles;
+import org.jetbrains.annotations.NotNull;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
+
+public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
+	public static final ComponentKey<GamblerPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "gambler"), GamblerPlayerComponent.class);
+	private final PlayerEntity player;
+	public boolean usedAbility = false;
+
+	public void reset() {
+		this.usedAbility = false;
+		this.sync();
+	}
+
+	public GamblerPlayerComponent(PlayerEntity player) {
+		this.player = player;
+	}
+
+	public void sync() {
+		KEY.sync(this.player);
+	}
+
+	public void clientTick() {
+	}
+
+	public void serverTick() {
+		sync();
+	}
+
+	public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+		tag.putBoolean("usedAbility", this.usedAbility);
+	}
+
+	public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+		this.usedAbility = tag.getBoolean("usedAbility");
+	}
+}

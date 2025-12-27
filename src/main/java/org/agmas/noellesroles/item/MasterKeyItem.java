@@ -7,6 +7,7 @@ import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.DoubleBlockHalf;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
@@ -27,8 +28,12 @@ public class MasterKeyItem extends Item {
         if (state.getBlock() instanceof SmallDoorBlock) {
             BlockPos lowerPos = state.get(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.down();
             BlockEntity var8 = world.getBlockEntity(lowerPos);
+
             return ActionResult.PASS;
         } else {
+            if (player != null) {
+                context.getStack().damage(1, player, EquipmentSlot.MAINHAND);
+            }
             return super.useOnBlock(context);
         }
     }

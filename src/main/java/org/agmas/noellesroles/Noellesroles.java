@@ -24,8 +24,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.ItemCooldownManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -40,98 +38,38 @@ import net.minecraft.util.math.Vec3d;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
-import org.agmas.noellesroles.bartender.BartenderPlayerComponent;
+import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.commands.ConfigCommand;
 import org.agmas.noellesroles.commands.SetRoleMaxCommand;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
-import org.agmas.noellesroles.coroner.BodyDeathReasonComponent;
-import org.agmas.noellesroles.executioner.ExecutionerPlayerComponent;
-import org.agmas.noellesroles.framing.FramingShopEntry;
-import org.agmas.noellesroles.morphling.MorphlingPlayerComponent;
+import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
+import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.roles.framing.FramingShopEntry;
+import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.packet.*;
-import org.agmas.noellesroles.recaller.RecallerPlayerComponent;
+import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
 import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.repack.HSRSounds;
-import org.agmas.noellesroles.thief.ThiefPlayerComponent;
-import org.agmas.noellesroles.voodoo.VoodooPlayerComponent;
-import org.agmas.noellesroles.vulture.VulturePlayerComponent;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
+import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
+import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import static org.agmas.noellesroles.RicesRoleRhapsody.initShops;
 
 public class Noellesroles implements ModInitializer {
 
     public static String MOD_ID = "noellesroles";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-
-    public static Identifier JESTER_ID = Identifier.of(MOD_ID, "jester");
-    public static Identifier MORPHLING_ID = Identifier.of(MOD_ID, "morphling");
-    public static Identifier CONDUCTOR_ID = Identifier.of(MOD_ID, "conductor");
-    public static Identifier BARTENDER_ID = Identifier.of(MOD_ID, "bartender");
-    public static Identifier NOISEMAKER_ID = Identifier.of(MOD_ID, "noisemaker");
-    public static Identifier PHANTOM_ID = Identifier.of(MOD_ID, "phantom");
-    public static Identifier AWESOME_BINGLUS_ID = Identifier.of(MOD_ID, "awesome_binglus");
-    public static Identifier SWAPPER_ID = Identifier.of(MOD_ID, "swapper");
-    // public static Identifier GUESSER_ID = Identifier.of(MOD_ID, "guesser");
-    public static Identifier VOODOO_ID = Identifier.of(MOD_ID, "voodoo");
-    public static Identifier TRAPPER_ID = Identifier.of(MOD_ID, "trapper");
-    public static Identifier CORONER_ID = Identifier.of(MOD_ID, "coroner");
-    public static Identifier RECALLER_ID = Identifier.of(MOD_ID, "recaller");
-    public static Identifier EXECUTIONER_ID = Identifier.of(MOD_ID, "executioner");
-    public static Identifier VULTURE_ID = Identifier.of(MOD_ID, "vulture");
-    public static Identifier BETTER_VIGILANTE_ID = Identifier.of(MOD_ID, "better_vigilante");
-    public static Identifier BROADCASTER_ID = Identifier.of(MOD_ID, "broadcaster");
-    public static Identifier GAMBLER_ID = Identifier.of(MOD_ID, "gambler");
-    public static Identifier GHOST_ID = Identifier.of(MOD_ID, "ghost");
-    public static Identifier SHERIFF_ID = Identifier.of(MOD_ID, "sheriff");
-    public static Identifier PHOTOGRAPHER_ID = Identifier.of(MOD_ID, "photographer");
-    public static Identifier THIEF_ID = Identifier.of(MOD_ID, "thief");
-
-
-    public static Identifier POISONER_ID = Identifier.of(MOD_ID, "poisoner");
-    public static Identifier BANDIT_ID = Identifier.of(MOD_ID, "bandit");
-    public static Identifier DOCTOR_ID = Identifier.of(MOD_ID, "doctor");
-    public static Identifier ATTENDANT_ID = Identifier.of(MOD_ID, "attendant");
-    // public static Role CKILLER = TMMRoles.registerRole(new Role(TMM.id("killer"), 12662840, false, true, Role.MoodType.FAKE, -1, true));
-    public static Role POISONER = TMMRoles.registerRole(new Role(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
-    public static Role BANDIT = TMMRoles.registerRole(new Role(BANDIT_ID, (new Color(196, 54, 18)).getRGB(), false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
-    public static Role DOCTOR = TMMRoles.registerRole(new Role(DOCTOR_ID, (new Color(0, 255, 255)).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
-    public static Role PHOTOGRAPHER = TMMRoles.registerRole(new Role(PHOTOGRAPHER_ID, (new Color(0, 128, 255)).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
-
-    public static Role ATTENDANT = TMMRoles.registerRole(new Role(ATTENDANT_ID, (new Color(198, 185, 36)).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
-    public static Identifier THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Identifier.of(MOD_ID, "the_insane_damned_paranoid_killer");
-    public static Role BROADCASTER = TMMRoles.registerRole(new Role(BROADCASTER_ID, new Color(0, 255, 0).getRGB(), true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
-
-    public static HashMap<Role, RoleAnnouncementTexts.RoleAnnouncementText> roleRoleAnnouncementTextHashMap = new HashMap<>();
-    public static Role JESTER = TMMRoles.registerRole(new Role(JESTER_ID,new Color(255,86,243).getRGB() ,false,false, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
-    public static Role MORPHLING =TMMRoles.registerRole(new Role(MORPHLING_ID, new Color(170, 2, 61).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
-    public static Role CONDUCTOR =TMMRoles.registerRole(new Role(CONDUCTOR_ID, new Color(255, 205, 84).getRGB(),true,false, Role.MoodType.REAL,TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-    public static Role AWESOME_BINGLUS = TMMRoles.registerRole(new Role(AWESOME_BINGLUS_ID, new Color(155, 255, 168).getRGB(),true,false, Role.MoodType.REAL,TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-
-    public static Role BARTENDER =TMMRoles.registerRole(new Role(BARTENDER_ID, new Color(217,241,240).getRGB(),true,false, Role.MoodType.REAL,TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-    public static Role NOISEMAKER =TMMRoles.registerRole(new Role(NOISEMAKER_ID, new Color(200, 255, 0).getRGB(),true,false, Role.MoodType.REAL,TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-    public static Role SWAPPER = TMMRoles.registerRole(new Role(SWAPPER_ID, new Color(255, 255, 0).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
-    public static Role PHANTOM =TMMRoles.registerRole(new Role(PHANTOM_ID, new Color(80, 5, 5, 192).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
-
-    public static Role VOODOO =TMMRoles.registerRole(new Role(VOODOO_ID, new Color(128, 114, 253).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-    public static Role THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES =TMMRoles.registerRole(new Role(THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID, new Color(255, 0, 0, 192).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
-    //public static Role TRAPPER =TMMRoles.registerRole(new Role(TRAPPER_ID, new Color(132, 186, 167).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-    public static Role CORONER =TMMRoles.registerRole(new Role(CORONER_ID, new Color(122, 122, 122).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-
-    public static Role EXECUTIONER =TMMRoles.registerRole(new Role(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),false,true,Role.MoodType.FAKE, Integer.MAX_VALUE,true));
-    public static Role RECALLER = TMMRoles.registerRole(new Role(RECALLER_ID, new Color(158, 255, 255).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-
-    public static Role VULTURE =TMMRoles.registerRole(new Role(VULTURE_ID, new Color(181, 103, 0).getRGB(),false,false,Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
-    public static Role BETTER_VIGILANTE =TMMRoles.registerRole(new Role(BETTER_VIGILANTE_ID, new Color(0, 255, 255).getRGB(),true,false,Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),false));
-    //public static Role GUESSER =TMMRoles.registerRole(new Role(GUESSER_ID, new Color(158, 43, 25, 191).getRGB(),false,true, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
-    public static Role GAMBLER =TMMRoles.registerRole(new Role(GAMBLER_ID, new Color(128, 0, 128).getRGB(),false,false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
-    public static Role GHOST = TMMRoles.registerRole(new Role(GHOST_ID, new Color(200, 200, 200).getRGB(),true,false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
-    public static Role THIEF = TMMRoles.registerRole(new Role(THIEF_ID, new Color(139, 69, 19).getRGB(),false,false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(),true));
-    public static Role SHERIFF = TMMRoles.registerRole(new Role(SHERIFF_ID, new Color(0, 0, 255).getRGB(),true,false, Role.MoodType.REAL, TMMRoles.VIGILANTE.getMaxSprintTime(),false));
+    //public static Role SHERIFF = TMMRoles.registerRole(new Role(SHERIFF_ID, new Color(0, 0, 255).getRGB(),true,false, Role.MoodType.REAL, TMMRoles.VIGILANTE.getMaxSprintTime(),false));
 
     public static final CustomPayload.Id<MorphC2SPacket> MORPH_PACKET = MorphC2SPacket.ID;
     public static final CustomPayload.Id<SwapperC2SPacket> SWAP_PACKET = SwapperC2SPacket.ID;
@@ -151,6 +89,7 @@ public class Noellesroles implements ModInitializer {
     }
     @Override
     public void onInitialize() {
+
         VANNILA_ROLES.add(TMMRoles.KILLER);
         VANNILA_ROLES.add(TMMRoles.VIGILANTE);
         VANNILA_ROLES.add(TMMRoles.CIVILIAN);
@@ -167,35 +106,10 @@ public class Noellesroles implements ModInitializer {
         FRAMING_ROLES_SHOP.add(new FramingShopEntry(TMMItems.NOTE.getDefaultStack(), 5, ShopEntry.Type.TOOL));
 
         NoellesRolesConfig.HANDLER.load();
-        ModItems.init();
+//        ModItems.init();
         NRSounds.initialize();
-        Harpymodloader.setRoleMaximum(CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
-        Harpymodloader.setRoleMaximum(EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
-        Harpymodloader.setRoleMaximum(VULTURE_ID, NoellesRolesConfig.HANDLER.instance().vultureMax);
-        Harpymodloader.setRoleMaximum(JESTER_ID, NoellesRolesConfig.HANDLER.instance().jesterMax);
-        Harpymodloader.setRoleMaximum(MORPHLING_ID, NoellesRolesConfig.HANDLER.instance().morphlingMax);
-        Harpymodloader.setRoleMaximum(BARTENDER_ID, NoellesRolesConfig.HANDLER.instance().bartenderMax);
-        Harpymodloader.setRoleMaximum(NOISEMAKER_ID, NoellesRolesConfig.HANDLER.instance().noisemakerMax);
-        Harpymodloader.setRoleMaximum(PHANTOM_ID, NoellesRolesConfig.HANDLER.instance().phantomMax);
-        Harpymodloader.setRoleMaximum(AWESOME_BINGLUS_ID, NoellesRolesConfig.HANDLER.instance().awesomeBinglusMax);
-        Harpymodloader.setRoleMaximum(SWAPPER_ID, NoellesRolesConfig.HANDLER.instance().swapperMax);
-        Harpymodloader.setRoleMaximum(VOODOO_ID, NoellesRolesConfig.HANDLER.instance().voodooMax);
-        Harpymodloader.setRoleMaximum(CORONER_ID, NoellesRolesConfig.HANDLER.instance().coronerMax);
-        Harpymodloader.setRoleMaximum(RECALLER_ID, NoellesRolesConfig.HANDLER.instance().recallerMax);
-        Harpymodloader.setRoleMaximum(BROADCASTER_ID, NoellesRolesConfig.HANDLER.instance().broadcasterMax);
-        Harpymodloader.setRoleMaximum(GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
-        Harpymodloader.setRoleMaximum(GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
-        Harpymodloader.setRoleMaximum(THIEF_ID, NoellesRolesConfig.HANDLER.instance().thiefMax);
-        Harpymodloader.setRoleMaximum(SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
-        PayloadTypeRegistry.playC2S().register(ExecutionerSelectTargetC2SPacket.ID, ExecutionerSelectTargetC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(BroadcasterC2SPacket.ID, BroadcasterC2SPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(BroadcastMessageS2CPacket.ID, BroadcastMessageS2CPacket.CODEC);
+        registerMaxRoleCount();
 
-        PayloadTypeRegistry.playC2S().register(MorphC2SPacket.ID, MorphC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(AbilityC2SPacket.ID, AbilityC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(VultureEatC2SPacket.ID, VultureEatC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(ThiefStealC2SPacket.ID, ThiefStealC2SPacket.CODEC);
 
         registerEvents();
         SetRoleMaxCommand.register();
@@ -206,27 +120,49 @@ public class Noellesroles implements ModInitializer {
         HSRSounds.init();
 
 
-        Harpymodloader.setRoleMaximum(POISONER_ID, 1);
-        Harpymodloader.setRoleMaximum(BANDIT_ID, 2);
-        Harpymodloader.setRoleMaximum(DOCTOR_ID, 1);
-        Harpymodloader.setRoleMaximum(ATTENDANT_ID, 1);
-        Harpymodloader.setRoleMaximum(POISONER_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.BANDIT_ID, 2);
+        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
+
+        shopRegister();
+
+
+//        PayloadTypeRegistry.playC2S().register(AntidoteUsePayload.ID, AntidoteUsePayload.CODEC);
+//        PayloadTypeRegistry.playC2S().register(ToxinUsePayload.ID, ToxinUsePayload.CODEC);
+//        PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID, BanditRevolverShootPayload.CODEC);
+//        ServerPlayNetworking.registerGlobalReceiver(AntidoteUsePayload.ID, new AntidoteUsePayload.Receiver());
+//        ServerPlayNetworking.registerGlobalReceiver(ToxinUsePayload.ID, new ToxinUsePayload.Receiver());
+//        ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID, new BanditRevolverShootPayload.Receiver());
+        //NoellesRolesEntities.init();
+
+    }
+
+    private void shopRegister() {
+        initShops();
+        ShopContent.customEntries.put(
+                ModRoles.POISONER_ID, HSRConstants.POISONER_SHOP_ENTRIES
+        );
 
         ShopContent.customEntries.put(
-                POISONER_ID, HSRConstants.POISONER_SHOP_ENTRIES
+                ModRoles.SWAPPER_ID, ShopContent.defaultEntries
+        );
+//        ShopContent.customEntries.put(
+//                POISONER_ID, ShopContent.defaultEntries
+//        );
+        ShopContent.customEntries.put(
+                ModRoles.BANDIT_ID, HSRConstants.BANDIT_SHOP_ENTRIES
         );
         ShopContent.customEntries.put(
-                BANDIT_ID, HSRConstants.BANDIT_SHOP_ENTRIES
-        );
-        ShopContent.customEntries.put(
-                JESTER_ID, Noellesroles.FRAMING_ROLES_SHOP
+                ModRoles.JESTER_ID, Noellesroles.FRAMING_ROLES_SHOP
         );
         {
         List<ShopEntry> entries = new ArrayList<>();
         entries.add(new ShopEntry(ModItems.DEFENSE_VIAL.getDefaultStack(), 250, ShopEntry.Type.POISON));
 
         ShopContent.customEntries.put(
-                BARTENDER_ID, entries
+                ModRoles.BARTENDER_ID, entries
         );
         }
         {
@@ -234,20 +170,24 @@ public class Noellesroles implements ModInitializer {
             entries.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultStack(), 75, ShopEntry.Type.TOOL));
 
             ShopContent.customEntries.put(
-                NOISEMAKER_ID, entries
+                ModRoles.NOISEMAKER_ID, entries
         );
-        }
-        {
-            List<ShopEntry> entries = new ArrayList<>();
-            entries.add(new ShopEntry(ModItems.SHERIFF_GUN_MAINTENANCE.getDefaultStack(), 150, ShopEntry.Type.TOOL));
-
             ShopContent.customEntries.put(
-                SHERIFF_ID, entries
-        );
+                    ModRoles.EXECUTIONER_ID, ShopContent.defaultEntries
+            );
+
         }
+//        {
+//            List<ShopEntry> entries = new ArrayList<>();
+//            entries.add(new ShopEntry(ModItems.SHERIFF_GUN_MAINTENANCE.getDefaultStack(), 150, ShopEntry.Type.TOOL));
+//
+//            ShopContent.customEntries.put(
+//                SHERIFF_ID, entries
+//        );
+//        }
         {
             List<ShopEntry> entries = new ArrayList<>();
-            entries.add(new ShopEntry(ModItems.SHERIFF_GUN_MAINTENANCE.getDefaultStack(), 50, ShopEntry.Type.TOOL) {
+            entries.add(new ShopEntry(Items.ITEM_FRAME.getDefaultStack(), 50, ShopEntry.Type.TOOL) {
                             @Override
                             public boolean onBuy(@NotNull PlayerEntity player) {
                                 final var item = player.getWorld().getRegistryManager().get(Registries.ITEM.getKey()).get(Identifier.tryParse("exposure_polaroid:instant_color_slide"));
@@ -262,28 +202,59 @@ public class Noellesroles implements ModInitializer {
             );
 
             ShopContent.customEntries.put(
-                PHOTOGRAPHER_ID, entries
+                ModRoles.PHOTOGRAPHER_ID, entries
         );
         }
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.CONSPIRATOR_ID, RicesRoleRhapsody.CONSPIRATOR_SHOP
+            );
+        }
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.SLIPPERY_GHOST_ID, RicesRoleRhapsody.SLIPPERY_GHOST_SHOP
+            );
+        }
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.ENGINEER_ID, RicesRoleRhapsody.ENGINEER_SHOP
+            );
+        }
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.POSTMAN_ID, RicesRoleRhapsody.POSTMAN_SHOP
+            );
+        }
+    }
 
-
-//        PayloadTypeRegistry.playC2S().register(AntidoteUsePayload.ID, AntidoteUsePayload.CODEC);
-//        PayloadTypeRegistry.playC2S().register(ToxinUsePayload.ID, ToxinUsePayload.CODEC);
-//        PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID, BanditRevolverShootPayload.CODEC);
-//        ServerPlayNetworking.registerGlobalReceiver(AntidoteUsePayload.ID, new AntidoteUsePayload.Receiver());
-//        ServerPlayNetworking.registerGlobalReceiver(ToxinUsePayload.ID, new ToxinUsePayload.Receiver());
-//        ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID, new BanditRevolverShootPayload.Receiver());
-        //NoellesRolesEntities.init();
-
+    private void registerMaxRoleCount() {
+        Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
+        Harpymodloader.setRoleMaximum(ModRoles.EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
+        Harpymodloader.setRoleMaximum(ModRoles.VULTURE_ID, NoellesRolesConfig.HANDLER.instance().vultureMax);
+        Harpymodloader.setRoleMaximum(ModRoles.JESTER_ID, NoellesRolesConfig.HANDLER.instance().jesterMax);
+        Harpymodloader.setRoleMaximum(ModRoles.MORPHLING_ID, NoellesRolesConfig.HANDLER.instance().morphlingMax);
+        Harpymodloader.setRoleMaximum(ModRoles.BARTENDER_ID, NoellesRolesConfig.HANDLER.instance().bartenderMax);
+        Harpymodloader.setRoleMaximum(ModRoles.NOISEMAKER_ID, NoellesRolesConfig.HANDLER.instance().noisemakerMax);
+        Harpymodloader.setRoleMaximum(ModRoles.PHANTOM_ID, NoellesRolesConfig.HANDLER.instance().phantomMax);
+        Harpymodloader.setRoleMaximum(ModRoles.AWESOME_BINGLUS_ID, NoellesRolesConfig.HANDLER.instance().awesomeBinglusMax);
+        Harpymodloader.setRoleMaximum(ModRoles.SWAPPER_ID, NoellesRolesConfig.HANDLER.instance().swapperMax);
+        Harpymodloader.setRoleMaximum(ModRoles.VOODOO_ID, NoellesRolesConfig.HANDLER.instance().voodooMax);
+        Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, NoellesRolesConfig.HANDLER.instance().coronerMax);
+        Harpymodloader.setRoleMaximum(ModRoles.RECALLER_ID, NoellesRolesConfig.HANDLER.instance().recallerMax);
+        Harpymodloader.setRoleMaximum(ModRoles.BROADCASTER_ID, NoellesRolesConfig.HANDLER.instance().broadcasterMax);
+        Harpymodloader.setRoleMaximum(ModRoles.GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
+        Harpymodloader.setRoleMaximum(ModRoles.GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
+        Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, NoellesRolesConfig.HANDLER.instance().thiefMax);
+        Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
     }
 
 
-
     public void registerEvents() {
+
         AllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (identifier == GameConstants.DeathReasons.FELL_OUT_OF_TRAIN) return true;
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.getWorld());
-            if (gameWorldComponent.isRole(playerEntity,Noellesroles.JESTER)) {
+            if (gameWorldComponent.isRole(playerEntity, ModRoles.JESTER)) {
                 PlayerPsychoComponent component =  PlayerPsychoComponent.KEY.get(playerEntity);
                 if (component.getPsychoTicks() > GameConstants.getInTicks(0,44)) {
                     return false;
@@ -299,7 +270,7 @@ public class Noellesroles implements ModInitializer {
         }));
         CanSeePoison.EVENT.register((player)->{
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
-            if (gameWorldComponent.isRole((PlayerEntity) player, Noellesroles.BARTENDER)) {
+            if (gameWorldComponent.isRole((PlayerEntity) player, ModRoles.BARTENDER)) {
                 return true;
             }
             return false;
@@ -309,20 +280,20 @@ public class Noellesroles implements ModInitializer {
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(player);
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
-            if (role.equals(BROADCASTER)) {
+            if (role.equals(ModRoles.BROADCASTER)) {
                 abilityPlayerComponent.cooldown = 0;
             } else {
                 abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
             }
-            if (role.equals(EXECUTIONER)) {
+            if (role.equals(ModRoles.EXECUTIONER)) {
                 ExecutionerPlayerComponent executionerPlayerComponent = (ExecutionerPlayerComponent) ExecutionerPlayerComponent.KEY.get(player);
                 executionerPlayerComponent.won = false;
                 PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(player);
-                playerShopComponent.setBalance(100);
                 executionerPlayerComponent.reset();
+                playerShopComponent.setBalance(100);
                 executionerPlayerComponent.sync();
             }
-            if (role.equals(VULTURE)) {
+            if (role.equals(ModRoles.VULTURE)) {
                 if (VulturePlayerComponent.KEY.isProvidedBy(player)) {
                     VulturePlayerComponent vulturePlayerComponent = VulturePlayerComponent.KEY.get(player);
                     vulturePlayerComponent.reset();
@@ -330,53 +301,62 @@ public class Noellesroles implements ModInitializer {
                     vulturePlayerComponent.sync();
                 }
             }
-            if (role.equals(DOCTOR)) {
+            if (role.equals(ModRoles.DOCTOR)) {
                 player.giveItemStack(HSRItems.ANTIDOTE.getDefaultStack());
             }
-            if (role.equals(PHOTOGRAPHER)) {
+            if (role.equals(ModRoles.PHOTOGRAPHER)) {
+                {
                 final var item = player.getWorld().getRegistryManager().get(Registries.ITEM.getKey()).get(Identifier.tryParse("exposure_polaroid:instant_camera"));
-                if (item != null){
-                final var defaultStack = item.getDefaultStack();
-                player.giveItemStack(defaultStack);
+                if (item != null) {
+                    final var defaultStack = item.getDefaultStack();
+                    player.giveItemStack(defaultStack);
+                }
+                    {
+                        final var item1 = player.getWorld().getRegistryManager().get(Registries.ITEM.getKey()).get(Identifier.tryParse("exposure:album"));
+                        if (item1 != null) {
+                            final var defaultStack = item1.getDefaultStack();
+                            player.giveItemStack(defaultStack);
+                        }
+                    }
             }}
 
-            if (role.equals(BANDIT)) {
+            if (role.equals(ModRoles.BANDIT)) {
                 player.giveItemStack(HSRItems.BANDIT_REVOLVER.getDefaultStack());
                 player.giveItemStack(TMMItems.CROWBAR.getDefaultStack());
             }
 
-            if (role.equals(ATTENDANT)) {
+            if (role.equals(ModRoles.ATTENDANT)) {
                 player.giveItemStack(ModItems.MASTER_KEY_P.getDefaultStack());
             }
 
-            if (role.equals(GAMBLER)) {
-                org.agmas.noellesroles.gambler.GamblerPlayerComponent gamblerPlayerComponent = org.agmas.noellesroles.gambler.GamblerPlayerComponent.KEY.get(player);
+            if (role.equals(ModRoles.GAMBLER)) {
+                org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent gamblerPlayerComponent = org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent.KEY.get(player);
                 gamblerPlayerComponent.reset();
                 gamblerPlayerComponent.sync();
             }
-            if (role.equals(GHOST)) {
-                org.agmas.noellesroles.ghost.GhostPlayerComponent ghostPlayerComponent = org.agmas.noellesroles.ghost.GhostPlayerComponent.KEY.get(player);
+            if (role.equals(ModRoles.GHOST)) {
+                org.agmas.noellesroles.roles.ghost.GhostPlayerComponent ghostPlayerComponent = org.agmas.noellesroles.roles.ghost.GhostPlayerComponent.KEY.get(player);
                 ghostPlayerComponent.reset();
                 ghostPlayerComponent.sync();
             }
-            if (role.equals(SHERIFF)) {
-                player.giveItemStack(TMMItems.REVOLVER.getDefaultStack());
-                org.agmas.noellesroles.sheriff.SheriffPlayerComponent sheriffPlayerComponent = org.agmas.noellesroles.sheriff.SheriffPlayerComponent.KEY.get(player);
-                sheriffPlayerComponent.reset();
-                sheriffPlayerComponent.sync();
-            }
-            if (role.equals(BETTER_VIGILANTE)) {
+//            if (role.equals(SHERIFF)) {
+//                player.giveItemStack(TMMItems.REVOLVER.getDefaultStack());
+//                org.agmas.noellesroles.roles.sheriff.SheriffPlayerComponent sheriffPlayerComponent = org.agmas.noellesroles.roles.sheriff.SheriffPlayerComponent.KEY.get(player);
+//                sheriffPlayerComponent.reset();
+//                sheriffPlayerComponent.sync();
+//            }
+            if (role.equals(ModRoles.BETTER_VIGILANTE)) {
                 player.giveItemStack(TMMItems.GRENADE.getDefaultStack());
             }
-            if (role.equals(JESTER)) {
+            if (role.equals(ModRoles.JESTER)) {
                 player.giveItemStack(ModItems.FAKE_KNIFE.getDefaultStack());
                 player.giveItemStack(ModItems.FAKE_REVOLVER.getDefaultStack());
             }
-            if (role.equals(CONDUCTOR)) {
+            if (role.equals(ModRoles.CONDUCTOR)) {
                 player.giveItemStack(ModItems.MASTER_KEY.getDefaultStack());
                 player.giveItemStack(Items.SPYGLASS.getDefaultStack());
             }
-            if (role.equals(AWESOME_BINGLUS)) {
+            if (role.equals(ModRoles.AWESOME_BINGLUS)) {
                 player.giveItemStack(TMMItems.NOTE.getDefaultStack());
                 player.giveItemStack(TMMItems.NOTE.getDefaultStack());
                 player.giveItemStack(TMMItems.NOTE.getDefaultStack());
@@ -397,9 +377,9 @@ public class Noellesroles implements ModInitializer {
         });
         ServerTickEvents.END_SERVER_TICK.register(((server) -> {
             if (server.getPlayerManager().getCurrentPlayerCount() >= 8) {
-                Harpymodloader.setRoleMaximum(VULTURE,1);
+                Harpymodloader.setRoleMaximum(ModRoles.VULTURE,1);
             } else {
-                Harpymodloader.setRoleMaximum(VULTURE,0);
+                Harpymodloader.setRoleMaximum(ModRoles.VULTURE,0);
             }
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(server.getOverworld());
             if (gameWorldComponent.isRunning()) {
@@ -418,14 +398,14 @@ public class Noellesroles implements ModInitializer {
         }));
         if (!NoellesRolesConfig.HANDLER.instance().shitpostRoles) {
             HarpyModLoaderConfig.HANDLER.load();
-            if (!HarpyModLoaderConfig.HANDLER.instance().disabled.contains(AWESOME_BINGLUS_ID.getPath())) {
-                HarpyModLoaderConfig.HANDLER.instance().disabled.add(AWESOME_BINGLUS_ID.getPath());
+            if (!HarpyModLoaderConfig.HANDLER.instance().disabled.contains(ModRoles.AWESOME_BINGLUS_ID.getPath())) {
+                HarpyModLoaderConfig.HANDLER.instance().disabled.add(ModRoles.AWESOME_BINGLUS_ID.getPath());
             }
-            if (!HarpyModLoaderConfig.HANDLER.instance().disabled.contains(BETTER_VIGILANTE_ID.getPath())) {
-                HarpyModLoaderConfig.HANDLER.instance().disabled.add(BETTER_VIGILANTE_ID.getPath());
+            if (!HarpyModLoaderConfig.HANDLER.instance().disabled.contains(ModRoles.BETTER_VIGILANTE_ID.getPath())) {
+                HarpyModLoaderConfig.HANDLER.instance().disabled.add(ModRoles.BETTER_VIGILANTE_ID.getPath());
             }
-            if (!HarpyModLoaderConfig.HANDLER.instance().disabled.contains(THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID.getPath())) {
-                HarpyModLoaderConfig.HANDLER.instance().disabled.add(THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID.getPath());
+            if (!HarpyModLoaderConfig.HANDLER.instance().disabled.contains(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID.getPath())) {
+                HarpyModLoaderConfig.HANDLER.instance().disabled.add(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID.getPath());
             }
             HarpyModLoaderConfig.HANDLER.save();
         }
@@ -434,55 +414,55 @@ public class Noellesroles implements ModInitializer {
 
 
     public void registerPackets() {
-        ServerPlayNetworking.registerGlobalReceiver(ThiefStealC2SPacket.ID, (payload, context) -> {
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(context.player().getWorld());
-            if (!gameWorldComponent.isRole(context.player(), Noellesroles.THIEF)) {
-                return;
-            }
-            AbilityPlayerComponent abilityComponent = AbilityPlayerComponent.KEY.get(context.player());
-            if (abilityComponent.cooldown > 0) {
-                return;
-            }
-            ThiefPlayerComponent thiefComponent = ThiefPlayerComponent.KEY.get(context.player());
-            boolean hasBlackout = thiefComponent.hasBlackoutEffect;
-            PlayerEntity targetPlayer = context.player().getWorld().getPlayerByUuid(payload.target());
-            if (targetPlayer == null) {
-                return;
-            }
-            if (context.player().distanceTo(targetPlayer) > 2.0D) {
-                return;
-            }
-            boolean isTargetAlive = GameFunctions.isPlayerAliveAndSurvival(targetPlayer);
-            if (!hasBlackout && isTargetAlive) {
-                return;
-            }
-            if (hasBlackout && !isTargetAlive) {
-                return;
-            }
-            PlayerShopComponent targetShop = PlayerShopComponent.KEY.get(targetPlayer);
-
-            int stolenCoins = targetShop.balance;
-            if (stolenCoins > 0) {
-                PlayerShopComponent thiefShop = PlayerShopComponent.KEY.get(context.player());
-                targetShop.balance = 0;
-                thiefShop.balance = thiefShop.balance + stolenCoins;
-                targetShop.sync();
-                thiefShop.sync();
-                abilityComponent.setCooldown(GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().thiefStealCooldown));
-                context.player().sendMessage(Text.translatable("message.thief.stole", stolenCoins), true);
-                thiefComponent.deactivateBlackout();
-
-                if (context.player() instanceof ServerPlayerEntity serverPlayer) {
-                    serverPlayer.networkHandler.sendPacket(new PlaySoundS2CPacket(
-                        Registries.SOUND_EVENT.getEntry(TMMSounds.UI_SHOP_BUY),
-                        SoundCategory.PLAYERS,
-                        serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
-                        1.0F, 0.9F + serverPlayer.getRandom().nextFloat() * 0.2F,
-                        serverPlayer.getRandom().nextLong()
-                    ));
-                }
-            }
-        });
+//        ServerPlayNetworking.registerGlobalReceiver(ThiefStealC2SPacket.ID, (payload, context) -> {
+//            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(context.player().getWorld());
+//            if (!gameWorldComponent.isRole(context.player(), ModRoles.THIEF)) {
+//                return;
+//            }
+//            AbilityPlayerComponent abilityComponent = AbilityPlayerComponent.KEY.get(context.player());
+//            if (abilityComponent.cooldown > 0) {
+//                return;
+//            }
+//            ThiefPlayerComponent thiefComponent = ThiefPlayerComponent.KEY.get(context.player());
+//            boolean hasBlackout = thiefComponent.hasBlackoutEffect;
+//            PlayerEntity targetPlayer = context.player().getWorld().getPlayerByUuid(payload.target());
+//            if (targetPlayer == null) {
+//                return;
+//            }
+//            if (context.player().distanceTo(targetPlayer) > 2.0D) {
+//                return;
+//            }
+//            boolean isTargetAlive = GameFunctions.isPlayerAliveAndSurvival(targetPlayer);
+//            if (!hasBlackout && isTargetAlive) {
+//                return;
+//            }
+//            if (hasBlackout && !isTargetAlive) {
+//                return;
+//            }
+//            PlayerShopComponent targetShop = PlayerShopComponent.KEY.get(targetPlayer);
+//
+//            int stolenCoins = targetShop.balance;
+//            if (stolenCoins > 0) {
+//                PlayerShopComponent thiefShop = PlayerShopComponent.KEY.get(context.player());
+//                targetShop.balance = 0;
+//                thiefShop.balance = thiefShop.balance + stolenCoins;
+//                targetShop.sync();
+//                thiefShop.sync();
+//                abilityComponent.setCooldown(GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().thiefStealCooldown));
+//                context.player().sendMessage(Text.translatable("message.thief.stole", stolenCoins), true);
+//                thiefComponent.deactivateBlackout();
+//
+//                if (context.player() instanceof ServerPlayerEntity serverPlayer) {
+//                    serverPlayer.networkHandler.sendPacket(new PlaySoundS2CPacket(
+//                        Registries.SOUND_EVENT.getEntry(TMMSounds.UI_SHOP_BUY),
+//                        SoundCategory.PLAYERS,
+//                        serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
+//                        1.0F, 0.9F + serverPlayer.getRandom().nextFloat() * 0.2F,
+//                        serverPlayer.getRandom().nextLong()
+//                    ));
+//                }
+//            }
+//        });
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.MORPH_PACKET, (payload, context) -> {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(context.player().getWorld());
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(context.player());
@@ -491,14 +471,14 @@ public class Noellesroles implements ModInitializer {
             if (abilityPlayerComponent.cooldown > 0) return;
             if (context.player().getWorld().getPlayerByUuid(payload.player()) == null) return;
 
-            if (gameWorldComponent.isRole(context.player(), VOODOO)) {
+            if (gameWorldComponent.isRole(context.player(), ModRoles.VOODOO)) {
                 abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().voodooCooldown);
                 abilityPlayerComponent.sync();
                 VoodooPlayerComponent voodooPlayerComponent = (VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(context.player());
                 voodooPlayerComponent.setTarget(payload.player());
 
             }
-            if (gameWorldComponent.isRole(context.player(), MORPHLING)) {
+            if (gameWorldComponent.isRole(context.player(), ModRoles.MORPHLING)) {
                 MorphlingPlayerComponent morphlingPlayerComponent = (MorphlingPlayerComponent) MorphlingPlayerComponent.KEY.get(context.player());
                 morphlingPlayerComponent.startMorph(payload.player());
             }
@@ -507,7 +487,7 @@ public class Noellesroles implements ModInitializer {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(context.player().getWorld());
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(context.player());
 
-            if (gameWorldComponent.isRole(context.player(), VULTURE) && GameFunctions.isPlayerAliveAndSurvival(context.player())) {
+            if (gameWorldComponent.isRole(context.player(), ModRoles.VULTURE) && GameFunctions.isPlayerAliveAndSurvival(context.player())) {
                 if (abilityPlayerComponent.cooldown > 0) return;
                 abilityPlayerComponent.sync();
                 List<PlayerBodyEntity> playerBodyEntities = context.player().getWorld().getEntitiesByType(TypeFilter.equals(PlayerBodyEntity.class), context.player().getBoundingBox().expand(10), (playerBodyEntity -> {
@@ -524,7 +504,7 @@ public class Noellesroles implements ModInitializer {
                         context.player().addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 40, 2));
                         if (vulturePlayerComponent.bodiesEaten >= vulturePlayerComponent.bodiesRequired) {
                             ArrayList<Role> shuffledKillerRoles = new ArrayList<>(TMMRoles.ROLES);
-                            shuffledKillerRoles.removeIf(role ->role.identifier().equals(EXECUTIONER_ID) || Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller() || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()));
+                            shuffledKillerRoles.removeIf(role ->role.identifier().equals(ModRoles.EXECUTIONER_ID) || Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller() || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()));
                             if (shuffledKillerRoles.isEmpty()) shuffledKillerRoles.add(TMMRoles.KILLER);
                             Collections.shuffle(shuffledKillerRoles);
 
@@ -548,7 +528,7 @@ public class Noellesroles implements ModInitializer {
         });
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.SWAP_PACKET, (payload, context) -> {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(context.player().getWorld());
-            if (gameWorldComponent.isRole(context.player(), SWAPPER)) {
+            if (gameWorldComponent.isRole(context.player(), ModRoles.SWAPPER)) {
                 if (payload.player() != null) {
                     if (context.player().getWorld().getPlayerByUuid(payload.player()) != null) {
                         if (payload.player2() != null) {
@@ -578,7 +558,7 @@ public class Noellesroles implements ModInitializer {
             }
 
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(context.player().getWorld());
-            if (gameWorldComponent.isRole(context.player(), EXECUTIONER)) {
+            if (gameWorldComponent.isRole(context.player(), ModRoles.EXECUTIONER)) {
                 ExecutionerPlayerComponent executionerPlayerComponent = ExecutionerPlayerComponent.KEY.get(context.player());
                 if (executionerPlayerComponent.targetSelected) return;
 
@@ -602,7 +582,7 @@ public class Noellesroles implements ModInitializer {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(context.player().getWorld());
             PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
 
-            if (gameWorldComponent.isRole(context.player(), BROADCASTER)) {
+            if (gameWorldComponent.isRole(context.player(), ModRoles.BROADCASTER)) {
                 if (playerShopComponent.balance < 150) {
                     context.player().sendMessage(Text.translatable("message.noellesroles.insufficient_funds"), true);
                     if (context.player() instanceof ServerPlayerEntity) {
@@ -631,7 +611,7 @@ public class Noellesroles implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.ABILITY_PACKET, (payload, context) -> {
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(context.player());
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(context.player().getWorld());
-            if (gameWorldComponent.isRole(context.player(), RECALLER) && abilityPlayerComponent.cooldown <= 0) {
+            if (gameWorldComponent.isRole(context.player(), ModRoles.RECALLER) && abilityPlayerComponent.cooldown <= 0) {
                 RecallerPlayerComponent recallerPlayerComponent = RecallerPlayerComponent.KEY.get(context.player());
                 PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
                 if (!recallerPlayerComponent.placed) {
@@ -646,10 +626,10 @@ public class Noellesroles implements ModInitializer {
                 }
 
             }
-            if (gameWorldComponent.isRole(context.player(), PHANTOM) && abilityPlayerComponent.cooldown <= 0) {
+            if (gameWorldComponent.isRole(context.player(), ModRoles.PHANTOM) && abilityPlayerComponent.cooldown <= 0) {
                 context.player().addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, NoellesRolesConfig.HANDLER.instance().phantomInvisibilityDuration * 20, 0, true, false, true));
                 abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().phantomInvisibilityCooldown);
-            } else if (gameWorldComponent.isRole(context.player(), THIEF) && abilityPlayerComponent.cooldown <= 0) {
+            } else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF) && abilityPlayerComponent.cooldown <= 0) {
 
             }
         });

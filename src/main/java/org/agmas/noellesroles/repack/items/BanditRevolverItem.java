@@ -6,6 +6,8 @@ import dev.doctor4t.trainmurdermystery.client.particle.HandParticle;
 import dev.doctor4t.trainmurdermystery.client.render.TMMRenderLayers;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
+import dev.doctor4t.trainmurdermystery.util.GunShootPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -32,28 +34,30 @@ public class BanditRevolverItem extends Item {
     }
 
     public TypedActionResult<ItemStack> use(@NotNull World world, @NotNull PlayerEntity user, Hand hand) {
+        if (!user.isCreative()) {
+            user.getItemCooldownManager().set(HSRItems.BANDIT_REVOLVER, 20);
+        }
         if (world.isClient) {
-            if (!user.isCreative()) {
-                user.getItemCooldownManager().set(HSRItems.BANDIT_REVOLVER, 20);
-            }
 
-            HitResult collision = getGunTarget(user);
-            if (collision instanceof EntityHitResult) {
-                EntityHitResult entityHitResult = (EntityHitResult)collision;
-                Entity target = entityHitResult.getEntity();
-                this.dropChance += 0.2;
 
-                if (user instanceof ServerPlayerEntity serverPlayer) {
-                    BanditRevolverShootPayload.extracted(serverPlayer, target);
-                }
-            } else {
-                //BanditRevolverShootPayload.extracted(serverPlayer, target);
-            }
+
 
             user.setPitch(user.getPitch() - 4.0F);
             spawnHandParticle();
-        }
 
+        HitResult collision = getGunTarget(user);
+        if (user instanceof ServerPlayerEntity serverPlayer) {
+            if (collision instanceof EntityHitResult) {
+                EntityHitResult entityHitResult = (EntityHitResult) collision;
+                Entity target = entityHitResult.getEntity();
+                this.dropChance += 0.3;
+                ClientPlayNetworking.send(new BanditRevolverShootPayload(target.getId()));
+
+            } else {
+                ClientPlayNetworking.send(new BanditRevolverShootPayload(-1));
+            }
+        }
+        }
         return TypedActionResult.consume(user.getStackInHand(hand));
     }
 

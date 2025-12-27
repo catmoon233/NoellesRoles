@@ -11,14 +11,7 @@ base {
 }
 
 loom {
-    splitEnvironmentSourceSets()
 
-    mods {
-        "noellesroles" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
-        }
-    }
 }
 
 fabricApi {

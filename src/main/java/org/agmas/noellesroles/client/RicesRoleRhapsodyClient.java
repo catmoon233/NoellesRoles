@@ -1,0 +1,579 @@
+package org.agmas.noellesroles.client;
+
+import org.agmas.noellesroles.AbilityPlayerComponent;
+import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.ModEntities;
+import org.agmas.noellesroles.Noellesroles;
+
+import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
+import org.agmas.noellesroles.client.renderer.PuppeteerBodyEntityRenderer;
+import org.agmas.noellesroles.client.screen.ConspiratorScreen;
+import org.agmas.noellesroles.client.screen.DetectiveInspectScreen;
+import org.agmas.noellesroles.client.screen.PostmanHandledScreen;
+import org.agmas.noellesroles.client.screen.TelegrapherScreen;
+
+import org.agmas.noellesroles.component.*;
+import org.agmas.noellesroles.item.ConspiracyPageItem;
+import org.agmas.noellesroles.packet.*;
+import org.agmas.noellesroles.role.ModRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
+import org.agmas.noellesroles.screen.ModScreenHandlers;
+import org.lwjgl.glfw.GLFW;
+
+/**
+ * Rice's Role Rhapsody - 客户端初始化
+ * 
+ * 负责：
+ * 1. 注册按键绑定
+ * 2. 注册客户端事件
+ * 3. 注册渲染器
+ * 4. 注册物品提示
+ */
+public class RicesRoleRhapsodyClient implements ClientModInitializer {
+
+    // ==================== 按键绑定 ====================
+    // 技能使用按键（默认 G 键）
+    public static KeyBinding abilityKeyBinding;
+    
+    // 跟踪者窥视状态
+    private static boolean stalkerGazingLastTick = false;
+    // 跟踪者蓄力状态
+    private static boolean stalkerChargingLastTick = false;
+    // 慕恋者窥视状态
+    private static boolean admirerGazingLastTick = false;
+
+    // ==================== 客户端状态 ====================
+    // 当前选中的目标玩家（用于需要选择目标的技能）
+    public static PlayerEntity targetPlayer;
+
+    @Override
+    public void onInitializeClient() {
+
+        // 1. 注册按键绑定
+        registerKeyBindings();
+
+        // 2. 注册客户端事件
+        registerClientEvents();
+
+        // 3. 注册物品提示（如果有自定义物品）
+        registerItemTooltips();
+
+        // 4. 设置物品回调
+        setupItemCallbacks();
+
+        // 5. 注册实体渲染器
+        registerEntityRenderers();
+
+        // 6. 注册Screen
+        registerScreens();
+
+    }
+
+    /**
+     * 注册按键绑定
+     */
+    private void registerKeyBindings() {
+        // 技能按键 - 默认 G 键
+        abilityKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key." + Noellesroles.MOD_ID + ".ability", // 翻译键
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_G, // 默认按键
+                "category.trainmurdermystery.keybinds" // 分类（使用游戏本体的分类）
+        ));
+    }
+
+    /**
+     * 注册客户端事件
+     */
+    private void registerClientEvents() {
+        // 每 tick 检查按键状态
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player == null)
+                return;
+
+            // 检查技能按键是否被按下
+            while (abilityKeyBinding.wasPressed()) {
+                onAbilityKeyPressed(client);
+            }
+            
+            // 跟踪者持续按键检测（窥视和蓄力）
+            handleStalkerContinuousInput(client);
+            
+            // 慕恋者持续按键检测（窥视）
+            handleAdmirerContinuousInput(client);
+        });
+
+        // 检查书页物品使用 - 通过检测物品使用来打开GUI
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player == null || client.world == null)
+                return;
+
+            // 检查是否是阴谋家
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.world);
+            if (!gameWorld.isRole(client.player, ModRoles.CONSPIRATOR))
+                return;
+
+            // 检查是否正在使用书页物品（通过检测使用状态）
+            // 书页物品的使用会在服务端验证后触发
+        });
+    }
+
+    /**
+     * 设置物品回调函数
+     */
+    private void setupItemCallbacks() {
+        // 设置阴谋之书页的GUI打开回调
+        ConspiracyPageItem.openScreenCallback = () -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            if (client.player == null)
+                return;
+            client.setScreen(new ConspiratorScreen());
+        };
+    }
+
+    /**
+     * 打开阴谋家选择屏幕
+     * 由物品使用触发
+     */
+    public static void openConspiratorScreen() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null)
+            return;
+
+        // 验证玩家持有书页
+        ItemStack mainHand = client.player.getStackInHand(Hand.MAIN_HAND);
+        ItemStack offHand = client.player.getStackInHand(Hand.OFF_HAND);
+
+        if (mainHand.isOf(ModItems.CONSPIRACY_PAGE) || offHand.isOf(ModItems.CONSPIRACY_PAGE)) {
+            client.setScreen(new ConspiratorScreen());
+        }
+    }
+
+    /**
+     * 技能按键被按下时的处理
+     */
+    private void onAbilityKeyPressed(MinecraftClient client) {
+        if (client.player == null)
+            return;
+
+        // 获取游戏世界组件
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.getWorld());
+
+        // 获取玩家的技能组件
+        AbilityPlayerComponent abilityComponent = AbilityPlayerComponent.KEY.get(client.player);
+
+        // ==================== 傀儡师：优先检测操控假人状态 ====================
+        // 必须放在所有角色之前，因为傀儡师操控假人时角色会临时变成其他杀手
+        // 如果不优先检测，假人角色的按键处理会拦截G键
+        PuppeteerPlayerComponent puppeteerCompEarly = PuppeteerPlayerComponent.KEY.get(client.player);
+        if (puppeteerCompEarly.isControllingPuppet) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+            
+            // 正在操控假人，按G返回本体
+            ClientPlayNetworking.send(new PuppeteerC2SPacket(PuppeteerC2SPacket.Action.RETURN_TO_BODY));
+            return;
+        }
+
+        // ==================== 电报员：打开消息编辑界面 ====================
+        if (gameWorld.isRole(client.player, ModRoles.TELEGRAPHER)) {
+            // 检查是否还有剩余次数
+            TelegrapherPlayerComponent telegrapherComponent = TelegrapherPlayerComponent.KEY.get(client.player);
+            if (telegrapherComponent.hasUsesRemaining()) {
+                client.setScreen(new TelegrapherScreen());
+            }
+            return;
+        }
+
+        // ==================== 拳击手：激活钢筋铁骨技能 ====================
+        if (gameWorld.isRole(client.player, ModRoles.BOXER)) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+            
+            BoxerPlayerComponent boxerComponent = BoxerPlayerComponent.KEY.get(client.player);
+            // 检查技能是否可用（客户端显示提示）
+            if (boxerComponent.canUseAbility()) {
+                // 发送网络包到服务端激活技能
+                ClientPlayNetworking.send(new BoxerAbilityC2SPacket());
+            } else if (boxerComponent.cooldown > 0) {
+                // 显示冷却提示
+                client.player.sendMessage(
+                    net.minecraft.text.Text.translatable("message.noellesroles.boxer.on_cooldown",
+                        String.format("%.1f", boxerComponent.getCooldownSeconds())),
+                    true
+                );
+            }
+            return;
+        }
+
+        // ==================== 运动员：激活疾跑技能 ====================
+        if (gameWorld.isRole(client.player, ModRoles.ATHLETE)) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+            
+            AthletePlayerComponent athleteComponent = AthletePlayerComponent.KEY.get(client.player);
+            // 检查技能是否可用（客户端显示提示）
+            if (athleteComponent.canUseAbility()) {
+                // 发送网络包到服务端激活技能
+                ClientPlayNetworking.send(new AthleteAbilityC2SPacket());
+            } else if (athleteComponent.cooldown > 0) {
+                // 显示冷却提示
+                client.player.sendMessage(
+                    net.minecraft.text.Text.translatable("message.noellesroles.athlete.on_cooldown",
+                        String.format("%.1f", athleteComponent.getCooldownSeconds())),
+                    true
+                );
+            }
+            return;
+        }
+
+        // ==================== 慕恋者：窥视积能量 ====================
+        if (gameWorld.isRole(client.player, ModRoles.ADMIRER) ||
+            AdmirerPlayerComponent.KEY.get(client.player).isActiveAdmirer()) {
+            AdmirerPlayerComponent admirerComp = AdmirerPlayerComponent.KEY.get(client.player);
+            
+            // 按G开始/停止窥视
+            if (!admirerComp.isGazing) {
+                ClientPlayNetworking.send(new AdmirerGazeC2SPacket(true));
+            } else {
+                ClientPlayNetworking.send(new AdmirerGazeC2SPacket(false));
+            }
+            return;
+        }
+        
+        // ==================== 跟踪者：窥视和突进 ====================
+        if (gameWorld.isRole(client.player, ModRoles.STALKER) ||
+            StalkerPlayerComponent.KEY.get(client.player).isActiveStalker()) {
+            StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(client.player);
+            
+            // 一阶段和二阶段：按G开始/停止窥视
+            if (stalkerComp.phase <= 2) {
+                if (!stalkerComp.isGazing) {
+                    ClientPlayNetworking.send(new StalkerGazeC2SPacket(true));
+                } else {
+                    ClientPlayNetworking.send(new StalkerGazeC2SPacket(false));
+                }
+            }
+            // 三阶段突进由鼠标右键控制，这里不处理
+            return;
+        }
+        
+        // ==================== 私家侦探：审查玩家物品栏 ====================
+        if (gameWorld.isRole(client.player, ModRoles.DETECTIVE)) {
+            // 使用准星检测目标玩家
+            net.minecraft.util.hit.HitResult hitResult = client.crosshairTarget;
+            if (hitResult != null && hitResult.getType() == net.minecraft.util.hit.HitResult.Type.ENTITY) {
+                net.minecraft.util.hit.EntityHitResult entityHit = (net.minecraft.util.hit.EntityHitResult) hitResult;
+                if (entityHit.getEntity() instanceof PlayerEntity targetPlayer) {
+                    // 发送审查请求到服务端
+                    ClientPlayNetworking.send(new org.agmas.noellesroles.packet.DetectiveC2SPacket(targetPlayer.getUuid()));
+                }
+            }
+            return;
+        }
+
+        // ==================== 设陷者：放置灾厄印记陷阱 ====================
+        if (gameWorld.isRole(client.player, ModRoles.TRAPPER)) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+            
+            TrapperPlayerComponent trapperComponent = TrapperPlayerComponent.KEY.get(client.player);
+            // 检查技能是否可用
+            if (trapperComponent.canPlaceTrap()) {
+                // 发送网络包到服务端放置陷阱
+                ClientPlayNetworking.send(new TrapperC2SPacket());
+            } else if (trapperComponent.cooldown > 0) {
+                // 显示冷却提示
+                client.player.sendMessage(
+                    net.minecraft.text.Text.translatable("message.noellesroles.trapper.on_cooldown",
+                        String.format("%.1f", trapperComponent.getCooldownSeconds())),
+                    true
+                );
+            }
+            return;
+        }
+
+        // ==================== 明星：聚光灯技能 ====================
+        if (gameWorld.isRole(client.player, ModRoles.STAR)) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+            
+            StarPlayerComponent starComponent = StarPlayerComponent.KEY.get(client.player);
+            // 检查技能是否可用
+            if (starComponent.canUseAbility()) {
+                // 发送网络包到服务端激活技能
+                ClientPlayNetworking.send(new StarAbilityC2SPacket());
+            } else if (starComponent.abilityCooldown > 0) {
+                // 显示冷却提示
+                client.player.sendMessage(
+                    net.minecraft.text.Text.translatable("message.noellesroles.star.on_cooldown",
+                        String.format("%.0f", starComponent.getCooldownSeconds())),
+                    true
+                );
+            }
+            return;
+        }
+
+        // ==================== 歌手：播放音乐技能 ====================
+        if (gameWorld.isRole(client.player, ModRoles.SINGER)) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+            
+            SingerPlayerComponent singerComponent = SingerPlayerComponent.KEY.get(client.player);
+            // 检查技能是否可用
+            if (singerComponent.canUseAbility()) {
+                // 发送网络包到服务端激活技能
+                ClientPlayNetworking.send(new SingerAbilityC2SPacket());
+            } else if (singerComponent.abilityCooldown > 0) {
+                // 显示冷却提示
+                client.player.sendMessage(
+                    net.minecraft.text.Text.translatable("message.noellesroles.singer.on_cooldown",
+                        String.format("%.0f", singerComponent.getCooldownSeconds())),
+                    true
+                );
+            }
+            return;
+        }
+
+        // ==================== 傀儡师：使用假人技能 ====================
+        // 注意：操控假人时的返回本体逻辑已在方法开头优先处理
+        if (gameWorld.isRole(client.player, ModRoles.PUPPETEER) ||
+            PuppeteerPlayerComponent.KEY.get(client.player).isActivePuppeteer()) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+            
+            PuppeteerPlayerComponent puppeteerComp = PuppeteerPlayerComponent.KEY.get(client.player);
+            
+            // 阶段一：收集者模式，提示玩家需要收集更多尸体
+            if (puppeteerComp.phase == 1) {
+                // 计算阈值
+                int totalPlayers = client.world.getPlayers().size();
+                int threshold = Math.max(1, totalPlayers / 6);
+                
+                client.player.sendMessage(
+                    net.minecraft.text.Text.translatable("message.noellesroles.puppeteer.collect_more",
+                        puppeteerComp.collectedBodies, threshold),
+                    true
+                );
+                return;
+            }
+            
+            // 阶段二：使用假人技能
+            if (puppeteerComp.phase == 2) {
+                if (puppeteerComp.canUsePuppetAbility()) {
+                    ClientPlayNetworking.send(new PuppeteerC2SPacket(PuppeteerC2SPacket.Action.USE_PUPPET));
+                } else if (puppeteerComp.abilityCooldown > 0) {
+                    client.player.sendMessage(
+                        net.minecraft.text.Text.translatable("message.noellesroles.puppeteer.ability_cooldown",
+                            String.format("%.0f", puppeteerComp.getAbilityCooldownSeconds())),
+                        true
+                    );
+                } else if (puppeteerComp.getRemainingPuppetUses() <= 0) {
+                    client.player.sendMessage(
+                        net.minecraft.text.Text.translatable("message.noellesroles.puppeteer.no_puppets"),
+                        true
+                    );
+                }
+            }
+            return;
+        }
+
+        // ==================== 心理学家：心理治疗技能 ====================
+        if (gameWorld.isRole(client.player, ModRoles.PSYCHOLOGIST)) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+            
+            PsychologistPlayerComponent psychComponent = PsychologistPlayerComponent.KEY.get(client.player);
+            
+            // 如果正在治疗，按G取消
+            if (psychComponent.isHealing) {
+                // 发送空UUID取消治疗
+                psychComponent.stopHealing("message.noellesroles.psychologist.cancelled");
+                return;
+            }
+            
+            // 检查技能是否可用
+            if (!psychComponent.canUseAbility()) {
+                if (psychComponent.cooldown > 0) {
+                    // 显示冷却提示
+                    client.player.sendMessage(
+                        net.minecraft.text.Text.translatable("message.noellesroles.psychologist.on_cooldown",
+                            psychComponent.getCooldownSeconds()),
+                        true
+                    );
+                } else {
+                    // san值不足
+                    client.player.sendMessage(
+                        net.minecraft.text.Text.translatable("message.noellesroles.psychologist.not_full_san"),
+                        true
+                    );
+                }
+                return;
+            }
+            
+            // 使用准星检测目标玩家
+            net.minecraft.util.hit.HitResult hitResult = client.crosshairTarget;
+            if (hitResult != null && hitResult.getType() == net.minecraft.util.hit.HitResult.Type.ENTITY) {
+                net.minecraft.util.hit.EntityHitResult entityHit = (net.minecraft.util.hit.EntityHitResult) hitResult;
+                if (entityHit.getEntity() instanceof PlayerEntity targetPlayer) {
+                    // 发送治疗请求到服务端
+                    ClientPlayNetworking.send(new PsychologistC2SPacket(targetPlayer.getUuid()));
+                }
+            } else {
+                // 没有瞄准玩家
+                client.player.sendMessage(
+                    net.minecraft.text.Text.translatable("message.noellesroles.psychologist.no_target"),
+                    true
+                );
+            }
+            return;
+        }
+
+        // 检查冷却
+        if (abilityComponent.cooldown > 0) {
+            // 技能还在冷却中，可以显示提示
+            return;
+        }
+
+        // ==================== 示例：根据角色执行不同技能 ====================
+        //
+        // if (gameWorld.isRole(client.player, ModRoles.EXAMPLE_ROLE)) {
+        // // 发送技能使用包到服务端
+        // ClientPlayNetworking.send(new AbilityC2SPacket());
+        // }
+
+        // 默认：发送通用技能包
+        // ClientPlayNetworking.send(new AbilityC2SPacket());
+    }
+    
+    /**
+     * 处理跟踪者持续按键输入
+     * 用于窥视（一二阶段）和蓄力突进（三阶段）
+     */
+    private void handleStalkerContinuousInput(MinecraftClient client) {
+        if (client.player == null) return;
+        
+        StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(client.player);
+        if (!stalkerComp.isActiveStalker()) return;
+        if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+        
+        // 三阶段：鼠标右键蓄力突进
+        if (stalkerComp.phase == 3 && stalkerComp.dashModeActive) {
+            boolean isRightMouseDown = client.options.useKey.isPressed();
+            
+            // 检查玩家手持刀
+            boolean holdingKnife = client.player.getMainHandStack().isOf(
+                dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE);
+            
+            if (holdingKnife) {
+                if (isRightMouseDown && !stalkerChargingLastTick) {
+                    // 开始蓄力
+                    ClientPlayNetworking.send(new StalkerDashC2SPacket(true));
+                } else if (!isRightMouseDown && stalkerChargingLastTick) {
+                    // 释放蓄力
+                    ClientPlayNetworking.send(new StalkerDashC2SPacket(false));
+                }
+                stalkerChargingLastTick = isRightMouseDown;
+            }
+        }
+    }
+
+    /**
+     * 处理慕恋者持续按键输入
+     * 用于窥视积累能量
+     */
+    private void handleAdmirerContinuousInput(MinecraftClient client) {
+        if (client.player == null) return;
+        
+        AdmirerPlayerComponent admirerComp = AdmirerPlayerComponent.KEY.get(client.player);
+        if (!admirerComp.isActiveAdmirer()) return;
+        if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
+        
+        // 检查技能键是否按住
+        boolean isAbilityKeyDown = abilityKeyBinding.isPressed();
+        
+        if (isAbilityKeyDown && !admirerGazingLastTick) {
+            // 开始窥视
+            ClientPlayNetworking.send(new AdmirerGazeC2SPacket(true));
+        } else if (!isAbilityKeyDown && admirerGazingLastTick) {
+            // 停止窥视
+            ClientPlayNetworking.send(new AdmirerGazeC2SPacket(false));
+        }
+        admirerGazingLastTick = isAbilityKeyDown;
+    }
+
+    /**
+     * 注册物品提示
+     */
+    private void registerItemTooltips() {
+        // 示例：为自定义物品添加提示
+        // ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, tooltipType,
+        // list) -> {
+        // if (itemStack.isOf(ModItems.EXAMPLE_ITEM)) {
+        // list.add(Text.translatable("item." + Noellesroles.MOD_ID +
+        // ".example_item.tooltip")
+        // .setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
+        // }
+        // });
+    }
+
+    /**
+     * 注册实体渲染器
+     */
+    private void registerEntityRenderers() {
+        // 烟雾弹实体渲染器 - 使用飞行物品渲染器
+        EntityRendererRegistry.register(ModEntities.SMOKE_GRENADE, FlyingItemEntityRenderer::new);
+
+        // 灾厄印记实体渲染器 - 使用自定义渲染器（对设陷者半透明可见）
+        EntityRendererRegistry.register(ModEntities.CALAMITY_MARK, CalamityMarkEntityRenderer::new);
+
+        // 傀儡本体实体渲染器 - 使用玩家皮肤渲染
+        EntityRendererRegistry.register(ModEntities.PUPPETEER_BODY, PuppeteerBodyEntityRenderer::new);
+    }
+
+    /**
+     * 注册Screen
+     */
+    private void registerScreens() {
+        // 注册邮差传递界面
+        HandledScreens.register(ModScreenHandlers.POSTMAN_SCREEN_HANDLER, PostmanHandledScreen::new);
+        
+        // 注册私家侦探审查界面
+        HandledScreens.register(ModScreenHandlers.DETECTIVE_INSPECT_SCREEN_HANDLER, DetectiveInspectScreen::new);
+    }
+
+    // ==================== 工具方法 ====================
+
+    /**
+     * 获取格式化的冷却时间（秒）
+     */
+    public static String formatCooldown(int ticks) {
+        return String.format("%.1f", ticks / 20.0);
+    }
+
+    /**
+     * 检查当前玩家是否有指定角色
+     */
+    public static boolean hasRole(dev.doctor4t.trainmurdermystery.api.Role role) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null)
+            return false;
+
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.getWorld());
+        return gameWorld.isRole(client.player, role);
+    }
+}
