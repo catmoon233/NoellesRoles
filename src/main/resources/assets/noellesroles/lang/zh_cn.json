@@ -69,7 +69,7 @@
   "item.noellesroles.bandit_revolver": "匪徒手枪",
   "item.noellesroles.antidote": "解药",
   "item.noellesroles.toxin": "毒药",
-  "Morphling.Tip": "剩余 %s 秒w",
+  "Morphling.Tip": "剩余 %s 秒",
   "item.noellesroles.master_key": "万能钥匙",
   "item.noellesroles.sheriff_gun_maintenance": "枪械保养工具",
   "item.noellesroles.sheriff_gun_maintenance.tooltip": "右键使用来维护你的手枪\n恢复手枪耐久度并重置冷却时间\n使用后获得150金币",
@@ -92,6 +92,8 @@
   "tip.vulture": "已吃掉 %s/%s 具尸体。",
   "announcement.goals.thief": "从其他玩家那里偷取金币。",
   "announcement.role.thief": "小偷",
+  "announcement.role.bandit": "绑匪",
+  "announcement.role.poisoner": "毒师",
   "message.thief.honor_purchased": "购买了小偷的荣誉！",
   "message.thief.stole": "偷到了 %s 个金币！"
 }

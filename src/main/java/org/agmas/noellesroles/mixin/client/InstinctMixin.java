@@ -100,6 +100,11 @@ public abstract class InstinctMixin {
                     cir.setReturnValue(ModRoles.EXECUTIONER.color());
                     cir.cancel();
                 }
+                if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, ModRoles.POSTMAN) && TMMClient.isPlayerAliveAndInSurvival()) {
+                    cir.setReturnValue(ModRoles.POSTMAN.color());
+                    cir.cancel();
+                }
+
             }
         }
     }

@@ -37,7 +37,7 @@ public class LobbyCreditsHudMixin {
             TextRenderer renderer = this.client.textRenderer;
             
             // 扩展职业内容提示信息
-            Text infoLine = Text.literal("职业扩展具体可查看模组页面");
+            Text infoLine = Text.literal("职业扩展具体可查看群公告文档");
             
             // 计算右下角位置
             int screenWidth = context.getScaledWindowWidth();

@@ -8,7 +8,6 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -30,11 +29,10 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.screen.DetectiveInspectScreenHandler;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
 import org.agmas.noellesroles.screen.PostmanScreenHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
+import static org.agmas.noellesroles.Noellesroles.LOGGER;
 import static org.agmas.noellesroles.Noellesroles.MOD_ID;
 
 /**
@@ -71,58 +69,78 @@ public class RicesRoleRhapsody implements ModInitializer {
     public static final CustomPayload.Id<SingerAbilityC2SPacket> SINGER_ABILITY_PACKET = SingerAbilityC2SPacket.ID;
     public static final CustomPayload.Id<PsychologistC2SPacket> PSYCHOLOGIST_PACKET = PsychologistC2SPacket.ID;
     public static final CustomPayload.Id<PuppeteerC2SPacket> PUPPETEER_PACKET = PuppeteerC2SPacket.ID;
-    
-    // ==================== 阴谋家商店 ====================
-    public static ArrayList<ShopEntry> CONSPIRATOR_SHOP = new ArrayList<>();
-    
-    // ==================== 滑头鬼商店 ====================
-    public static ArrayList<ShopEntry> SLIPPERY_GHOST_SHOP = new ArrayList<>();
-    
-    // ==================== 工程师商店 ====================
-    public static ArrayList<ShopEntry> ENGINEER_SHOP = new ArrayList<>();
-    
-    // ==================== 邮差商店 ====================
-    public static ArrayList<ShopEntry> POSTMAN_SHOP = new ArrayList<>();
 
     @Override
     public void onInitialize() {
         
+//        // 1. 初始化原版角色列表（用于后续判断）
+//        initVanillaRoles();
+//
+//        // 2. 注册自定义角色
+//        ModRoles.init();
+//
+//        // 3. 注册物品
+//        ModItems.init();
+//
+//        // 4. 注册实体
+//        ModEntities.init();
+//
+//        // 5. 注册 ScreenHandlers
+//        ModScreenHandlers.init();
+//
+//        // 6. 初始化商店
+//
+//
+//        // 7. 注册网络包（如果有自定义技能需要客户端-服务端通信）
+//        registerPackets();
+//
+//        // 8. 注册事件监听
+//        registerEvents();
+//
+//        // 9. 加载配置（如果使用 YACL）
+//        // ModConfig.HANDLER.load();
+//
+//        // 10. 注册傀儡师尸体收集事件
+//        registerPuppeteerBodyCollect();
+    }
+    public static void onInitialize1() {
+
         // 1. 初始化原版角色列表（用于后续判断）
         initVanillaRoles();
-        
+
         // 2. 注册自定义角色
         ModRoles.init();
-        
+
         // 3. 注册物品
         ModItems.init();
-        
+
         // 4. 注册实体
         ModEntities.init();
-        
+
         // 5. 注册 ScreenHandlers
         ModScreenHandlers.init();
-        
+
         // 6. 初始化商店
 
-        
+
         // 7. 注册网络包（如果有自定义技能需要客户端-服务端通信）
         registerPackets();
-        
+
         // 8. 注册事件监听
         registerEvents();
-        
+
         // 9. 加载配置（如果使用 YACL）
         // ModConfig.HANDLER.load();
-        
+
         // 10. 注册傀儡师尸体收集事件
         registerPuppeteerBodyCollect();
     }
-    
+
     /**
      * 注册傀儡师尸体收集事件
      * 使用 Fabric API 的 UseEntityCallback 代替 Mixin
      */
-    private void registerPuppeteerBodyCollect() {
+    private static void registerPuppeteerBodyCollect() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             // 只在服务端处理
             if (world.isClient()) return net.minecraft.util.ActionResult.PASS;
@@ -165,7 +183,7 @@ public class RicesRoleRhapsody implements ModInitializer {
     /**
      * 初始化原版角色列表
      */
-    private void initVanillaRoles() {
+    private static void initVanillaRoles() {
         VANILLA_ROLES.add(TMMRoles.KILLER);
         VANILLA_ROLES.add(TMMRoles.VIGILANTE);
         VANILLA_ROLES.add(TMMRoles.CIVILIAN);
@@ -177,100 +195,14 @@ public class RicesRoleRhapsody implements ModInitializer {
         VANILLA_ROLE_IDS.add(TMMRoles.LOOSE_END.identifier());
     }
     
-    /**
-     * 初始化商店
-     */
-    public static void initShops() {
-        CONSPIRATOR_SHOP.add(new ShopEntry(
-            ModItems.CONSPIRACY_PAGE.getDefaultStack(),
-            125,
-            ShopEntry.Type.TOOL
-        ));
-        
-        CONSPIRATOR_SHOP.add(new ShopEntry(
-            dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE.getDefaultStack(),
-            100,
-            ShopEntry.Type.TOOL
-        ));
-        
-        CONSPIRATOR_SHOP.add(new ShopEntry(
-            dev.doctor4t.trainmurdermystery.index.TMMItems.REVOLVER.getDefaultStack(),
-            175,
-            ShopEntry.Type.WEAPON
-        ));
-    
-        CONSPIRATOR_SHOP.add(new ShopEntry(
-            dev.doctor4t.trainmurdermystery.index.TMMItems.LOCKPICK.getDefaultStack(),
-            50,
-            ShopEntry.Type.TOOL
-        ));
-        // ==================== 滑头鬼商店 ====================
-        // 空包弹 - 150金币
-        SLIPPERY_GHOST_SHOP.add(new ShopEntry(
-            ModItems.BLANK_CARTRIDGE.getDefaultStack(),
-            150,
-            ShopEntry.Type.TOOL
-        ));
-        
-        // 烟雾弹 - 300金币
-        SLIPPERY_GHOST_SHOP.add(new ShopEntry(
-            ModItems.SMOKE_GRENADE.getDefaultStack(),
-            300,
-            ShopEntry.Type.TOOL
-        ));
-        
-        // 撬锁器 - 50金币 (原版杀手商店物品)
-        SLIPPERY_GHOST_SHOP.add(new ShopEntry(
-            dev.doctor4t.trainmurdermystery.index.TMMItems.LOCKPICK.getDefaultStack(),
-            50,
-            ShopEntry.Type.TOOL
-        ));
-        
-        // 关灯 - 300金币 (原版杀手商店物品)
-        SLIPPERY_GHOST_SHOP.add(new ShopEntry(
-            dev.doctor4t.trainmurdermystery.index.TMMItems.BLACKOUT.getDefaultStack(),
-            300,
-            ShopEntry.Type.TOOL
-        ));
-        
-        // ==================== 工程师商店 ====================
-        // 加固门 - 75金币
-        ENGINEER_SHOP.add(new ShopEntry(
-            ModItems.REINFORCEMENT.getDefaultStack(),
-            75,
-            ShopEntry.Type.TOOL
-        ));
-        
-        // 警报陷阱 - 150金币
-        ENGINEER_SHOP.add(new ShopEntry(
-            ModItems.ALARM_TRAP.getDefaultStack(),
-            150,
-            ShopEntry.Type.TOOL
-        ));
-        
-        // ==================== 邮差商店 ====================
-        // 传递盒 - 250金币
-        POSTMAN_SHOP.add(new ShopEntry(
-            ModItems.DELIVERY_BOX.getDefaultStack(),
-            250,
-            ShopEntry.Type.TOOL
-        ));
-    }
-    
+
     /**
      * 注册网络包
      * 用于客户端-服务端通信（例如技能使用）
      */
-    private void registerPackets() {
+    private static void registerPackets() {
 
-        PayloadTypeRegistry.playC2S().register(ExecutionerSelectTargetC2SPacket.ID, ExecutionerSelectTargetC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(BroadcasterC2SPacket.ID, BroadcasterC2SPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(BroadcastMessageS2CPacket.ID, BroadcastMessageS2CPacket.CODEC);
 
-        PayloadTypeRegistry.playC2S().register(MorphC2SPacket.ID, MorphC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(AbilityC2SPacket.ID, AbilityC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(VultureEatC2SPacket.ID, VultureEatC2SPacket.CODEC);
         //PayloadTypeRegistry.playC2S().register(ThiefStealC2SPacket.ID, ThiefStealC2SPacket.CODEC);
 
         // 注册阴谋家猜测包
@@ -797,177 +729,16 @@ public class RicesRoleRhapsody implements ModInitializer {
     /**
      * 注册事件监听
      */
-    private void registerEvents() {
-        // 监听角色分配事件 - 这是最重要的事件！
-        // 当玩家被分配角色时触发，可以在这里给予初始物品、设置初始状态等
-        ModdedRoleAssigned.EVENT.register((player, role) -> {
-            // 在角色分配时清除之前的跟踪者状态（如果有）
-            // 但是如果跟踪者正在进化（切换角色），不清除状态
-            StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
-            if (!stalkerComp.isActiveStalker()) {
-                stalkerComp.clearAll();
-            }
-            
-            // 在角色分配时清除之前的傀儡师状态（如果有）
-            // 但是如果傀儡师正在操控假人（临时切换角色），不清除状态
-            PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(player);
-            if (!puppeteerComp.isPuppeteerMarked) {
-                puppeteerComp.clearAll();
-            }
-            
-            onRoleAssigned(player, role);
-        });
-        
-        // 监听玩家死亡事件 - 用于激活复仇者能力、拳击手反制和跟踪者免疫
-        AllowPlayerDeath.EVENT.register((victim, deathReason) -> {
-            // 检查拳击手无敌反制
-            if (handleBoxerInvulnerability(victim, deathReason)) {
-                return false; // 阻止死亡
-            }
-            
-            // 检查跟踪者免疫
-            if (handleStalkerImmunity(victim, deathReason)) {
-                return false; // 阻止死亡
-            }
-            
-            // 检查傀儡师假人状态
-            if (handlePuppeteerDeath(victim, deathReason)) {
-                return false; // 阻止死亡（假人死亡）
-            }
-            
-            onPlayerDeath(victim, deathReason);
-            return true; // 允许死亡
-        });
-        
-        // 示例：监听是否能看到毒药
-        // CanSeePoison.EVENT.register((player) -> {
-        //     GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
-        //     if (gameWorld.isRole(player, ModRoles.YOUR_ROLE)) {
-        //         return true;
-        //     }
-        //     return false;
-        // });
+    private static void registerEvents() {
+
     }
     
-    /**
-     * 处理拳击手无敌反制
-     * 钢筋铁骨期间可以反弹任何死亡
-     *
-     * @param victim 受害者
-     * @param deathReason 死亡原因
-     * @return true 表示成功反制，应阻止死亡
-     */
-    private boolean handleBoxerInvulnerability(PlayerEntity victim, Identifier deathReason) {
-        if (victim == null || victim.getWorld().isClient()) return false;
-        
-        // 检查受害者是否是拳击手
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(victim.getWorld());
-        if (!gameWorld.isRole(victim, ModRoles.BOXER)) return false;
-        
-        // 获取拳击手组件
-        BoxerPlayerComponent boxerComponent = ModComponents.BOXER.get(victim);
-        
-        // 检查是否处于无敌状态
-        if (!boxerComponent.isInvulnerable) return false;
-        
-        // 钢筋铁骨可以反弹任何死亡 - 不再限制死亡原因
-        
-        // 尝试找到攻击者（如果是刀或棍棒攻击）
-        boolean isKnife = deathReason.equals(dev.doctor4t.trainmurdermystery.game.GameConstants.DeathReasons.KNIFE);
-        boolean isBat = deathReason.equals(dev.doctor4t.trainmurdermystery.game.GameConstants.DeathReasons.BAT);
-        
-        if (isKnife || isBat) {
-            // 需要找到攻击者 - 遍历附近玩家找到持有对应武器的
-            PlayerEntity attacker = findAttackerWithWeapon(victim, isKnife);
-            
-            if (attacker != null) {
-                // 获取攻击者的武器
-                ItemStack weapon = attacker.getMainHandStack();
-                
-                // 执行反制（对刀和棍棒有额外效果）
-                boxerComponent.handleCounterAttack(attacker, weapon);
-            }
-        }
-        
-        // 执行通用反制（反弹任何死亡）
-        boxerComponent.handleAnyDeathCounter(deathReason);
-        
-        // 无敌状态下阻止任何死亡
-        return true;
-    }
-    
-    /**
-     * 处理跟踪者免疫
-     *
-     * @param victim 受害者
-     * @param deathReason 死亡原因
-     * @return true 表示成功免疫，应阻止死亡
-     */
-    private boolean handleStalkerImmunity(PlayerEntity victim, Identifier deathReason) {
-        if (victim == null || victim.getWorld().isClient()) return false;
-        
-        // 获取跟踪者组件
-        StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(victim);
-        
-        // 检查是否是活跃的跟踪者且处于二阶段或以上
-        if (!stalkerComp.isActiveStalker()) return false;
-        if (stalkerComp.phase < 2) return false;
-        
-        // 检查免疫是否已使用
-        if (stalkerComp.immunityUsed) return false;
-        
-        // 消耗免疫
-        stalkerComp.immunityUsed = true;
-        stalkerComp.sync();
-        
-        // 播放音效
-        victim.getWorld().playSound(null, victim.getBlockPos(),
-            dev.doctor4t.trainmurdermystery.index.TMMSounds.ITEM_PSYCHO_ARMOUR,
-            SoundCategory.MASTER, 5.0F, 1.0F);
-        
-        // 发送消息
-        if (victim instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(
-                Text.translatable("message.noellesroles.stalker.immunity_triggered")
-                    .formatted(Formatting.GREEN, Formatting.BOLD),
-                true
-            );
-        }
-        
-        return true;
-    }
-    
-    /**
-     * 处理傀儡师死亡
-     * 假人死亡时返回本体，本体死亡时真正死亡
-     *
-     * @param victim 受害者
-     * @param deathReason 死亡原因
-     * @return true 表示假人死亡（阻止真正死亡），false 表示正常处理
-     */
-    private boolean handlePuppeteerDeath(PlayerEntity victim, Identifier deathReason) {
-        if (victim == null || victim.getWorld().isClient()) return false;
-        
-        // 获取傀儡师组件
-        PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(victim);
-        
-        // 检查是否是活跃的傀儡师
-        if (!puppeteerComp.isActivePuppeteer()) return false;
-        
-        // 检查是否正在操控假人
-        if (!puppeteerComp.isControllingPuppet) return false;
-        
-        // 假人死亡，返回本体
-        puppeteerComp.onPuppetDeath();
-        
-        return true; // 阻止真正死亡
-    }
-    
+
     /**
      * 查找攻击者
      * 遍历附近玩家找到持有对应武器的
      */
-    private PlayerEntity findAttackerWithWeapon(PlayerEntity victim, boolean isKnife) {
+    public static PlayerEntity findAttackerWithWeapon(PlayerEntity victim, boolean isKnife) {
         // 获取附近5格内的所有玩家
         for (PlayerEntity player : victim.getWorld().getPlayers()) {
             if (player.equals(victim)) continue;
@@ -993,7 +764,7 @@ public class RicesRoleRhapsody implements ModInitializer {
      * @param victim 死亡的玩家
      * @param deathReason 死亡原因
      */
-    private void onPlayerDeath(PlayerEntity victim, Identifier deathReason) {
+    private static void onPlayerDeath(PlayerEntity victim, Identifier deathReason) {
         // 复仇者的激活逻辑已在 AvengerKillMixin 中处理
         // 此方法保留用于处理其他死亡相关逻辑
     }
@@ -1004,13 +775,13 @@ public class RicesRoleRhapsody implements ModInitializer {
      * @param player 被分配角色的玩家
      * @param role 分配的角色
      */
-    private void onRoleAssigned(PlayerEntity player, Role role) {
+    public static void onRoleAssigned(PlayerEntity player, Role role) {
         // 重置玩家的技能冷却
         AbilityPlayerComponent abilityComponent = ModComponents.ABILITY.get(player);
         abilityComponent.reset();
         
         // 获取游戏世界组件（用于判断角色）
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        //GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
         
         // ==================== 复仇者角色处理 ====================
         if (role.equals(ModRoles.AVENGER)) {
@@ -1021,9 +792,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             // 随机绑定一个无辜玩家作为保护目标
             // 延迟执行以确保所有玩家都已分配角色
             if (player instanceof ServerPlayerEntity serverPlayer) {
-                serverPlayer.getServer().execute(() -> {
-                    avengerComponent.bindRandomTarget();
-                });
+                serverPlayer.getServer().execute(avengerComponent::bindRandomTarget);
             }
             
         }
@@ -1137,11 +906,11 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // ==================== 傀儡师角色处理 ====================
         if (role.equals(ModRoles.PUPPETEER)) {
+            LOGGER.info("Puppeteer reset");
             PuppeteerPlayerComponent puppeteerComponent = ModComponents.PUPPETEER.get(player);
             // 只有在傀儡师未被标记时才重置（避免返回本体时重置状态）
-            if (!puppeteerComponent.isPuppeteerMarked) {
                 puppeteerComponent.reset();
-            }
+
         }
         
         // ==================== 示例：根据角色给予物品 ====================
@@ -1170,7 +939,7 @@ public class RicesRoleRhapsody implements ModInitializer {
      *
      * @param postmanPlayer 邮差玩家
      */
-    private void consumeDeliveryBox(PlayerEntity postmanPlayer) {
+    private static void consumeDeliveryBox(PlayerEntity postmanPlayer) {
         // 先检查主手
         ItemStack mainHand = postmanPlayer.getMainHandStack();
         if (mainHand.isOf(ModItems.DELIVERY_BOX)) {

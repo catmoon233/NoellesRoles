@@ -14,12 +14,10 @@
       "org.agmas.noellesroles.client.NoellesrolesDataGenerator"
     ],
     "client": [
-      "org.agmas.noellesroles.client.NoellesrolesClient",
-      "org.agmas.noellesroles.client.RicesRoleRhapsodyClient"
+      "org.agmas.noellesroles.client.NoellesrolesClient"
     ],
     "main": [
-      "org.agmas.noellesroles.Noellesroles",
-      "org.agmas.noellesroles.RicesRoleRhapsody"
+      "org.agmas.noellesroles.Noellesroles"
     ],
     "cardinal-components": [
       "org.agmas.noellesroles.component.ModComponents"
@@ -46,6 +44,7 @@
     "noellesroles:ghost",
     "noellesroles:thief",
     "noellesroles:ability",
+    "noellesroles:ability_no",
     "noellesroles:avenger",
     "noellesroles:conspirator",
     "noellesroles:slippery_ghost",

@@ -30,6 +30,15 @@ public abstract class StoreRendererMixin {
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.NOISEMAKER)
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.BROADCASTER)
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.PHOTOGRAPHER)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.PUPPETEER)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.TELEGRAPHER)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.AVENGER)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.BOXER)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.SLIPPERY_GHOST)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.CONSPIRATOR)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.DETECTIVE)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.POSTMAN)
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.ENGINEER)
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld())).isRole(player.getUuid(), ModRoles.THIEF)) {
             int balance = ((PlayerShopComponent)PlayerShopComponent.KEY.get(player)).balance;
             if (view.getTarget() != (float)balance) {

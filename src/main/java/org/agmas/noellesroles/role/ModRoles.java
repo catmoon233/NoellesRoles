@@ -620,7 +620,7 @@ public class ModRoles {
         // 慕恋者角色 - 中立阵营
         ADMIRER = TMMRoles.registerRole(new Role(
             ADMIRER_ID,                                   // 角色 ID
-new Color(255,86,243).getRGB() ,false,false, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
+            new Color(255,86,243).getRGB() ,false,false, Role.MoodType.FAKE,Integer.MAX_VALUE,true));
         
         // 傀儡师角色 - 中立阵营（初始）
         PUPPETEER = TMMRoles.registerRole(new Role(

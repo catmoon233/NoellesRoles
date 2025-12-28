@@ -44,6 +44,8 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
+import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.*;
+
 public class NoellesrolesClient implements ClientModInitializer {
 
 
@@ -129,10 +131,22 @@ public class NoellesrolesClient implements ClientModInitializer {
                     i++;
                 }
             }
+
             if (abilityBind.wasPressed()) {
+
+
+
                 PacketByteBuf data = PacketByteBufs.create();
                 client.execute(() -> {
+                    // 跟踪者持续按键检测（窥视和蓄力）
+                    handleStalkerContinuousInput(client);
+                    // 慕恋者持续按键检测（窥视）
+                    handleAdmirerContinuousInput(client);
                     if (MinecraftClient.getInstance().player == null) return;
+                    //while (abilityBind.wasPressed()) {
+                    onAbilityKeyPressed(client);
+                    //}
+
                     GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
                     if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, ModRoles.VULTURE)) {
                         if (targetBody == null) return;
@@ -145,6 +159,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                     }
                     ClientPlayNetworking.send(new AbilityC2SPacket());
                 });
+
             }
         });
 
@@ -152,6 +167,22 @@ public class NoellesrolesClient implements ClientModInitializer {
             tooltipHelper(ModItems.DEFENSE_VIAL, itemStack, list);
             tooltipHelper(ModItems.DELUSION_VIAL, itemStack, list);
         }));
+        //registerKeyBindings();
+
+        // 2. 注册客户端事件
+        registerClientEvents();
+
+        // 3. 注册物品提示（如果有自定义物品）
+//        registerItemTooltips();
+
+        // 4. 设置物品回调
+        setupItemCallbacks();
+
+        // 5. 注册实体渲染器
+        registerEntityRenderers();
+
+        // 6. 注册Screen
+        registerScreens();
     }
 
     public void tooltipHelper(Item item, ItemStack itemStack, List<Text> list) {

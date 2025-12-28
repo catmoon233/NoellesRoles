@@ -34,6 +34,9 @@ import net.minecraft.util.Hand;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
 import org.lwjgl.glfw.GLFW;
 
+
+import static org.agmas.noellesroles.client.NoellesrolesClient.abilityBind;
+
 /**
  * Rice's Role Rhapsody - 客户端初始化
  * 
@@ -47,7 +50,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
 
     // ==================== 按键绑定 ====================
     // 技能使用按键（默认 G 键）
-    public static KeyBinding abilityKeyBinding;
+
     
     // 跟踪者窥视状态
     private static boolean stalkerGazingLastTick = false;
@@ -64,58 +67,35 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     public void onInitializeClient() {
 
         // 1. 注册按键绑定
-        registerKeyBindings();
 
-        // 2. 注册客户端事件
-        registerClientEvents();
-
-        // 3. 注册物品提示（如果有自定义物品）
-        registerItemTooltips();
-
-        // 4. 设置物品回调
-        setupItemCallbacks();
-
-        // 5. 注册实体渲染器
-        registerEntityRenderers();
-
-        // 6. 注册Screen
-        registerScreens();
 
     }
 
     /**
      * 注册按键绑定
      */
-    private void registerKeyBindings() {
-        // 技能按键 - 默认 G 键
-        abilityKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key." + Noellesroles.MOD_ID + ".ability", // 翻译键
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_G, // 默认按键
-                "category.trainmurdermystery.keybinds" // 分类（使用游戏本体的分类）
-        ));
-    }
+
 
     /**
      * 注册客户端事件
      */
-    private void registerClientEvents() {
+    public static void registerClientEvents() {
         // 每 tick 检查按键状态
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null)
-                return;
-
-            // 检查技能按键是否被按下
-            while (abilityKeyBinding.wasPressed()) {
-                onAbilityKeyPressed(client);
-            }
-            
-            // 跟踪者持续按键检测（窥视和蓄力）
-            handleStalkerContinuousInput(client);
-            
-            // 慕恋者持续按键检测（窥视）
-            handleAdmirerContinuousInput(client);
-        });
+//        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+//            if (client.player == null)
+//                return;
+//
+//            // 检查技能按键是否被按下
+//            //while (abilityBind.wasPressed()) {
+//                onAbilityKeyPressed(client);
+//            //}
+//
+//            // 跟踪者持续按键检测（窥视和蓄力）
+//            handleStalkerContinuousInput(client);
+//
+//            // 慕恋者持续按键检测（窥视）
+//            handleAdmirerContinuousInput(client);
+//        });
 
         // 检查书页物品使用 - 通过检测物品使用来打开GUI
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -135,7 +115,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     /**
      * 设置物品回调函数
      */
-    private void setupItemCallbacks() {
+    public static void setupItemCallbacks() {
         // 设置阴谋之书页的GUI打开回调
         ConspiracyPageItem.openScreenCallback = () -> {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -166,7 +146,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     /**
      * 技能按键被按下时的处理
      */
-    private void onAbilityKeyPressed(MinecraftClient client) {
+    public static void onAbilityKeyPressed(MinecraftClient client) {
         if (client.player == null)
             return;
 
@@ -464,7 +444,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
      * 处理跟踪者持续按键输入
      * 用于窥视（一二阶段）和蓄力突进（三阶段）
      */
-    private void handleStalkerContinuousInput(MinecraftClient client) {
+    public static void handleStalkerContinuousInput(MinecraftClient client) {
         if (client.player == null) return;
         
         StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(client.player);
@@ -496,7 +476,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
      * 处理慕恋者持续按键输入
      * 用于窥视积累能量
      */
-    private void handleAdmirerContinuousInput(MinecraftClient client) {
+    public static void handleAdmirerContinuousInput(MinecraftClient client) {
         if (client.player == null) return;
         
         AdmirerPlayerComponent admirerComp = AdmirerPlayerComponent.KEY.get(client.player);
@@ -504,7 +484,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
         if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
         
         // 检查技能键是否按住
-        boolean isAbilityKeyDown = abilityKeyBinding.isPressed();
+        boolean isAbilityKeyDown = abilityBind.isPressed();
         
         if (isAbilityKeyDown && !admirerGazingLastTick) {
             // 开始窥视
@@ -534,7 +514,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     /**
      * 注册实体渲染器
      */
-    private void registerEntityRenderers() {
+    public static void registerEntityRenderers() {
         // 烟雾弹实体渲染器 - 使用飞行物品渲染器
         EntityRendererRegistry.register(ModEntities.SMOKE_GRENADE, FlyingItemEntityRenderer::new);
 
@@ -548,7 +528,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     /**
      * 注册Screen
      */
-    private void registerScreens() {
+    public static void registerScreens() {
         // 注册邮差传递界面
         HandledScreens.register(ModScreenHandlers.POSTMAN_SCREEN_HANDLER, PostmanHandledScreen::new);
         

@@ -15,7 +15,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import java.util.UUID;
 
 public class AbilityPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
-    public static final ComponentKey<AbilityPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "ability"), AbilityPlayerComponent.class);
+    public static final ComponentKey<AbilityPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "ability_no"), AbilityPlayerComponent.class);
     private final PlayerEntity player;
     public int cooldown = 0;
 

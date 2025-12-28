@@ -21,9 +21,11 @@ public class ExecutionerConfirmMixin {
         final var world = victim.getWorld();
         if (world==null)return;
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(world);
-        final var role = gameWorldComponent.getRole(killer);
-
         if (gameWorldComponent==null)return;
+        if (killer==null)return;
+        final var role = gameWorldComponent.getRole(killer);
+        if (role== null)return;
+
         for (UUID uuid : gameWorldComponent.getAllWithRole(ModRoles.EXECUTIONER)) {
             PlayerEntity executioner = world.getPlayerByUuid(uuid);
             if (executioner == null) continue;

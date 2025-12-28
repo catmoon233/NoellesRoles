@@ -54,17 +54,7 @@ public class StalkerInstinctMixin {
     // 定义杀手透视时显示绿色的乘客角色列表
     private static final int INNOCENT_GREEN = new Color(0, 255, 0).getRGB();
     private static final Set<Role> INNOCENT_ROLES_FOR_KILLER_INSTINCT = Set.of(
-        ModRoles.AVENGER,
-        ModRoles.TELEGRAPHER,
-        ModRoles.ENGINEER,
-        ModRoles.BOXER,
-        ModRoles.POSTMAN,
-        ModRoles.DETECTIVE,
-        ModRoles.ATHLETE,
-        ModRoles.STAR,
-        ModRoles.VETERAN,
-        ModRoles.SINGER,
-        ModRoles.PSYCHOLOGIST
+        ModRoles.PUPPETEER
     );
     
     /**
@@ -210,7 +200,7 @@ public class StalkerInstinctMixin {
             cir.cancel();
             return;
         }
-        
+
         // =============== 乘客角色透视处理 ===============
         // 杀手透视这些乘客角色时，显示渐变绿色
         if (TMMClient.isKiller() && TMMClient.isPlayerAliveAndInSurvival()) {

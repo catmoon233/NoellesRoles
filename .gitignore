@@ -2,8 +2,8 @@
 .idea/*
 build/*
 run/*
-libs/*
+
 /.kilocode/
 /run/
 /.idea/
-/libs/
+

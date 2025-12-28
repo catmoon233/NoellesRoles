@@ -10,7 +10,7 @@ import org.agmas.noellesroles.Noellesroles;
 import java.util.UUID;
 
 public record AbilityC2SPacket() implements CustomPayload {
-    public static final Identifier ABILITY_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "ability");
+    public static final Identifier ABILITY_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "ability_no");
     public static final Id<AbilityC2SPacket> ID = new Id<>(ABILITY_PAYLOAD_ID);
     public static final PacketCodec<RegistryByteBuf, AbilityC2SPacket> CODEC;
 
