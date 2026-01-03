@@ -9,6 +9,7 @@ import java.util.Set;
 
 public class NRMixinPlugin implements IMixinConfigPlugin {
     public void onLoad(String mixinPackage) {
+        System.out.println("Noelle's Roles: Mixin Plugin Loaded");
     }
 
     public String getRefMapperConfig() {
@@ -16,7 +17,7 @@ public class NRMixinPlugin implements IMixinConfigPlugin {
     }
 
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return !"dpm.harpysimpleroles.mixin.client.LimitedInventoryScreen".equals(mixinClassName) && !"dpm.harpysimpleroles.mixin.PurchaseMixin".equals(mixinClassName);
+        return !"dpm.harpysimpleroles.mixin.client.LimitedInventoryScreen".equals(mixinClassName) && !"dpm.harpysimpleroles.mixin.PurchaseMixin".equals(mixinClassName) && !"dev.doctor4t.ratatouille.mixin.client.armor.PlayerEntityRendererMixin".equals(mixinClassName) && !"dev.doctor4t.ratatouille.mixin.client.armor.LivingEntityRendererMixin".equals(mixinClassName);
     }
 
     public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {

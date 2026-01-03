@@ -8,17 +8,16 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
 import dev.doctor4t.trainmurdermystery.util.GunShootPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
@@ -29,36 +28,29 @@ import static dev.doctor4t.trainmurdermystery.item.RevolverItem.spawnHandParticl
 public class BanditRevolverItem extends Item {
     public double dropChance = (double)0.0F;
 
-    public BanditRevolverItem(Item.Settings settings) {
+    public BanditRevolverItem(Item.Properties settings) {
         super(settings);
     }
 
-    public TypedActionResult<ItemStack> use(@NotNull World world, @NotNull PlayerEntity user, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player user, InteractionHand hand) {
         if (!user.isCreative()) {
-            user.getItemCooldownManager().set(HSRItems.BANDIT_REVOLVER, 20);
+            user.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, 20);
         }
-        if (world.isClient) {
-
-
-
-
-            user.setPitch(user.getPitch() - 4.0F);
+        if (world.isClientSide) {
+            user.setXRot(user.getXRot() - 4.0F);
             spawnHandParticle();
 
-        HitResult collision = getGunTarget(user);
-        if (user instanceof ServerPlayerEntity serverPlayer) {
+            HitResult collision = getGunTarget(user);
             if (collision instanceof EntityHitResult) {
                 EntityHitResult entityHitResult = (EntityHitResult) collision;
                 Entity target = entityHitResult.getEntity();
                 this.dropChance += 0.3;
                 ClientPlayNetworking.send(new BanditRevolverShootPayload(target.getId()));
-
             } else {
                 ClientPlayNetworking.send(new BanditRevolverShootPayload(-1));
             }
         }
-        }
-        return TypedActionResult.consume(user.getStackInHand(hand));
+        return InteractionResultHolder.consume(user.getItemInHand(hand));
     }
 
 //    public static void spawnHandParticle() {
@@ -66,10 +58,10 @@ public class BanditRevolverItem extends Item {
 //     //   TMMClient.handParticleManager.spawn(handParticle);
 //    }
 
-    public static HitResult getGunTarget(PlayerEntity user) {
-        return ProjectileUtil.getCollision(user, (entity) -> {
+    public static HitResult getGunTarget(Player user) {
+        return ProjectileUtil.getHitResultOnViewVector(user, (entity) -> {
             boolean var10000;
-            if (entity instanceof PlayerEntity player) {
+            if (entity instanceof Player player) {
                 if (GameFunctions.isPlayerAliveAndSurvival(player)) {
                     var10000 = true;
                     return var10000;

@@ -6,20 +6,19 @@ import org.agmas.noellesroles.component.TrapperPlayerComponent;
 import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 灾厄印记实体
@@ -32,8 +31,8 @@ import java.util.UUID;
 public class CalamityMarkEntity extends Entity {
     
     /** 所有者 UUID */
-    private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(
-        CalamityMarkEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(
+        CalamityMarkEntity.class, EntityDataSerializers.OPTIONAL_UUID
     );
     
     /** 陷阱触发半径（格） */
@@ -46,25 +45,25 @@ public class CalamityMarkEntity extends Entity {
     private int lifetime = 0;
     
     /** 所有者玩家引用（缓存） */
-    private PlayerEntity ownerCache = null;
+    private Player ownerCache = null;
     
-    public CalamityMarkEntity(EntityType<?> type, World world) {
+    public CalamityMarkEntity(EntityType<?> type, Level world) {
         super(type, world);
         this.setInvisible(true); // 对所有人隐形
         this.setNoGravity(true); // 无重力
     }
     
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        builder.add(OWNER_UUID, Optional.empty());
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(OWNER_UUID, Optional.empty());
     }
     
     /**
      * 设置所有者
      */
-    public void setOwner(PlayerEntity owner) {
+    public void setOwner(Player owner) {
         if (owner != null) {
-            this.dataTracker.set(OWNER_UUID, Optional.of(owner.getUuid()));
+            this.entityData.set(OWNER_UUID, Optional.of(owner.getUUID()));
             this.ownerCache = owner;
         }
     }
@@ -73,20 +72,20 @@ public class CalamityMarkEntity extends Entity {
      * 获取所有者 UUID
      */
     public Optional<UUID> getOwnerUuid() {
-        return this.dataTracker.get(OWNER_UUID);
+        return this.entityData.get(OWNER_UUID);
     }
     
     /**
      * 获取所有者玩家
      */
-    public PlayerEntity getOwner() {
+    public Player getOwner() {
         if (ownerCache != null && ownerCache.isAlive()) {
             return ownerCache;
         }
         
         Optional<UUID> ownerUuid = getOwnerUuid();
         if (ownerUuid.isPresent()) {
-            ownerCache = getWorld().getPlayerByUuid(ownerUuid.get());
+            ownerCache = level().getPlayerByUUID(ownerUuid.get());
             return ownerCache;
         }
         return null;
@@ -96,7 +95,7 @@ public class CalamityMarkEntity extends Entity {
     public void tick() {
         super.tick();
         
-        if (getWorld().isClient()) return;
+        if (level().isClientSide()) return;
         
         // 增加存活时间
         lifetime++;
@@ -106,13 +105,13 @@ public class CalamityMarkEntity extends Entity {
         }
         
         // 检查所有者是否还是设陷者
-        PlayerEntity owner = getOwner();
+        Player owner = getOwner();
         if (owner == null) {
             this.discard();
             return;
         }
         
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(level());
         if (!gameWorld.isRole(owner, ModRoles.TRAPPER)) {
             this.discard();
             return;
@@ -126,22 +125,22 @@ public class CalamityMarkEntity extends Entity {
      * 检测是否有玩家触发陷阱
      */
     private void checkTrigger() {
-        World world = getWorld();
-        Vec3d pos = this.getPos();
+        Level world = level();
+        Vec3 pos = this.position();
         
         // 创建检测区域
-        Box detectionBox = new Box(
+        AABB detectionBox = new AABB(
             pos.x - TRIGGER_RADIUS, pos.y - 0.5, pos.z - TRIGGER_RADIUS,
             pos.x + TRIGGER_RADIUS, pos.y + 2.0, pos.z + TRIGGER_RADIUS
         );
         
         // 获取区域内的所有玩家
-        List<PlayerEntity> players = world.getEntitiesByClass(
-            PlayerEntity.class, detectionBox,
+        List<Player> players = world.getEntitiesOfClass(
+            Player.class, detectionBox,
             player -> {
                 // 排除所有者
                 Optional<UUID> ownerUuid = getOwnerUuid();
-                if (ownerUuid.isPresent() && player.getUuid().equals(ownerUuid.get())) {
+                if (ownerUuid.isPresent() && player.getUUID().equals(ownerUuid.get())) {
                     return false;
                 }
                 
@@ -162,7 +161,7 @@ public class CalamityMarkEntity extends Entity {
         
         // 如果有玩家触发
         if (!players.isEmpty()) {
-            PlayerEntity victim = players.get(0);
+            Player victim = players.get(0);
             triggerTrap(victim);
         }
     }
@@ -170,8 +169,8 @@ public class CalamityMarkEntity extends Entity {
     /**
      * 触发陷阱
      */
-    private void triggerTrap(PlayerEntity victim) {
-        PlayerEntity owner = getOwner();
+    private void triggerTrap(Player victim) {
+        Player owner = getOwner();
         if (owner == null) {
             this.discard();
             return;
@@ -179,7 +178,7 @@ public class CalamityMarkEntity extends Entity {
         
         // 获取设陷者组件并触发效果
         TrapperPlayerComponent trapperComp = ModComponents.TRAPPER.get(owner);
-        trapperComp.onTrapTriggered(victim, this.getPos());
+        trapperComp.onTrapTriggered(victim, this.position());
         
         // 陷阱触发后消失（一次性）
         this.discard();
@@ -189,37 +188,37 @@ public class CalamityMarkEntity extends Entity {
      * 该实体是否对指定玩家可见
      * 只有设陷者本人可以看到自己的陷阱（半透明效果在客户端渲染）
      */
-    public boolean isVisibleTo(PlayerEntity player) {
+    public boolean isVisibleTo(Player player) {
         Optional<UUID> ownerUuid = getOwnerUuid();
-        return ownerUuid.isPresent() && player.getUuid().equals(ownerUuid.get());
+        return ownerUuid.isPresent() && player.getUUID().equals(ownerUuid.get());
     }
     
     @Override
-    public boolean isInvisibleTo(PlayerEntity player) {
+    public boolean isInvisibleTo(Player player) {
         // 对所有非所有者玩家隐形
         return !isVisibleTo(player);
     }
     
     @Override
-    protected void readCustomDataFromNbt(NbtCompound nbt) {
+    protected void readAdditionalSaveData(CompoundTag nbt) {
         if (nbt.contains("OwnerUUID")) {
             try {
                 UUID uuid = UUID.fromString(nbt.getString("OwnerUUID"));
-                this.dataTracker.set(OWNER_UUID, Optional.of(uuid));
+                this.entityData.set(OWNER_UUID, Optional.of(uuid));
             } catch (IllegalArgumentException ignored) {}
         }
         this.lifetime = nbt.contains("Lifetime") ? nbt.getInt("Lifetime") : 0;
     }
     
     @Override
-    protected void writeCustomDataToNbt(NbtCompound nbt) {
+    protected void addAdditionalSaveData(CompoundTag nbt) {
         Optional<UUID> ownerUuid = getOwnerUuid();
         ownerUuid.ifPresent(uuid -> nbt.putString("OwnerUUID", uuid.toString()));
         nbt.putInt("Lifetime", this.lifetime);
     }
     
     @Override
-    public boolean canHit() {
+    public boolean isPickable() {
         return false; // 不能被点击
     }
     
@@ -229,7 +228,7 @@ public class CalamityMarkEntity extends Entity {
     }
     
     @Override
-    public boolean isCollidable() {
+    public boolean canBeCollidedWith() {
         return false; // 无碰撞
     }
 }

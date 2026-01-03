@@ -1,11 +1,11 @@
 package org.agmas.noellesroles.packet;
 
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
 /**
@@ -14,19 +14,19 @@ import org.agmas.noellesroles.Noellesroles;
  * 
  * 当玩家按下/松开技能键时发送，用于控制窥视状态
  */
-public record AdmirerGazeC2SPacket(boolean gazing) implements CustomPayload {
+public record AdmirerGazeC2SPacket(boolean gazing) implements CustomPacketPayload {
     
-    public static final Id<AdmirerGazeC2SPacket> ID = new Id<>(
-        Identifier.of(Noellesroles.MOD_ID, "admirer_gaze")
+    public static final Type<AdmirerGazeC2SPacket> ID = new Type<>(
+        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "admirer_gaze")
     );
     
-    public static final PacketCodec<RegistryByteBuf, AdmirerGazeC2SPacket> CODEC = PacketCodec.tuple(
-        PacketCodecs.BOOL, AdmirerGazeC2SPacket::gazing,
+    public static final StreamCodec<RegistryFriendlyByteBuf, AdmirerGazeC2SPacket> CODEC = StreamCodec.composite(
+        ByteBufCodecs.BOOL, AdmirerGazeC2SPacket::gazing,
         AdmirerGazeC2SPacket::new
     );
     
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

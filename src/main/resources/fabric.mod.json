@@ -27,6 +27,7 @@
     ]
   },
 
+  "accessWidener" : "noellesroles.accesswidener",
 
   "custom": {
   "cardinal-components": [

@@ -4,37 +4,36 @@ import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 public class MasterKeyItem extends Item {
-    public MasterKeyItem(Settings settings) {
+    public MasterKeyItem(Properties settings) {
         super(settings);
     }
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        PlayerEntity player = context.getPlayer();
-        World world = context.getWorld();
-        BlockPos pos = context.getBlockPos();
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        Level world = context.getLevel();
+        BlockPos pos = context.getClickedPos();
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof SmallDoorBlock) {
-            BlockPos lowerPos = state.get(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.down();
+            BlockPos lowerPos = state.getValue(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
             BlockEntity var8 = world.getBlockEntity(lowerPos);
 
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         } else {
             if (player != null) {
-                context.getStack().damage(1, player, EquipmentSlot.MAINHAND);
+                context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
             }
-            return super.useOnBlock(context);
+            return super.useOn(context);
         }
     }
 }

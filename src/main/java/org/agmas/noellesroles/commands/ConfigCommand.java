@@ -1,25 +1,24 @@
 package org.agmas.noellesroles.commands;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 
 public class ConfigCommand {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            var configCommand = CommandManager.literal("noellesroles")
-                    .then(CommandManager.literal("config")
-                            .requires(source -> source.hasPermissionLevel(2)) // 需要OP权限
-                            .then(CommandManager.literal("reload")
+            var configCommand = Commands.literal("noellesroles")
+                    .then(Commands.literal("config")
+                            .requires(source -> source.hasPermission(2)) // 需要OP权限
+                            .then(Commands.literal("reload")
                                     .executes(context -> {
                                         NoellesRolesConfig.HANDLER.load();
-                                        context.getSource().sendMessage(Text.literal("NoellesRoles configuration reloaded successfully"));
+                                        context.getSource().sendSystemMessage(Component.literal("NoellesRoles configuration reloaded successfully"));
                                         return 1;
                                     }))
-                            .then(CommandManager.literal("reset")
+                            .then(Commands.literal("reset")
                                     .executes(context -> {
                                         // 创建默认配置实例
                                         NoellesRolesConfig defaultConfig = new NoellesRolesConfig();
@@ -43,9 +42,9 @@ public class ConfigCommand {
                                             // 保存到文件
                                             NoellesRolesConfig.HANDLER.save();
                                             
-                                            context.getSource().sendMessage(Text.literal("NoellesRoles configuration reset to defaults successfully"));
+                                            context.getSource().sendSystemMessage(Component.literal("NoellesRoles configuration reset to defaults successfully"));
                                         } catch (Exception e) {
-                                            context.getSource().sendMessage(Text.literal("Failed to reset configuration: " + e.getMessage()));
+                                            context.getSource().sendSystemMessage(Component.literal("Failed to reset configuration: " + e.getMessage()));
                                             return 0;
                                         }
                                         

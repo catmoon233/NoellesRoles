@@ -1,9 +1,9 @@
 package org.agmas.noellesroles;
 
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import org.agmas.noellesroles.item.*;
 
 public class ModItems {
@@ -12,31 +12,31 @@ public class ModItems {
     }
 
     public static final Item FAKE_KNIFE = register(
-            new FakeKnifeItem(new Item.Settings().maxCount(1)),
+            new FakeKnifeItem(new Item.Properties().stacksTo(1)),
             "fake_knife"
     );
     public static final Item FAKE_REVOLVER = register(
-            new FakeRevolverItem(new Item.Settings().maxCount(1).maxDamage(4)),
+            new FakeRevolverItem(new Item.Properties().stacksTo(1).durability(4)),
             "fake_revolver"
     );
     public static final Item MASTER_KEY = register(
-            new Item(new Item.Settings().maxCount(1)),
+            new Item(new Item.Properties().stacksTo(1)),
             "master_key"
     );
     public static final Item MASTER_KEY_P = register(
-            new MasterKeyItem(new Item.Settings().maxCount(1).maxDamage(5)),
+            new MasterKeyItem(new Item.Properties().stacksTo(1).durability(5)),
             "master_key_p"
     );
     public static final Item DELUSION_VIAL = register(
-            new Item(new Item.Settings().maxCount(1)),
+            new Item(new Item.Properties().stacksTo(1)),
             "delusion_vial"
     );
     public static final Item DEFENSE_VIAL = register(
-            new Item(new Item.Settings().maxCount(1)),
+            new Item(new Item.Properties().stacksTo(1)),
             "defense_vial"
     );
     public static final Item ROLE_MINE = register(
-            new Item(new Item.Settings().maxCount(1)),
+            new Item(new Item.Properties().stacksTo(1)),
             "role_mine"
     );
 
@@ -47,7 +47,7 @@ public class ModItems {
      * - 右键使用打开玩家/角色选择GUI
      */
     public static final Item CONSPIRACY_PAGE = register(
-            new ConspiracyPageItem(new Item.Settings().maxCount(1)),
+            new ConspiracyPageItem(new Item.Properties().stacksTo(1)),
             "conspiracy_page");
 
     /**
@@ -57,7 +57,7 @@ public class ModItems {
      * - 右键对目标玩家使用，使其手中枪械进入30秒冷却
      */
     public static final Item BLANK_CARTRIDGE = register(
-            new BlankCartridgeItem(new Item.Settings().maxCount(16)),
+            new BlankCartridgeItem(new Item.Properties().stacksTo(16)),
             "blank_cartridge");
 
     /**
@@ -69,7 +69,7 @@ public class ModItems {
      * - 直接命中玩家时清空目标san值
      */
     public static final Item SMOKE_GRENADE = register(
-            new SmokeGrenadeItem(new Item.Settings().maxCount(8)),
+            new SmokeGrenadeItem(new Item.Properties().stacksTo(8)),
             "smoke_grenade");
 
     /**
@@ -80,7 +80,7 @@ public class ModItems {
      * - 蹲下右键被卡住的门：解除卡住状态
      */
     public static final Item REINFORCEMENT = register(
-            new ReinforcementItem(new Item.Settings().maxCount(16)),
+            new ReinforcementItem(new Item.Properties().stacksTo(16)),
             "reinforcement");
 
     /**
@@ -91,7 +91,7 @@ public class ModItems {
      * - 当撬棍使用时触发，发出响亮的警报声
      */
     public static final Item ALARM_TRAP = register(
-            new AlarmTrapItem(new Item.Settings().maxCount(16)),
+            new AlarmTrapItem(new Item.Properties().stacksTo(16)),
             "alarm_trap");
 
     /**
@@ -102,8 +102,23 @@ public class ModItems {
      * - 双方可以放入一样物品并交换
      */
     public static final Item DELIVERY_BOX = register(
-            new DeliveryBoxItem(new Item.Settings().maxCount(8)),
+            new DeliveryBoxItem(new Item.Properties().stacksTo(8)),
             "delivery_box");
+
+    /**
+     * 迷幻瓶
+     * - 迷幻师专属物品
+     * - 在商店购买
+     * - 右键使用，制造大量烟雾
+     * - 20格范围内玩家视野会随机偏离视角
+     * - 迷雾范围：20格
+     * - 持续时间：3秒
+     * - 触发间隔：1秒
+     * - 耐久：2点
+     */
+    public static final Item HALLUCINATION_BOTTLE = register(
+            new HallucinationBottleItem(new Item.Properties().stacksTo(1).durability(2)),
+            "hallucination_bottle");
 
 
 //    public static final Item SHERIFF_GUN_MAINTENANCE = register(
@@ -113,10 +128,10 @@ public class ModItems {
     
     public static Item register(Item item, String id) {
         // Create the identifier for the item.
-        Identifier itemID = Identifier.of(Noellesroles.MOD_ID, id);
+        ResourceLocation itemID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, id);
 
         // Register the item.
-        Item registeredItem = Registry.register(Registries.ITEM, itemID, item);
+        Item registeredItem = Registry.register(BuiltInRegistries.ITEM, itemID, item);
 
         // Return the registered item!
         return registeredItem;

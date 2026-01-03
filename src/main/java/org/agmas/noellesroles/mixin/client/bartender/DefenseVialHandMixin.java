@@ -5,24 +5,22 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(PlayerEntityRenderer.class)
+@Mixin(PlayerRenderer.class)
 public class DefenseVialHandMixin {
-    @WrapOperation(method = "getArmPose", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"))
-    private static ItemStack view(AbstractClientPlayerEntity instance, Hand hand, Operation<ItemStack> original) {
+    @WrapOperation(method = "getArmPose", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"))
+    private static ItemStack view(AbstractClientPlayer instance, InteractionHand hand, Operation<ItemStack> original) {
 
         ItemStack ret = original.call(instance, hand);
-        if (ret.isOf(ModItems.DEFENSE_VIAL)) {
+        if (ret.is(ModItems.DEFENSE_VIAL) || ret.is(ModItems.SMOKE_GRENADE) || ret.is(ModItems.BLANK_CARTRIDGE)) {
             ret = ItemStack.EMPTY;
         }
 

@@ -1,17 +1,10 @@
 package org.agmas.noellesroles.mixin.client.phantom;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.doctor4t.ratatouille.client.render.feature.PlushOnHeadFeatureRenderer;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.entity.LivingEntity;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.NoellesrolesClient;
@@ -24,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlushOnHeadFeatureRenderer.class)
 public abstract class PhantomRattatoulieMixin {
 
-    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V", at = @At("HEAD"), cancellable = true)
-    public void phantomRatMixin(MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At("HEAD"), cancellable = true)
+    public void phantomRatMixin(PoseStack matrices, MultiBufferSource vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
        if (livingEntity.isInvisible()) ci.cancel();
     }
 }

@@ -2,10 +2,10 @@ package org.agmas.noellesroles.screen;
 
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Uuids;
+import net.minecraft.core.Registry;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
 import java.util.UUID;
@@ -21,11 +21,11 @@ public class ModScreenHandlers {
      */
     public static final ExtendedScreenHandlerType<PostmanScreenHandler, UUID> POSTMAN_SCREEN_HANDLER =
         Registry.register(
-            Registries.SCREEN_HANDLER,
-            Identifier.of(Noellesroles.MOD_ID, "postman"),
+            BuiltInRegistries.MENU,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "postman"),
             new ExtendedScreenHandlerType<>(
                 (syncId, playerInventory, data) -> new PostmanScreenHandler(syncId, playerInventory, data),
-                Uuids.PACKET_CODEC.cast()
+                UUIDUtil.STREAM_CODEC.cast()
             )
         );
     
@@ -35,11 +35,11 @@ public class ModScreenHandlers {
      */
     public static final ExtendedScreenHandlerType<DetectiveInspectScreenHandler, UUID> DETECTIVE_INSPECT_SCREEN_HANDLER =
         Registry.register(
-            Registries.SCREEN_HANDLER,
-            Identifier.of(Noellesroles.MOD_ID, "detective_inspect"),
+            BuiltInRegistries.MENU,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "detective_inspect"),
             new ExtendedScreenHandlerType<>(
                 (syncId, playerInventory, data) -> new DetectiveInspectScreenHandler(syncId, playerInventory, data),
-                Uuids.PACKET_CODEC.cast()
+                UUIDUtil.STREAM_CODEC.cast()
             )
         );
     

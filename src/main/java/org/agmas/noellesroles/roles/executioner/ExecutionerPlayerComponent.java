@@ -2,10 +2,6 @@ package org.agmas.noellesroles.roles.executioner;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.role.ModRoles;
@@ -20,10 +16,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
-    public static final ComponentKey<ExecutionerPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "executioner"), ExecutionerPlayerComponent.class);
-    private final PlayerEntity player;
+    public static final ComponentKey<ExecutionerPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "executioner"), ExecutionerPlayerComponent.class);
+    private final Player player;
     public UUID target;
     public boolean won = false;
     public boolean targetSelected = false;
@@ -40,7 +40,7 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
         this.sync();
     }
 
-    public ExecutionerPlayerComponent(PlayerEntity player) {
+    public ExecutionerPlayerComponent(Player player) {
         this.player = player;
         this.target = null;
         this.targetSelected = false;
@@ -55,7 +55,7 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
     public void serverTick() {
         // 如果目标已经死亡且executioner尚未获胜，解锁商店并重置目标
         if (target==null){
-            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
             if (gameWorldComponent == null)return;
             if (!gameWorldComponent.isRunning())return;
             if (!gameWorldComponent.isRole(player, ModRoles.EXECUTIONER)) return;
@@ -63,12 +63,12 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
 
         }
         if (target != null && !won) {
-            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
             if (gameWorldComponent == null)return;
             if (!gameWorldComponent.isRunning())return;
             if (!gameWorldComponent.isRole(player, ModRoles.EXECUTIONER)) return;
 
-            PlayerEntity targetPlayer = player.getWorld().getPlayerByUuid(target);
+            Player targetPlayer = player.level().getPlayerByUUID(target);
             if (targetPlayer == null || GameFunctions.isPlayerEliminated(targetPlayer)) {
                 // 目标死亡，解锁商店并分配新目标
                 this.shopUnlocked = true;
@@ -94,13 +94,13 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
             return;
         }
         
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
         if (gameWorldComponent== null)return;
-        List<PlayerEntity> eligibleTargets = new ArrayList<>();
+        List<Player> eligibleTargets = new ArrayList<>();
         
         // 获取所有存活的平民玩家
-        for (PlayerEntity p : player.getWorld().getPlayers()) {
-            if (p.getUuid().equals(player.getUuid())) {
+        for (Player p : player.level().players()) {
+            if (p.getUUID().equals(player.getUUID())) {
                 continue; // 跳过自己
             }
             if (!GameFunctions.isPlayerAliveAndSurvival(p)) {
@@ -115,7 +115,7 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
         // 随机选择一个目标
         if (!eligibleTargets.isEmpty()) {
             Collections.shuffle(eligibleTargets);
-            this.target = eligibleTargets.getFirst().getUuid();
+            this.target = eligibleTargets.getFirst().getUUID();
             this.targetSelected = true;
             this.sync();
         }
@@ -145,17 +145,17 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
         this.sync();
     }
 
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         if (this.target != null) {
-            tag.putUuid("target", this.target);
+            tag.putUUID("target", this.target);
         }
         tag.putBoolean("won", this.won);
         tag.putBoolean("targetSelected", this.targetSelected);
         tag.putBoolean("shopUnlocked", this.shopUnlocked);
     }
 
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
-        this.target = tag.contains("target") ? tag.getUuid("target") : null;
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
+        this.target = tag.contains("target") ? tag.getUUID("target") : null;
         this.won = tag.getBoolean("won");
         this.targetSelected = tag.getBoolean("targetSelected");
         this.shopUnlocked = tag.getBoolean("shopUnlocked");

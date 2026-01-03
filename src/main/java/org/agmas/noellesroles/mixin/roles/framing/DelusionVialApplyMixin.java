@@ -2,16 +2,16 @@ package org.agmas.noellesroles.mixin.roles.framing;
 
 import dev.doctor4t.trainmurdermystery.block.FoodPlatterBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.agmas.noellesroles.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,17 +21,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(FoodPlatterBlock.class)
 public abstract class DelusionVialApplyMixin {
 
-    @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
-    private void defenseVialApply(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
-        if (world.isClient) return;
+    @Inject(method = "useWithoutItem", at = @At("HEAD"), cancellable = true)
+    private void defenseVialApply(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
+        if (world.isClientSide) return;
         if (player.isCreative()) return;
         BlockEntity platter = world.getBlockEntity(pos);
         if (platter instanceof BeveragePlateBlockEntity blockEntity) {
-            if (player.getStackInHand(Hand.MAIN_HAND).isOf(ModItems.DELUSION_VIAL) && blockEntity.getPoisoner() == null) {
-                blockEntity.setPoisoner(player.getUuidAsString());
-                player.getStackInHand(Hand.MAIN_HAND).decrement(1);
-                player.playSoundToPlayer(SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                cir.setReturnValue(ActionResult.SUCCESS);
+            if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.DELUSION_VIAL) && blockEntity.getPoisoner() == null) {
+                blockEntity.setPoisoner(player.getStringUUID());
+                player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+                player.playNotifySound(SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.5F, 1.0F);
+                cir.setReturnValue(InteractionResult.SUCCESS);
                 cir.cancel();
             }
         }

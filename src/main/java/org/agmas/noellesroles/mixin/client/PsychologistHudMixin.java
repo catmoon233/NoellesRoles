@@ -6,13 +6,13 @@ import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,16 +26,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * - 自己的san值状态
  * - 正在治疗时的进度
  */
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public class PsychologistHudMixin {
     
-    @Inject(method = "renderStatusEffectOverlay", at = @At("RETURN"))
-    private void renderPsychologistHud(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null || client.world == null) return;
+    @Inject(method = "renderEffects", at = @At("RETURN"))
+    private void renderPsychologistHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) return;
         
         // 检查是否是心理学家
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.world);
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
         if (!gameWorld.isRole(client.player, ModRoles.PSYCHOLOGIST)) return;
         
         // 检查玩家是否存活
@@ -45,35 +45,35 @@ public class PsychologistHudMixin {
         PsychologistPlayerComponent psychComp = ModComponents.PSYCHOLOGIST.get(client.player);
         
         // 渲染位置 - 左下角
-        int screenHeight = client.getWindow().getScaledHeight();
+        int screenHeight = client.getWindow().getGuiScaledHeight();
         int x = 10;
         int y = screenHeight - 80;
         
-        TextRenderer textRenderer = client.textRenderer;
+        Font textRenderer = client.font;
         
         // 标题
-        Text titleText = Text.literal("心理学家").formatted(Formatting.AQUA, Formatting.BOLD);
-        context.drawTextWithShadow(textRenderer, titleText, x, y, 0xFFFFFF);
+        Component titleText = Component.literal("心理学家").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD);
+        context.drawString(textRenderer, titleText, x, y, 0xFFFFFF);
         y += 12;
         
         // 检查自己的san值（游戏中san值范围是0.0-1.0，需要转换为百分比显示）
         PlayerMoodComponent selfMood = PlayerMoodComponent.KEY.get(client.player);
         float sanity = selfMood.getMood();  // 0.0 到 1.0
         int sanityPercent = (int)(sanity * 100);  // 转换为百分比
-        Formatting sanColor = sanity >= 0.99f ? Formatting.GREEN :
-                             sanity >= 0.5f ? Formatting.YELLOW : Formatting.RED;
-        Text sanText = Text.literal("San: " + sanityPercent + "/100").formatted(sanColor);
-        context.drawTextWithShadow(textRenderer, sanText, x, y, 0xFFFFFF);
+        ChatFormatting sanColor = sanity >= 0.99f ? ChatFormatting.GREEN :
+                             sanity >= 0.5f ? ChatFormatting.YELLOW : ChatFormatting.RED;
+        Component sanText = Component.literal("San: " + sanityPercent + "/100").withStyle(sanColor);
+        context.drawString(textRenderer, sanText, x, y, 0xFFFFFF);
         y += 12;
         
         // 正在治疗中
         if (psychComp.isHealing) {
             int healedSeconds = (int) psychComp.getHealingSeconds();
             int totalSeconds = PsychologistPlayerComponent.HEALING_DURATION / 20;
-            Text healingText = Text.translatable("hud.noellesroles.psychologist.healing",
+            Component healingText = Component.translatable("hud.noellesroles.psychologist.healing",
                 psychComp.healingTargetName, healedSeconds, totalSeconds)
-                .formatted(Formatting.GREEN);
-            context.drawTextWithShadow(textRenderer, healingText, x, y, 0xFFFFFF);
+                .withStyle(ChatFormatting.GREEN);
+            context.drawString(textRenderer, healingText, x, y, 0xFFFFFF);
             y += 12;
             
             // 进度条
@@ -90,23 +90,23 @@ public class PsychologistHudMixin {
         }
         // 冷却中
         else if (psychComp.cooldown > 0) {
-            Text cooldownText = Text.translatable("hud.noellesroles.psychologist.cooldown",
-                psychComp.getCooldownSeconds()).formatted(Formatting.GRAY);
-            context.drawTextWithShadow(textRenderer, cooldownText, x, y, 0xFFFFFF);
+            Component cooldownText = Component.translatable("hud.noellesroles.psychologist.cooldown",
+                psychComp.getCooldownSeconds()).withStyle(ChatFormatting.GRAY);
+            context.drawString(textRenderer, cooldownText, x, y, 0xFFFFFF);
             y += 12;
         }
         // 技能就绪（san值需要 >= 0.99 才算满）
         else if (sanity >= 0.99f) {
-            Text readyText = Text.translatable("hud.noellesroles.psychologist.ready")
-                .formatted(Formatting.GREEN);
-            context.drawTextWithShadow(textRenderer, readyText, x, y, 0xFFFFFF);
+            Component readyText = Component.translatable("hud.noellesroles.psychologist.ready")
+                .withStyle(ChatFormatting.GREEN);
+            context.drawString(textRenderer, readyText, x, y, 0xFFFFFF);
             y += 12;
         }
         // san值不足
         else {
-            Text notReadyText = Text.translatable("hud.noellesroles.psychologist.not_ready")
-                .formatted(Formatting.YELLOW);
-            context.drawTextWithShadow(textRenderer, notReadyText, x, y, 0xFFFFFF);
+            Component notReadyText = Component.translatable("hud.noellesroles.psychologist.not_ready")
+                .withStyle(ChatFormatting.YELLOW);
+            context.drawString(textRenderer, notReadyText, x, y, 0xFFFFFF);
         }
     }
 }

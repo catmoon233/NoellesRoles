@@ -2,13 +2,13 @@ package org.agmas.noellesroles.component;
 
 import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -40,7 +40,7 @@ public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickin
     
     // ==================== 状态变量 ====================
     
-    private final PlayerEntity player;
+    private final Player player;
     
     /** 技能冷却时间（tick） */
     public int cooldown = 0;
@@ -54,7 +54,7 @@ public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickin
     /**
      * 构造函数
      */
-    public AthletePlayerComponent(PlayerEntity player) {
+    public AthletePlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -86,7 +86,7 @@ public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickin
         }
         
         // 验证是运动员
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.ATHLETE)) {
             return false;
         }
@@ -94,8 +94,8 @@ public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickin
         // 应用速度效果（无粒子，不显示图标）
         // ambient=true 使粒子不可见, showParticles=false 确保无粒子
         // showIcon=false 确保不显示效果图标
-        player.addStatusEffect(new StatusEffectInstance(
-            StatusEffects.SPEED,
+        player.addEffect(new MobEffectInstance(
+            MobEffects.MOVEMENT_SPEED,
             SPEED_DURATION,
             SPEED_AMPLIFIER,
             true,   // ambient - 环境效果（粒子更少更透明）
@@ -111,8 +111,8 @@ public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickin
         this.cooldown = ABILITY_COOLDOWN;
         
         // 发送消息
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(Text.translatable("message.noellesroles.athlete.ability_activated"), true);
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(Component.translatable("message.noellesroles.athlete.ability_activated"), true);
         }
         
         this.sync();
@@ -160,8 +160,8 @@ public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickin
             // 速度效果结束
             if (this.speedTicks <= 0) {
                 this.isSprinting = false;
-                if (player instanceof ServerPlayerEntity serverPlayer) {
-                    serverPlayer.sendMessage(Text.translatable("message.noellesroles.athlete.ability_ended"), true);
+                if (player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.displayClientMessage(Component.translatable("message.noellesroles.athlete.ability_ended"), true);
                 }
                 this.sync();
             }
@@ -171,14 +171,14 @@ public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickin
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("cooldown", this.cooldown);
         tag.putInt("speedTicks", this.speedTicks);
         tag.putBoolean("isSprinting", this.isSprinting);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
         this.speedTicks = tag.contains("speedTicks") ? tag.getInt("speedTicks") : 0;
         this.isSprinting = tag.contains("isSprinting") && tag.getBoolean("isSprinting");

@@ -2,23 +2,22 @@ package org.agmas.noellesroles.client;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerEntity;
-
 import java.awt.*;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 
 /**
  * 辅助类用于处理角色屏幕的通用逻辑，如分页和角色检查。
  */
 public class RoleScreenHelper<T> {
-    private final ClientPlayerEntity player;
+    private final LocalPlayer player;
     private final PlayerPaginationHelper<T> paginationHelper;
     private final Role role;
-    private final BiConsumer<DrawContext, Point> extraDrawer;
+    private final BiConsumer<GuiGraphics, Point> extraDrawer;
     private final Supplier<List<T>> entriesSupplier;
 
     /**
@@ -30,11 +29,11 @@ public class RoleScreenHelper<T> {
      * @param extraDrawer 额外绘制逻辑（接收绘制上下文和屏幕中心点）
      * @param entriesSupplier 提供玩家条目列表的 Supplier
      */
-    public RoleScreenHelper(ClientPlayerEntity player,
+    public RoleScreenHelper(LocalPlayer player,
                             Role role,
                             PlayerPaginationHelper.PlayerWidgetCreator<T> widgetCreator,
                             PlayerPaginationHelper.PaginationTextProvider textProvider,
-                            BiConsumer<DrawContext, Point> extraDrawer,
+                            BiConsumer<GuiGraphics, Point> extraDrawer,
                             Supplier<List<T>> entriesSupplier) {
         this.player = player;
         this.role = role;
@@ -47,7 +46,7 @@ public class RoleScreenHelper<T> {
      * 检查当前玩家是否拥有该角色。
      */
     public boolean isRoleActive() {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
         return gameWorldComponent.isRole(player, role);
     }
 
@@ -56,7 +55,7 @@ public class RoleScreenHelper<T> {
      * @param context 绘制上下文
      * @param screen 屏幕实例（必须实现 ScreenWithChildren）
      */
-    public void onRender(DrawContext context, PlayerPaginationHelper.ScreenWithChildren screen) {
+    public void onRender(GuiGraphics context, PlayerPaginationHelper.ScreenWithChildren screen) {
         if (!isRoleActive()) {
             return;
         }

@@ -3,17 +3,17 @@ package org.agmas.noellesroles.component;
 import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -48,7 +48,7 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     
     // ==================== 状态变量 ====================
     
-    private final PlayerEntity player;
+    private final Player player;
     
     /** 发光周期计时器（tick） */
     public int glowTimer = 0;
@@ -68,7 +68,7 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     /**
      * 构造函数
      */
-    public StarPlayerComponent(PlayerEntity player) {
+    public StarPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -96,7 +96,7 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
         this.isActive = false;
         // 移除发光效果
         if (player != null) {
-            player.removeStatusEffect(StatusEffects.GLOWING);
+            player.removeEffect(MobEffects.GLOWING);
         }
         this.sync();
     }
@@ -105,8 +105,8 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
      * 检查是否为激活的明星角色
      */
     public boolean isActiveStar() {
-        if (!isActive || player == null || player.getWorld().isClient()) return false;
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        if (!isActive || player == null || player.level().isClientSide()) return false;
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         return gameWorld.isRole(player, ModRoles.STAR);
     }
     
@@ -128,23 +128,23 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
             return false;
         }
         
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
             return false;
         }
         
-        ServerWorld world = serverPlayer.getServerWorld();
+        ServerLevel world = serverPlayer.serverLevel();
         int affectedCount = 0;
         
         // 遍历范围内的所有玩家
-        for (PlayerEntity target : world.getPlayers()) {
+        for (Player target : world.players()) {
             if (target.equals(player)) continue;
             if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
             
-            double distance = target.squaredDistanceTo(player);
+            double distance = target.distanceToSqr(player);
             if (distance > ABILITY_RANGE * ABILITY_RANGE) continue;
             
             // 让目标玩家看向明星
-            if (target instanceof ServerPlayerEntity serverTarget) {
+            if (target instanceof ServerPlayer serverTarget) {
                 // 计算目标应该看向的方向
                 double dx = player.getX() - target.getX();
                 double dy = (player.getY() + player.getEyeHeight(player.getPose())) - (target.getY() + target.getEyeHeight(target.getPose()));
@@ -155,15 +155,15 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
                 float pitch = (float) -Math.toDegrees(Math.atan2(dy, horizontalDistance));
                 
                 // 设置玩家视角
-                serverTarget.networkHandler.requestTeleport(
+                serverTarget.connection.teleport(
                     target.getX(), target.getY(), target.getZ(),
                     yaw, pitch
                 );
                 
                 // 给目标玩家发送提示
-                serverTarget.sendMessage(
-                    Text.translatable("message.noellesroles.star.attracted")
-                        .formatted(Formatting.GOLD),
+                serverTarget.displayClientMessage(
+                    Component.translatable("message.noellesroles.star.attracted")
+                        .withStyle(ChatFormatting.GOLD),
                     true
                 );
                 
@@ -175,17 +175,17 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
         this.abilityCooldown = ABILITY_COOLDOWN;
         
         // 播放音效
-        world.playSound(null, player.getBlockPos(),
-            SoundEvents.ENTITY_PLAYER_LEVELUP,
-            SoundCategory.PLAYERS, 1.0F, 1.2F);
+        world.playSound(null, player.blockPosition(),
+            SoundEvents.PLAYER_LEVELUP,
+            SoundSource.PLAYERS, 1.0F, 1.2F);
         
         // 给明星发光2秒以突出效果
         startGlowing();
         
         // 发送消息给明星玩家
-        serverPlayer.sendMessage(
-            Text.translatable("message.noellesroles.star.ability_used", affectedCount)
-                .formatted(Formatting.GOLD),
+        serverPlayer.displayClientMessage(
+            Component.translatable("message.noellesroles.star.ability_used", affectedCount)
+                .withStyle(ChatFormatting.GOLD),
             true
         );
         
@@ -203,8 +203,8 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
         this.glowTicksRemaining = GLOW_DURATION;
         
         // 添加发光效果
-        player.addStatusEffect(new StatusEffectInstance(
-            StatusEffects.GLOWING,
+        player.addEffect(new MobEffectInstance(
+            MobEffects.GLOWING,
             GLOW_DURATION + 5, // 稍微多一点以确保效果
             0,
             false,  // ambient
@@ -223,7 +223,7 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
         this.glowTicksRemaining = 0;
         
         if (player != null) {
-            player.removeStatusEffect(StatusEffects.GLOWING);
+            player.removeEffect(MobEffects.GLOWING);
         }
         
         this.sync();
@@ -249,7 +249,7 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
      * 同步到客户端
      */
     public void sync() {
-        if (player != null && !player.getWorld().isClient()) {
+        if (player != null && !player.level().isClientSide()) {
             ModComponents.STAR.sync(this.player);
         }
     }
@@ -295,7 +295,7 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("glowTimer", this.glowTimer);
         tag.putBoolean("isGlowing", this.isGlowing);
         tag.putInt("glowTicksRemaining", this.glowTicksRemaining);
@@ -304,7 +304,7 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.glowTimer = tag.contains("glowTimer") ? tag.getInt("glowTimer") : 0;
         this.isGlowing = tag.contains("isGlowing") && tag.getBoolean("isGlowing");
         this.glowTicksRemaining = tag.contains("glowTicksRemaining") ? tag.getInt("glowTicksRemaining") : 0;

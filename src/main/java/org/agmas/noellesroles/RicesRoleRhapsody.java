@@ -12,15 +12,13 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.component.AbilityPlayerComponent;
@@ -52,23 +50,23 @@ public class RicesRoleRhapsody implements ModInitializer {
     
     // ==================== 原版角色列表（用于判断） ====================
     public static final ArrayList<Role> VANILLA_ROLES = new ArrayList<>();
-    public static final ArrayList<Identifier> VANILLA_ROLE_IDS = new ArrayList<>();
+    public static final ArrayList<ResourceLocation> VANILLA_ROLE_IDS = new ArrayList<>();
     
     // ==================== 网络包 ID ====================
-    public static final CustomPayload.Id<ConspiratorC2SPacket> CONSPIRATOR_PACKET = ConspiratorC2SPacket.ID;
-    public static final CustomPayload.Id<TelegrapherC2SPacket> TELEGRAPHER_PACKET = TelegrapherC2SPacket.ID;
-    public static final CustomPayload.Id<PostmanC2SPacket> POSTMAN_PACKET = PostmanC2SPacket.ID;
-    public static final CustomPayload.Id<DetectiveC2SPacket> DETECTIVE_PACKET = DetectiveC2SPacket.ID;
-    public static final CustomPayload.Id<BoxerAbilityC2SPacket> BOXER_ABILITY_PACKET = BoxerAbilityC2SPacket.ID;
-    public static final CustomPayload.Id<StalkerGazeC2SPacket> STALKER_GAZE_PACKET = StalkerGazeC2SPacket.ID;
-    public static final CustomPayload.Id<StalkerDashC2SPacket> STALKER_DASH_PACKET = StalkerDashC2SPacket.ID;
-    public static final CustomPayload.Id<AthleteAbilityC2SPacket> ATHLETE_ABILITY_PACKET = AthleteAbilityC2SPacket.ID;
-    public static final CustomPayload.Id<AdmirerGazeC2SPacket> ADMIRER_GAZE_PACKET = AdmirerGazeC2SPacket.ID;
-    public static final CustomPayload.Id<TrapperC2SPacket> TRAPPER_PACKET = TrapperC2SPacket.ID;
-    public static final CustomPayload.Id<StarAbilityC2SPacket> STAR_ABILITY_PACKET = StarAbilityC2SPacket.ID;
-    public static final CustomPayload.Id<SingerAbilityC2SPacket> SINGER_ABILITY_PACKET = SingerAbilityC2SPacket.ID;
-    public static final CustomPayload.Id<PsychologistC2SPacket> PSYCHOLOGIST_PACKET = PsychologistC2SPacket.ID;
-    public static final CustomPayload.Id<PuppeteerC2SPacket> PUPPETEER_PACKET = PuppeteerC2SPacket.ID;
+    public static final CustomPacketPayload.Type<ConspiratorC2SPacket> CONSPIRATOR_PACKET = ConspiratorC2SPacket.ID;
+    public static final CustomPacketPayload.Type<TelegrapherC2SPacket> TELEGRAPHER_PACKET = TelegrapherC2SPacket.ID;
+    public static final CustomPacketPayload.Type<PostmanC2SPacket> POSTMAN_PACKET = PostmanC2SPacket.ID;
+    public static final CustomPacketPayload.Type<DetectiveC2SPacket> DETECTIVE_PACKET = DetectiveC2SPacket.ID;
+    public static final CustomPacketPayload.Type<BoxerAbilityC2SPacket> BOXER_ABILITY_PACKET = BoxerAbilityC2SPacket.ID;
+    public static final CustomPacketPayload.Type<StalkerGazeC2SPacket> STALKER_GAZE_PACKET = StalkerGazeC2SPacket.ID;
+    public static final CustomPacketPayload.Type<StalkerDashC2SPacket> STALKER_DASH_PACKET = StalkerDashC2SPacket.ID;
+    public static final CustomPacketPayload.Type<AthleteAbilityC2SPacket> ATHLETE_ABILITY_PACKET = AthleteAbilityC2SPacket.ID;
+    public static final CustomPacketPayload.Type<AdmirerGazeC2SPacket> ADMIRER_GAZE_PACKET = AdmirerGazeC2SPacket.ID;
+    public static final CustomPacketPayload.Type<TrapperC2SPacket> TRAPPER_PACKET = TrapperC2SPacket.ID;
+    public static final CustomPacketPayload.Type<StarAbilityC2SPacket> STAR_ABILITY_PACKET = StarAbilityC2SPacket.ID;
+    public static final CustomPacketPayload.Type<SingerAbilityC2SPacket> SINGER_ABILITY_PACKET = SingerAbilityC2SPacket.ID;
+    public static final CustomPacketPayload.Type<PsychologistC2SPacket> PSYCHOLOGIST_PACKET = PsychologistC2SPacket.ID;
+    public static final CustomPacketPayload.Type<PuppeteerC2SPacket> PUPPETEER_PACKET = PuppeteerC2SPacket.ID;
 
     @Override
     public void onInitialize() {
@@ -143,31 +141,31 @@ public class RicesRoleRhapsody implements ModInitializer {
     private static void registerPuppeteerBodyCollect() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             // 只在服务端处理
-            if (world.isClient()) return net.minecraft.util.ActionResult.PASS;
+            if (world.isClientSide()) return net.minecraft.world.InteractionResult.PASS;
             
             // 检查实体是否是玩家尸体
-            if (!(entity instanceof PlayerBodyEntity body)) return net.minecraft.util.ActionResult.PASS;
+            if (!(entity instanceof PlayerBodyEntity body)) return net.minecraft.world.InteractionResult.PASS;
             
             // 检查玩家是否存活
-            if (!GameFunctions.isPlayerAliveAndSurvival(player)) return net.minecraft.util.ActionResult.PASS;
+            if (!GameFunctions.isPlayerAliveAndSurvival(player)) return net.minecraft.world.InteractionResult.PASS;
             
             // 检查玩家是否是傀儡师
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(world);
-            if (!gameWorld.isRole(player, ModRoles.PUPPETEER)) return net.minecraft.util.ActionResult.PASS;
+            if (!gameWorld.isRole(player, ModRoles.PUPPETEER)) return net.minecraft.world.InteractionResult.PASS;
             
             // 获取傀儡师组件
             PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(player);
             
             // 检查是否可以回收（阶段一且不在冷却中）
-            if (!puppeteerComp.canCollectBody()) return net.minecraft.util.ActionResult.PASS;
+            if (!puppeteerComp.canCollectBody()) return net.minecraft.world.InteractionResult.PASS;
             
             // 获取尸体对应的玩家UUID
             java.util.UUID bodyOwnerUuid = body.getPlayerUuid();
             
             // 获取游戏总人数
             int totalPlayers = 1;
-            if (world instanceof net.minecraft.server.world.ServerWorld serverWorld) {
-                totalPlayers = serverWorld.getPlayers().size();
+            if (world instanceof net.minecraft.server.level.ServerLevel serverWorld) {
+                totalPlayers = serverWorld.players().size();
             }
             
             // 回收尸体
@@ -176,7 +174,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             // 让尸体消失
             body.discard();
             
-            return net.minecraft.util.ActionResult.SUCCESS;
+            return net.minecraft.world.InteractionResult.SUCCESS;
         });
     }
     
@@ -249,7 +247,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理阴谋家猜测包
         ServerPlayNetworking.registerGlobalReceiver(CONSPIRATOR_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家是阴谋家
             if (!gameWorld.isRole(context.player(), ModRoles.CONSPIRATOR)) return;
@@ -259,18 +257,18 @@ public class RicesRoleRhapsody implements ModInitializer {
             
             // 验证目标玩家
             if (payload.targetPlayer() == null) return;
-            PlayerEntity target = context.player().getWorld().getPlayerByUuid(payload.targetPlayer());
+            Player target = context.player().level().getPlayerByUUID(payload.targetPlayer());
             if (target == null) return;
             
             // 验证角色 ID
             if (payload.roleId() == null || payload.roleId().isEmpty()) return;
-            Identifier roleId = Identifier.tryParse(payload.roleId());
+            ResourceLocation roleId = ResourceLocation.tryParse(payload.roleId());
             if (roleId == null) return;
             
             // 验证玩家持有书页物品
-            ItemStack mainHand = context.player().getStackInHand(Hand.MAIN_HAND);
-            ItemStack offHand = context.player().getStackInHand(Hand.OFF_HAND);
-            boolean hasPage = mainHand.isOf(ModItems.CONSPIRACY_PAGE) || offHand.isOf(ModItems.CONSPIRACY_PAGE);
+            ItemStack mainHand = context.player().getItemInHand(InteractionHand.MAIN_HAND);
+            ItemStack offHand = context.player().getItemInHand(InteractionHand.OFF_HAND);
+            boolean hasPage = mainHand.is(ModItems.CONSPIRACY_PAGE) || offHand.is(ModItems.CONSPIRACY_PAGE);
             
             if (!hasPage) return;
             
@@ -279,40 +277,18 @@ public class RicesRoleRhapsody implements ModInitializer {
             boolean correct = component.makeGuess(payload.targetPlayer(), roleId);
             
             // 消耗书页物品
-            if (mainHand.isOf(ModItems.CONSPIRACY_PAGE)) {
-                mainHand.decrement(1);
-            } else if (offHand.isOf(ModItems.CONSPIRACY_PAGE)) {
-                offHand.decrement(1);
+            if (mainHand.is(ModItems.CONSPIRACY_PAGE)) {
+                mainHand.shrink(1);
+            } else if (offHand.is(ModItems.CONSPIRACY_PAGE)) {
+                offHand.shrink(1);
             }
         });
         
-        // 处理电报员消息包
-        ServerPlayNetworking.registerGlobalReceiver(TELEGRAPHER_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
-            
-            // 验证玩家是电报员
-            if (!gameWorld.isRole(context.player(), ModRoles.TELEGRAPHER)) return;
-            
-            // 验证玩家存活
-            if (!GameFunctions.isPlayerAliveAndSurvival(context.player())) return;
-            
-            // 验证消息不为空
-            if (payload.message() == null || payload.message().trim().isEmpty()) return;
-            
-            // 限制消息长度（防止滥用）
-            String message = payload.message();
-            if (message.length() > 200) {
-                message = message.substring(0, 200);
-            }
-            
-            // 发送匿名消息
-            TelegrapherPlayerComponent component = ModComponents.TELEGRAPHER.get(context.player());
-            component.sendAnonymousMessage(message);
-        });
+
         
         // 处理邮差传递包
         ServerPlayNetworking.registerGlobalReceiver(POSTMAN_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家存活
             if (!GameFunctions.isPlayerAliveAndSurvival(context.player())) return;
@@ -324,10 +300,10 @@ public class RicesRoleRhapsody implements ModInitializer {
             switch (payload.action()) {
                 case OPEN_DELIVERY -> {
                     // 只有邮差才能发起传递
-                    if (!gameWorld.isRole(context.player(), ModRoles.POSTMAN)) return;
+                    //if (!gameWorld.isRole(context.player(), ModRoles.POSTMAN)) return;
                     
                     // 验证目标玩家存在且存活
-                    PlayerEntity target = context.player().getWorld().getPlayerByUuid(payload.targetPlayer());
+                    Player target = context.player().level().getPlayerByUUID(payload.targetPlayer());
                     if (target == null || !GameFunctions.isPlayerAliveAndSurvival(target)) return;
                     
                     // 开始传递
@@ -335,44 +311,44 @@ public class RicesRoleRhapsody implements ModInitializer {
                     
                     // 通知目标玩家
                     PostmanPlayerComponent targetComp = ModComponents.POSTMAN.get(target);
-                    targetComp.receiveDelivery(context.player().getUuid(), context.player().getName().getString());
+                    targetComp.receiveDelivery(context.player().getUUID(), context.player().getName().getString());
                     
                     // 打开邮差界面 - 使用 ExtendedScreenHandlerFactory 传递 UUID
-                    if (context.player() instanceof ServerPlayerEntity serverPlayer) {
-                        serverPlayer.openHandledScreen(new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory<java.util.UUID>() {
+                    if (context.player() instanceof ServerPlayer serverPlayer) {
+                        serverPlayer.openMenu(new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory<java.util.UUID>() {
                             @Override
-                            public Text getDisplayName() {
-                                return Text.translatable("screen.noellesroles.postman.title");
+                            public Component getDisplayName() {
+                                return Component.translatable("screen.noellesroles.postman.title");
                             }
                             
                             @Override
-                            public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory playerInventory, PlayerEntity player) {
+                            public net.minecraft.world.inventory.AbstractContainerMenu createMenu(int syncId, net.minecraft.world.entity.player.Inventory playerInventory, Player player) {
                                 return new PostmanScreenHandler(syncId, playerInventory, payload.targetPlayer());
                             }
                             
                             @Override
-                            public java.util.UUID getScreenOpeningData(ServerPlayerEntity player) {
+                            public java.util.UUID getScreenOpeningData(ServerPlayer player) {
                                 return payload.targetPlayer();
                             }
                         });
                     }
                     
                     // 同时为目标玩家打开界面
-                    if (target instanceof ServerPlayerEntity serverTarget) {
-                        final java.util.UUID postmanUuid = context.player().getUuid();
-                        serverTarget.openHandledScreen(new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory<java.util.UUID>() {
+                    if (target instanceof ServerPlayer serverTarget) {
+                        final java.util.UUID postmanUuid = context.player().getUUID();
+                        serverTarget.openMenu(new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory<java.util.UUID>() {
                             @Override
-                            public Text getDisplayName() {
-                                return Text.translatable("screen.noellesroles.postman.title");
+                            public Component getDisplayName() {
+                                return Component.translatable("screen.noellesroles.postman.title");
                             }
                             
                             @Override
-                            public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory playerInventory, PlayerEntity player) {
+                            public net.minecraft.world.inventory.AbstractContainerMenu createMenu(int syncId, net.minecraft.world.entity.player.Inventory playerInventory, Player player) {
                                 return new PostmanScreenHandler(syncId, playerInventory, postmanUuid);
                             }
                             
                             @Override
-                            public java.util.UUID getScreenOpeningData(ServerPlayerEntity player) {
+                            public java.util.UUID getScreenOpeningData(ServerPlayer player) {
                                 return postmanUuid;
                             }
                         });
@@ -391,7 +367,7 @@ public class RicesRoleRhapsody implements ModInitializer {
                     
                     // 获取对方组件
                     if (postmanComp.deliveryTarget == null) return;
-                    PlayerEntity target = context.player().getWorld().getPlayerByUuid(postmanComp.deliveryTarget);
+                    Player target = context.player().level().getPlayerByUUID(postmanComp.deliveryTarget);
                     if (target == null) return;
                     PostmanPlayerComponent targetComp = ModComponents.POSTMAN.get(target);
                     
@@ -416,15 +392,15 @@ public class RicesRoleRhapsody implements ModInitializer {
                         ItemStack targetItem = postmanComp.targetItem.copy();
                         
                         // 确定谁是邮差谁是接收方
-                        PlayerEntity postmanPlayer = isPostman ? context.player() : target;
-                        PlayerEntity receiverPlayer = isPostman ? target : context.player();
+                        Player postmanPlayer = isPostman ? context.player() : target;
+                        Player receiverPlayer = isPostman ? target : context.player();
                         
                         // 邮差收到接收方的物品，接收方收到邮差的物品
                         if (!targetItem.isEmpty()) {
-                            postmanPlayer.giveItemStack(targetItem);
+                            postmanPlayer.addItem(targetItem);
                         }
                         if (!postmanItem.isEmpty()) {
-                            receiverPlayer.giveItemStack(postmanItem);
+                            receiverPlayer.addItem(postmanItem);
                         }
                         
                         // 消耗邮差的传递盒
@@ -435,11 +411,11 @@ public class RicesRoleRhapsody implements ModInitializer {
                         targetComp.reset();
                         
                         // 关闭双方界面
-                        if (context.player() instanceof ServerPlayerEntity serverPlayer) {
-                            serverPlayer.closeHandledScreen();
+                        if (context.player() instanceof ServerPlayer serverPlayer) {
+                            serverPlayer.closeContainer();
                         }
-                        if (target instanceof ServerPlayerEntity serverTarget) {
-                            serverTarget.closeHandledScreen();
+                        if (target instanceof ServerPlayer serverTarget) {
+                            serverTarget.closeContainer();
                         }
                     }
                 }
@@ -449,7 +425,7 @@ public class RicesRoleRhapsody implements ModInitializer {
                     
                     // 取消传递 - 邮差和接收方都可以取消
                     if (postmanComp.deliveryTarget != null) {
-                        PlayerEntity target = context.player().getWorld().getPlayerByUuid(postmanComp.deliveryTarget);
+                        Player target = context.player().level().getPlayerByUUID(postmanComp.deliveryTarget);
                         if (target != null) {
                             PostmanPlayerComponent targetComp = ModComponents.POSTMAN.get(target);
                             targetComp.reset();
@@ -462,7 +438,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理私家侦探审查包
         ServerPlayNetworking.registerGlobalReceiver(DETECTIVE_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家是私家侦探
             if (!gameWorld.isRole(context.player(), ModRoles.DETECTIVE)) return;
@@ -475,7 +451,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             
             // 检查技能冷却
             if (!component.canUseAbility()) {
-                context.player().sendMessage(Text.translatable("message.noellesroles.detective.on_cooldown",
+                context.player().sendSystemMessage(Component.translatable("message.noellesroles.detective.on_cooldown",
                     String.format("%.1f", component.getCooldownSeconds())));
                 return;
             }
@@ -483,20 +459,20 @@ public class RicesRoleRhapsody implements ModInitializer {
             // 获取玩家商店组件，检查金币
             PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(context.player());
             if (shopComponent.balance < DetectivePlayerComponent.INSPECT_COST) {
-                context.player().sendMessage(Text.translatable("message.noellesroles.detective.insufficient_funds"));
+                context.player().sendSystemMessage(Component.translatable("message.noellesroles.detective.insufficient_funds"));
                 return;
             }
             
             // 验证目标玩家
-            PlayerEntity target = context.player().getWorld().getPlayerByUuid(payload.targetUuid());
+            Player target = context.player().level().getPlayerByUUID(payload.targetUuid());
             if (target == null || !GameFunctions.isPlayerAliveAndSurvival(target)) {
-                context.player().sendMessage(Text.translatable("message.noellesroles.detective.invalid_target"));
+                context.player().sendSystemMessage(Component.translatable("message.noellesroles.detective.invalid_target"));
                 return;
             }
             
             // 不能审查自己
-            if (target.getUuid().equals(context.player().getUuid())) {
-                context.player().sendMessage(Text.translatable("message.noellesroles.detective.cannot_inspect_self"));
+            if (target.getUUID().equals(context.player().getUUID())) {
+                context.player().sendSystemMessage(Component.translatable("message.noellesroles.detective.cannot_inspect_self"));
                 return;
             }
             
@@ -507,24 +483,24 @@ public class RicesRoleRhapsody implements ModInitializer {
             component.setCooldown(DetectivePlayerComponent.INSPECT_COOLDOWN);
             
             // 开始审查
-            component.startInspecting((ServerPlayerEntity) target);
+            component.startInspecting((ServerPlayer) target);
             
             // 打开只读的侦探审查界面
-            if (context.player() instanceof ServerPlayerEntity serverPlayer) {
-                serverPlayer.openHandledScreen(new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory<java.util.UUID>() {
+            if (context.player() instanceof ServerPlayer serverPlayer) {
+                serverPlayer.openMenu(new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory<java.util.UUID>() {
                     @Override
-                    public Text getDisplayName() {
-                        return Text.translatable("container.noellesroles.detective.inspect", target.getName());
+                    public Component getDisplayName() {
+                        return Component.translatable("container.noellesroles.detective.inspect", target.getName());
                     }
                     
                     @Override
-                    public net.minecraft.screen.ScreenHandler createMenu(int syncId, net.minecraft.entity.player.PlayerInventory playerInventory, PlayerEntity player) {
-                        return new DetectiveInspectScreenHandler(syncId, playerInventory, (ServerPlayerEntity) target);
+                    public net.minecraft.world.inventory.AbstractContainerMenu createMenu(int syncId, net.minecraft.world.entity.player.Inventory playerInventory, Player player) {
+                        return new DetectiveInspectScreenHandler(syncId, playerInventory, (ServerPlayer) target);
                     }
                     
                     @Override
-                    public java.util.UUID getScreenOpeningData(ServerPlayerEntity player) {
-                        return target.getUuid();
+                    public java.util.UUID getScreenOpeningData(ServerPlayer player) {
+                        return target.getUUID();
                     }
                 });
             }
@@ -532,7 +508,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理拳击手技能包
         ServerPlayNetworking.registerGlobalReceiver(BOXER_ABILITY_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家是拳击手
             if (!gameWorld.isRole(context.player(), ModRoles.BOXER)) return;
@@ -591,7 +567,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理运动员技能包
         ServerPlayNetworking.registerGlobalReceiver(ATHLETE_ABILITY_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家是运动员
             if (!gameWorld.isRole(context.player(), ModRoles.ATHLETE)) return;
@@ -626,7 +602,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理设陷者技能包
         ServerPlayNetworking.registerGlobalReceiver(TRAPPER_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家是设陷者
             if (!gameWorld.isRole(context.player(), ModRoles.TRAPPER)) return;
@@ -641,7 +617,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理明星技能包
         ServerPlayNetworking.registerGlobalReceiver(STAR_ABILITY_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家是明星
             if (!gameWorld.isRole(context.player(), ModRoles.STAR)) return;
@@ -656,7 +632,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理歌手技能包
         ServerPlayNetworking.registerGlobalReceiver(SINGER_ABILITY_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家是歌手
             if (!gameWorld.isRole(context.player(), ModRoles.SINGER)) return;
@@ -671,7 +647,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理心理学家治疗包
         ServerPlayNetworking.registerGlobalReceiver(PSYCHOLOGIST_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 验证玩家是心理学家
             if (!gameWorld.isRole(context.player(), ModRoles.PSYCHOLOGIST)) return;
@@ -680,9 +656,9 @@ public class RicesRoleRhapsody implements ModInitializer {
             if (!GameFunctions.isPlayerAliveAndSurvival(context.player())) return;
             
             // 验证目标玩家
-            PlayerEntity target = context.player().getWorld().getPlayerByUuid(payload.targetUuid());
+            Player target = context.player().level().getPlayerByUUID(payload.targetUuid());
             if (target == null) {
-                context.player().sendMessage(Text.translatable("message.noellesroles.psychologist.invalid_target"), true);
+                context.player().displayClientMessage(Component.translatable("message.noellesroles.psychologist.invalid_target"), true);
                 return;
             }
             
@@ -693,7 +669,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 处理傀儡师技能包
         ServerPlayNetworking.registerGlobalReceiver(PUPPETEER_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().getWorld());
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
             
             // 获取傀儡师组件
             PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(context.player());
@@ -738,18 +714,18 @@ public class RicesRoleRhapsody implements ModInitializer {
      * 查找攻击者
      * 遍历附近玩家找到持有对应武器的
      */
-    public static PlayerEntity findAttackerWithWeapon(PlayerEntity victim, boolean isKnife) {
+    public static Player findAttackerWithWeapon(Player victim, boolean isKnife) {
         // 获取附近5格内的所有玩家
-        for (PlayerEntity player : victim.getWorld().getPlayers()) {
+        for (Player player : victim.level().players()) {
             if (player.equals(victim)) continue;
             if (!GameFunctions.isPlayerAliveAndSurvival(player)) continue;
-            if (player.squaredDistanceTo(victim) > 25) continue; // 5格距离
+            if (player.distanceToSqr(victim) > 25) continue; // 5格距离
             
-            ItemStack mainHand = player.getMainHandStack();
-            if (isKnife && mainHand.isOf(dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE)) {
+            ItemStack mainHand = player.getMainHandItem();
+            if (isKnife && mainHand.is(dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE)) {
                 return player;
             }
-            if (!isKnife && mainHand.isOf(dev.doctor4t.trainmurdermystery.index.TMMItems.BAT)) {
+            if (!isKnife && mainHand.is(dev.doctor4t.trainmurdermystery.index.TMMItems.BAT)) {
                 return player;
             }
         }
@@ -764,7 +740,7 @@ public class RicesRoleRhapsody implements ModInitializer {
      * @param victim 死亡的玩家
      * @param deathReason 死亡原因
      */
-    private static void onPlayerDeath(PlayerEntity victim, Identifier deathReason) {
+    private static void onPlayerDeath(Player victim, ResourceLocation deathReason) {
         // 复仇者的激活逻辑已在 AvengerKillMixin 中处理
         // 此方法保留用于处理其他死亡相关逻辑
     }
@@ -775,10 +751,41 @@ public class RicesRoleRhapsody implements ModInitializer {
      * @param player 被分配角色的玩家
      * @param role 分配的角色
      */
-    public static void onRoleAssigned(PlayerEntity player, Role role) {
+    public static void onRoleAssigned(Player player, Role role) {
         // 重置玩家的技能冷却
         AbilityPlayerComponent abilityComponent = ModComponents.ABILITY.get(player);
         abilityComponent.reset();
+        
+        // ==================== 清除其他角色的组件状态 ====================
+        // 当角色改变时，需要清除之前角色的组件状态
+        // 这对于傀儡师操控假人变成其他杀手后返回本体的情况尤其重要
+        
+        // 如果新角色不是跟踪者，清除跟踪者组件状态
+        if (!role.equals(ModRoles.STALKER)) {
+            StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
+            if (stalkerComp.isActiveStalker()) {
+                stalkerComp.clearAll();
+            }
+        }
+        
+        // 如果新角色不是慕恋者，清除慕恋者组件状态
+        if (!role.equals(ModRoles.ADMIRER)) {
+            AdmirerPlayerComponent admirerComp = ModComponents.ADMIRER.get(player);
+            if (admirerComp.isActiveAdmirer()) {
+                admirerComp.clearAll();
+            }
+        }
+        
+        // 如果新角色不是傀儡师，清除傀儡师组件状态（但保留操控假人状态，因为傀儡师返回本体需要这个）
+        // 注意：傀儡师操控假人时角色会临时变成其他杀手，但不应该清除傀儡师组件
+        // 所以这里只在完全不是傀儡师相关的角色变化时才清除
+        if (!role.equals(ModRoles.PUPPETEER)) {
+            PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(player);
+            // 只有在不是操控假人状态时才清除（操控假人时需要保留状态以便返回）
+            if (puppeteerComp.isActivePuppeteer() && !puppeteerComp.isControllingPuppet) {
+                puppeteerComp.clearAll();
+            }
+        }
         
         // 获取游戏世界组件（用于判断角色）
         //GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
@@ -791,7 +798,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             
             // 随机绑定一个无辜玩家作为保护目标
             // 延迟执行以确保所有玩家都已分配角色
-            if (player instanceof ServerPlayerEntity serverPlayer) {
+            if (player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.getServer().execute(avengerComponent::bindRandomTarget);
             }
             
@@ -811,13 +818,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             slipperyGhostComponent.reset();
         }
         
-        // ==================== 电报员角色处理 ====================
-        if (role.equals(ModRoles.TELEGRAPHER)) {
-            // 重置电报员组件
-            TelegrapherPlayerComponent telegrapherComponent = ModComponents.TELEGRAPHER.get(player);
-            telegrapherComponent.reset();
-        }
-        
+
         // ==================== 工程师角色处理 ====================
         if (role.equals(ModRoles.ENGINEER)) {
             // 工程师不需要特殊组件，只需要商店访问权限
@@ -887,7 +888,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             veteranComponent.reset();
             
             // 给予一把刀
-            player.giveItemStack(new ItemStack(dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE));
+            player.addItem(new ItemStack(dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE));
         }
         
         // ==================== 歌手角色处理 ====================
@@ -939,26 +940,26 @@ public class RicesRoleRhapsody implements ModInitializer {
      *
      * @param postmanPlayer 邮差玩家
      */
-    private static void consumeDeliveryBox(PlayerEntity postmanPlayer) {
+    private static void consumeDeliveryBox(Player postmanPlayer) {
         // 先检查主手
-        ItemStack mainHand = postmanPlayer.getMainHandStack();
-        if (mainHand.isOf(ModItems.DELIVERY_BOX)) {
-            mainHand.decrement(1);
+        ItemStack mainHand = postmanPlayer.getMainHandItem();
+        if (mainHand.is(ModItems.DELIVERY_BOX)) {
+            mainHand.shrink(1);
             return;
         }
         
         // 再检查副手
-        ItemStack offHand = postmanPlayer.getOffHandStack();
-        if (offHand.isOf(ModItems.DELIVERY_BOX)) {
-            offHand.decrement(1);
+        ItemStack offHand = postmanPlayer.getOffhandItem();
+        if (offHand.is(ModItems.DELIVERY_BOX)) {
+            offHand.shrink(1);
             return;
         }
         
         // 最后遍历背包
-        for (int i = 0; i < postmanPlayer.getInventory().size(); i++) {
-            ItemStack stack = postmanPlayer.getInventory().getStack(i);
-            if (stack.isOf(ModItems.DELIVERY_BOX)) {
-                stack.decrement(1);
+        for (int i = 0; i < postmanPlayer.getInventory().getContainerSize(); i++) {
+            ItemStack stack = postmanPlayer.getInventory().getItem(i);
+            if (stack.is(ModItems.DELIVERY_BOX)) {
+                stack.shrink(1);
                 return;
             }
         }
@@ -967,8 +968,8 @@ public class RicesRoleRhapsody implements ModInitializer {
     /**
      * 创建本模组的资源标识符
      */
-    public static Identifier id(String path) {
-        return Identifier.of(MOD_ID, path);
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
     
     /**
@@ -981,7 +982,7 @@ public class RicesRoleRhapsody implements ModInitializer {
     /**
      * 判断角色是否为原版角色（通过ID）
      */
-    public static boolean isVanillaRole(Identifier roleId) {
+    public static boolean isVanillaRole(ResourceLocation roleId) {
         return VANILLA_ROLE_IDS.contains(roleId);
     }
 }

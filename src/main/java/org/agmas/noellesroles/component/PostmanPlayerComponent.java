@@ -1,14 +1,14 @@
 package org.agmas.noellesroles.component;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import java.util.UUID;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * 邮差组件
@@ -23,7 +23,7 @@ public class PostmanPlayerComponent implements AutoSyncedComponent {
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<PostmanPlayerComponent> KEY = ModComponents.POSTMAN;
     
-    private final PlayerEntity player;
+    private final Player player;
     
     // 当前正在传递的目标玩家 UUID
     public UUID deliveryTarget = null;
@@ -46,7 +46,7 @@ public class PostmanPlayerComponent implements AutoSyncedComponent {
     // 是否是接收方（true = 被邮差选中的目标，false = 邮差本人）
     public boolean isReceiver = false;
     
-    public PostmanPlayerComponent(PlayerEntity player) {
+    public PostmanPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -164,20 +164,20 @@ public class PostmanPlayerComponent implements AutoSyncedComponent {
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         if (deliveryTarget != null) {
-            tag.putUuid("deliveryTarget", deliveryTarget);
+            tag.putUUID("deliveryTarget", deliveryTarget);
         }
         
         if (!postmanItem.isEmpty()) {
-            NbtCompound postmanItemTag = new NbtCompound();
-            postmanItem.encode(registryLookup, postmanItemTag);
+            CompoundTag postmanItemTag = new CompoundTag();
+            postmanItem.save(registryLookup, postmanItemTag);
             tag.put("postmanItem", postmanItemTag);
         }
         
         if (!targetItem.isEmpty()) {
-            NbtCompound targetItemTag = new NbtCompound();
-            targetItem.encode(registryLookup, targetItemTag);
+            CompoundTag targetItemTag = new CompoundTag();
+            targetItem.save(registryLookup, targetItemTag);
             tag.put("targetItem", targetItemTag);
         }
         
@@ -188,17 +188,17 @@ public class PostmanPlayerComponent implements AutoSyncedComponent {
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
-        this.deliveryTarget = tag.contains("deliveryTarget") ? tag.getUuid("deliveryTarget") : null;
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
+        this.deliveryTarget = tag.contains("deliveryTarget") ? tag.getUUID("deliveryTarget") : null;
         
         if (tag.contains("postmanItem")) {
-            this.postmanItem = ItemStack.fromNbtOrEmpty(registryLookup, tag.getCompound("postmanItem"));
+            this.postmanItem = ItemStack.parseOptional(registryLookup, tag.getCompound("postmanItem"));
         } else {
             this.postmanItem = ItemStack.EMPTY;
         }
         
         if (tag.contains("targetItem")) {
-            this.targetItem = ItemStack.fromNbtOrEmpty(registryLookup, tag.getCompound("targetItem"));
+            this.targetItem = ItemStack.parseOptional(registryLookup, tag.getCompound("targetItem"));
         } else {
             this.targetItem = ItemStack.EMPTY;
         }

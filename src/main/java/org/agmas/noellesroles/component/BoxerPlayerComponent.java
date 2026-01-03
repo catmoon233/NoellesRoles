@@ -2,17 +2,17 @@ package org.agmas.noellesroles.component;
 
 import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -56,7 +56,7 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
     
     // ==================== 状态变量 ====================
     
-    private final PlayerEntity player;
+    private final Player player;
     
     /** 技能冷却时间（tick） */
     public int cooldown = 0;
@@ -70,7 +70,7 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
     /**
      * 构造函数
      */
-    public BoxerPlayerComponent(PlayerEntity player) {
+    public BoxerPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -102,7 +102,7 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
         }
         
         // 验证是拳击手
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.BOXER)) {
             return false;
         }
@@ -115,8 +115,8 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
         this.cooldown = ABILITY_COOLDOWN;
         
         // 发送消息
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(Text.translatable("message.noellesroles.boxer.ability_activated"), true);
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(Component.translatable("message.noellesroles.boxer.ability_activated"), true);
         }
         
         this.sync();
@@ -131,14 +131,14 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
      * @param weapon 攻击者使用的武器
      * @return true 表示成功反制，攻击应被取消
      */
-    public boolean handleCounterAttack(PlayerEntity attacker, ItemStack weapon) {
+    public boolean handleCounterAttack(Player attacker, ItemStack weapon) {
         if (!isInvulnerable || invulnerabilityTicks <= 0) {
             return false;
         }
         
         // 给攻击者施加缓慢4效果，持续2秒
-        attacker.addStatusEffect(new StatusEffectInstance(
-            StatusEffects.SLOWNESS,
+        attacker.addEffect(new MobEffectInstance(
+            MobEffects.MOVEMENT_SLOWDOWN,
             COUNTER_SLOWNESS_DURATION,
             COUNTER_SLOWNESS_AMPLIFIER,
             false,
@@ -147,24 +147,24 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
         ));
         
         // 如果是刀，让刀进入CD
-        if (weapon.isOf(dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE)) {
+        if (weapon.is(dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE)) {
             // 使用物品冷却系统
-            attacker.getItemCooldownManager().set(weapon.getItem(), KNIFE_COOLDOWN);
+            attacker.getCooldowns().addCooldown(weapon.getItem(), KNIFE_COOLDOWN);
             
             // 发送消息给攻击者
-            if (attacker instanceof ServerPlayerEntity serverAttacker) {
-                serverAttacker.sendMessage(Text.translatable("message.noellesroles.boxer.counter_knife"), true);
+            if (attacker instanceof ServerPlayer serverAttacker) {
+                serverAttacker.displayClientMessage(Component.translatable("message.noellesroles.boxer.counter_knife"), true);
             }
         } else {
             // 棍棒攻击
-            if (attacker instanceof ServerPlayerEntity serverAttacker) {
-                serverAttacker.sendMessage(Text.translatable("message.noellesroles.boxer.counter_bat"), true);
+            if (attacker instanceof ServerPlayer serverAttacker) {
+                serverAttacker.displayClientMessage(Component.translatable("message.noellesroles.boxer.counter_bat"), true);
             }
         }
         
         // 发送消息给拳击手
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(Text.translatable("message.noellesroles.boxer.counter_success", attacker.getName()), true);
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(Component.translatable("message.noellesroles.boxer.counter_success", attacker.getName()), true);
         }
         
         return true;
@@ -176,23 +176,23 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
      *
      * @param deathReason 死亡原因
      */
-    public void handleAnyDeathCounter(Identifier deathReason) {
+    public void handleAnyDeathCounter(ResourceLocation deathReason) {
         if (!isInvulnerable || invulnerabilityTicks <= 0) {
             return;
         }
         
         // 播放反弹音效
-        player.getWorld().playSound(null, player.getBlockPos(),
+        player.level().playSound(null, player.blockPosition(),
             dev.doctor4t.trainmurdermystery.index.TMMSounds.ITEM_PSYCHO_ARMOUR,
-            SoundCategory.MASTER, 5.0F, 1.0F);
+            SoundSource.MASTER, 5.0F, 1.0F);
         
         // 发送消息给拳击手
-        if (player instanceof ServerPlayerEntity serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             // 根据死亡原因显示不同消息
             String deathType = getDeathTypeName(deathReason);
-            serverPlayer.sendMessage(
-                Text.translatable("message.noellesroles.boxer.blocked_death", deathType)
-                    .formatted(Formatting.GOLD, Formatting.BOLD),
+            serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.boxer.blocked_death", deathType)
+                    .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
                 true
             );
         }
@@ -201,7 +201,7 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
     /**
      * 获取死亡类型名称
      */
-    private String getDeathTypeName(Identifier deathReason) {
+    private String getDeathTypeName(ResourceLocation deathReason) {
         if (deathReason == null) return "未知";
         
         String path = deathReason.getPath();
@@ -258,8 +258,8 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
             // 无敌结束
             if (this.invulnerabilityTicks <= 0) {
                 this.isInvulnerable = false;
-                if (player instanceof ServerPlayerEntity serverPlayer) {
-                    serverPlayer.sendMessage(Text.translatable("message.noellesroles.boxer.ability_ended"), true);
+                if (player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.displayClientMessage(Component.translatable("message.noellesroles.boxer.ability_ended"), true);
                 }
                 this.sync();
             }
@@ -269,14 +269,14 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("cooldown", this.cooldown);
         tag.putInt("invulnerabilityTicks", this.invulnerabilityTicks);
         tag.putBoolean("isInvulnerable", this.isInvulnerable);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
         this.invulnerabilityTicks = tag.contains("invulnerabilityTicks") ? tag.getInt("invulnerabilityTicks") : 0;
         this.isInvulnerable = tag.contains("isInvulnerable") && tag.getBoolean("isInvulnerable");

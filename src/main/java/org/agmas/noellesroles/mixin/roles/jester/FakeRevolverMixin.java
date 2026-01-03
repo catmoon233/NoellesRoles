@@ -1,8 +1,8 @@
 package org.agmas.noellesroles.mixin.roles.jester;
 
 import dev.doctor4t.trainmurdermystery.item.RevolverItem;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.hit.HitResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.HitResult;
 import org.agmas.noellesroles.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class FakeRevolverMixin {
 
     @Inject(method = "getGunTarget", at = @At("HEAD"), cancellable = true)
-    private static void jesterFakeGun(PlayerEntity user, CallbackInfoReturnable<HitResult> cir) {
-        if (user.getMainHandStack().isOf(ModItems.FAKE_REVOLVER)) {
+    private static void jesterFakeGun(Player user, CallbackInfoReturnable<HitResult> cir) {
+        if (user.getMainHandItem().is(ModItems.FAKE_REVOLVER)) {
             cir.setReturnValue(null);
         }
     }

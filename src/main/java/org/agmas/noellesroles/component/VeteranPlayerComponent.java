@@ -2,12 +2,12 @@ package org.agmas.noellesroles.component;
 
 import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -24,12 +24,12 @@ public class VeteranPlayerComponent implements AutoSyncedComponent {
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<VeteranPlayerComponent> KEY = ModComponents.VETERAN;
     
-    private final PlayerEntity player;
+    private final Player player;
     
     // 是否已使用刀击杀
     public boolean knifeUsed = false;
     
-    public VeteranPlayerComponent(PlayerEntity player) {
+    public VeteranPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -45,8 +45,8 @@ public class VeteranPlayerComponent implements AutoSyncedComponent {
      * 检查玩家是否是活跃的退伍军人
      */
     public boolean isActiveVeteran() {
-        if (player.getWorld().isClient()) return false;
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        if (player.level().isClientSide()) return false;
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         return gameWorld.isRole(player, ModRoles.VETERAN);
     }
     
@@ -60,10 +60,10 @@ public class VeteranPlayerComponent implements AutoSyncedComponent {
         this.knifeUsed = true;
         
         // 发送消息给玩家
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(
-                Text.translatable("message.noellesroles.veteran.knife_used")
-                    .formatted(Formatting.YELLOW),
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.veteran.knife_used")
+                    .withStyle(ChatFormatting.YELLOW),
                 true
             );
         }
@@ -85,12 +85,12 @@ public class VeteranPlayerComponent implements AutoSyncedComponent {
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putBoolean("knifeUsed", knifeUsed);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.knifeUsed = tag.getBoolean("knifeUsed");
     }
 }

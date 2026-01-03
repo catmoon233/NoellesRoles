@@ -1,9 +1,5 @@
 package org.agmas.noellesroles.roles.voodoo;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -11,18 +7,22 @@ import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import java.util.UUID;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 public class VoodooPlayerComponent implements AutoSyncedComponent {
-    public static final ComponentKey<VoodooPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "voodoo"), VoodooPlayerComponent.class);
-    private final PlayerEntity player;
+    public static final ComponentKey<VoodooPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "voodoo"), VoodooPlayerComponent.class);
+    private final Player player;
     public UUID target;
 
     public void reset() {
-        this.target = player.getUuid();
+        this.target = player.getUUID();
         this.sync();
     }
 
-    public VoodooPlayerComponent(PlayerEntity player) {
+    public VoodooPlayerComponent(Player player) {
         this.player = player;
     }
 
@@ -36,11 +36,11 @@ public class VoodooPlayerComponent implements AutoSyncedComponent {
         this.sync();
     }
 
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
-        tag.putUuid("target", player.getUuid());
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
+        tag.putUUID("target", player.getUUID());
     }
 
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
-        this.target = tag.contains("target") ? tag.getUuid("target") : player.getUuid();
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
+        this.target = tag.contains("target") ? tag.getUUID("target") : player.getUUID();
     }
 }

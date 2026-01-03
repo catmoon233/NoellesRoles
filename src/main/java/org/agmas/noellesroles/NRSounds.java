@@ -2,7 +2,7 @@ package org.agmas.noellesroles;
 
 import dev.doctor4t.ratatouille.util.registrar.SoundEventRegistrar;
 import dev.doctor4t.trainmurdermystery.TMM;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 
 public class NRSounds {
     public static final SoundEventRegistrar registrar = new SoundEventRegistrar(Noellesroles.MOD_ID);

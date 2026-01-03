@@ -3,17 +3,17 @@ package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.SlipperyGhostPlayerComponent;
 
@@ -29,73 +29,73 @@ public class BlankCartridgeItem extends Item {
     // 冷却时间: 30秒 = 600 ticks
     private static final int GUN_COOLDOWN_TICKS = 600;
     
-    public BlankCartridgeItem(Settings settings) {
+    public BlankCartridgeItem(Properties settings) {
         super(settings);
     }
     
     @Override
-    public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
-        if (user.getWorld().isClient) {
-            return ActionResult.SUCCESS;
+    public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity entity, InteractionHand hand) {
+        if (user.level().isClientSide) {
+            return InteractionResult.SUCCESS;
         }
         
         // 检查目标是否为玩家
-        if (!(entity instanceof ServerPlayerEntity target)) {
-            return ActionResult.PASS;
+        if (!(entity instanceof ServerPlayer target)) {
+            return InteractionResult.PASS;
         }
         
         // 检查冷却
         SlipperyGhostPlayerComponent ghostComp = ModComponents.SLIPPERY_GHOST.get(user);
         if (ghostComp.isBlankCartridgeOnCooldown()) {
-            user.sendMessage(Text.literal("空包弹冷却中！剩余 " + ghostComp.getBlankCartridgeCooldownSeconds() + " 秒").formatted(Formatting.RED), true);
-            return ActionResult.FAIL;
+            user.displayClientMessage(Component.literal("空包弹冷却中！剩余 " + ghostComp.getBlankCartridgeCooldownSeconds() + " 秒").withStyle(ChatFormatting.RED), true);
+            return InteractionResult.FAIL;
         }
         
         // 检查目标是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(target)) {
-            return ActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
         
         // 获取目标手中的物品，检查是否为枪械
-        ItemStack targetMainHand = target.getStackInHand(Hand.MAIN_HAND);
-        ItemStack targetOffHand = target.getStackInHand(Hand.OFF_HAND);
+        ItemStack targetMainHand = target.getItemInHand(InteractionHand.MAIN_HAND);
+        ItemStack targetOffHand = target.getItemInHand(InteractionHand.OFF_HAND);
         
         boolean appliedCooldown = false;
         
         // 检查主手是否为枪械
         if (isGun(targetMainHand)) {
-            target.getItemCooldownManager().set(targetMainHand.getItem(), GUN_COOLDOWN_TICKS);
+            target.getCooldowns().addCooldown(targetMainHand.getItem(), GUN_COOLDOWN_TICKS);
             appliedCooldown = true;
         }
         
         // 检查副手是否为枪械
         if (isGun(targetOffHand)) {
-            target.getItemCooldownManager().set(targetOffHand.getItem(), GUN_COOLDOWN_TICKS);
+            target.getCooldowns().addCooldown(targetOffHand.getItem(), GUN_COOLDOWN_TICKS);
             appliedCooldown = true;
         }
         
         if (appliedCooldown) {
             // 播放音效
-            user.getWorld().playSound(null, target.getX(), target.getY(), target.getZ(),
-                    SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 0.5F);
+            user.level().playSound(null, target.getX(), target.getY(), target.getZ(),
+                    SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 0.5F);
             
             // 通知目标
-            target.sendMessage(Text.literal("你的枪械被空包弹干扰，进入冷却状态！").formatted(Formatting.RED), true);
+            target.displayClientMessage(Component.literal("你的枪械被空包弹干扰，进入冷却状态！").withStyle(ChatFormatting.RED), true);
             
             // 通知使用者
-            user.sendMessage(Text.literal("成功使 " + target.getName().getString() + " 的枪械进入冷却！").formatted(Formatting.GREEN), true);
+            user.displayClientMessage(Component.literal("成功使 " + target.getName().getString() + " 的枪械进入冷却！").withStyle(ChatFormatting.GREEN), true);
             
             // 消耗物品
-            stack.decrementUnlessCreative(1, user);
+            stack.consume(1, user);
             
             // 设置冷却
             ghostComp.setBlankCartridgeCooldown();
             
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else {
             // 目标没有枪械
-            user.sendMessage(Text.literal("目标没有持有枪械！").formatted(Formatting.YELLOW), true);
-            return ActionResult.FAIL;
+            user.displayClientMessage(Component.literal("目标没有持有枪械！").withStyle(ChatFormatting.YELLOW), true);
+            return InteractionResult.FAIL;
         }
     }
     

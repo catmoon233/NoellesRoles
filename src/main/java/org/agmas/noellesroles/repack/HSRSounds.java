@@ -1,8 +1,7 @@
 package org.agmas.noellesroles.repack;
 
 import dev.doctor4t.ratatouille.util.registrar.SoundEventRegistrar;
-
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 import org.agmas.noellesroles.Noellesroles;
 
 public interface HSRSounds {

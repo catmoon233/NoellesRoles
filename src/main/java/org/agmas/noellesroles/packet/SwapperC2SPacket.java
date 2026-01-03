@@ -1,35 +1,35 @@
 package org.agmas.noellesroles.packet;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.Noellesroles;
 
 import java.util.UUID;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-public record SwapperC2SPacket(UUID player, UUID player2) implements CustomPayload {
-    public static final Identifier MORPH_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "swapper");
-    public static final Id<SwapperC2SPacket> ID = new Id<>(MORPH_PAYLOAD_ID);
-    public static final PacketCodec<RegistryByteBuf, SwapperC2SPacket> CODEC;
+public record SwapperC2SPacket(UUID player, UUID player2) implements CustomPacketPayload {
+    public static final ResourceLocation MORPH_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "swapper");
+    public static final Type<SwapperC2SPacket> ID = new Type<>(MORPH_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SwapperC2SPacket> CODEC;
 
     public SwapperC2SPacket(UUID player, UUID player2) {
         this.player = player;
         this.player2 = player2;
     }
 
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
-    public void write(PacketByteBuf buf) {
-        buf.writeUuid(this.player);
-        buf.writeUuid(this.player2);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeUUID(this.player);
+        buf.writeUUID(this.player2);
     }
 
-    public static SwapperC2SPacket read(PacketByteBuf buf) {
-        return new SwapperC2SPacket(buf.readUuid(), buf.readUuid());
+    public static SwapperC2SPacket read(FriendlyByteBuf buf) {
+        return new SwapperC2SPacket(buf.readUUID(), buf.readUUID());
     }
 
 
@@ -42,6 +42,6 @@ public record SwapperC2SPacket(UUID player, UUID player2) implements CustomPaylo
 
 
     static {
-        CODEC = PacketCodec.of(SwapperC2SPacket::write, SwapperC2SPacket::read);
+        CODEC = StreamCodec.ofMember(SwapperC2SPacket::write, SwapperC2SPacket::read);
     }
 }

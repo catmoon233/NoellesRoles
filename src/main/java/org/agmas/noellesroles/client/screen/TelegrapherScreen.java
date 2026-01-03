@@ -1,15 +1,16 @@
 package org.agmas.noellesroles.client.screen;
 
 import org.agmas.noellesroles.component.TelegrapherPlayerComponent;
+import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
 import org.agmas.noellesroles.packet.TelegrapherC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 /**
  * 电报员消息编辑屏幕
@@ -22,16 +23,17 @@ import net.minecraft.util.Formatting;
 public class TelegrapherScreen extends Screen {
     
     // 文本输入框
-    private TextFieldWidget messageField;
-    
+    private EditBox messageField;
+    private Screen parent;
     // 确认按钮
-    private ButtonWidget confirmButton;
+    private Button confirmButton;
     
     // 剩余使用次数
     private int remainingUses = 0;
     
-    public TelegrapherScreen() {
-        super(Text.translatable("screen.noellesroles.telegrapher.title"));
+    public TelegrapherScreen(Screen parent) {
+        super(Component.translatable("screen.noellesroles.telegrapher.title"));
+        this.parent = parent;
     }
     
     @Override
@@ -39,9 +41,8 @@ public class TelegrapherScreen extends Screen {
         super.init();
         
         // 获取剩余使用次数
-        if (client != null && client.player != null) {
-            TelegrapherPlayerComponent component = TelegrapherPlayerComponent.KEY.get(client.player);
-            remainingUses = component.remainingUses;
+        if (minecraft != null && minecraft.player != null) {
+
         }
         
         // 创建文本输入框
@@ -50,18 +51,18 @@ public class TelegrapherScreen extends Screen {
         int fieldX = (width - fieldWidth) / 2;
         int fieldY = height / 2 - 10;
         
-        messageField = new TextFieldWidget(
-            textRenderer,
+        messageField = new EditBox(
+            font,
             fieldX,
             fieldY,
             fieldWidth,
             fieldHeight,
-            Text.translatable("screen.noellesroles.telegrapher.message")
+            Component.translatable("screen.noellesroles.telegrapher.message")
         );
         messageField.setMaxLength(200); // 限制最大长度
-        messageField.setPlaceholder(Text.translatable("screen.noellesroles.telegrapher.placeholder")
-            .formatted(Formatting.GRAY));
-        addSelectableChild(messageField);
+        messageField.setHint(Component.translatable("screen.noellesroles.telegrapher.placeholder")
+            .withStyle(ChatFormatting.GRAY));
+        addWidget(messageField);
         setInitialFocus(messageField);
         
         // 创建确认按钮
@@ -70,71 +71,56 @@ public class TelegrapherScreen extends Screen {
         int buttonX = (width - buttonWidth) / 2;
         int buttonY = fieldY + fieldHeight + 10;
         
-        confirmButton = ButtonWidget.builder(
-            Text.translatable("screen.noellesroles.telegrapher.confirm"),
+        confirmButton = Button.builder(
+            Component.translatable("screen.noellesroles.telegrapher.confirm"),
             button -> onConfirm()
         )
-        .dimensions(buttonX, buttonY, buttonWidth, buttonHeight)
+        .bounds(buttonX, buttonY, buttonWidth, buttonHeight)
         .build();
         
-        addDrawableChild(confirmButton);
+        addRenderableWidget(confirmButton);
     }
     
     /**
      * 确认按钮被点击
      */
     private void onConfirm() {
-        if (client == null || client.player == null) return;
+        if (minecraft == null || minecraft.player == null) return;
         
-        String message = messageField.getText().trim();
-        
-        // 验证消息不为空
-        if (message.isEmpty()) {
-            client.player.sendMessage(
-                Text.translatable("message.noellesroles.telegrapher.empty")
-                    .formatted(Formatting.RED),
-                false
-            );
-            return;
-        }
-        
-        // 验证还有剩余次数
-        if (remainingUses <= 0) {
-            client.player.sendMessage(
-                Text.translatable("message.noellesroles.telegrapher.no_uses")
-                    .formatted(Formatting.RED),
-                false
-            );
-            close();
-            return;
-        }
-        
+        String message = messageField.getValue().trim();
+
         // 发送网络包到服务端
-        ClientPlayNetworking.send(new TelegrapherC2SPacket(message));
-        
+        if (!message.isEmpty()) {
+            // 发送包到服务器
+            ClientPlayNetworking.send(new BroadcasterC2SPacket(message));
+        }
+        if (this.minecraft != null) {
+            this.minecraft.setScreen(this.parent);
+        }
+
         // 关闭屏幕
-        close();
+
     }
     
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         // 渲染背景
         renderBackground(context, mouseX, mouseY, delta);
         
         // 渲染标题
-        Text title = Text.translatable("screen.noellesroles.telegrapher.title")
-            .formatted(Formatting.AQUA, Formatting.BOLD);
-        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 40, 0xFFFFFF);
+        Component title = Component.translatable("screen.noellesroles.telegrapher.title")
+            .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD);
+        context.drawCenteredString(font, title, width / 2, 40, 0xFFFFFF);
         
         // 渲染剩余次数提示
-        Text usesText = Text.translatable("screen.noellesroles.telegrapher.remaining", remainingUses)
-            .formatted(remainingUses > 0 ? Formatting.GREEN : Formatting.RED);
-        context.drawCenteredTextWithShadow(textRenderer, usesText, width / 2, 60, 0xFFFFFF);
+//        Component usesText = Component.translatable("screen.noellesroles.telegrapher.remaining", remainingUses)
+//            .withStyle(remainingUses > 0 ? ChatFormatting.GREEN : ChatFormatting.RED);
+//        context.drawCenteredString(font, usesText, width / 2, 60, 0xFFFFFF);
         
         // 渲染说明文本
-        Text hint = Text.translatable("screen.noellesroles.telegrapher.hint")
-            .formatted(Formatting.GRAY);
-        context.drawCenteredTextWithShadow(textRenderer, hint, width / 2, height / 2 - 30, 0x888888);
+        Component hint = Component.translatable("screen.noellesroles.telegrapher.hint")
+            .withStyle(ChatFormatting.GRAY);
+        context.drawCenteredString(font, hint, width / 2, height / 2 - 30, 0x888888);
         
         super.render(context, mouseX, mouseY, delta);
         
@@ -143,14 +129,14 @@ public class TelegrapherScreen extends Screen {
     }
     
     @Override
-    public boolean shouldPause() {
+    public boolean isPauseScreen() {
         return false;
     }
     
     @Override
-    public void resize(MinecraftClient client, int width, int height) {
-        String text = messageField.getText();
+    public void resize(Minecraft client, int width, int height) {
+        String text = messageField.getValue();
         super.resize(client, width, height);
-        messageField.setText(text);
+        messageField.setValue(text);
     }
 }

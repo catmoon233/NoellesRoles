@@ -1,13 +1,12 @@
 package org.agmas.noellesroles.packet;
 
 import org.agmas.noellesroles.Noellesroles;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
 import java.util.UUID;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * 邮差传递网络包
@@ -21,11 +20,11 @@ public record PostmanC2SPacket(
     Action action,
     UUID targetPlayer,
     ItemStack item
-) implements CustomPayload {
+) implements CustomPacketPayload {
     
-    public static final Identifier POSTMAN_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "postman_delivery");
-    public static final Id<PostmanC2SPacket> ID = new Id<>(POSTMAN_PAYLOAD_ID);
-    public static final PacketCodec<RegistryByteBuf, PostmanC2SPacket> CODEC;
+    public static final ResourceLocation POSTMAN_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "postman_delivery");
+    public static final Type<PostmanC2SPacket> ID = new Type<>(POSTMAN_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, PostmanC2SPacket> CODEC;
     
     public enum Action {
         OPEN_DELIVERY,      // 打开传递界面
@@ -46,20 +45,20 @@ public record PostmanC2SPacket(
     }
     
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
     
-    public void write(RegistryByteBuf buf) {
-        buf.writeEnumConstant(this.action);
-        buf.writeUuid(this.targetPlayer);
-        ItemStack.OPTIONAL_PACKET_CODEC.encode(buf, this.item);
+    public void write(RegistryFriendlyByteBuf buf) {
+        buf.writeEnum(this.action);
+        buf.writeUUID(this.targetPlayer);
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, this.item);
     }
     
-    public static PostmanC2SPacket read(RegistryByteBuf buf) {
-        Action action = buf.readEnumConstant(Action.class);
-        UUID targetPlayer = buf.readUuid();
-        ItemStack item = ItemStack.OPTIONAL_PACKET_CODEC.decode(buf);
+    public static PostmanC2SPacket read(RegistryFriendlyByteBuf buf) {
+        Action action = buf.readEnum(Action.class);
+        UUID targetPlayer = buf.readUUID();
+        ItemStack item = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
         return new PostmanC2SPacket(action, targetPlayer, item);
     }
     
@@ -76,6 +75,6 @@ public record PostmanC2SPacket(
     }
     
     static {
-        CODEC = PacketCodec.of(PostmanC2SPacket::write, PostmanC2SPacket::read);
+        CODEC = StreamCodec.ofMember(PostmanC2SPacket::write, PostmanC2SPacket::read);
     }
 }

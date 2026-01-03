@@ -1,16 +1,16 @@
 package org.agmas.noellesroles.client.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
 import org.joml.Matrix4f;
 
 /**
@@ -22,17 +22,17 @@ import org.joml.Matrix4f;
 public class CalamityMarkEntityRenderer extends EntityRenderer<CalamityMarkEntity> {
     
     // 使用附魔光效纹理作为印记效果
-    private static final Identifier TEXTURE = Identifier.of("minecraft", "textures/misc/enchanted_glint_entity.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/misc/enchanted_glint_entity.png");
     
-    public CalamityMarkEntityRenderer(EntityRendererFactory.Context context) {
+    public CalamityMarkEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
     
     @Override
-    public void render(CalamityMarkEntity entity, float yaw, float tickDelta, MatrixStack matrices, 
-                       VertexConsumerProvider vertexConsumers, int light) {
+    public void render(CalamityMarkEntity entity, float yaw, float tickDelta, PoseStack matrices, 
+                       MultiBufferSource vertexConsumers, int light) {
         
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         if (client.player == null) return;
         
         // 只对设陷者（所有者）可见
@@ -40,25 +40,25 @@ public class CalamityMarkEntityRenderer extends EntityRenderer<CalamityMarkEntit
             return;
         }
         
-        matrices.push();
+        matrices.pushPose();
         
         // 旋转使其平躺在地面上
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0f));
+        matrices.mulPose(Axis.XP.rotationDegrees(90.0f));
         
         // 缓慢旋转动画
-        float rotation = (entity.age + tickDelta) * 2.0f;
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rotation));
+        float rotation = (entity.tickCount + tickDelta) * 2.0f;
+        matrices.mulPose(Axis.ZP.rotationDegrees(rotation));
         
         // 缩放
         float scale = 0.8f;
         // 添加脉动效果
-        float pulse = (float) Math.sin((entity.age + tickDelta) * 0.1) * 0.1f + 1.0f;
+        float pulse = (float) Math.sin((entity.tickCount + tickDelta) * 0.1) * 0.1f + 1.0f;
         matrices.scale(scale * pulse, scale * pulse, scale);
         
         // 渲染半透明的印记
         renderMark(matrices, vertexConsumers, light);
         
-        matrices.pop();
+        matrices.popPose();
         
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }
@@ -66,12 +66,12 @@ public class CalamityMarkEntityRenderer extends EntityRenderer<CalamityMarkEntit
     /**
      * 渲染印记图形
      */
-    private void renderMark(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        MatrixStack.Entry entry = matrices.peek();
-        Matrix4f posMatrix = entry.getPositionMatrix();
+    private void renderMark(PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
+        PoseStack.Pose entry = matrices.last();
+        Matrix4f posMatrix = entry.pose();
         
         // 使用半透明渲染层
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE));
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderType.entityTranslucent(TEXTURE));
         
         // 紫色半透明
         int red = 139;
@@ -88,7 +88,7 @@ public class CalamityMarkEntityRenderer extends EntityRenderer<CalamityMarkEntit
     /**
      * 绘制六边形
      */
-    private void drawHexagon(VertexConsumer consumer, Matrix4f posMatrix, MatrixStack.Entry entry,
+    private void drawHexagon(VertexConsumer consumer, Matrix4f posMatrix, PoseStack.Pose entry,
                              float size, int r, int g, int b, int a, int light) {
         // 中心点
         float cx = 0, cy = 0;
@@ -104,53 +104,53 @@ public class CalamityMarkEntityRenderer extends EntityRenderer<CalamityMarkEntit
             float y2 = (float) (size * Math.sin(angle2));
             
             // 三角形顶点
-            consumer.vertex(posMatrix, cx, cy, 0)
-                    .color(r, g, b, a)
-                    .texture(0.5f, 0.5f)
-                    .overlay(OverlayTexture.DEFAULT_UV)
-                    .light(light)
-                    .normal(entry, 0, 0, 1);
+            consumer.addVertex(posMatrix, cx, cy, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(0.5f, 0.5f)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(light)
+                    .setNormal(entry, 0, 0, 1);
             
-            consumer.vertex(posMatrix, x1, y1, 0)
-                    .color(r, g, b, a)
-                    .texture(0.5f + x1 / size * 0.5f, 0.5f + y1 / size * 0.5f)
-                    .overlay(OverlayTexture.DEFAULT_UV)
-                    .light(light)
-                    .normal(entry, 0, 0, 1);
+            consumer.addVertex(posMatrix, x1, y1, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(0.5f + x1 / size * 0.5f, 0.5f + y1 / size * 0.5f)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(light)
+                    .setNormal(entry, 0, 0, 1);
             
-            consumer.vertex(posMatrix, x2, y2, 0)
-                    .color(r, g, b, a)
-                    .texture(0.5f + x2 / size * 0.5f, 0.5f + y2 / size * 0.5f)
-                    .overlay(OverlayTexture.DEFAULT_UV)
-                    .light(light)
-                    .normal(entry, 0, 0, 1);
+            consumer.addVertex(posMatrix, x2, y2, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(0.5f + x2 / size * 0.5f, 0.5f + y2 / size * 0.5f)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(light)
+                    .setNormal(entry, 0, 0, 1);
             
             // 第二个三角形（背面）
-            consumer.vertex(posMatrix, cx, cy, 0)
-                    .color(r, g, b, a)
-                    .texture(0.5f, 0.5f)
-                    .overlay(OverlayTexture.DEFAULT_UV)
-                    .light(light)
-                    .normal(entry, 0, 0, -1);
+            consumer.addVertex(posMatrix, cx, cy, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(0.5f, 0.5f)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(light)
+                    .setNormal(entry, 0, 0, -1);
             
-            consumer.vertex(posMatrix, x2, y2, 0)
-                    .color(r, g, b, a)
-                    .texture(0.5f + x2 / size * 0.5f, 0.5f + y2 / size * 0.5f)
-                    .overlay(OverlayTexture.DEFAULT_UV)
-                    .light(light)
-                    .normal(entry, 0, 0, -1);
+            consumer.addVertex(posMatrix, x2, y2, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(0.5f + x2 / size * 0.5f, 0.5f + y2 / size * 0.5f)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(light)
+                    .setNormal(entry, 0, 0, -1);
             
-            consumer.vertex(posMatrix, x1, y1, 0)
-                    .color(r, g, b, a)
-                    .texture(0.5f + x1 / size * 0.5f, 0.5f + y1 / size * 0.5f)
-                    .overlay(OverlayTexture.DEFAULT_UV)
-                    .light(light)
-                    .normal(entry, 0, 0, -1);
+            consumer.addVertex(posMatrix, x1, y1, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(0.5f + x1 / size * 0.5f, 0.5f + y1 / size * 0.5f)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(light)
+                    .setNormal(entry, 0, 0, -1);
         }
     }
     
     @Override
-    public Identifier getTexture(CalamityMarkEntity entity) {
+    public ResourceLocation getTextureLocation(CalamityMarkEntity entity) {
         return TEXTURE;
     }
 }

@@ -2,12 +2,12 @@ package org.agmas.noellesroles.mixin.client.broadcaster;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.role.ModRoles;
@@ -17,42 +17,42 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public abstract class BroadcasterHudMixin {
-    @Shadow public abstract TextRenderer getTextRenderer();
+    @Shadow public abstract Font getFont();
 
     @Inject(method = "render", at = @At("TAIL"))
-    public void broadcasterHud(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        if (MinecraftClient.getInstance().player == null) {
+    public void broadcasterHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        if (Minecraft.getInstance().player == null) {
             return;
         }
 
         if (NoellesrolesClient.currentBroadcastMessage != null && NoellesrolesClient.broadcastMessageTicks > 0) {
             String message = NoellesrolesClient.currentBroadcastMessage;
-            TextRenderer textRenderer = getTextRenderer();
-            int screenWidth = context.getScaledWindowWidth();
-            int screenHeight = context.getScaledWindowHeight();
-            int textWidth = textRenderer.getWidth(message);
+            Font textRenderer = getFont();
+            int screenWidth = context.guiWidth();
+            int screenHeight = context.guiHeight();
+            int textWidth = textRenderer.width(message);
             int x = (screenWidth - textWidth) / 2;
             int y = 20;
             int padding = 4;
             int bgColor = 0x80000000;
-            context.fill(x - padding, y - padding, x + textWidth + padding, y + textRenderer.fontHeight + padding, bgColor);
-            context.drawTextWithShadow(textRenderer, message, x, y, 0xFFFFFF);
+            context.fill(x - padding, y - padding, x + textWidth + padding, y + textRenderer.lineHeight + padding, bgColor);
+            context.drawString(textRenderer, message, x, y, 0xFFFFFF);
         }
         
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(MinecraftClient.getInstance().player.getWorld());
-        AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(MinecraftClient.getInstance().player);
-        PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(MinecraftClient.getInstance().player);
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(Minecraft.getInstance().player.level());
+        AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
+        PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(Minecraft.getInstance().player);
         
-        if (gameWorldComponent.isRole(MinecraftClient.getInstance().player, ModRoles.BROADCASTER)) {
-            int drawY = context.getScaledWindowHeight();
+        if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BROADCASTER)) {
+            int drawY = context.guiHeight();
 
-            Text line;
-            line = Text.translatable("tip.broadcaster.with_cost", NoellesrolesClient.abilityBind.getBoundKeyLocalizedText(), 150);
+            Component line;
+            line = Component.translatable("tip.broadcaster.with_cost", NoellesrolesClient.abilityBind.getTranslatedKeyMessage(), 150);
 
-            drawY -= getTextRenderer().getWrappedLinesHeight(line, 999999);
-            context.drawTextWithShadow(getTextRenderer(), line, context.getScaledWindowWidth() - getTextRenderer().getWidth(line), drawY, ModRoles.BROADCASTER.color());
+            drawY -= getFont().wordWrapHeight(line, 999999);
+            context.drawString(getFont(), line, context.guiWidth() - getFont().width(line), drawY, ModRoles.BROADCASTER.color());
         }
     }
 }

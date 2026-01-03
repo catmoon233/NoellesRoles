@@ -2,14 +2,6 @@ package org.agmas.noellesroles.mixin.client.voodoo;
 
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedHandledScreen;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.text.Text;
 import org.agmas.noellesroles.ConfigWorldComponent;
 import org.agmas.noellesroles.client.PlayerPaginationHelper;
 import org.agmas.noellesroles.client.RoleScreenHelper;
@@ -24,9 +16,17 @@ import java.awt.Color;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.InventoryMenu;
 
 @Mixin(LimitedInventoryScreen.class)
-public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScreenHandler> implements PlayerPaginationHelper.ScreenWithChildren {
+public abstract class VoodooScreenMixin extends LimitedHandledScreen<InventoryMenu> implements PlayerPaginationHelper.ScreenWithChildren {
     @Unique
     private static final PlayerPaginationHelper.PaginationTextProvider TEXT_PROVIDER = new PlayerPaginationHelper.PaginationTextProvider() {
         @Override
@@ -46,12 +46,12 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
     };
 
     @Shadow @Final
-    public ClientPlayerEntity player;
+    public LocalPlayer player;
 
     @Unique
     private RoleScreenHelper<UUID> roleScreenHelper;
 
-    public VoodooScreenMixin(PlayerScreenHandler handler, PlayerInventory inventory, Text title) {
+    public VoodooScreenMixin(InventoryMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
 
@@ -59,7 +59,7 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
     @Unique
     private RoleScreenHelper<UUID> getRoleScreenHelper() {
         if (roleScreenHelper == null) {
-            MinecraftClient client = MinecraftClient.getInstance();
+            Minecraft client = Minecraft.getInstance();
             roleScreenHelper = new RoleScreenHelper<>(
                 player,
                 ModRoles.VOODOO,
@@ -74,54 +74,54 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
 
     @Unique
     private VoodooPlayerWidget createVoodooWidget(int x, int y, UUID playerUUID, int index) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         if (client.player == null) {
             return null;
         }
 
-        PlayerListEntry playerListEntry = client.player.networkHandler.getPlayerListEntry(playerUUID);
+        PlayerInfo playerListEntry = client.player.connection.getPlayerInfo(playerUUID);
         if (playerListEntry == null) {
             return null;
         }
 
         VoodooPlayerWidget widget = new VoodooPlayerWidget(
             (LimitedInventoryScreen) (Object) this,
-            x, y, playerUUID, playerListEntry, player.getWorld(),index
+            x, y, playerUUID, playerListEntry, player.level(),index
         );
         addDrawableChild(widget);
         return widget;
     }
 
     @Unique
-    private void drawVoodooTip(DrawContext context, java.awt.Point point) {
-        ConfigWorldComponent configComponent = ConfigWorldComponent.KEY.get(player.getWorld());
+    private void drawVoodooTip(GuiGraphics context, java.awt.Point point) {
+        ConfigWorldComponent configComponent = ConfigWorldComponent.KEY.get(player.level());
         if (!configComponent.naturalVoodoosAllowed) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            Text text = Text.translatable("hud.voodoo.tip");
-            int textWidth = client.textRenderer.getWidth(text);
-            context.drawTextWithShadow(client.textRenderer, text,
+            Minecraft client = Minecraft.getInstance();
+            Component text = Component.translatable("hud.voodoo.tip");
+            int textWidth = client.font.width(text);
+            context.drawString(client.font, text,
                 point.x - textWidth / 2, point.y + 40, Color.RED.getRGB());
         }
     }
 
     @Unique
     private List<UUID> getEligiblePlayers() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null || client.world == null) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) {
             return List.of();
         }
 
-        return client.player.networkHandler.getPlayerUuids().stream()
-                .filter(uuid -> !uuid.equals(player.getUuid()))
+        return client.player.connection.getOnlinePlayerIds().stream()
+                .filter(uuid -> !uuid.equals(player.getUUID()))
                 .filter(uuid -> {
-                    PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(uuid);
+                    PlayerInfo entry = client.player.connection.getPlayerInfo(uuid);
                     return entry != null ;
                 })
                 .collect(Collectors.toList());
     }
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void noellesroles$onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void noellesroles$onRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         getRoleScreenHelper().onRender(context, this);
     }
 
@@ -131,17 +131,17 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<PlayerScree
     }
 
     @Override
-    public void addDrawableChild(ButtonWidget button) {
-        super.addDrawableChild(button);
+    public void addDrawableChild(Button button) {
+        super.addRenderableWidget(button);
     }
 
     @Override
-    public void removeDrawableChild(ButtonWidget button) {
-        super.remove(button);
+    public void removeDrawableChild(Button button) {
+        super.removeWidget(button);
     }
 
     @Override
-    public void clearChildren() {
-        super.clearChildren();
+    public void clearWidgets() {
+        super.clearWidgets();
     }
 }

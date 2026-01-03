@@ -1,27 +1,26 @@
 package org.agmas.noellesroles.packet;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
-public record BroadcastMessageS2CPacket(String message) implements CustomPayload {
-    public static final Identifier BROADCAST_MESSAGE_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "broadcast_message");
-    public static final Id<BroadcastMessageS2CPacket> ID = new Id<>(BROADCAST_MESSAGE_PAYLOAD_ID);
-    public static final PacketCodec<RegistryByteBuf, BroadcastMessageS2CPacket> CODEC = PacketCodec.of(
-        (packet, buf) -> buf.writeString(packet.message()),
-        buf -> new BroadcastMessageS2CPacket(buf.readString())
+public record BroadcastMessageS2CPacket(String message) implements CustomPacketPayload {
+    public static final ResourceLocation BROADCAST_MESSAGE_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "broadcast_message");
+    public static final Type<BroadcastMessageS2CPacket> ID = new Type<>(BROADCAST_MESSAGE_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, BroadcastMessageS2CPacket> CODEC = StreamCodec.ofMember(
+        (packet, buf) -> buf.writeUtf(packet.message()),
+        buf -> new BroadcastMessageS2CPacket(buf.readUtf())
     );
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
-    public BroadcastMessageS2CPacket(Text message) {
+    public BroadcastMessageS2CPacket(Component message) {
         this(message.getString());
     }
 }

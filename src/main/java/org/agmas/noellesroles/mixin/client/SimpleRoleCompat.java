@@ -4,11 +4,6 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedHandledScreen;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
-
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.text.Text;
 import org.agmas.noellesroles.Noellesroles;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,14 +14,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.InventoryMenu;
 
 @Mixin(LimitedInventoryScreen.class)
-public abstract class SimpleRoleCompat extends LimitedHandledScreen<PlayerScreenHandler> {
+public abstract class SimpleRoleCompat extends LimitedHandledScreen<InventoryMenu> {
     @Shadow
     @Final
-    public ClientPlayerEntity player;
+    public LocalPlayer player;
 
-    public SimpleRoleCompat(PlayerScreenHandler handler, PlayerInventory inventory, Text title) {
+    public SimpleRoleCompat(InventoryMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
 

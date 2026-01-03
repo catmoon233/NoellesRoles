@@ -1,9 +1,9 @@
 package org.agmas.noellesroles.component;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -29,13 +29,13 @@ public class DetectivePlayerComponent implements AutoSyncedComponent, ServerTick
     public static final int INSPECT_COST = 200;
     
     // 持有该组件的玩家
-    private final PlayerEntity player;
+    private final Player player;
     
     // 技能冷却时间（tick）
     public int cooldown = 0;
     
     // 当前正在查看的目标玩家UUID（null表示没有查看任何人）
-    private ServerPlayerEntity inspectingTarget = null;
+    private ServerPlayer inspectingTarget = null;
     
     // 目标玩家的上一次位置（用于检测移动）
     private double lastTargetX = 0;
@@ -45,7 +45,7 @@ public class DetectivePlayerComponent implements AutoSyncedComponent, ServerTick
     /**
      * 构造函数
      */
-    public DetectivePlayerComponent(PlayerEntity player) {
+    public DetectivePlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -63,7 +63,7 @@ public class DetectivePlayerComponent implements AutoSyncedComponent, ServerTick
      * 
      * @param target 目标玩家
      */
-    public void startInspecting(ServerPlayerEntity target) {
+    public void startInspecting(ServerPlayer target) {
         this.inspectingTarget = target;
         this.lastTargetX = target.getX();
         this.lastTargetY = target.getY();
@@ -80,7 +80,7 @@ public class DetectivePlayerComponent implements AutoSyncedComponent, ServerTick
     /**
      * 获取当前正在查看的目标
      */
-    public ServerPlayerEntity getInspectingTarget() {
+    public ServerPlayer getInspectingTarget() {
         return this.inspectingTarget;
     }
     
@@ -134,7 +134,7 @@ public class DetectivePlayerComponent implements AutoSyncedComponent, ServerTick
         // 检查目标是否移动
         if (this.inspectingTarget != null) {
             // 如果目标玩家已离线或死亡
-            if (this.inspectingTarget.isDisconnected() || this.inspectingTarget.isDead()) {
+            if (this.inspectingTarget.hasDisconnected() || this.inspectingTarget.isDeadOrDying()) {
                 closeInspectScreen();
                 return;
             }
@@ -155,20 +155,20 @@ public class DetectivePlayerComponent implements AutoSyncedComponent, ServerTick
      * 关闭审查界面
      */
     private void closeInspectScreen() {
-        if (this.player instanceof ServerPlayerEntity serverPlayer) {
+        if (this.player instanceof ServerPlayer serverPlayer) {
             // 关闭当前打开的界面
-            serverPlayer.closeHandledScreen();
+            serverPlayer.closeContainer();
         }
         this.stopInspecting();
     }
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("cooldown", this.cooldown);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
     }
 }

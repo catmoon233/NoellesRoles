@@ -1,9 +1,9 @@
 package org.agmas.noellesroles.roles.recaller;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -13,8 +13,8 @@ import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
-    public static final ComponentKey<RecallerPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "recaller"), RecallerPlayerComponent.class);
-    private final PlayerEntity player;
+    public static final ComponentKey<RecallerPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "recaller"), RecallerPlayerComponent.class);
+    private final Player player;
     public boolean placed = false;
     public double x = 0;
     public double y = 0;
@@ -28,7 +28,7 @@ public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTicki
         this.sync();
     }
 
-    public RecallerPlayerComponent(PlayerEntity player) {
+    public RecallerPlayerComponent(Player player) {
         this.player = player;
     }
 
@@ -53,20 +53,20 @@ public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTicki
 
 
     public void teleport() {
-        player.refreshPositionAfterTeleport(x,y,z);
+        player.moveTo(x,y,z);
         placed = false;
         this.sync();
     }
 
 
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putDouble("x", this.x);
         tag.putDouble("y", this.y);
         tag.putDouble("z", this.z);
         tag.putBoolean("placed", this.placed);
     }
 
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.x = tag.contains("x") ? tag.getDouble("x") : 0;
         this.y = tag.contains("y") ? tag.getDouble("y") : 0;
         this.z = tag.contains("z") ? tag.getDouble("z") : 0;

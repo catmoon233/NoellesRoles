@@ -1,24 +1,24 @@
 package org.agmas.noellesroles.client.screen;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
 import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 /**
  * 广播者输入屏幕 - 允许玩家输入广播消息
  */
 public class BroadcasterInputScreen extends Screen {
-    private TextFieldWidget messageField;
-    private ButtonWidget sendButton;
-    private ButtonWidget cancelButton;
+    private EditBox messageField;
+    private Button sendButton;
+    private Button cancelButton;
     private final Screen parent;
 
     public BroadcasterInputScreen(Screen parent) {
-        super(Text.translatable("screen.broadcaster.title"));
+        super(Component.translatable("screen.broadcaster.title"));
         this.parent = parent;
     }
 
@@ -32,29 +32,29 @@ public class BroadcasterInputScreen extends Screen {
         int y = this.height / 2 - 10;
 
         // 创建文本框
-        this.messageField = new TextFieldWidget(this.textRenderer, x, y, fieldWidth, fieldHeight, Text.translatable("screen.broadcaster.hint"));
+        this.messageField = new EditBox(this.font, x, y, fieldWidth, fieldHeight, Component.translatable("screen.broadcaster.hint"));
         this.messageField.setMaxLength(256);
-        this.messageField.setFocusUnlocked(false);
+        this.messageField.setCanLoseFocus(false);
         this.messageField.setFocused(true);
-        this.messageField.setEditableColor(0xFFFFFF); // 白色文本以提高对比度
-        this.addSelectableChild(this.messageField);
+        this.messageField.setTextColor(0xFFFFFF); // 白色文本以提高对比度
+        this.addWidget(this.messageField);
         this.setInitialFocus(this.messageField);
 
         // 发送按钮
-        this.sendButton = ButtonWidget.builder(Text.translatable("screen.broadcaster.send"), button -> sendMessage())
-                .dimensions(x, y + fieldHeight + 10, fieldWidth / 2 - 5, 20)
+        this.sendButton = Button.builder(Component.translatable("screen.broadcaster.send"), button -> sendMessage())
+                .bounds(x, y + fieldHeight + 10, fieldWidth / 2 - 5, 20)
                 .build();
-        this.addDrawableChild(this.sendButton);
+        this.addRenderableWidget(this.sendButton);
 
         // 取消按钮
-        this.cancelButton = ButtonWidget.builder(Text.translatable("screen.broadcaster.cancel"), button -> close())
-                .dimensions(x + fieldWidth / 2 + 5, y + fieldHeight + 10, fieldWidth / 2 - 5, 20)
+        this.cancelButton = Button.builder(Component.translatable("screen.broadcaster.cancel"), button -> onClose())
+                .bounds(x + fieldWidth / 2 + 5, y + fieldHeight + 10, fieldWidth / 2 - 5, 20)
                 .build();
-        this.addDrawableChild(this.cancelButton);
+        this.addRenderableWidget(this.cancelButton);
     }
 
     private void sendMessage() {
-        String message = this.messageField.getText().trim();
+        String message = this.messageField.getValue().trim();
         if (!message.isEmpty()) {
             // 发送包到服务器
             ClientPlayNetworking.send(new BroadcasterC2SPacket(message));
@@ -63,18 +63,18 @@ public class BroadcasterInputScreen extends Screen {
     }
 
     private void closeScreen() {
-        if (this.client != null) {
-            this.client.setScreen(this.parent);
+        if (this.minecraft != null) {
+            this.minecraft.setScreen(this.parent);
         }
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         // 绘制自定义背景（70% 不透明以消除模糊）
         context.fill(0, 0, this.width, this.height, 0xB3000000);
         // 渲染标题（无背景矩形，因为背景已足够深）
         int titleY = this.height / 2 - 40;
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, titleY, 0xFFFFFF);
+        context.drawCenteredString(this.font, this.title, this.width / 2, titleY, 0xFFFFFF);
         
         // 绘制文本框的不透明背景以提高可读性
         int fieldWidth = 200;
@@ -90,7 +90,7 @@ public class BroadcasterInputScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
     }
 
     @Override
@@ -114,7 +114,7 @@ public class BroadcasterInputScreen extends Screen {
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         this.closeScreen();
     }
 }

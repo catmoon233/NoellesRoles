@@ -3,24 +3,24 @@ package org.agmas.noellesroles.component;
 import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.Random;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * 歌手组件
@@ -40,7 +40,7 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
     public static final int ABILITY_COOLDOWN = 4800;
     
     /** 音乐播放范围（格） */
-    public static final double MUSIC_RANGE = 48.0;
+    public static final double MUSIC_RANGE = 32.0;
     
     /** 音乐持续时间（唱片最短约60秒，设为65秒 = 1300 tick）*/
     public static final int MUSIC_DURATION = 1300;
@@ -70,7 +70,7 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
     
     // ==================== 状态变量 ====================
     
-    private final PlayerEntity player;
+    private final Player player;
     private final Random random = new Random();
     
     /** 主动技能冷却时间（tick） */
@@ -88,7 +88,7 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
     /**
      * 构造函数
      */
-    public SingerPlayerComponent(PlayerEntity player) {
+    public SingerPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -119,8 +119,8 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
      * 检查是否为激活的歌手角色
      */
     public boolean isActiveSinger() {
-        if (!isActive || player == null || player.getWorld().isClient()) return false;
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        if (!isActive || player == null || player.level().isClientSide()) return false;
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         return gameWorld.isRole(player, ModRoles.SINGER);
     }
     
@@ -142,11 +142,11 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
             return false;
         }
         
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
             return false;
         }
         
-        ServerWorld world = serverPlayer.getServerWorld();
+        ServerLevel world = serverPlayer.serverLevel();
         
         // 随机选择一首音乐
         int musicIndex = random.nextInt(MUSIC_DISCS.length);
@@ -158,7 +158,7 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
             null,
             player.getX(), player.getY(), player.getZ(),
             music,
-            SoundCategory.RECORDS,
+            SoundSource.RECORDS,
             4.0F,  // 音量
             1.0F   // 音调
         );
@@ -173,24 +173,24 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
         this.musicRemainingTicks = MUSIC_DURATION;
         
         // 发送消息给歌手玩家
-        serverPlayer.sendMessage(
-            Text.translatable("message.noellesroles.singer.music_played", musicName)
-                .formatted(Formatting.LIGHT_PURPLE),
+        serverPlayer.displayClientMessage(
+            Component.translatable("message.noellesroles.singer.music_played", musicName)
+                .withStyle(ChatFormatting.LIGHT_PURPLE),
             true
         );
         
         // 通知范围内的其他玩家
-        for (PlayerEntity target : world.getPlayers()) {
+        for (Player target : world.players()) {
             if (target.equals(player)) continue;
             if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
             
-            double distance = target.squaredDistanceTo(player);
+            double distance = target.distanceToSqr(player);
             if (distance > MUSIC_RANGE * MUSIC_RANGE) continue;
             
-            if (target instanceof ServerPlayerEntity serverTarget) {
-                serverTarget.sendMessage(
-                    Text.translatable("message.noellesroles.singer.music_heard", player.getName().getString())
-                        .formatted(Formatting.LIGHT_PURPLE),
+            if (target instanceof ServerPlayer serverTarget) {
+                serverTarget.displayClientMessage(
+                    Component.translatable("message.noellesroles.singer.music_heard", player.getName().getString())
+                        .withStyle(ChatFormatting.LIGHT_PURPLE),
                     true
                 );
             }
@@ -225,7 +225,7 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
      * 同步到客户端
      */
     public void sync() {
-        if (player != null && !player.getWorld().isClient()) {
+        if (player != null && !player.level().isClientSide()) {
             ModComponents.SINGER.sync(this.player);
         }
     }
@@ -266,19 +266,19 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
      * 给周围玩家速度效果
      */
     private void applySpeedEffectToNearbyPlayers() {
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
         
-        ServerWorld world = serverPlayer.getServerWorld();
+        ServerLevel world = serverPlayer.serverLevel();
         
-        for (PlayerEntity target : world.getPlayers()) {
+        for (Player target : world.players()) {
             if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
             
-            double distance = target.squaredDistanceTo(player);
+            double distance = target.distanceToSqr(player);
             if (distance > SPEED_EFFECT_RANGE * SPEED_EFFECT_RANGE) continue;
             
             // 给予速度 I 效果（持续2.5秒 = 50 tick，确保连续覆盖）
-            target.addStatusEffect(new StatusEffectInstance(
-                StatusEffects.SPEED,
+            target.addEffect(new MobEffectInstance(
+                MobEffects.MOVEMENT_SPEED,
                 50,      // 持续时间（tick）
                 0,       // 等级（0 = 速度 I）
                 false,   // ambient（环境效果，如信标）
@@ -298,7 +298,7 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("abilityCooldown", this.abilityCooldown);
         tag.putBoolean("isActive", this.isActive);
         tag.putInt("currentMusicIndex", this.currentMusicIndex);
@@ -306,7 +306,7 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.abilityCooldown = tag.contains("abilityCooldown") ? tag.getInt("abilityCooldown") : 0;
         this.isActive = tag.contains("isActive") && tag.getBoolean("isActive");
         this.currentMusicIndex = tag.contains("currentMusicIndex") ? tag.getInt("currentMusicIndex") : -1;

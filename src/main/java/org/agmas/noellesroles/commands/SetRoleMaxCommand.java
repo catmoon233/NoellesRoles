@@ -2,11 +2,10 @@ package org.agmas.noellesroles.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import org.agmas.harpymodloader.Harpymodloader;
@@ -19,19 +18,19 @@ import java.lang.reflect.Field;
 public class SetRoleMaxCommand {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            var setmaxCommand = CommandManager.literal("noellesroles")
-                    .then(CommandManager.literal("setmax")
-                            .then(CommandManager.argument("role", IdentifierArgumentType.identifier())
+            var setmaxCommand = Commands.literal("noellesroles")
+                    .then(Commands.literal("setmax")
+                            .then(Commands.argument("role", ResourceLocationArgument.id())
                                     .suggests((context, builder) -> {
                                         for (Role role : TMMRoles.ROLES) {
-                                            Identifier id = role.identifier();
+                                            ResourceLocation id = role.identifier();
                                             builder.suggest(id.toString());
                                         }
                                         return builder.buildFuture();
                                     })
-                                    .then(CommandManager.argument("value", IntegerArgumentType.integer(0, 10))
+                                    .then(Commands.argument("value", IntegerArgumentType.integer(0, 10))
                                             .executes(context -> {
-                                                Identifier roleId = IdentifierArgumentType.getIdentifier(context, "role");
+                                                ResourceLocation roleId = ResourceLocationArgument.getId(context, "role");
                                                 int value = IntegerArgumentType.getInteger(context, "value");
 
                                                 Role roleObj = null;
@@ -62,7 +61,7 @@ public class SetRoleMaxCommand {
                                                     NoellesRolesConfig.HANDLER.save();
                                                 }
 
-                                                context.getSource().sendMessage(Text.literal("Set max " + roleId + " to " + value));
+                                                context.getSource().sendSystemMessage(Component.literal("Set max " + roleId + " to " + value));
                                                 return 1;
                                             }))));
             dispatcher.register(setmaxCommand);

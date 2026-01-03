@@ -3,8 +3,8 @@ package org.agmas.noellesroles.mixin.roles.host;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.doctor4t.trainmurdermystery.block.TrainDoorBlock;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(TrainDoorBlock.class)
 public abstract class MasterKeyTrainDoorMixin {
 
-    @WrapOperation(method = "onUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
+    @WrapOperation(method = "useWithoutItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"))
     private boolean conductor(ItemStack instance, Item item, Operation<Boolean> original) {
-        return  original.call(instance,item) || instance.isOf(ModItems.MASTER_KEY);
+        return  original.call(instance,item) || instance.is(ModItems.MASTER_KEY);
     }
 
 }

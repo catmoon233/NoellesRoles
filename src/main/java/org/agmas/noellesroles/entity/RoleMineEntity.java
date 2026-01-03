@@ -1,28 +1,28 @@
 package org.agmas.noellesroles.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
 
 public class RoleMineEntity extends Entity {
-    public RoleMineEntity(EntityType<?> type, World world) {
+    public RoleMineEntity(EntityType<?> type, Level world) {
         super(type, world);
     }
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
 
     }
 
     @Override
-    protected void readCustomDataFromNbt(NbtCompound nbt) {
+    protected void readAdditionalSaveData(CompoundTag nbt) {
 
     }
 
     @Override
-    protected void writeCustomDataToNbt(NbtCompound nbt) {
+    protected void addAdditionalSaveData(CompoundTag nbt) {
 
     }
 }

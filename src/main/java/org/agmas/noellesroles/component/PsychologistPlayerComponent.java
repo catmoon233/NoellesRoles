@@ -4,21 +4,21 @@ import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.UUID;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 心理学家组件
@@ -51,11 +51,11 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
     public static final float FULL_SANITY = 1.0f;
     
     /** san满的阈值容差（用于浮点数比较） */
-    public static final float SANITY_THRESHOLD = 0.99f;
+    public static final float SANITY_THRESHOLD = 0.7f;
     
     // ==================== 状态变量 ====================
     
-    private final PlayerEntity player;
+    private final Player player;
     
     /** 技能冷却时间（tick） */
     public int cooldown = 0;
@@ -73,12 +73,12 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
     public boolean isHealing = false;
     
     /** 目标上次记录的位置 */
-    private Vec3d targetLastPos = null;
+    private Vec3 targetLastPos = null;
     
     /**
      * 构造函数
      */
-    public PsychologistPlayerComponent(PlayerEntity player) {
+    public PsychologistPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -113,56 +113,56 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
      * @param target 目标玩家
      * @return 是否成功开始
      */
-    public boolean startHealing(PlayerEntity target) {
+    public boolean startHealing(Player target) {
         if (!canUseAbility()) {
             if (cooldown > 0) {
-                player.sendMessage(Text.translatable("message.noellesroles.psychologist.on_cooldown",
+                player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.on_cooldown",
                     getCooldownSeconds()), true);
             } else {
-                player.sendMessage(Text.translatable("message.noellesroles.psychologist.not_full_san"), true);
+                player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.not_full_san"), true);
             }
             return false;
         }
         
         // 验证是心理学家
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.PSYCHOLOGIST)) {
             return false;
         }
         
         // 不能治疗自己
-        if (target.getUuid().equals(player.getUuid())) {
-            player.sendMessage(Text.translatable("message.noellesroles.psychologist.cannot_heal_self"), true);
+        if (target.getUUID().equals(player.getUUID())) {
+            player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.cannot_heal_self"), true);
             return false;
         }
         
         // 检查目标是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(target)) {
-            player.sendMessage(Text.translatable("message.noellesroles.psychologist.invalid_target"), true);
+            player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.invalid_target"), true);
             return false;
         }
         
         // 检查距离
-        if (player.squaredDistanceTo(target) > MAX_HEALING_DISTANCE * MAX_HEALING_DISTANCE) {
-            player.sendMessage(Text.translatable("message.noellesroles.psychologist.too_far"), true);
+        if (player.distanceToSqr(target) > MAX_HEALING_DISTANCE * MAX_HEALING_DISTANCE) {
+            player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.too_far"), true);
             return false;
         }
         
         // 开始治疗
-        this.healingTarget = target.getUuid();
+        this.healingTarget = target.getUUID();
         this.healingTargetName = target.getName().getString();
         this.healingTicks = 0;
         this.isHealing = true;
-        this.targetLastPos = target.getPos();
+        this.targetLastPos = target.position();
         
         // 发送开始消息
-        player.sendMessage(Text.translatable("message.noellesroles.psychologist.healing_started", 
+        player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healing_started", 
             healingTargetName), true);
         
         // 通知目标
-        if (target instanceof ServerPlayerEntity serverTarget) {
-            serverTarget.sendMessage(Text.translatable("message.noellesroles.psychologist.being_healed",
-                player.getName().getString()).formatted(Formatting.GREEN), true);
+        if (target instanceof ServerPlayer serverTarget) {
+            serverTarget.displayClientMessage(Component.translatable("message.noellesroles.psychologist.being_healed",
+                player.getName().getString()).withStyle(ChatFormatting.GREEN), true);
         }
         
         this.sync();
@@ -180,8 +180,8 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
             healingTicks = 0;
             targetLastPos = null;
             
-            if (reason != null && player instanceof ServerPlayerEntity) {
-                player.sendMessage(Text.translatable(reason).formatted(Formatting.RED), true);
+            if (reason != null && player instanceof ServerPlayer) {
+                player.displayClientMessage(Component.translatable(reason).withStyle(ChatFormatting.RED), true);
             }
             
             this.sync();
@@ -191,26 +191,26 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
     /**
      * 完成治疗
      */
-    private void completeHealing(PlayerEntity target) {
+    private void completeHealing(Player target) {
         // 恢复目标的san值到满（san值范围是0.0-1.0）
         PlayerMoodComponent targetMood = PlayerMoodComponent.KEY.get(target);
         targetMood.setMood(FULL_SANITY);  // 1.0f 表示满san
         targetMood.sync();
         
         // 播放治疗完成音效
-        player.getWorld().playSound(null, target.getBlockPos(),
-            SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 1.0F, 1.5F);
+        player.level().playSound(null, target.blockPosition(),
+            SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.5F);
         
         // 发送完成消息给心理学家
-        if (player instanceof ServerPlayerEntity) {
-            player.sendMessage(Text.translatable("message.noellesroles.psychologist.healing_complete",
-                healingTargetName).formatted(Formatting.GREEN, Formatting.BOLD), true);
+        if (player instanceof ServerPlayer) {
+            player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healing_complete",
+                healingTargetName).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), true);
         }
         
         // 发送完成消息给目标
-        if (target instanceof ServerPlayerEntity serverTarget) {
-            serverTarget.sendMessage(Text.translatable("message.noellesroles.psychologist.healed_by",
-                player.getName().getString()).formatted(Formatting.GREEN, Formatting.BOLD), true);
+        if (target instanceof ServerPlayer serverTarget) {
+            serverTarget.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healed_by",
+                player.getName().getString()).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), true);
         }
         
         // 设置冷却
@@ -258,11 +258,11 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
      * 检查是否是活跃的心理学家
      */
     public boolean isActivePsychologist() {
-        if (player.getWorld().isClient()) {
+        if (player.level().isClientSide()) {
             // 客户端通过isHealing或cooldown判断
             return isHealing || cooldown > 0;
         }
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         return gameWorld.isRole(player, ModRoles.PSYCHOLOGIST);
     }
     
@@ -271,7 +271,7 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
     @Override
     public void serverTick() {
         // 验证是心理学家
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.PSYCHOLOGIST)) {
             return;
         }
@@ -287,7 +287,7 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
         
         // 处理治疗逻辑
         if (this.isHealing && this.healingTarget != null) {
-            PlayerEntity target = player.getWorld().getPlayerByUuid(healingTarget);
+            Player target = player.level().getPlayerByUUID(healingTarget);
             
             // 检查目标是否还存在且存活
             if (target == null || !GameFunctions.isPlayerAliveAndSurvival(target)) {
@@ -296,14 +296,14 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
             }
             
             // 检查距离
-            if (player.squaredDistanceTo(target) > MAX_HEALING_DISTANCE * MAX_HEALING_DISTANCE) {
+            if (player.distanceToSqr(target) > MAX_HEALING_DISTANCE * MAX_HEALING_DISTANCE) {
                 stopHealing("message.noellesroles.psychologist.target_too_far");
                 return;
             }
             
             // 检查目标是否移动
             if (targetLastPos != null) {
-                double movedDistance = target.getPos().distanceTo(targetLastPos);
+                double movedDistance = target.position().distanceTo(targetLastPos);
                 if (movedDistance > MOVEMENT_THRESHOLD) {
                     stopHealing("message.noellesroles.psychologist.target_moved");
                     return;
@@ -311,7 +311,7 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
             }
             
             // 更新目标位置
-            targetLastPos = target.getPos();
+            targetLastPos = target.position();
             
             // 增加治疗时间
             healingTicks++;
@@ -319,7 +319,7 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
             // 每秒同步并显示进度
             if (healingTicks % 20 == 0) {
                 int seconds = healingTicks / 20;
-                player.sendMessage(Text.translatable("message.noellesroles.psychologist.healing_progress",
+                player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healing_progress",
                     seconds, HEALING_DURATION / 20), true);
                 this.sync();
             }
@@ -334,24 +334,24 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("cooldown", this.cooldown);
         tag.putInt("healingTicks", this.healingTicks);
         tag.putBoolean("isHealing", this.isHealing);
         tag.putString("healingTargetName", this.healingTargetName);
         if (this.healingTarget != null) {
-            tag.putUuid("healingTarget", this.healingTarget);
+            tag.putUUID("healingTarget", this.healingTarget);
         }
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
         this.healingTicks = tag.contains("healingTicks") ? tag.getInt("healingTicks") : 0;
         this.isHealing = tag.contains("isHealing") && tag.getBoolean("isHealing");
         this.healingTargetName = tag.contains("healingTargetName") ? tag.getString("healingTargetName") : "";
-        if (tag.containsUuid("healingTarget")) {
-            this.healingTarget = tag.getUuid("healingTarget");
+        if (tag.hasUUID("healingTarget")) {
+            this.healingTarget = tag.getUUID("healingTarget");
         }
     }
 }
