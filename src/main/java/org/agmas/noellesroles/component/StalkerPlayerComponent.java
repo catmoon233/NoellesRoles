@@ -3,21 +3,6 @@ package org.agmas.noellesroles.component;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -25,6 +10,21 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 跟踪者组件
@@ -41,48 +41,40 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     
     // ==================== 常量定义 ====================
     
-    /** 一阶段进阶所需能量 */
-    public static final int PHASE_1_ENERGY = 500;
-    
-    /** 二阶段进阶所需能量 */
-    public static final int PHASE_2_ENERGY = 30;
-    
-    /** 二阶段进阶所需击杀数 */
-    public static final int PHASE_2_KILLS = 2;
-    
+
     /** 三阶段初始时间（180秒 = 3600 tick） */
-    public static final int PHASE_3_TIME = 180 * 20;
+    public static final int PHASE_3_TIME = 260 * 20;
     
     /** 处决减少时间（60秒 = 1200 tick） */
     public static final int EXECUTION_REDUCTION = 60 * 20;
     
     /** 窥视视野角度（度数） */
-    public static final double GAZE_ANGLE = 45.0;
+    public static final double GAZE_ANGLE = 80.0;
     
     /** 窥视最大距离（格） */
-    public static final double GAZE_DISTANCE = 32.0;
+    public static final double GAZE_DISTANCE = 48.0;
     
     /** 最小蓄力时间（1秒 = 20 tick） */
-    public static final int MIN_CHARGE_TIME = 20;
+    public static final int MIN_CHARGE_TIME = 1;
     
     /** 最大蓄力时间（3秒 = 60 tick） */
-    public static final int MAX_CHARGE_TIME = 60;
+    public static final int MAX_CHARGE_TIME = 180;
     
     /** 基础突进距离（格）- 缩短距离 */
-    public static final double BASE_DASH_DISTANCE = 3.0;
+    public static final double BASE_DASH_DISTANCE = 10.0;
     
     /** 每秒蓄力增加的突进距离（格）- 缩短距离 */
-    public static final double DASH_DISTANCE_PER_SECOND = 3.0;
+    public static final double DASH_DISTANCE_PER_SECOND = 6.0;
     
     /** 二阶段攻击冷却（2秒 = 40 tick） */
     public static final int PHASE_2_ATTACK_COOLDOWN = 40;
     
     /** 三阶段突进冷却（2秒 = 40 tick） */
-    public static final int DASH_COOLDOWN = 40;
+    public static final int DASH_COOLDOWN = 0;
     
     // ==================== 状态变量 ====================
     
-    private final PlayerEntity player;
+    private final Player player;
     
     /** 当前阶段（1、2、3） */
     public int phase = 0;
@@ -121,7 +113,7 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     public double dashDistanceRemaining = 0;
     
     /** 突进方向 */
-    public Vec3d dashDirection = Vec3d.ZERO;
+    public Vec3 dashDirection = Vec3.ZERO;
     
     /** 是否已标记为跟踪者（用于在角色转换后仍能识别） */
     public boolean isStalkerMarked = false;
@@ -138,7 +130,16 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     /**
      * 构造函数
      */
-    public StalkerPlayerComponent(PlayerEntity player) {
+    /** 一阶段进阶所需能量（基础值，实际值 = 游戏人数 × 20） */
+    public   int ph1_energy_need = 500;
+
+    /** 二阶段进阶所需能量（基础值，实际值 = 游戏人数 × 2） */
+    public   int ph2_energy_need = 30;
+
+    /** 二阶段进阶所需击杀数（基础值，实际值 = 游戏人数 ÷ 6，向上取整，最小为1） */
+    public  int ph2_kill_need = 2;
+
+    public StalkerPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -159,11 +160,17 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.chargeTime = 0;
         this.isDashing = false;
         this.dashDistanceRemaining = 0;
-        this.dashDirection = Vec3d.ZERO;
+        this.dashDirection = Vec3.ZERO;
         this.isStalkerMarked = true;
         this.energyTickCounter = 0;
         this.attackCooldown = 0;
         this.dashCooldown = 0;
+        final var playerCount = getPlayerCount();
+        int kills = (int) Math.ceil(playerCount / 6.0);
+        this.ph2_kill_need = Math.max(1, kills);
+        this.ph1_energy_need = playerCount * 15;
+        this.ph2_energy_need = playerCount * 2;
+
         this.sync();
     }
     
@@ -183,12 +190,46 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.chargeTime = 0;
         this.isDashing = false;
         this.dashDistanceRemaining = 0;
-        this.dashDirection = Vec3d.ZERO;
+        this.dashDirection = Vec3.ZERO;
         this.isStalkerMarked = false;
         this.energyTickCounter = 0;
         this.attackCooldown = 0;
         this.dashCooldown = 0;
         this.sync();
+    }
+    
+    /**
+     * 获取当前游戏玩家人数
+     */
+    private int getPlayerCount() {
+        if (player.level().isClientSide()) {
+            return 8; // 客户端默认值
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            return serverPlayer.getServer().getPlayerList().getPlayerCount();
+        }
+        return 8; // 默认值
+    }
+    
+    /**
+     * 获取一阶段进阶所需能量（游戏人数 × 20）
+     */
+    public int getPhase1EnergyRequired() {
+        return ph1_energy_need;
+    }
+    
+    /**
+     * 获取二阶段进阶所需能量（游戏人数 × 2）
+     */
+    public int getPhase2EnergyRequired() {
+        return ph1_energy_need;
+    }
+    
+    /**
+     * 获取二阶段进阶所需击杀数（游戏人数 ÷ 6，向上取整，最小为1）
+     */
+    public int getPhase2KillsRequired() {
+        return ph2_kill_need;
     }
     
     /**
@@ -204,9 +245,9 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
      * 检查阶段进阶
      */
     public void checkPhaseAdvance() {
-        if (phase == 1 && energy >= PHASE_1_ENERGY) {
+        if (phase == 1 && energy >= getPhase1EnergyRequired()) {
             advanceToPhase2();
-        } else if (phase == 2 && energy >= PHASE_2_ENERGY && phase2Kills >= PHASE_2_KILLS) {
+        } else if (phase == 2 && energy >= getPhase2EnergyRequired() && phase2Kills >= getPhase2KillsRequired()) {
             advanceToPhase3();
         }
     }
@@ -220,22 +261,22 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.phase = 2;
         this.energy = 0; // 重置能量，从0开始积累30
         
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
         
         // 跟踪者一开始就是杀手阵营，不需要 addRole
         // 只需要给予刀
-        player.giveItemStack(TMMItems.KNIFE.getDefaultStack());
+        player.addItem(TMMItems.KNIFE.getDefaultInstance());
         
         // 发送阶段转换消息
-        serverPlayer.sendMessage(
-            Text.translatable("message.noellesroles.stalker.phase2_advance")
-                .formatted(Formatting.RED, Formatting.BOLD),
+        serverPlayer.displayClientMessage(
+            Component.translatable("message.noellesroles.stalker.phase2_advance")
+                .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
             false
         );
         
         // 播放音效
-        player.getWorld().playSound(null, player.getBlockPos(),
-            SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.PLAYERS, 1.0F, 1.5F);
+        player.level().playSound(null, player.blockPosition(),
+            SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 1.0F, 1.5F);
         
         this.sync();
     }
@@ -248,16 +289,16 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.phase3Timer = PHASE_3_TIME;
         this.dashModeActive = true;
         
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(
-                Text.translatable("message.noellesroles.stalker.phase3_advance")
-                    .formatted(Formatting.DARK_RED, Formatting.BOLD),
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.stalker.phase3_advance")
+                    .withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
                 false
             );
             
             // 播放音效
-            player.getWorld().playSound(null, player.getBlockPos(), 
-                SoundEvents.ENTITY_ENDER_DRAGON_GROWL, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            player.level().playSound(null, player.blockPosition(), 
+                SoundEvents.ENDER_DRAGON_GROWL, SoundSource.PLAYERS, 1.0F, 1.0F);
         }
         
         this.sync();
@@ -277,10 +318,10 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         
         // 保留击杀数，可以重新进入三阶段
         
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(
-                Text.translatable("message.noellesroles.stalker.phase_regress")
-                    .formatted(Formatting.YELLOW),
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.stalker.phase_regress")
+                    .withStyle(ChatFormatting.YELLOW),
                 true
             );
         }
@@ -408,18 +449,18 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.dashCooldown = DASH_COOLDOWN; // 设置突进冷却
         
         // 获取水平方向（忽略Y分量，防止穿入地板）
-        Vec3d lookDir = player.getRotationVec(1.0f);
-        Vec3d horizontalDir = new Vec3d(lookDir.x, 0, lookDir.z).normalize();
+        Vec3 lookDir = player.getViewVector(1.0f);
+        Vec3 horizontalDir = new Vec3(lookDir.x, 0, lookDir.z).normalize();
         // 如果玩家正好垂直看，使用前方向
-        if (horizontalDir.lengthSquared() < 0.001) {
-            float yaw = player.getYaw() * ((float) Math.PI / 180F);
-            horizontalDir = new Vec3d(-Math.sin(yaw), 0, Math.cos(yaw));
+        if (horizontalDir.lengthSqr() < 0.001) {
+            float yaw = player.getYRot() * ((float) Math.PI / 180F);
+            horizontalDir = new Vec3(-Math.sin(yaw), 0, Math.cos(yaw));
         }
         this.dashDirection = horizontalDir;
         
         // 播放突进音效
-        player.getWorld().playSound(null, player.getBlockPos(),
-            SoundEvents.ENTITY_BREEZE_CHARGE, SoundCategory.PLAYERS, 1.0F, 0.5F);
+        player.level().playSound(null, player.blockPosition(),
+            SoundEvents.BREEZE_CHARGE, SoundSource.PLAYERS, 1.0F, 0.5F);
         
         this.sync();
     }
@@ -427,35 +468,35 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     /**
      * 获取可见的玩家列表（用于窥视技能）
      */
-    public List<PlayerEntity> getVisiblePlayers() {
-        List<PlayerEntity> visible = new ArrayList<>();
-        World world = player.getWorld();
-        Vec3d eyePos = player.getEyePos();
-        Vec3d lookDir = player.getRotationVec(1.0f);
+    public List<Player> getVisiblePlayers() {
+        List<Player> visible = new ArrayList<>();
+        Level world = player.level();
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookDir = player.getViewVector(1.0f);
         
-        for (PlayerEntity target : world.getPlayers()) {
+        for (Player target : world.players()) {
             if (target.equals(player)) continue;
             if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
             
-            Vec3d targetPos = target.getEyePos();
+            Vec3 targetPos = target.getEyePosition();
             double distance = eyePos.distanceTo(targetPos);
             if (distance > GAZE_DISTANCE) continue;
             
             // 视野角度检查（90度扇形，半角45度）
-            Vec3d toTarget = targetPos.subtract(eyePos).normalize();
-            double dot = lookDir.dotProduct(toTarget);
+            Vec3 toTarget = targetPos.subtract(eyePos).normalize();
+            double dot = lookDir.dot(toTarget);
             if (dot < Math.cos(Math.toRadians(GAZE_ANGLE))) continue;
             
             // 射线检测
-            RaycastContext context = new RaycastContext(
+            ClipContext context = new ClipContext(
                 eyePos, targetPos,
-                RaycastContext.ShapeType.COLLIDER,
-                RaycastContext.FluidHandling.NONE,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
                 player
             );
-            BlockHitResult hit = world.raycast(context);
+            BlockHitResult hit = world.clip(context);
             if (hit.getType() == HitResult.Type.MISS ||
-                hit.getPos().distanceTo(targetPos) < 1.0) {
+                hit.getLocation().distanceTo(targetPos) < 1.0) {
                 visible.add(target);
             }
         }
@@ -466,7 +507,7 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
      * 更新窥视状态
      */
     private void updateGazing() {
-        List<PlayerEntity> visible = getVisiblePlayers();
+        List<Player> visible = getVisiblePlayers();
         gazingTargetCount = visible.size();
         
         // 每秒获取能量
@@ -490,7 +531,7 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
             return;
         }
         
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
             isDashing = false;
             return;
         }
@@ -499,17 +540,17 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         double movePerTick = 1.5; // 每 tick 移动1.5格（更快的突进速度）
         double actualMove = Math.min(movePerTick, dashDistanceRemaining);
         
-        Vec3d currentPos = player.getPos();
-        Vec3d newPos = currentPos.add(dashDirection.multiply(actualMove));
+        Vec3 currentPos = player.position();
+        Vec3 newPos = currentPos.add(dashDirection.scale(actualMove));
         
         // 检查是否撞到方块
-        RaycastContext context = new RaycastContext(
+        ClipContext context = new ClipContext(
             currentPos.add(0, 0.5, 0), newPos.add(0, 0.5, 0),
-            RaycastContext.ShapeType.COLLIDER,
-            RaycastContext.FluidHandling.NONE,
+            ClipContext.Block.COLLIDER,
+            ClipContext.Fluid.NONE,
             player
         );
-        BlockHitResult hit = player.getWorld().raycast(context);
+        BlockHitResult hit = player.level().clip(context);
         
         if (hit.getType() != HitResult.Type.MISS) {
             // 撞到方块，停止突进
@@ -520,12 +561,12 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         }
         
         // 检查是否穿过玩家
-        for (PlayerEntity target : player.getWorld().getPlayers()) {
+        for (Player target : player.level().players()) {
             if (target.equals(player)) continue;
             if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
             
             // 检查目标是否在突进路径上
-            double distToTarget = currentPos.distanceTo(target.getPos());
+            double distToTarget = currentPos.distanceTo(target.position());
             if (distToTarget <= 2.5) {
                 // 命中玩家，执行处决
                 executePlayer(target);
@@ -537,10 +578,10 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         }
         
         // 使用 teleport 移动玩家（正确同步到客户端）
-        serverPlayer.teleport(
-            serverPlayer.getServerWorld(),
+        serverPlayer.teleportTo(
+            serverPlayer.serverLevel(),
             newPos.x, newPos.y, newPos.z,
-            serverPlayer.getYaw(), serverPlayer.getPitch()
+            serverPlayer.getYRot(), serverPlayer.getXRot()
         );
         
         dashDistanceRemaining -= actualMove;
@@ -554,8 +595,8 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     /**
      * 处决玩家
      */
-    private void executePlayer(PlayerEntity target) {
-        if (!(player instanceof ServerPlayerEntity)) return;
+    private void executePlayer(Player target) {
+        if (!(player instanceof ServerPlayer)) return;
         
         // 使用刀刺死因
         GameFunctions.killPlayer(target, true, player, GameConstants.DeathReasons.KNIFE);
@@ -564,17 +605,17 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         onExecution();
         
         // 发送消息
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(
-                Text.translatable("message.noellesroles.stalker.execution_success", target.getName())
-                    .formatted(Formatting.RED),
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.stalker.execution_success", target.getName())
+                    .withStyle(ChatFormatting.RED),
                 true
             );
         }
         
         // 播放音效
-        player.getWorld().playSound(null, player.getBlockPos(), 
-            SoundEvents.ENTITY_WARDEN_SONIC_BOOM, SoundCategory.PLAYERS, 1.0F, 1.5F);
+        player.level().playSound(null, player.blockPosition(), 
+            SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 1.0F, 1.5F);
     }
     
     /**
@@ -665,8 +706,8 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
                 chargeTime = MAX_CHARGE_TIME;
             }
             // 蓄力时减速
-            player.addStatusEffect(new StatusEffectInstance(
-                StatusEffects.SLOWNESS, 3, 1, false, false, false
+            player.addEffect(new MobEffectInstance(
+                MobEffects.MOVEMENT_SLOWDOWN, 3, 1, false, false, false
             ));
         }
         
@@ -679,7 +720,7 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("phase", this.phase);
         tag.putInt("energy", this.energy);
         tag.putInt("phase2Kills", this.phase2Kills);
@@ -698,10 +739,13 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         tag.putBoolean("isStalkerMarked", this.isStalkerMarked);
         tag.putInt("attackCooldown", this.attackCooldown);
         tag.putInt("dashCooldown", this.dashCooldown);
+        tag.putInt("ph1_energy_need", this.ph1_energy_need);
+        tag.putInt("ph2_energy_need", this.ph2_energy_need);
+        tag.putInt("ph2_kill_need", this.ph2_kill_need);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.phase = tag.contains("phase") ? tag.getInt("phase") : 0;
         this.energy = tag.contains("energy") ? tag.getInt("energy") : 0;
         this.phase2Kills = tag.contains("phase2Kills") ? tag.getInt("phase2Kills") : 0;
@@ -717,9 +761,12 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
         double dirX = tag.contains("dashDirX") ? tag.getDouble("dashDirX") : 0;
         double dirY = tag.contains("dashDirY") ? tag.getDouble("dashDirY") : 0;
         double dirZ = tag.contains("dashDirZ") ? tag.getDouble("dashDirZ") : 0;
-        this.dashDirection = new Vec3d(dirX, dirY, dirZ);
+        this.dashDirection = new Vec3(dirX, dirY, dirZ);
         this.isStalkerMarked = tag.contains("isStalkerMarked") && tag.getBoolean("isStalkerMarked");
         this.attackCooldown = tag.contains("attackCooldown") ? tag.getInt("attackCooldown") : 0;
         this.dashCooldown = tag.contains("dashCooldown") ? tag.getInt("dashCooldown") : 0;
+        this.ph1_energy_need = tag.contains("ph1_energy_need") ? tag.getInt("ph1_energy_need") : 500;
+        this.ph2_energy_need = tag.contains("ph2_energy_need") ? tag.getInt("ph2_energy_need") : 30;
+        this.ph2_kill_need = tag.contains("ph2_kill_need") ? tag.getInt("ph2_kill_need") : 2;
     }
 }

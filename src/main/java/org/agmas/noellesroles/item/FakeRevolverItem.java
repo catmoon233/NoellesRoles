@@ -3,26 +3,26 @@ package org.agmas.noellesroles.item;
 import dev.doctor4t.trainmurdermystery.item.RevolverItem;
 import dev.doctor4t.trainmurdermystery.util.GunShootPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 
 public class FakeRevolverItem extends RevolverItem {
-    public FakeRevolverItem(Settings settings) {
+    public FakeRevolverItem(Properties settings) {
         super(settings);
     }
-    public TypedActionResult<ItemStack> use(@NotNull World world, @NotNull PlayerEntity user, Hand hand) {
-        if (hand==Hand.OFF_HAND)return TypedActionResult.pass(user.getStackInHand(hand));
-        if (user.getStackInHand(hand).getDamage() < user.getStackInHand(hand).getMaxDamage()) {
-            user.getStackInHand(hand).damage(1,user, EquipmentSlot.MAINHAND);
-            if (world.isClient) {
+    public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player user, InteractionHand hand) {
+        if (hand==InteractionHand.OFF_HAND)return InteractionResultHolder.pass(user.getItemInHand(hand));
+        if (user.getItemInHand(hand).getDamageValue() < user.getItemInHand(hand).getMaxDamage()) {
+            user.getItemInHand(hand).hurtAndBreak(1,user, EquipmentSlot.MAINHAND);
+            if (world.isClientSide) {
                 HitResult collision = getGunTarget(user);
                 if (collision instanceof EntityHitResult) {
                     EntityHitResult entityHitResult = (EntityHitResult) collision;
@@ -32,10 +32,10 @@ public class FakeRevolverItem extends RevolverItem {
                     ClientPlayNetworking.send(new GunShootPayload(-1));
                 }
 
-                user.setPitch(user.getPitch() - 4.0F);
+                user.setXRot(user.getXRot() - 4.0F);
                 spawnHandParticle();
             }
         }
-        return TypedActionResult.consume(user.getStackInHand(hand));
+        return InteractionResultHolder.consume(user.getItemInHand(hand));
     }
 }

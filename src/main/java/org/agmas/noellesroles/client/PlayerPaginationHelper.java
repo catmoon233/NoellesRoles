@@ -1,14 +1,13 @@
 package org.agmas.noellesroles.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 /**
  * Player pagination helper class to handle player list pagination
@@ -23,8 +22,8 @@ public class PlayerPaginationHelper<T> {
     private List<T> playerEntries = List.of();
     
     // Managed widgets
-    private final List<ButtonWidget> managedButtons = new ArrayList<>();
-    private final List<ButtonWidget> managedPlayerWidgets = new ArrayList<>();
+    private final List<Button> managedButtons = new ArrayList<>();
+    private final List<Button> managedPlayerWidgets = new ArrayList<>();
     
     // Callbacks
     private final PlayerWidgetCreator<T> widgetCreator;
@@ -34,7 +33,7 @@ public class PlayerPaginationHelper<T> {
      * Functional interface to create player widgets
      */
     public interface PlayerWidgetCreator<T> {
-        ButtonWidget createWidget(int x, int y, T playerEntry, int index);
+        Button createWidget(int x, int y, T playerEntry, int index);
     }
     
     /**
@@ -67,12 +66,12 @@ public class PlayerPaginationHelper<T> {
     /**
      * Draw pagination information
      */
-    public void drawPagination(DrawContext context, Screen screen, int centerY) {
+    public void drawPagination(GuiGraphics context, Screen screen, int centerY) {
         int totalPages = getTotalPages();
         if (totalPages > 1) {
-            Text pageText = Text.translatable(textProvider.getPageTranslationKey(), currentPage + 1, totalPages);
-            int pageTextWidth = MinecraftClient.getInstance().textRenderer.getWidth(pageText);
-            context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, pageText,
+            Component pageText = Component.translatable(textProvider.getPageTranslationKey(), currentPage + 1, totalPages);
+            int pageTextWidth = Minecraft.getInstance().font.width(pageText);
+            context.drawString(Minecraft.getInstance().font, pageText,
                     screen.width / 2 - pageTextWidth / 2,
                     centerY + 120, Color.WHITE.getRGB());
         }
@@ -99,7 +98,7 @@ public class PlayerPaginationHelper<T> {
         // Add player widgets for current page
         for (int i = startIndex; i < endIndex; ++i) {
             T playerEntry = playerEntries.get(i);
-            ButtonWidget playerWidget = widgetCreator.createWidget(x + apart * (i - startIndex), y, playerEntry, i);
+            Button playerWidget = widgetCreator.createWidget(x + apart * (i - startIndex), y, playerEntry, i);
             if (playerWidget != null) {
                 managedPlayerWidgets.add(playerWidget);
             }
@@ -110,20 +109,20 @@ public class PlayerPaginationHelper<T> {
             int buttonY = y + 40;
             
             // Previous page button
-            ButtonWidget prevButton = ButtonWidget.builder(Text.translatable(textProvider.getPrevTranslationKey()), button -> {
+            Button prevButton = Button.builder(Component.translatable(textProvider.getPrevTranslationKey()), button -> {
                 if (currentPage > 0) {
                     currentPage--;
                     refreshPage(screen);
                 }
-            }).dimensions(screen.width / 2 - 80, buttonY, 50, 20).build();
+            }).bounds(screen.width / 2 - 80, buttonY, 50, 20).build();
             
             // Next page button
-            ButtonWidget nextButton = ButtonWidget.builder(Text.translatable(textProvider.getNextTranslationKey()), button -> {
+            Button nextButton = Button.builder(Component.translatable(textProvider.getNextTranslationKey()), button -> {
                 if (currentPage < totalPages - 1) {
                     currentPage++;
                     refreshPage(screen);
                 }
-            }).dimensions(screen.width / 2 + 30, buttonY, 50, 20).build();
+            }).bounds(screen.width / 2 + 30, buttonY, 50, 20).build();
             
             // Store managed buttons
             managedButtons.add(prevButton);
@@ -139,13 +138,13 @@ public class PlayerPaginationHelper<T> {
      */
     public void clearManagedWidgets(ScreenWithChildren screen) {
         // Clear pagination buttons
-        for (ButtonWidget button : managedButtons) {
+        for (Button button : managedButtons) {
             screen.removeDrawableChild(button);
         }
         managedButtons.clear();
         
         // Clear player widgets
-        for (ButtonWidget widget : managedPlayerWidgets) {
+        for (Button widget : managedPlayerWidgets) {
             screen.removeDrawableChild(widget);
         }
         managedPlayerWidgets.clear();
@@ -173,8 +172,8 @@ public class PlayerPaginationHelper<T> {
      * Interface to access screen children operations
      */
     public interface ScreenWithChildren {
-        void addDrawableChild(ButtonWidget button);
-        void removeDrawableChild(ButtonWidget button);
+        void addDrawableChild(Button button);
+        void removeDrawableChild(Button button);
         void clearChildren();
     }
 }

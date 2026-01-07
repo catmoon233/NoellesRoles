@@ -1,19 +1,19 @@
 package org.agmas.noellesroles.client.screen;
 
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.widget.ConspiratorPlayerWidget;
 import org.agmas.noellesroles.client.widget.ConspiratorRoleWidget;
 import org.agmas.noellesroles.packet.ConspiratorC2SPacket;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +35,7 @@ public class ConspiratorScreen extends Screen {
     private String selectedPlayerName = "";
     
     // 玩家列表
-    private List<AbstractClientPlayerEntity> players = new ArrayList<>();
+    private List<AbstractClientPlayer> players = new ArrayList<>();
     
     // 角色列表
     private List<Role> roles = new ArrayList<>();
@@ -45,7 +45,7 @@ public class ConspiratorScreen extends Screen {
     private List<ConspiratorRoleWidget> roleWidgets = new ArrayList<>();
     
     public ConspiratorScreen() {
-        super(Text.translatable("screen.noellesroles.conspirator.title"));
+        super(Component.translatable("screen.noellesroles.conspirator.title"));
     }
     
     @Override
@@ -67,14 +67,14 @@ public class ConspiratorScreen extends Screen {
      * 初始化玩家选择阶段
      */
     private void initPlayerSelection() {
-        if (client == null || client.world == null || client.player == null) return;
+        if (minecraft == null || minecraft.level == null || minecraft.player == null) return;
         
         // 获取所有其他玩家
-        players = new ArrayList<>(client.world.getPlayers());
-        players.removeIf(p -> p.getUuid().equals(client.player.getUuid()));
+        players = new ArrayList<>(minecraft.level.players());
+        players.removeIf(p -> p.getUUID().equals(minecraft.player.getUUID()));
         
         if (players.isEmpty()) {
-            close();
+            onClose();
             return;
         }
         
@@ -98,7 +98,7 @@ public class ConspiratorScreen extends Screen {
                 this, x, y, widgetSize, players.get(i), i
             );
             playerWidgets.add(widget);
-            addDrawableChild(widget);
+            addRenderableWidget(widget);
         }
     }
     
@@ -107,10 +107,10 @@ public class ConspiratorScreen extends Screen {
      */
     private void initRoleSelection() {
         // 获取所有注册的角色
-        roles = new ArrayList<>(TMMRoles.ROLES);
+        roles = Noellesroles.getEnableRoles();
         
         if (roles.isEmpty()) {
-            close();
+            onClose();
             return;
         }
         
@@ -136,7 +136,7 @@ public class ConspiratorScreen extends Screen {
                 this, x, y, widgetWidth, widgetHeight, roles.get(i), i
             );
             roleWidgets.add(widget);
-            addDrawableChild(widget);
+            addRenderableWidget(widget);
         }
     }
     
@@ -149,7 +149,7 @@ public class ConspiratorScreen extends Screen {
         this.phase = 1;
         
         // 重新初始化，显示角色选择
-        clearChildren();
+        clearWidgets();
         init();
     }
     
@@ -158,7 +158,7 @@ public class ConspiratorScreen extends Screen {
      */
     public void onRoleSelected(Role role) {
         if (selectedPlayer == null) return;
-        if (client == null || client.player == null) return;
+        if (minecraft == null || minecraft.player == null) return;
         
         // 发送网络包到服务端
         ClientPlayNetworking.send(new ConspiratorC2SPacket(
@@ -167,42 +167,42 @@ public class ConspiratorScreen extends Screen {
         ));
         
         // 消耗书页物品
-        ItemStack mainHand = client.player.getStackInHand(Hand.MAIN_HAND);
-        ItemStack offHand = client.player.getStackInHand(Hand.OFF_HAND);
+        ItemStack mainHand = minecraft.player.getItemInHand(InteractionHand.MAIN_HAND);
+        ItemStack offHand = minecraft.player.getItemInHand(InteractionHand.OFF_HAND);
         
         // 物品消耗由服务端处理
         
         // 关闭屏幕
-        close();
+        onClose();
     }
     
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         // 渲染背景
         renderBackground(context, mouseX, mouseY, delta);
         
         // 渲染标题
-        Text title;
+        Component title;
         if (phase == 0) {
-            title = Text.translatable("screen.noellesroles.conspirator.select_player")
-                .formatted(Formatting.GOLD, Formatting.BOLD);
+            title = Component.translatable("screen.noellesroles.conspirator.select_player")
+                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         } else {
-            title = Text.translatable("screen.noellesroles.conspirator.select_role", selectedPlayerName)
-                .formatted(Formatting.GOLD, Formatting.BOLD);
+            title = Component.translatable("screen.noellesroles.conspirator.select_role", selectedPlayerName)
+                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         }
         
-        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 30, 0xFFFFFF);
+        context.drawCenteredString(font, title, width / 2, 30, 0xFFFFFF);
         
         // 渲染提示
-        Text hint = Text.translatable("screen.noellesroles.conspirator.hint")
-            .formatted(Formatting.GRAY);
-        context.drawCenteredTextWithShadow(textRenderer, hint, width / 2, height - 30, 0x888888);
+        Component hint = Component.translatable("screen.noellesroles.conspirator.hint")
+            .withStyle(ChatFormatting.GRAY);
+        context.drawCenteredString(font, hint, width / 2, height - 30, 0x888888);
         
         super.render(context, mouseX, mouseY, delta);
     }
     
     @Override
-    public boolean shouldPause() {
+    public boolean isPauseScreen() {
         return false;
     }
     
@@ -215,7 +215,7 @@ public class ConspiratorScreen extends Screen {
                 phase = 0;
                 selectedPlayer = null;
                 selectedPlayerName = "";
-                clearChildren();
+                clearWidgets();
                 init();
                 return true;
             }

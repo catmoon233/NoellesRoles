@@ -6,14 +6,14 @@ import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,27 +36,27 @@ public class StalkerRoleNameMixin {
     /**
      * 在角色名称渲染后添加阶段/能量信息
      */
-    @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTextWithShadow(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;III)I", ordinal = 0, shift = At.Shift.AFTER))
-    private static void renderPhaseInfo(TextRenderer renderer, ClientPlayerEntity player, DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null || client.world == null) return;
+    @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I", ordinal = 0, shift = At.Shift.AFTER))
+    private static void renderPhaseInfo(Font renderer, LocalPlayer player, GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) return;
         
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
         
         // 只有旁观者或创作模式能看到详细信息
         if (!TMMClient.isPlayerSpectatingOrCreative()) return;
         
         // 获取当前查看的玩家（通过射线追踪或其他方式）
         // 这里使用当前玩家本身来检查角色
-        PlayerEntity localPlayer = client.player;
+        Player localPlayer = client.player;
         
         // =============== 跟踪者阶段显示 ===============
         if (gameWorld.isRole(localPlayer, ModRoles.STALKER)) {
             StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(localPlayer);
             if (stalkerComp.isStalkerMarked && stalkerComp.phase > 0) {
-                Text phaseText = getPhaseText(stalkerComp.phase);
+                Component phaseText = getPhaseText(stalkerComp.phase);
                 // 在角色名称下方显示阶段信息
-                context.drawTextWithShadow(renderer, phaseText, -renderer.getWidth(phaseText) / 2, 12, 
+                context.drawString(renderer, phaseText, -renderer.width(phaseText) / 2, 12, 
                     ModRoles.STALKER.color() | (int) (nametagAlpha * 255.0F) << 24);
             }
         }
@@ -65,10 +65,10 @@ public class StalkerRoleNameMixin {
         if (gameWorld.isRole(localPlayer, ModRoles.ADMIRER)) {
             AdmirerPlayerComponent admirerComp = AdmirerPlayerComponent.KEY.get(localPlayer);
             if (admirerComp.isAdmirerMarked && !admirerComp.hasTransformed) {
-                Text energyText = Text.literal(String.format("[%d/%d]", admirerComp.energy, AdmirerPlayerComponent.MAX_ENERGY))
-                    .formatted(Formatting.LIGHT_PURPLE);
+                Component energyText = Component.literal(String.format("[%d/%d]", admirerComp.energy, AdmirerPlayerComponent.MAX_ENERGY))
+                    .withStyle(ChatFormatting.LIGHT_PURPLE);
                 // 在角色名称下方显示能量信息
-                context.drawTextWithShadow(renderer, energyText, -renderer.getWidth(energyText) / 2, 12,
+                context.drawString(renderer, energyText, -renderer.width(energyText) / 2, 12,
                     ModRoles.ADMIRER.color() | (int) (nametagAlpha * 255.0F) << 24);
             }
         }
@@ -77,12 +77,12 @@ public class StalkerRoleNameMixin {
     /**
      * 获取阶段文本
      */
-    private static Text getPhaseText(int phase) {
+    private static Component getPhaseText(int phase) {
         return switch (phase) {
-            case 1 -> Text.translatable("hud.noellesroles.stalker.phase1_short").formatted(Formatting.DARK_PURPLE);
-            case 2 -> Text.translatable("hud.noellesroles.stalker.phase2_short").formatted(Formatting.RED);
-            case 3 -> Text.translatable("hud.noellesroles.stalker.phase3_short").formatted(Formatting.DARK_RED);
-            default -> Text.empty();
+            case 1 -> Component.translatable("hud.noellesroles.stalker.phase1_short").withStyle(ChatFormatting.DARK_PURPLE);
+            case 2 -> Component.translatable("hud.noellesroles.stalker.phase2_short").withStyle(ChatFormatting.RED);
+            case 3 -> Component.translatable("hud.noellesroles.stalker.phase3_short").withStyle(ChatFormatting.DARK_RED);
+            default -> Component.empty();
         };
     }
 }

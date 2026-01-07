@@ -2,10 +2,6 @@ package org.agmas.noellesroles.mixin;
 
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 
 /**
  * 玩家重置 Mixin
@@ -29,7 +28,7 @@ public abstract class PlayerResetMixin {
      * 在 resetPlayer 方法尾部注入，清除所有自定义组件状态
      */
     @Inject(method = "resetPlayer", at = @At("TAIL"))
-    private static void clearAllComponentsOnReset(ServerPlayerEntity player, CallbackInfo ci) {
+    private static void clearAllComponentsOnReset(ServerPlayer player, CallbackInfo ci) {
         // 清除跟踪者组件状态
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
@@ -81,18 +80,18 @@ public abstract class PlayerResetMixin {
     /**
      * 清除指定玩家放置的所有灾厄印记实体
      */
-    private static void clearCalamityMarks(ServerPlayerEntity player) {
-        ServerWorld world = player.getServerWorld();
+    private static void clearCalamityMarks(ServerPlayer player) {
+        ServerLevel world = player.serverLevel();
         if (world == null) return;
         
         // 收集需要移除的实体（避免在遍历时修改集合）
         List<Entity> toRemove = new ArrayList<>();
         
-        for (Entity entity : world.iterateEntities()) {
+        for (Entity entity : world.getAllEntities()) {
             if (entity instanceof CalamityMarkEntity mark) {
                 // 检查是否是该玩家放置的
                 if (mark.getOwnerUuid().isPresent() &&
-                    mark.getOwnerUuid().get().equals(player.getUuid())) {
+                    mark.getOwnerUuid().get().equals(player.getUUID())) {
                     toRemove.add(mark);
                 }
             }

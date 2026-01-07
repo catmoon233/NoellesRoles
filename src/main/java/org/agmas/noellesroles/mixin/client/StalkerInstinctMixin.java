@@ -7,10 +7,6 @@ import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,6 +16,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.awt.*;
 import java.util.Set;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * 杀手本能 Mixin
@@ -34,7 +34,7 @@ import java.util.Set;
 public class StalkerInstinctMixin {
     
     @Shadow
-    public static KeyBinding instinctKeybind;
+    public static KeyMapping instinctKeybind;
     
     // 渐变色配置 - 从红色到橙色到黄色循环
     @Unique
@@ -64,10 +64,10 @@ public class StalkerInstinctMixin {
      */
     @Unique
     private static int getGradientColor(int tickOffset) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world == null) return GRADIENT_COLORS[0];
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null) return GRADIENT_COLORS[0];
         
-        long worldTime = client.world.getTime();
+        long worldTime = client.level.getGameTime();
         int cyclePosition = (int) ((worldTime + tickOffset) % GRADIENT_CYCLE);
         
         // 计算在颜色数组中的位置
@@ -108,14 +108,14 @@ public class StalkerInstinctMixin {
      */
     @Inject(method = "isInstinctEnabled", at = @At("HEAD"), cancellable = true)
     private static void admirerAndPuppeteerCanUseInstinct(CallbackInfoReturnable<Boolean> cir) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null || client.world == null) return;
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) return;
         
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
         
         // 爱慕者可以使用本能侦查（类似小丑）
         if (gameWorld.isRole(client.player, ModRoles.ADMIRER)) {
-            if (instinctKeybind.isPressed()) {
+            if (instinctKeybind.isDown()) {
                 cir.setReturnValue(true);
                 cir.cancel();
                 return;
@@ -125,7 +125,7 @@ public class StalkerInstinctMixin {
         // 傀儡师操控假人时可以使用本能侦查
         // 注意：操控假人时角色会临时变成其他杀手，所以需要检查组件状态而不是角色
         PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(client.player);
-        if (puppeteerComp.isControllingPuppet && instinctKeybind.isPressed()) {
+        if (puppeteerComp.isControllingPuppet && instinctKeybind.isDown()) {
             cir.setReturnValue(true);
             cir.cancel();
         }
@@ -138,13 +138,13 @@ public class StalkerInstinctMixin {
      */
     @Inject(method = "getInstinctHighlight", at = @At("HEAD"), cancellable = true)
     private static void customInstinctHighlight(Entity target, CallbackInfoReturnable<Integer> cir) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null || client.world == null) return;
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) return;
         
-        if (!(target instanceof PlayerEntity targetPlayer)) return;
+        if (!(target instanceof Player targetPlayer)) return;
         if (targetPlayer.isSpectator()) return;
         
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
         
         // 只有在杀手本能激活时才处理
         if (!TMMClient.isInstinctEnabled()) return;
@@ -154,15 +154,15 @@ public class StalkerInstinctMixin {
         
         // =============== 跟踪者处理 ===============
         // 杀手透视跟踪者时，显示渐变色
-        StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(targetPlayer);
-        if (stalkerComp.isStalkerMarked && stalkerComp.phase > 0) {
-            if (TMMClient.isKiller() && TMMClient.isPlayerAliveAndInSurvival()) {
-                // 使用渐变色
-                cir.setReturnValue(getGradientColor(entityOffset));
-                cir.cancel();
-                return;
-            }
-        }
+//        StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(targetPlayer);
+//        if (stalkerComp.isStalkerMarked && stalkerComp.phase > 0) {
+//            if (TMMClient.isKiller() && TMMClient.isPlayerAliveAndInSurvival()) {
+//                // 使用渐变色
+//                cir.setReturnValue(getGradientColor(entityOffset));
+//                cir.cancel();
+//                return;
+//            }
+//        }
         
         // =============== 傀儡师处理 ===============
         // 杀手透视傀儡师时（阶段一和阶段二），显示渐变色

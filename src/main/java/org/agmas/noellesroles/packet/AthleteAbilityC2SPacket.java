@@ -1,10 +1,10 @@
 package org.agmas.noellesroles.packet;
 
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
 /**
@@ -13,16 +13,16 @@ import org.agmas.noellesroles.Noellesroles;
  * 
  * 当玩家按下技能键时发送，请求激活疾跑技能
  */
-public record AthleteAbilityC2SPacket() implements CustomPayload {
+public record AthleteAbilityC2SPacket() implements CustomPacketPayload {
     
-    public static final Id<AthleteAbilityC2SPacket> ID = new Id<>(
-        Identifier.of(Noellesroles.MOD_ID, "athlete_ability")
+    public static final Type<AthleteAbilityC2SPacket> ID = new Type<>(
+        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "athlete_ability")
     );
     
-    public static final PacketCodec<RegistryByteBuf, AthleteAbilityC2SPacket> CODEC = PacketCodec.unit(new AthleteAbilityC2SPacket());
+    public static final StreamCodec<RegistryFriendlyByteBuf, AthleteAbilityC2SPacket> CODEC = StreamCodec.unit(new AthleteAbilityC2SPacket());
     
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

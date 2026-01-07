@@ -5,23 +5,22 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.agmas.noellesroles.repack.AntidoteUsePayload;
 import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
@@ -29,36 +28,38 @@ import org.agmas.noellesroles.repack.HSRSounds;
 import org.jetbrains.annotations.NotNull;
 
 public class AntidoteItem extends Item {
-    public AntidoteItem(Settings settings) {
+    public AntidoteItem(Properties settings) {
         super(settings);
     }
 
-    public TypedActionResult<ItemStack> use(World world, @NotNull PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        user.setCurrentHand(hand);
-        return TypedActionResult.consume(itemStack);
+    public InteractionResultHolder<ItemStack> use(Level world, @NotNull Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
+        user.startUsingItem(hand);
+        return InteractionResultHolder.consume(itemStack);
     }
 
-    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
         if (!user.isSpectator()) {
-            if (remainingUseTicks < this.getMaxUseTime(stack, user) - 10 && user instanceof PlayerEntity) {
-                PlayerEntity attacker = (PlayerEntity)user;
-                if (world.isClient) {
+            if (remainingUseTicks < this.getUseDuration(stack, user) - 10 && user instanceof Player) {
+                Player attacker = (Player)user;
+                //if (!world.isClientSide) {
                     HitResult collision = getAntidoteTarget(attacker);
                     if (collision instanceof EntityHitResult) {
                         EntityHitResult entityHitResult = (EntityHitResult) collision;
                         Entity target = entityHitResult.getEntity();
-                        if (attacker instanceof ServerPlayerEntity player) {
+                        if (attacker instanceof ServerPlayer player) {
 
 
                                 if (!((double)target.distanceTo(player) > (double)3.0F)) {
-                                    ((PlayerPoisonComponent)PlayerPoisonComponent.KEY.get(target)).reset();
+                                    final var playerPoisonComponent = PlayerPoisonComponent.KEY.get(target);
+                                    ((PlayerPoisonComponent) playerPoisonComponent).reset();
+                                    playerPoisonComponent.sync();
                                     target.playSound(HSRSounds.ITEM_SYRINGE_STAB, 0.4F, 1.0F);
-                                    final var blockPos = target.getBlockPos();
-                                    ((ServerWorld) world).playSound(blockPos.getX(), blockPos.getY(), blockPos.getZ(), SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.PLAYERS,1.4F, 1.0F,false);
-                                    player.swingHand(Hand.MAIN_HAND);
+                                    final var blockPos = target.blockPosition();
+                                    ((ServerLevel) world).playLocalSound(blockPos.getX(), blockPos.getY(), blockPos.getZ(), SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS,1.4F, 1.0F,false);
+                                    player.swing(InteractionHand.MAIN_HAND);
                                     if (!player.isCreative()) {
-                                        player.getItemCooldownManager().set(HSRItems.ANTIDOTE, (Integer) HSRConstants.ITEM_COOLDOWNS.get(HSRItems.ANTIDOTE));
+                                        player.getCooldowns().addCooldown(HSRItems.ANTIDOTE, (Integer) HSRConstants.ITEM_COOLDOWNS.get(HSRItems.ANTIDOTE));
                                     }
 
 
@@ -66,16 +67,16 @@ public class AntidoteItem extends Item {
                     }
 
                     return;
-                }
+                //}
             }
 
         }
     }
 
-    public static HitResult getAntidoteTarget(PlayerEntity user) {
-        return ProjectileUtil.getCollision(user, (entity) -> {
+    public static HitResult getAntidoteTarget(Player user) {
+        return ProjectileUtil.getHitResultOnViewVector(user, (entity) -> {
             boolean var10000;
-            if (entity instanceof PlayerEntity player) {
+            if (entity instanceof Player player) {
                 if (GameFunctions.isPlayerAliveAndSurvival(player)) {
                     var10000 = true;
                     return var10000;
@@ -87,11 +88,11 @@ public class AntidoteItem extends Item {
         }, (double)3.0F);
     }
 
-    public UseAction getUseAction(ItemStack stack) {
-        return UseAction.SPEAR;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.SPEAR;
     }
 
-    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+    public int getUseDuration(ItemStack stack, LivingEntity user) {
         return 72000;
     }
 }

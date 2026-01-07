@@ -4,22 +4,21 @@ import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 /**
  * 警报陷阱物品
@@ -30,62 +29,62 @@ import java.util.List;
  */
 public class AlarmTrapItem extends Item implements AdventureUsable {
     
-    public AlarmTrapItem(Settings settings) {
+    public AlarmTrapItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        PlayerEntity player = context.getPlayer();
-        World world = context.getWorld();
-        BlockPos pos = context.getBlockPos();
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        Level world = context.getLevel();
+        BlockPos pos = context.getClickedPos();
         BlockState state = world.getBlockState(pos);
         
-        if (player == null) return ActionResult.PASS;
+        if (player == null) return InteractionResult.PASS;
         
         // 检查是否为门方块
         if (state.getBlock() instanceof SmallDoorBlock) {
-            BlockPos lowerPos = state.get(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.down();
+            BlockPos lowerPos = state.getValue(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
             
             if (world.getBlockEntity(lowerPos) instanceof SmallDoorBlockEntity doorEntity) {
                 // 检查门是否已被破坏
                 if (doorEntity.isBlasted()) {
-                    if (!world.isClient) {
-                        player.sendMessage(Text.translatable("message.noellesroles.engineer.already_broken")
-                            .formatted(Formatting.RED), true);
+                    if (!world.isClientSide) {
+                        player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_broken")
+                            .withStyle(ChatFormatting.RED), true);
                     }
-                    return ActionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
                 
                 // 检查门是否已有警报陷阱
                 if (hasDoorAlarmTrap(doorEntity)) {
-                    if (!world.isClient) {
-                        player.sendMessage(Text.translatable("message.noellesroles.engineer.already_trapped")
-                            .formatted(Formatting.YELLOW), true);
+                    if (!world.isClientSide) {
+                        player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_trapped")
+                            .withStyle(ChatFormatting.YELLOW), true);
                     }
-                    return ActionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
                 
                 // 放置警报陷阱
                 setDoorAlarmTrap(doorEntity, true);
                 
-                if (!world.isClient) {
+                if (!world.isClientSide) {
                     world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
-                        SoundEvents.BLOCK_TRIPWIRE_ATTACH, SoundCategory.BLOCKS, 0.7f, 1.2f);
-                    player.sendMessage(Text.translatable("message.noellesroles.engineer.trap_placed")
-                        .formatted(Formatting.GREEN), true);
+                        SoundEvents.TRIPWIRE_ATTACH, SoundSource.BLOCKS, 0.7f, 1.2f);
+                    player.displayClientMessage(Component.translatable("message.noellesroles.engineer.trap_placed")
+                        .withStyle(ChatFormatting.GREEN), true);
                 }
                 
                 // 消耗物品
                 if (!player.isCreative()) {
-                    context.getStack().decrement(1);
+                    context.getItemInHand().shrink(1);
                 }
                 
-                return ActionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
         
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
     
     /**
@@ -119,21 +118,21 @@ public class AlarmTrapItem extends Item implements AdventureUsable {
      * 触发警报陷阱（被撬棍使用时调用）
      * @return true 如果触发了警报
      */
-    public static boolean triggerAlarmTrap(DoorBlockEntity doorEntity, World world) {
+    public static boolean triggerAlarmTrap(DoorBlockEntity doorEntity, Level world) {
         if (hasDoorAlarmTrap(doorEntity)) {
             // 移除陷阱（一次性）
             setDoorAlarmTrap(doorEntity, false);
             
             // 播放响亮的警报声
-            if (!world.isClient) {
-                BlockPos pos = doorEntity.getPos();
+            if (!world.isClientSide) {
+                BlockPos pos = doorEntity.getBlockPos();
                 // 播放多个叠加的声音让警报更响亮
                 world.playSound(null, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
-                    SoundEvents.BLOCK_BELL_USE, SoundCategory.BLOCKS, 3.0f, 0.8f);
+                    SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 3.0f, 0.8f);
                 world.playSound(null, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
-                    SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), SoundCategory.BLOCKS, 3.0f, 0.5f);
+                    SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS, 3.0f, 0.5f);
                 world.playSound(null, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
-                    SoundEvents.ENTITY_WARDEN_ROAR, SoundCategory.BLOCKS, 1.5f, 2.0f);
+                    SoundEvents.WARDEN_ROAR, SoundSource.BLOCKS, 1.5f, 2.0f);
             }
             
             return true;
@@ -142,10 +141,10 @@ public class AlarmTrapItem extends Item implements AdventureUsable {
     }
     
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.translatable("item.noellesroles.alarm_trap.tooltip")
-            .formatted(Formatting.GRAY));
-        tooltip.add(Text.translatable("item.noellesroles.alarm_trap.tooltip2")
-            .formatted(Formatting.GRAY));
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        tooltip.add(Component.translatable("item.noellesroles.alarm_trap.tooltip")
+            .withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.noellesroles.alarm_trap.tooltip2")
+            .withStyle(ChatFormatting.GRAY));
     }
 }

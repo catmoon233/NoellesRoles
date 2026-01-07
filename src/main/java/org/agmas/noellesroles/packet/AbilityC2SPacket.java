@@ -1,36 +1,36 @@
 package org.agmas.noellesroles.packet;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.Noellesroles;
 
 import java.util.UUID;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-public record AbilityC2SPacket() implements CustomPayload {
-    public static final Identifier ABILITY_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "ability_no");
-    public static final Id<AbilityC2SPacket> ID = new Id<>(ABILITY_PAYLOAD_ID);
-    public static final PacketCodec<RegistryByteBuf, AbilityC2SPacket> CODEC;
+public record AbilityC2SPacket() implements CustomPacketPayload {
+    public static final ResourceLocation ABILITY_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "ability_no");
+    public static final Type<AbilityC2SPacket> ID = new Type<>(ABILITY_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, AbilityC2SPacket> CODEC;
 
     public AbilityC2SPacket() {
     }
 
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
-    public void write(PacketByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
 
     }
 
-    public static AbilityC2SPacket read(PacketByteBuf buf) {
+    public static AbilityC2SPacket read(FriendlyByteBuf buf) {
         return new AbilityC2SPacket();
     }
 
 
     static {
-        CODEC = PacketCodec.of(AbilityC2SPacket::write, AbilityC2SPacket::read);
+        CODEC = StreamCodec.ofMember(AbilityC2SPacket::write, AbilityC2SPacket::read);
     }
 }

@@ -1,13 +1,12 @@
 package org.agmas.noellesroles.packet;
 
 import org.agmas.noellesroles.Noellesroles;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
 import java.util.UUID;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * 阴谋家猜测网络包
@@ -16,11 +15,11 @@ import java.util.UUID;
  * - 目标玩家 UUID
  * - 猜测的角色 ID
  */
-public record ConspiratorC2SPacket(UUID targetPlayer, String roleId) implements CustomPayload {
+public record ConspiratorC2SPacket(UUID targetPlayer, String roleId) implements CustomPacketPayload {
     
-    public static final Identifier CONSPIRATOR_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "conspirator_guess");
-    public static final Id<ConspiratorC2SPacket> ID = new Id<>(CONSPIRATOR_PAYLOAD_ID);
-    public static final PacketCodec<RegistryByteBuf, ConspiratorC2SPacket> CODEC;
+    public static final ResourceLocation CONSPIRATOR_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "conspirator_guess");
+    public static final Type<ConspiratorC2SPacket> ID = new Type<>(CONSPIRATOR_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ConspiratorC2SPacket> CODEC;
     
     public ConspiratorC2SPacket(UUID targetPlayer, String roleId) {
         this.targetPlayer = targetPlayer;
@@ -28,17 +27,17 @@ public record ConspiratorC2SPacket(UUID targetPlayer, String roleId) implements 
     }
     
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
     
-    public void write(PacketByteBuf buf) {
-        buf.writeUuid(this.targetPlayer);
-        buf.writeString(this.roleId);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeUUID(this.targetPlayer);
+        buf.writeUtf(this.roleId);
     }
     
-    public static ConspiratorC2SPacket read(PacketByteBuf buf) {
-        return new ConspiratorC2SPacket(buf.readUuid(), buf.readString());
+    public static ConspiratorC2SPacket read(FriendlyByteBuf buf) {
+        return new ConspiratorC2SPacket(buf.readUUID(), buf.readUtf());
     }
     
     public UUID targetPlayer() {
@@ -50,6 +49,6 @@ public record ConspiratorC2SPacket(UUID targetPlayer, String roleId) implements 
     }
     
     static {
-        CODEC = PacketCodec.of(ConspiratorC2SPacket::write, ConspiratorC2SPacket::read);
+        CODEC = StreamCodec.ofMember(ConspiratorC2SPacket::write, ConspiratorC2SPacket::read);
     }
 }

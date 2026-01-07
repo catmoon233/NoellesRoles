@@ -1,8 +1,8 @@
 package org.agmas.noellesroles.roles.framing;
 
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class FramingShopEntry extends ShopEntry {
@@ -12,7 +12,7 @@ public class FramingShopEntry extends ShopEntry {
     }
 
     @Override
-    public boolean onBuy(@NotNull PlayerEntity player) {
+    public boolean onBuy(@NotNull Player player) {
         return insertStackInFreeSlot(player, stack().copy());
     }
 }

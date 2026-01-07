@@ -1,13 +1,6 @@
 package org.agmas.noellesroles;
 
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.GameMode;
-import net.minecraft.world.World;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -17,20 +10,24 @@ import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.UUID;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 
 public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingComponent {
-    public static final ComponentKey<ConfigWorldComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "config"), ConfigWorldComponent.class);
+    public static final ComponentKey<ConfigWorldComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "config"), ConfigWorldComponent.class);
     public boolean insaneSeesMorphs = true;
     public boolean naturalVoodoosAllowed = false;
     public int masterKeyVisibleCount = 0;
     public boolean masterKeyIsVisible = false;
-    private final World world;
+    private final Level world;
 
     public void reset() {
         this.sync();
     }
 
-    public ConfigWorldComponent(World world) {
+    public ConfigWorldComponent(Level world) {
         this.world = world;
     }
 
@@ -38,7 +35,7 @@ public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingC
         KEY.sync(this.world);
     }
 
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         insaneSeesMorphs = NoellesRolesConfig.HANDLER.instance().insanePlayersSeeMorphs;
         naturalVoodoosAllowed = NoellesRolesConfig.HANDLER.instance().voodooNonKillerDeaths;
         masterKeyVisibleCount = NoellesRolesConfig.HANDLER.instance().playerCountToMakeConducterKeyVisible;
@@ -50,7 +47,7 @@ public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingC
 
 
 
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         if (tag.contains("insaneSeesMorphs"))   this.insaneSeesMorphs = tag.getBoolean("insaneSeesMorphs");
         if (tag.contains("naturalVoodoosAllowed"))   this.naturalVoodoosAllowed = tag.getBoolean("naturalVoodoosAllowed");
         if (tag.contains("masterKeyIsVisible"))   this.masterKeyIsVisible = tag.getBoolean("masterKeyIsVisible");
@@ -63,7 +60,7 @@ public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingC
             masterKeyIsVisible = false;
         } else {
             if (world.getServer() != null)
-                masterKeyIsVisible =  world.getServer().getPlayerManager().getCurrentPlayerCount() >= NoellesRolesConfig.HANDLER.instance().playerCountToMakeConducterKeyVisible;
+                masterKeyIsVisible =  world.getServer().getPlayerList().getPlayerCount() >= NoellesRolesConfig.HANDLER.instance().playerCountToMakeConducterKeyVisible;
         }
         this.sync();
     }

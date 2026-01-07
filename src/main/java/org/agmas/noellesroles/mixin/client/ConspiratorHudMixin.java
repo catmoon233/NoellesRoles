@@ -5,13 +5,13 @@ import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,36 +25,36 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ConspiratorHudMixin {
     
     @Inject(method = "renderHud", at = @At("HEAD"))
-    private static void renderConspiratorHud(TextRenderer renderer, ClientPlayerEntity player, DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
+    private static void renderConspiratorHud(Font renderer, LocalPlayer player, GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        Minecraft client = Minecraft.getInstance();
         if (client.player == null) return;
         
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
         if (!gameWorld.isRole(client.player, ModRoles.CONSPIRATOR)) return;
         if (!TMMClient.isPlayerAliveAndInSurvival()) return;
         
         ConspiratorPlayerComponent component = ConspiratorPlayerComponent.KEY.get(client.player);
         
-        context.getMatrices().push();
+        context.pose().pushPose();
         
-        int screenWidth = context.getScaledWindowWidth();
-        int screenHeight = context.getScaledWindowHeight();
+        int screenWidth = context.guiWidth();
+        int screenHeight = context.guiHeight();
         int yOffset = screenHeight - 28;  // 右下角
         int xOffset = screenWidth - 200;  // 距离右边缘
         
         // 如果有正在进行的诅咒
         if (component.guessCorrect && component.deathCountdown > 0 && !component.targetName.isEmpty()) {
-            Text targetText = Text.translatable("tip.noellesroles.conspirator.target",
+            Component targetText = Component.translatable("tip.noellesroles.conspirator.target",
                 component.targetName, component.getCountdownSeconds())
-                .formatted(Formatting.DARK_PURPLE);
-            context.drawTextWithShadow(renderer, targetText, xOffset, yOffset, ModRoles.CONSPIRATOR.color());
+                .withStyle(ChatFormatting.DARK_PURPLE);
+            context.drawString(renderer, targetText, xOffset, yOffset, ModRoles.CONSPIRATOR.color());
         } else {
             // 显示提示
-            Text hintText = Text.translatable("tip.noellesroles.conspirator.no_target")
-                .formatted(Formatting.GRAY);
-            context.drawTextWithShadow(renderer, hintText, xOffset, yOffset, 0x888888);
+            Component hintText = Component.translatable("tip.noellesroles.conspirator.no_target")
+                .withStyle(ChatFormatting.GRAY);
+            context.drawString(renderer, hintText, xOffset, yOffset, 0x888888);
         }
         
-        context.getMatrices().pop();
+        context.pose().popPose();
     }
 }

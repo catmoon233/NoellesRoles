@@ -3,8 +3,8 @@ package org.agmas.noellesroles.mixin.roles.avengerKill;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.component.AvengerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
@@ -25,16 +25,16 @@ public abstract class AvengerKillMixin {
      * 在玩家被杀死时触发
      * 检查是否有复仇者绑定了受害者，如果有则激活其能力
      */
-    @Inject(method = "killPlayer(Lnet/minecraft/entity/player/PlayerEntity;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Identifier;)V", 
+    @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", 
             at = @At("HEAD"))
-    private static void onKillPlayer(PlayerEntity victim, boolean spawnBody, PlayerEntity killer, Identifier deathReason, CallbackInfo ci) {
+    private static void onKillPlayer(Player victim, boolean spawnBody, Player killer, ResourceLocation deathReason, CallbackInfo ci) {
         if (victim == null) return;
         
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(victim.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(victim.level());
         if (gameWorld == null) return;
         
         // 遍历所有玩家，检查是否有复仇者绑定了这个受害者
-        for (PlayerEntity player : victim.getWorld().getPlayers()) {
+        for (Player player : victim.level().players()) {
             if (!gameWorld.isRole(player, ModRoles.AVENGER)) continue;
             if (player.equals(victim)) continue; // 复仇者自己死亡不触发
             
@@ -42,12 +42,12 @@ public abstract class AvengerKillMixin {
             
             // 检查这个复仇者是否绑定了受害者
             if (avengerComponent.targetPlayer != null &&
-                avengerComponent.targetPlayer.equals(victim.getUuid()) &&
+                avengerComponent.targetPlayer.equals(victim.getUUID()) &&
                 !avengerComponent.activated) {
                 
                 // 激活复仇者能力，传入凶手信息
                 if (killer != null) {
-                    avengerComponent.activate(killer.getUuid());
+                    avengerComponent.activate(killer.getUUID());
                 } else {
                     avengerComponent.activate(null);
                 }

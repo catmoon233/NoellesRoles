@@ -3,26 +3,22 @@ package org.agmas.noellesroles.mixin.client.conductor;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
-import net.minecraft.client.render.item.HeldItemRenderer;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.ConfigWorldComponent;
 import org.agmas.noellesroles.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(HeldItemFeatureRenderer.class)
+@Mixin(ItemInHandLayer.class)
 public class MasterKeyInvisibilityMixin {
-    @WrapOperation(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getMainHandStack()Lnet/minecraft/item/ItemStack;"))
+    @WrapOperation(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"))
     private ItemStack view(LivingEntity instance, Operation<ItemStack> original) {
 
         ItemStack ret = original.call(instance);
-        if (ret.isOf(ModItems.MASTER_KEY) && !ConfigWorldComponent.KEY.get(instance.getEntityWorld()).masterKeyIsVisible) {
-            ret = TMMItems.LOCKPICK.getDefaultStack();
+        if (ret.is(ModItems.MASTER_KEY) && !ConfigWorldComponent.KEY.get(instance.getCommandSenderWorld()).masterKeyIsVisible) {
+            ret = TMMItems.LOCKPICK.getDefaultInstance();
         }
 
         return ret;

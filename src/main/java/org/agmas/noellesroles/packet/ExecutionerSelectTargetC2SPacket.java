@@ -1,37 +1,37 @@
 package org.agmas.noellesroles.packet;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
 import org.agmas.noellesroles.Noellesroles;
 
 import java.util.UUID;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Executioner选择目标的网络包
  * 用于客户端向服务器发送选中的目标玩家UUID
  */
-public record ExecutionerSelectTargetC2SPacket(UUID target) implements CustomPayload {
-    public static final Identifier EXECUTIONER_SELECT_TARGET_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "executioner_select_target");
-    public static final CustomPayload.Id<ExecutionerSelectTargetC2SPacket> ID = new CustomPayload.Id<>(EXECUTIONER_SELECT_TARGET_PAYLOAD_ID);
-    public static final PacketCodec<RegistryByteBuf, ExecutionerSelectTargetC2SPacket> CODEC;
+public record ExecutionerSelectTargetC2SPacket(UUID target) implements CustomPacketPayload {
+    public static final ResourceLocation EXECUTIONER_SELECT_TARGET_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "executioner_select_target");
+    public static final CustomPacketPayload.Type<ExecutionerSelectTargetC2SPacket> ID = new CustomPacketPayload.Type<>(EXECUTIONER_SELECT_TARGET_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ExecutionerSelectTargetC2SPacket> CODEC;
 
     public ExecutionerSelectTargetC2SPacket(UUID target) {
         this.target = target;
     }
 
-    public CustomPayload.Id<? extends CustomPayload> getId() {
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
-    public void write(PacketByteBuf buf) {
-        buf.writeUuid(this.target);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeUUID(this.target);
     }
 
-    public static ExecutionerSelectTargetC2SPacket read(PacketByteBuf buf) {
-        return new ExecutionerSelectTargetC2SPacket(buf.readUuid());
+    public static ExecutionerSelectTargetC2SPacket read(FriendlyByteBuf buf) {
+        return new ExecutionerSelectTargetC2SPacket(buf.readUUID());
     }
 
     public UUID target() {
@@ -39,6 +39,6 @@ public record ExecutionerSelectTargetC2SPacket(UUID target) implements CustomPay
     }
 
     static {
-        CODEC = PacketCodec.of(ExecutionerSelectTargetC2SPacket::write, ExecutionerSelectTargetC2SPacket::read);
+        CODEC = StreamCodec.ofMember(ExecutionerSelectTargetC2SPacket::write, ExecutionerSelectTargetC2SPacket::read);
     }
 }

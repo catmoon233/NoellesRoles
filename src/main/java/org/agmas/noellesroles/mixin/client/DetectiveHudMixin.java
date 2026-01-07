@@ -4,13 +4,13 @@ import org.agmas.noellesroles.component.DetectivePlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.CommonColors;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,16 +23,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * - 审查技能冷却时间
  * - 技能就绪提示
  */
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public class DetectiveHudMixin {
     
-    @Inject(method = "renderStatusEffectOverlay", at = @At("RETURN"))
-    private void renderDetectiveAbilityStatus(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null || client.world == null) return;
+    @Inject(method = "renderEffects", at = @At("RETURN"))
+    private void renderDetectiveAbilityStatus(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) return;
         
         // 检查是否是私家侦探
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.world);
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
         if (!gameWorld.isRole(client.player, ModRoles.DETECTIVE)) return;
         
         // 检查玩家是否存活
@@ -42,26 +42,26 @@ public class DetectiveHudMixin {
         DetectivePlayerComponent detectiveComponent = DetectivePlayerComponent.KEY.get(client.player);
         
         // 渲染位置 - 右下角
-        int screenWidth = client.getWindow().getScaledWidth();
-        int screenHeight = client.getWindow().getScaledHeight();
+        int screenWidth = client.getWindow().getGuiScaledWidth();
+        int screenHeight = client.getWindow().getGuiScaledHeight();
         int x = screenWidth - 120;  // 距离右边缘
         int y = screenHeight - 30;  // 距离底部
         
-        TextRenderer textRenderer = client.textRenderer;
+        Font textRenderer = client.font;
         
         if (detectiveComponent.cooldown > 0) {
             // 显示技能冷却
             float cdSeconds = detectiveComponent.getCooldownSeconds();
-            Text cdText = Text.translatable("hud.noellesroles.detective.cooldown",
+            Component cdText = Component.translatable("hud.noellesroles.detective.cooldown",
                 String.format("%.1f", cdSeconds));
             
             // 红色文字表示冷却中
-            context.drawTextWithShadow(textRenderer, cdText, x, y, Colors.RED);
+            context.drawString(textRenderer, cdText, x, y, CommonColors.RED);
             
         } else {
             // 技能可用 - 显示金币消耗提示
-            Text readyText = Text.translatable("hud.noellesroles.detective.ready_cost");
-            context.drawTextWithShadow(textRenderer, readyText, x, y, Colors.GREEN);
+            Component readyText = Component.translatable("hud.noellesroles.detective.ready_cost");
+            context.drawString(textRenderer, readyText, x, y, CommonColors.GREEN);
         }
     }
 }

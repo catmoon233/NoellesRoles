@@ -3,22 +3,15 @@ package org.agmas.noellesroles.component;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.client.TMMClient;
+import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.World;
+import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -27,12 +20,24 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 慕恋者组件
  *
- * 管理慕恋者的机制：
- * - 群体窥视积累能量，满300能量后变为随机杀手角色
  */
 public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
     
@@ -42,17 +47,17 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
     // ==================== 常量定义 ====================
     
     /** 进阶所需能量 */
-    public static final int MAX_ENERGY = 300;
+    public static final int MAX_ENERGY = 90;
     
     /** 窥视视野角度（度数） */
-    public static final double GAZE_ANGLE = 45.0;
+    public static final double GAZE_ANGLE = 65.0;
     
     /** 窥视最大距离（格） */
-    public static final double GAZE_DISTANCE = 32.0;
+    public static final double GAZE_DISTANCE = 48.0;
     
     // ==================== 状态变量 ====================
     
-    private final PlayerEntity player;
+    private final Player player;
     
     /** 当前能量值 */
     public int energy = 0;
@@ -69,13 +74,16 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
     /** 是否已转化 */
     public boolean hasTransformed = false;
     
-    /** 能量获取计时器（每秒获取一次） */
     private int energyTickCounter = 0;
+    
+    private UUID boundTargetUUID = null;
+    
+    public String boundTargetName = "";
     
     /**
      * 构造函数
      */
-    public AdmirerPlayerComponent(PlayerEntity player) {
+    public AdmirerPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -90,6 +98,11 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.isAdmirerMarked = true;
         this.hasTransformed = false;
         this.energyTickCounter = 0;
+        this.boundTargetUUID = null;
+        this.boundTargetName = "";
+        
+        bindRandomTarget();
+        
         this.sync();
     }
     
@@ -103,12 +116,11 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.isAdmirerMarked = false;
         this.hasTransformed = false;
         this.energyTickCounter = 0;
+        this.boundTargetUUID = null;
+        this.boundTargetName = "";
         this.sync();
     }
     
-    /**
-     * 添加能量
-     */
     public void addEnergy(int amount) {
         this.energy += amount;
         if (this.energy >= MAX_ENERGY && !hasTransformed) {
@@ -124,12 +136,12 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         if (hasTransformed) return;
         hasTransformed = true;
         
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
         
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         
         // 获取可用的杀手角色列表
-        List<Role> killerRoles = getAvailableKillerRoles();
+        List<Role> killerRoles = Noellesroles.getEnableKillerRoles();
         
         if (killerRoles.isEmpty()) {
             // 如果没有可用的杀手角色，使用原版杀手
@@ -141,7 +153,7 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         Role selectedRole = killerRoles.get(random.nextInt(killerRoles.size()));
         
         // 清除慕恋者标记
-        this.isAdmirerMarked = false;
+        this.isAdmirerMarked = true;
         
         // 转换角色
         gameWorld.addRole(player, selectedRole);
@@ -151,25 +163,28 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         ModdedRoleAssigned.EVENT.invoker().assignModdedRole(player, selectedRole);
         
         // 原版杀手需要额外给刀（因为 onRoleAssigned 中没有处理原版杀手）
-        if (selectedRole.equals(TMMRoles.KILLER)) {
-            player.giveItemStack(TMMItems.KNIFE.getDefaultStack());
+            player.addItem(TMMItems.KNIFE.getDefaultInstance());
             // 给予杀手初始金币
             dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent shopComponent =
                 dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY.get(player);
             shopComponent.addToBalance(200);
+            shopComponent.sync();
+        if (Harpymodloader.VANNILA_ROLES.contains(gameWorld.getRole(player))) {
+            ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS.indexOf(gameWorld.isRole(player, TMMRoles.KILLER) ? RoleAnnouncementTexts.KILLER : (gameWorld.isRole(player, TMMRoles.VIGILANTE) ? RoleAnnouncementTexts.VIGILANTE : RoleAnnouncementTexts.CIVILIAN)), gameWorld.getAllKillerTeamPlayers().size(), 0));
+        } else {
+            ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS.indexOf(Harpymodloader.autogeneratedAnnouncements.get(gameWorld.getRole(player))), gameWorld.getAllKillerTeamPlayers().size(), 0));
         }
-        
         // 发送转化消息
-        serverPlayer.sendMessage(
-            Text.translatable("message.noellesroles.admirer.transform",
-                Text.translatable("announcement.role." + selectedRole.identifier().getPath()))
-                .formatted(Formatting.RED, Formatting.BOLD),
-            false
+        serverPlayer.displayClientMessage(
+            Component.translatable("message.noellesroles.admirer.transform",
+                Component.translatable("announcement.role." + selectedRole.identifier().getPath()))
+                .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+            true
         );
         
         // 播放音效
-        player.getWorld().playSound(null, player.getBlockPos(),
-            SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.PLAYERS, 1.0F, 1.5F);
+        player.level().playSound(null, player.blockPosition(),
+            SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 1.0F, 1.5F);
         
         this.sync();
     }
@@ -192,6 +207,63 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         return killerRoles;
     }
     
+    public void bindRandomTarget() {
+        Level world = player.level();
+        List<Player> candidates = new ArrayList<>();
+        
+        for (Player target : world.players()) {
+            if (target.equals(player)) continue;
+            if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
+            candidates.add(target);
+        }
+        
+        if (candidates.isEmpty()) {
+            this.boundTargetUUID = null;
+            this.boundTargetName = "";
+            return;
+        }
+        
+        Random random = new Random();
+        Player selected = candidates.get(random.nextInt(candidates.size()));
+        this.boundTargetUUID = selected.getUUID();
+        this.boundTargetName = selected.getName().getString();
+        
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.admirer.bound", boundTargetName)
+                    .withStyle(ChatFormatting.LIGHT_PURPLE),
+                false
+            );
+        }
+        
+        this.sync();
+    }
+    
+    public Player getBoundTarget() {
+        if (boundTargetUUID == null) return null;
+        Level world = player.level();
+        for (Player target : world.players()) {
+            if (target.getUUID().equals(boundTargetUUID)) {
+                return target;
+            }
+        }
+        return null;
+    }
+    
+    private void checkBoundTarget() {
+        Player boundTarget = getBoundTarget();
+        if (boundTarget == null || !GameFunctions.isPlayerAliveAndSurvival(boundTarget)) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.admirer.target_died")
+                        .withStyle(ChatFormatting.RED),
+                    false
+                );
+            }
+            bindRandomTarget();
+        }
+    }
+    
     /**
      * 开始窥视
      */
@@ -209,57 +281,49 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.sync();
     }
     
-    /**
-     * 获取可见的玩家列表（用于窥视技能）
-     */
-    public List<PlayerEntity> getVisiblePlayers() {
-        List<PlayerEntity> visible = new ArrayList<>();
-        World world = player.getWorld();
-        Vec3d eyePos = player.getEyePos();
-        Vec3d lookDir = player.getRotationVec(1.0f);
+    public boolean isBoundTargetVisible() {
+        Player boundTarget = getBoundTarget();
+        if (boundTarget == null) return false;
+        if (!GameFunctions.isPlayerAliveAndSurvival(boundTarget)) return false;
         
-        for (PlayerEntity target : world.getPlayers()) {
-            if (target.equals(player)) continue;
-            if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
-            
-            Vec3d targetPos = target.getEyePos();
-            double distance = eyePos.distanceTo(targetPos);
-            if (distance > GAZE_DISTANCE) continue;
-            
-            // 视野角度检查（90度扇形，半角45度）
-            Vec3d toTarget = targetPos.subtract(eyePos).normalize();
-            double dot = lookDir.dotProduct(toTarget);
-            if (dot < Math.cos(Math.toRadians(GAZE_ANGLE))) continue;
-            
-            // 射线检测
-            RaycastContext context = new RaycastContext(
-                eyePos, targetPos,
-                RaycastContext.ShapeType.COLLIDER,
-                RaycastContext.FluidHandling.NONE,
-                player
-            );
-            BlockHitResult hit = world.raycast(context);
-            if (hit.getType() == HitResult.Type.MISS ||
-                hit.getPos().distanceTo(targetPos) < 1.0) {
-                visible.add(target);
-            }
-        }
-        return visible;
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookDir = player.getViewVector(1.0f);
+        Vec3 targetPos = boundTarget.getEyePosition();
+        
+        double distance = eyePos.distanceTo(targetPos);
+        if (distance > GAZE_DISTANCE) return false;
+        
+        // 视野角度检查（90度扇形，半角45度）
+        Vec3 toTarget = targetPos.subtract(eyePos).normalize();
+        double dot = lookDir.dot(toTarget);
+        if (dot < Math.cos(Math.toRadians(GAZE_ANGLE))) return false;
+        
+        // 射线检测
+        Level world = player.level();
+        ClipContext context = new ClipContext(
+            eyePos, targetPos,
+            ClipContext.Block.COLLIDER,
+            ClipContext.Fluid.NONE,
+            player
+        );
+        BlockHitResult hit = world.clip(context);
+        return hit.getType() == HitResult.Type.MISS ||
+            hit.getLocation().distanceTo(targetPos) < 1.0;
     }
     
     /**
      * 更新窥视状态
      */
     private void updateGazing() {
-        List<PlayerEntity> visible = getVisiblePlayers();
-        gazingTargetCount = visible.size();
+        boolean targetVisible = isBoundTargetVisible();
+        gazingTargetCount = targetVisible ? 1 : 0;
         
         // 每秒获取能量
         energyTickCounter++;
         if (energyTickCounter >= 20) {
             energyTickCounter = 0;
-            if (gazingTargetCount > 0) {
-                addEnergy(gazingTargetCount);
+            if (targetVisible) {
+                addEnergy(1);
             }
         }
     }
@@ -295,6 +359,9 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         // 检查玩家是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(player)) return;
         
+        // 检查绑定对象状态
+        checkBoundTarget();
+        
         // 窥视技能处理
         if (isGazing) {
             updateGazing();
@@ -304,20 +371,26 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("energy", this.energy);
         tag.putBoolean("isGazing", this.isGazing);
         tag.putInt("gazingTargetCount", this.gazingTargetCount);
         tag.putBoolean("isAdmirerMarked", this.isAdmirerMarked);
         tag.putBoolean("hasTransformed", this.hasTransformed);
+        if (this.boundTargetUUID != null) {
+            tag.putUUID("boundTargetUUID", this.boundTargetUUID);
+        }
+        tag.putString("boundTargetName", this.boundTargetName);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.energy = tag.contains("energy") ? tag.getInt("energy") : 0;
         this.isGazing = tag.contains("isGazing") && tag.getBoolean("isGazing");
         this.gazingTargetCount = tag.contains("gazingTargetCount") ? tag.getInt("gazingTargetCount") : 0;
         this.isAdmirerMarked = tag.contains("isAdmirerMarked") && tag.getBoolean("isAdmirerMarked");
         this.hasTransformed = tag.contains("hasTransformed") && tag.getBoolean("hasTransformed");
+        this.boundTargetUUID = tag.hasUUID("boundTargetUUID") ? tag.getUUID("boundTargetUUID") : null;
+        this.boundTargetName = tag.contains("boundTargetName") ? tag.getString("boundTargetName") : "";
     }
 }

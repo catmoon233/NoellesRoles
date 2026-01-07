@@ -2,16 +2,6 @@ package org.agmas.noellesroles.mixin.client.swapper;
 
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedHandledScreen;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.world.GameMode;
 import org.agmas.noellesroles.client.PlayerPaginationHelper;
 import org.agmas.noellesroles.client.RoleScreenHelper;
 import org.agmas.noellesroles.client.widget.SwapperPlayerWidget;
@@ -27,10 +17,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.GameType;
 
 
 @Mixin(LimitedInventoryScreen.class)
-public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScreenHandler> implements PlayerPaginationHelper.ScreenWithChildren {
+public abstract class SwapperScreenMixin extends LimitedHandledScreen<InventoryMenu> implements PlayerPaginationHelper.ScreenWithChildren {
     @Unique
     private static final PlayerPaginationHelper.PaginationTextProvider TEXT_PROVIDER = new PlayerPaginationHelper.PaginationTextProvider() {
         @Override
@@ -50,19 +50,19 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
     };
 
     @Shadow @Final
-    public ClientPlayerEntity player;
+    public LocalPlayer player;
 
     @Unique
-    private RoleScreenHelper<AbstractClientPlayerEntity> roleScreenHelper;
+    private RoleScreenHelper<AbstractClientPlayer> roleScreenHelper;
 
-    public SwapperScreenMixin(PlayerScreenHandler handler, PlayerInventory inventory, Text title) {
+    public SwapperScreenMixin(InventoryMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
 
 
 
     @Unique
-    private RoleScreenHelper<AbstractClientPlayerEntity> getRoleScreenHelper() {
+    private RoleScreenHelper<AbstractClientPlayer> getRoleScreenHelper() {
         if (roleScreenHelper == null) {
             roleScreenHelper = new RoleScreenHelper<>(
                     player,
@@ -77,7 +77,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
     }
 
     @Unique
-    private SwapperPlayerWidget createSwapperWidget(int x, int y, AbstractClientPlayerEntity playerEntity, int index) {
+    private SwapperPlayerWidget createSwapperWidget(int x, int y, AbstractClientPlayer playerEntity, int index) {
         SwapperPlayerWidget widget = new SwapperPlayerWidget(
                 (LimitedInventoryScreen) (Object) this,
                 x, y, playerEntity, index
@@ -87,45 +87,45 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
     }
 
     @Unique
-    private void drawSwapperSelectionHint(DrawContext context, java.awt.Point point) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        Text text;
+    private void drawSwapperSelectionHint(GuiGraphics context, java.awt.Point point) {
+        Minecraft client = Minecraft.getInstance();
+        Component text;
         int color;
 
         if (SwapperPlayerWidget.playerChoiceOne == null) {
-            text = Text.translatable("hud.swapper.first_player_selection");
+            text = Component.translatable("hud.swapper.first_player_selection");
             color = Color.CYAN.getRGB();
         } else {
-            text = Text.translatable("hud.swapper.second_player_selection");
+            text = Component.translatable("hud.swapper.second_player_selection");
             color = Color.RED.getRGB();
         }
 
-        int textWidth = client.textRenderer.getWidth(text);
-        context.drawTextWithShadow(client.textRenderer, text,
+        int textWidth = client.font.width(text);
+        context.drawString(client.font, text,
                 point.x - textWidth / 2, point.y + 40, color);
     }
 
     @Unique
-    private List<AbstractClientPlayerEntity> getEligiblePlayers() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world == null || client.player == null) {
+    private List<AbstractClientPlayer> getEligiblePlayers() {
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null || client.player == null) {
             return List.of();
         }
 
-        return client.world.getPlayers().stream()
-                .filter(a->a.getUuid() !=player.getUuid()&& isPlayerInAdventureMode( a) && a.getUuid()!=client.player.getUuid())
+        return client.level.players().stream()
+                .filter(a->a.getUUID() !=player.getUUID()&& isPlayerInAdventureMode( a) && a.getUUID()!=client.player.getUUID())
                 .collect(Collectors.toList());
     }
 
     @Unique
-    private boolean isPlayerInAdventureMode(AbstractClientPlayerEntity targetPlayer) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(targetPlayer.getUuid());
-        return entry != null && entry.getGameMode() == GameMode.ADVENTURE;
+    private boolean isPlayerInAdventureMode(AbstractClientPlayer targetPlayer) {
+        Minecraft client = Minecraft.getInstance();
+        PlayerInfo entry = client.player.connection.getPlayerInfo(targetPlayer.getUUID());
+        return entry != null && entry.getGameMode() == GameType.ADVENTURE;
     }
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void noellesroles$onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void noellesroles$onRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         getRoleScreenHelper().onRender(context, this);
     }
 
@@ -136,17 +136,17 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<PlayerScre
     }
 
     @Override
-    public void addDrawableChild(ButtonWidget button) {
-        super.addDrawableChild(button);
+    public void addDrawableChild(Button button) {
+        super.addRenderableWidget(button);
     }
 
     @Override
-    public void removeDrawableChild(ButtonWidget button) {
-        super.remove(button);
+    public void removeDrawableChild(Button button) {
+        super.removeWidget(button);
     }
 
     @Override
-    public void clearChildren() {
-        super.clearChildren();
+    public void clearWidgets() {
+        super.clearWidgets();
     }
 }

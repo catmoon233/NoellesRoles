@@ -1,9 +1,9 @@
 package org.agmas.noellesroles.mixin.roles.bartender;
 
 import dev.doctor4t.trainmurdermystery.item.CocktailItem;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(CocktailItem.class)
 public class CocktailItemMixin {
 
-    @Inject(method = "finishUsing", at = @At("HEAD"))
-    public void bartenderVision(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
+    @Inject(method = "finishUsingItem", at = @At("HEAD"))
+    public void bartenderVision(ItemStack stack, Level world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
 
         ((BartenderPlayerComponent)BartenderPlayerComponent.KEY.get(user)).startGlow();
     }

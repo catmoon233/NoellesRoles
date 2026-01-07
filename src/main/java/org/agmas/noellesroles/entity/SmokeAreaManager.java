@@ -1,17 +1,16 @@
 package org.agmas.noellesroles.entity;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 烟雾区域管理器
@@ -28,7 +27,7 @@ public class SmokeAreaManager {
     /**
      * 创建一个新的烟雾区域
      */
-    public static void createSmokeArea(ServerWorld world, Vec3d position, double radius, int durationTicks) {
+    public static void createSmokeArea(ServerLevel world, Vec3 position, double radius, int durationTicks) {
         activeAreas.add(new SmokeArea(world, position, radius, durationTicks));
     }
     
@@ -58,13 +57,13 @@ public class SmokeAreaManager {
      * 烟雾区域数据类
      */
     private static class SmokeArea {
-        private final ServerWorld world;
-        private final Vec3d center;
+        private final ServerLevel world;
+        private final Vec3 center;
         private final double radius;
         private int remainingTicks;
         private int tickCounter = 0;
         
-        public SmokeArea(ServerWorld world, Vec3d center, double radius, int durationTicks) {
+        public SmokeArea(ServerLevel world, Vec3 center, double radius, int durationTicks) {
             this.world = world;
             this.center = center;
             this.radius = radius;
@@ -107,20 +106,20 @@ public class SmokeAreaManager {
                 double offsetZ = (world.random.nextDouble() - 0.5) * radius * 2;
                 
                 // 主要烟雾粒子（增加数量）
-                world.spawnParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                world.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,
                         center.x + offsetX, center.y + offsetY, center.z + offsetZ,
                         2, 0.1, 0.1, 0.1, 0.03);
                         
                 // 大量添加大型烟雾粒子
                 if (i % 3 == 0) {
-                    world.spawnParticles(ParticleTypes.LARGE_SMOKE,
+                    world.sendParticles(ParticleTypes.LARGE_SMOKE,
                             center.x + offsetX, center.y + offsetY, center.z + offsetZ,
                             2, 0.15, 0.15, 0.15, 0.04);
                 }
                 
                 // 添加普通烟雾粒子
                 if (i % 5 == 0) {
-                    world.spawnParticles(ParticleTypes.SMOKE,
+                    world.sendParticles(ParticleTypes.SMOKE,
                             center.x + offsetX, center.y + offsetY, center.z + offsetZ,
                             1, 0.12, 0.12, 0.12, 0.035);
                 }
@@ -131,22 +130,22 @@ public class SmokeAreaManager {
          * 对范围内玩家应用失明效果
          */
         private void applyBlindnessToPlayers() {
-            Box area = new Box(
+            AABB area = new AABB(
                     center.x - radius, center.y - 1, center.z - radius,
                     center.x + radius, center.y + 4, center.z + radius
             );
             
-            List<ServerPlayerEntity> players = world.getEntitiesByClass(
-                    ServerPlayerEntity.class, area,
+            List<ServerPlayer> players = world.getEntitiesOfClass(
+                    ServerPlayer.class, area,
                     GameFunctions::isPlayerAliveAndSurvival
             );
             
-            for (ServerPlayerEntity player : players) {
+            for (ServerPlayer player : players) {
                 // 检查玩家是否真的在球形范围内
-                double distance = player.getPos().distanceTo(center);
+                double distance = player.position().distanceTo(center);
                 if (distance <= radius) {
-                    player.addStatusEffect(new StatusEffectInstance(
-                            StatusEffects.BLINDNESS, BLINDNESS_DURATION, 0, false, false
+                    player.addEffect(new MobEffectInstance(
+                            MobEffects.BLINDNESS, BLINDNESS_DURATION, 0, false, false
                     ));
                 }
             }

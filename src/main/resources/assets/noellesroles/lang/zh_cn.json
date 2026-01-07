@@ -23,7 +23,7 @@
   "announcement.role.better_vigilante": "更好的召回者",
   "announcement.role.broadcaster": "广播员",
   "announcement.role.conductor": "船长",
-  "announcement.role.photographer": "s摄影师",
+  "announcement.role.photographer": "摄影师",
   "announcement.role.coroner": "验尸官",
   "announcement.role.executioner": "刽子手",
   "announcement.role.jester": "小丑",
@@ -55,6 +55,7 @@
   "hud.pagination.next": "下一页",
   "hud.pagination.page": "第 %s/%s 页",
   "hud.pagination.prev": "上一页",
+  "Morphling.Tip": "变形剩余 %s 秒",
   "hud.swapper.first_player_selection": "选择第一个要交换的玩家",
   "hud.swapper.second_player_selection": "选择第二个要交换的玩家",
   "hud.voodoo.tip": "巫毒死亡必须由其他玩家触发！",
@@ -65,6 +66,7 @@
   "item.noellesroles.delusion_vial.tooltip": "右键点击食物/饮料托盘使用\n制造假毒药，使食用中毒物品的玩家\n认为自己中毒了，但没有实际的影响。",
   "item.noellesroles.delusion_vial": "幻觉药剂",
   "item.noellesroles.fake_knife": "假刀",
+  "item.noellesroles.master_key_p": "乘务员钥匙",
   "item.noellesroles.fake_revolver": "假左轮手枪",
   "item.noellesroles.bandit_revolver": "匪徒手枪",
   "item.noellesroles.antidote": "解药",
@@ -95,5 +97,9 @@
   "announcement.role.bandit": "绑匪",
   "announcement.role.poisoner": "毒师",
   "message.thief.honor_purchased": "购买了小偷的荣誉！",
-  "message.thief.stole": "偷到了 %s 个金币！"
+  "message.thief.stole": "偷到了 %s 个金币！",
+  "announcement.role.illusionist": "迷幻师",
+  "announcement.goals.illusionist": "使用迷幻瓶扰乱敌人的视野！",
+  "item.noellesroles.hallucination_bottle": "迷幻瓶",
+  "item.noellesroles.hallucination_bottle.tooltip": "右键使用\n制造大量迷幻烟雾\n20格范围内玩家视野会随机偏离\n持续3秒，每秒触发一次\n耐久：2次"
 }

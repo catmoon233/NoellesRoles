@@ -4,13 +4,9 @@ import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,11 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * 统一金币显示 HUD Mixin
  * 在右上角显示所有需要金币的职业的余额
  */
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public class MoneyHudMixin {
     
-    @Inject(method = "renderStatusEffectOverlay", at = @At("RETURN"))
-    private void renderMoneyDisplay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+    @Inject(method = "renderEffects", at = @At("RETURN"))
+    private void renderMoneyDisplay(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
 //        MinecraftClient client = MinecraftClient.getInstance();
 //        if (client.player == null || client.world == null) return;
 //

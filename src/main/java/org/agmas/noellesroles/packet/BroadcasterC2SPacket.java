@@ -1,18 +1,17 @@
 package org.agmas.noellesroles.packet;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
-public record BroadcasterC2SPacket(String message) implements CustomPayload {
-    public static final Identifier BROADCASTER_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "broadcaster");
-    public static final Id<BroadcasterC2SPacket> ID = new Id<>(BROADCASTER_PAYLOAD_ID);
-    public static final PacketCodec<RegistryByteBuf, BroadcasterC2SPacket> CODEC = PacketCodec.of(
-        (packet, buf) -> buf.writeString(packet.message()),
-        buf -> new BroadcasterC2SPacket(buf.readString())
+public record BroadcasterC2SPacket(String message) implements CustomPacketPayload {
+    public static final ResourceLocation BROADCASTER_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "broadcaster");
+    public static final Type<BroadcasterC2SPacket> ID = new Type<>(BROADCASTER_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, BroadcasterC2SPacket> CODEC = StreamCodec.ofMember(
+        (packet, buf) -> buf.writeUtf(packet.message()),
+        buf -> new BroadcasterC2SPacket(buf.readUtf())
     );
 
     public BroadcasterC2SPacket() {
@@ -20,7 +19,7 @@ public record BroadcasterC2SPacket(String message) implements CustomPayload {
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

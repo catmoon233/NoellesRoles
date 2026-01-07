@@ -1,22 +1,23 @@
 package org.agmas.noellesroles.entity;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.world.World;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 
 import java.util.Optional;
 import java.util.UUID;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 /**
  * 傀儡本体实体
@@ -28,8 +29,8 @@ import java.util.UUID;
 public class PuppeteerBodyEntity extends LivingEntity {
     
     /** 所有者 UUID */
-    private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(
-        PuppeteerBodyEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(
+        PuppeteerBodyEntity.class, EntityDataSerializers.OPTIONAL_UUID
     );
     
     /** 皮肤 GameProfile（用于渲染玩家皮肤） */
@@ -45,36 +46,36 @@ public class PuppeteerBodyEntity extends LivingEntity {
     private int lifetime = 0;
     
     /** 所有者玩家引用（缓存） */
-    private PlayerEntity ownerCache = null;
+    private Player ownerCache = null;
     
-    public PuppeteerBodyEntity(EntityType<? extends LivingEntity> entityType, World world) {
+    public PuppeteerBodyEntity(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
         this.setNoGravity(false); // 有重力
         this.setHealth(20.0F); // 20点生命值（和玩家一样）
     }
     
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(OWNER_UUID, Optional.empty());
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(OWNER_UUID, Optional.empty());
     }
     
     /**
      * 设置所有者
      */
-    public void setOwner(PlayerEntity owner) {
+    public void setOwner(Player owner) {
         if (owner != null) {
-            this.dataTracker.set(OWNER_UUID, Optional.of(owner.getUuid()));
+            this.entityData.set(OWNER_UUID, Optional.of(owner.getUUID()));
             this.ownerCache = owner;
             this.ownerName = owner.getName().getString();
             
             // 设置皮肤（获取玩家的 GameProfile）
-            if (owner instanceof ServerPlayerEntity serverPlayer) {
+            if (owner instanceof ServerPlayer serverPlayer) {
                 this.skinProfile = serverPlayer.getGameProfile();
             }
             
             // 设置自定义名称
-            this.setCustomName(Text.literal(owner.getName().getString() + " 的本体"));
+            this.setCustomName(Component.literal(owner.getName().getString() + " 的本体"));
             this.setCustomNameVisible(false);
         }
     }
@@ -83,20 +84,20 @@ public class PuppeteerBodyEntity extends LivingEntity {
      * 获取所有者 UUID
      */
     public Optional<UUID> getOwnerUuid() {
-        return this.dataTracker.get(OWNER_UUID);
+        return this.entityData.get(OWNER_UUID);
     }
     
     /**
      * 获取所有者玩家
      */
-    public PlayerEntity getOwner() {
+    public Player getOwner() {
         if (ownerCache != null && ownerCache.isAlive()) {
             return ownerCache;
         }
         
         Optional<UUID> ownerUuid = getOwnerUuid();
         if (ownerUuid.isPresent()) {
-            ownerCache = getWorld().getPlayerByUuid(ownerUuid.get());
+            ownerCache = level().getPlayerByUUID(ownerUuid.get());
             return ownerCache;
         }
         return null;
@@ -120,8 +121,15 @@ public class PuppeteerBodyEntity extends LivingEntity {
     public void tick() {
         super.tick();
         
-        if (getWorld().isClient()) return;
-        
+        if (level().isClientSide()) return;
+
+        final var gameWorldComponent = GameWorldComponent.KEY.get(level());
+        if (gameWorldComponent!=null){
+            if (!gameWorldComponent.isRunning()) {
+                discard();
+
+            }
+        }
         // 增加存活时间
         lifetime++;
         if (lifetime > MAX_LIFETIME) {
@@ -130,7 +138,7 @@ public class PuppeteerBodyEntity extends LivingEntity {
         }
         
         // 检查所有者是否还存在
-        PlayerEntity owner = getOwner();
+        Player owner = getOwner();
         if (owner == null || !owner.isAlive()) {
             this.discard();
             return;
@@ -138,15 +146,15 @@ public class PuppeteerBodyEntity extends LivingEntity {
     }
     
     @Override
-    public boolean damage(DamageSource source, float amount) {
-        if (getWorld().isClient()) return false;
+    public boolean hurt(DamageSource source, float amount) {
+        if (level().isClientSide()) return false;
         
         // 调用父类处理伤害
-        boolean result = super.damage(source, amount);
+        boolean result = super.hurt(source, amount);
         
         // 如果死亡，通知傀儡师
-        if (this.isDead()) {
-            PlayerEntity owner = getOwner();
+        if (this.isDeadOrDying()) {
+            Player owner = getOwner();
             if (owner != null) {
                 // 通知傀儡师组件本体死亡
                 PuppeteerPlayerComponent puppeteerComp =
@@ -159,11 +167,11 @@ public class PuppeteerBodyEntity extends LivingEntity {
     }
     
     @Override
-    public void onDeath(DamageSource damageSource) {
-        super.onDeath(damageSource);
+    public void die(DamageSource damageSource) {
+        super.die(damageSource);
         
         // 确保通知傀儡师
-        PlayerEntity owner = getOwner();
+        Player owner = getOwner();
         if (owner != null) {
             PuppeteerPlayerComponent puppeteerComp =
                 ModComponents.PUPPETEER.get(owner);
@@ -172,11 +180,11 @@ public class PuppeteerBodyEntity extends LivingEntity {
     }
     
     @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
+    public void readAdditionalSaveData(CompoundTag nbt) {
+        super.readAdditionalSaveData(nbt);
         
         if (nbt.contains("OwnerUUID")) {
-            this.dataTracker.set(OWNER_UUID, Optional.of(nbt.getUuid("OwnerUUID")));
+            this.entityData.set(OWNER_UUID, Optional.of(nbt.getUUID("OwnerUUID")));
         }
         if (nbt.contains("OwnerName")) {
             this.ownerName = nbt.getString("OwnerName");
@@ -186,18 +194,18 @@ public class PuppeteerBodyEntity extends LivingEntity {
     }
     
     @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
+    public void addAdditionalSaveData(CompoundTag nbt) {
+        super.addAdditionalSaveData(nbt);
         
         Optional<UUID> ownerUuid = getOwnerUuid();
-        ownerUuid.ifPresent(uuid -> nbt.putUuid("OwnerUUID", uuid));
+        ownerUuid.ifPresent(uuid -> nbt.putUUID("OwnerUUID", uuid));
         nbt.putString("OwnerName", this.ownerName);
         // SkinProfile 通过 OwnerUUID 在客户端动态获取，不需要保存到 NBT
         nbt.putInt("Lifetime", this.lifetime);
     }
     
     @Override
-    public boolean canHit() {
+    public boolean isPickable() {
         return true; // 可以被击中
     }
     
@@ -207,22 +215,22 @@ public class PuppeteerBodyEntity extends LivingEntity {
     }
     
     @Override
-    public Iterable<net.minecraft.item.ItemStack> getArmorItems() {
+    public Iterable<net.minecraft.world.item.ItemStack> getArmorSlots() {
         return java.util.Collections.emptyList();
     }
     
     @Override
-    public net.minecraft.item.ItemStack getEquippedStack(net.minecraft.entity.EquipmentSlot slot) {
-        return net.minecraft.item.ItemStack.EMPTY;
+    public net.minecraft.world.item.ItemStack getItemBySlot(net.minecraft.world.entity.EquipmentSlot slot) {
+        return net.minecraft.world.item.ItemStack.EMPTY;
     }
     
     @Override
-    public void equipStack(net.minecraft.entity.EquipmentSlot slot, net.minecraft.item.ItemStack stack) {
+    public void setItemSlot(net.minecraft.world.entity.EquipmentSlot slot, net.minecraft.world.item.ItemStack stack) {
         // 不装备任何物品
     }
     
     @Override
-    public net.minecraft.util.Arm getMainArm() {
-        return net.minecraft.util.Arm.RIGHT;
+    public net.minecraft.world.entity.HumanoidArm getMainArm() {
+        return net.minecraft.world.entity.HumanoidArm.RIGHT;
     }
 }

@@ -2,13 +2,13 @@ package org.agmas.noellesroles.mixin.client;
 
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,13 +26,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * - 窥视目标数
  * - 蓄力进度（三阶段）
  */
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public class StalkerHudMixin {
     
-    @Inject(method = "renderStatusEffectOverlay", at = @At("RETURN"))
-    private void renderStalkerHud(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null || client.world == null) return;
+    @Inject(method = "renderEffects", at = @At("RETURN"))
+    private void renderStalkerHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) return;
         
         // 获取跟踪者组件
         StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(client.player);
@@ -44,39 +44,39 @@ public class StalkerHudMixin {
         if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) return;
         
         // 渲染位置 - 左下角
-        int screenHeight = client.getWindow().getScaledHeight();
+        int screenHeight = client.getWindow().getGuiScaledHeight();
         int x = 10;
         int y = screenHeight - 80;
         
-        TextRenderer textRenderer = client.textRenderer;
+        Font textRenderer = client.font;
         
         // 阶段显示
-        Text phaseText = switch (stalkerComp.phase) {
-            case 1 -> Text.translatable("hud.noellesroles.stalker.phase1").formatted(Formatting.DARK_PURPLE);
-            case 2 -> Text.translatable("hud.noellesroles.stalker.phase2").formatted(Formatting.RED);
-            case 3 -> Text.translatable("hud.noellesroles.stalker.phase3").formatted(Formatting.DARK_RED);
-            default -> Text.empty();
+        Component phaseText = switch (stalkerComp.phase) {
+            case 1 -> Component.translatable("hud.noellesroles.stalker.phase1").withStyle(ChatFormatting.DARK_PURPLE);
+            case 2 -> Component.translatable("hud.noellesroles.stalker.phase2").withStyle(ChatFormatting.RED);
+            case 3 -> Component.translatable("hud.noellesroles.stalker.phase3").withStyle(ChatFormatting.DARK_RED);
+            default -> Component.empty();
         };
-        context.drawTextWithShadow(textRenderer, phaseText, x, y, 0xFFFFFF);
+        context.drawString(textRenderer, phaseText, x, y, 0xFFFFFF);
         y += 12;
         
         // 能量条
-        int maxEnergy = stalkerComp.phase == 1 ? StalkerPlayerComponent.PHASE_1_ENERGY : StalkerPlayerComponent.PHASE_2_ENERGY;
-        Text energyText = Text.translatable("hud.noellesroles.stalker.energy", stalkerComp.energy, maxEnergy);
-        context.drawTextWithShadow(textRenderer, energyText, x, y, 0xAAAAAA);
+        int maxEnergy = stalkerComp.phase == 1 ? stalkerComp.getPhase1EnergyRequired() : stalkerComp.getPhase2EnergyRequired();
+        Component energyText = Component.translatable("hud.noellesroles.stalker.energy", stalkerComp.energy, maxEnergy);
+        context.drawString(textRenderer, energyText, x, y, 0xAAAAAA);
         y += 12;
         
         // 二阶段：击杀数和免疫状态
         if (stalkerComp.phase >= 2) {
-            Text killsText = Text.translatable("hud.noellesroles.stalker.kills", 
-                stalkerComp.phase2Kills, StalkerPlayerComponent.PHASE_2_KILLS);
-            context.drawTextWithShadow(textRenderer, killsText, x, y, 0xFF6666);
+            Component killsText = Component.translatable("hud.noellesroles.stalker.kills",
+                stalkerComp.phase2Kills, stalkerComp.getPhase2KillsRequired());
+            context.drawString(textRenderer, killsText, x, y, 0xFF6666);
             y += 12;
             
-            Text immunityText = stalkerComp.immunityUsed ? 
-                Text.translatable("hud.noellesroles.stalker.immunity_used").formatted(Formatting.GRAY) : 
-                Text.translatable("hud.noellesroles.stalker.immunity_available").formatted(Formatting.GREEN);
-            context.drawTextWithShadow(textRenderer, immunityText, x, y, 0xFFFFFF);
+            Component immunityText = stalkerComp.immunityUsed ? 
+                Component.translatable("hud.noellesroles.stalker.immunity_used").withStyle(ChatFormatting.GRAY) : 
+                Component.translatable("hud.noellesroles.stalker.immunity_available").withStyle(ChatFormatting.GREEN);
+            context.drawString(textRenderer, immunityText, x, y, 0xFFFFFF);
             y += 12;
         }
         
@@ -85,18 +85,18 @@ public class StalkerHudMixin {
             int seconds = stalkerComp.phase3Timer / 20;
             int minutes = seconds / 60;
             seconds %= 60;
-            Text timerText = Text.translatable("hud.noellesroles.stalker.timer", 
+            Component timerText = Component.translatable("hud.noellesroles.stalker.timer", 
                 String.format("%d:%02d", minutes, seconds));
             int color = stalkerComp.phase3Timer < 600 ? 0xFF0000 : 0xFFAA00; // 30秒以下变红
-            context.drawTextWithShadow(textRenderer, timerText, x, y, color);
+            context.drawString(textRenderer, timerText, x, y, color);
             y += 12;
         }
         
         // 窥视状态
         if (stalkerComp.isGazing) {
-            Text gazingText = Text.translatable("hud.noellesroles.stalker.gazing", stalkerComp.gazingTargetCount)
-                .formatted(Formatting.YELLOW);
-            context.drawTextWithShadow(textRenderer, gazingText, x, y, 0xFFFFFF);
+            Component gazingText = Component.translatable("hud.noellesroles.stalker.gazing", stalkerComp.gazingTargetCount)
+                .withStyle(ChatFormatting.YELLOW);
+            context.drawString(textRenderer, gazingText, x, y, 0xFFFFFF);
             y += 12;
         }
         
@@ -104,17 +104,17 @@ public class StalkerHudMixin {
         if (stalkerComp.isCharging) {
             float chargeSeconds = stalkerComp.getChargeSeconds();
             float maxSeconds = StalkerPlayerComponent.MAX_CHARGE_TIME / 20.0f;
-            Text chargeText = Text.translatable("hud.noellesroles.stalker.charging", 
+            Component chargeText = Component.translatable("hud.noellesroles.stalker.charging", 
                 String.format("%.1f", chargeSeconds), String.format("%.1f", maxSeconds));
             int chargeColor = chargeSeconds >= 1.0f ? 0x00FF00 : 0xFFFF00;
-            context.drawTextWithShadow(textRenderer, chargeText, x, y, chargeColor);
+            context.drawString(textRenderer, chargeText, x, y, chargeColor);
         }
         
         // 突进状态
         if (stalkerComp.isDashing) {
-            Text dashText = Text.translatable("hud.noellesroles.stalker.dashing")
-                .formatted(Formatting.AQUA, Formatting.BOLD);
-            context.drawTextWithShadow(textRenderer, dashText, x, y, 0xFFFFFF);
+            Component dashText = Component.translatable("hud.noellesroles.stalker.dashing")
+                .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD);
+            context.drawString(textRenderer, dashText, x, y, 0xFFFFFF);
         }
     }
 }

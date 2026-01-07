@@ -1,13 +1,12 @@
 package org.agmas.noellesroles.packet;
 
 import org.agmas.noellesroles.Noellesroles;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
 import java.util.UUID;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * 心理学家治疗网络包
@@ -16,27 +15,27 @@ import java.util.UUID;
  * 当玩家按下技能键并瞄准玩家时发送，请求开始心理治疗
  * - 包含目标玩家UUID
  */
-public record PsychologistC2SPacket(UUID targetUuid) implements CustomPayload {
+public record PsychologistC2SPacket(UUID targetUuid) implements CustomPacketPayload {
     
-    public static final Identifier PSYCHOLOGIST_PAYLOAD_ID = Identifier.of(Noellesroles.MOD_ID, "psychologist_heal");
-    public static final Id<PsychologistC2SPacket> ID = new Id<>(PSYCHOLOGIST_PAYLOAD_ID);
-    public static final PacketCodec<RegistryByteBuf, PsychologistC2SPacket> CODEC;
+    public static final ResourceLocation PSYCHOLOGIST_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "psychologist_heal");
+    public static final Type<PsychologistC2SPacket> ID = new Type<>(PSYCHOLOGIST_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, PsychologistC2SPacket> CODEC;
     
     public PsychologistC2SPacket(UUID targetUuid) {
         this.targetUuid = targetUuid;
     }
     
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
     
-    public void write(PacketByteBuf buf) {
-        buf.writeUuid(this.targetUuid);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeUUID(this.targetUuid);
     }
     
-    public static PsychologistC2SPacket read(PacketByteBuf buf) {
-        return new PsychologistC2SPacket(buf.readUuid());
+    public static PsychologistC2SPacket read(FriendlyByteBuf buf) {
+        return new PsychologistC2SPacket(buf.readUUID());
     }
     
     public UUID targetUuid() {
@@ -44,6 +43,6 @@ public record PsychologistC2SPacket(UUID targetUuid) implements CustomPayload {
     }
     
     static {
-        CODEC = PacketCodec.of(PsychologistC2SPacket::write, PsychologistC2SPacket::read);
+        CODEC = StreamCodec.ofMember(PsychologistC2SPacket::write, PsychologistC2SPacket::read);
     }
 }

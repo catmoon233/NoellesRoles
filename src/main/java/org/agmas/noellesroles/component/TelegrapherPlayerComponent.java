@@ -1,11 +1,11 @@
 package org.agmas.noellesroles.component;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -25,12 +25,12 @@ public class TelegrapherPlayerComponent implements AutoSyncedComponent {
     // 最大使用次数
     public static final int MAX_USES = 6;
     
-    private final PlayerEntity player;
+    private final Player player;
     
     // 剩余使用次数
     public int remainingUses = MAX_USES;
     
-    public TelegrapherPlayerComponent(PlayerEntity player) {
+    public TelegrapherPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -55,10 +55,10 @@ public class TelegrapherPlayerComponent implements AutoSyncedComponent {
      */
     public boolean useAbility() {
         if (!hasUsesRemaining()) {
-            if (player instanceof ServerPlayerEntity serverPlayer) {
-                serverPlayer.sendMessage(
-                    Text.translatable("message.noellesroles.telegrapher.no_uses")
-                        .formatted(Formatting.RED),
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.telegrapher.no_uses")
+                        .withStyle(ChatFormatting.RED),
                     false
                 );
             }
@@ -75,7 +75,7 @@ public class TelegrapherPlayerComponent implements AutoSyncedComponent {
      * @param message 要发送的消息
      */
     public void sendAnonymousMessage(String message) {
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
         
         // 检查是否还有使用次数
         if (!useAbility()) {
@@ -83,29 +83,29 @@ public class TelegrapherPlayerComponent implements AutoSyncedComponent {
         }
         
         // 创建Title和Subtitle文本
-        Text titleText = Text.translatable("message.noellesroles.telegrapher.anonymous")
-            .formatted(Formatting.DARK_AQUA, Formatting.BOLD);
-        Text subtitleText = Text.literal(message).formatted(Formatting.WHITE);
+        Component titleText = Component.translatable("")
+            .withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD);
+        Component subtitleText = Component.literal(message).withStyle(ChatFormatting.WHITE);
         
         // 向所有玩家显示Title（包括生存模式玩家）
-        for (ServerPlayerEntity targetPlayer : serverPlayer.getServer().getPlayerManager().getPlayerList()) {
+        for (ServerPlayer targetPlayer : serverPlayer.getServer().getPlayerList().getPlayers()) {
             // 使用showTitle方法显示标题
             // 参数：fadeIn(淡入), stay(停留), fadeOut(淡出) - 单位：tick
-            targetPlayer.networkHandler.sendPacket(
-                new net.minecraft.network.packet.s2c.play.TitleS2CPacket(titleText)
+            targetPlayer.connection.send(
+                new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(titleText)
             );
-            targetPlayer.networkHandler.sendPacket(
-                new net.minecraft.network.packet.s2c.play.SubtitleS2CPacket(subtitleText)
+            targetPlayer.connection.send(
+                new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(subtitleText)
             );
-            targetPlayer.networkHandler.sendPacket(
-                new net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket(10, 60, 10)
+            targetPlayer.connection.send(
+                new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(10, 60, 10)
             );
         }
         
         // 向发送者确认
-        serverPlayer.sendMessage(
-            Text.translatable("message.noellesroles.telegrapher.sent", remainingUses)
-                .formatted(Formatting.GREEN),
+        serverPlayer.displayClientMessage(
+            Component.translatable("message.noellesroles.telegrapher.sent", remainingUses)
+                .withStyle(ChatFormatting.GREEN),
             false
         );
     }
@@ -117,12 +117,12 @@ public class TelegrapherPlayerComponent implements AutoSyncedComponent {
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("remainingUses", remainingUses);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.remainingUses = tag.getInt("remainingUses");
     }
 }

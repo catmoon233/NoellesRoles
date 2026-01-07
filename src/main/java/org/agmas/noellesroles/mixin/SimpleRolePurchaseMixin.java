@@ -4,8 +4,6 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
-
-import net.minecraft.entity.player.PlayerEntity;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.repack.HSRConstants;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;

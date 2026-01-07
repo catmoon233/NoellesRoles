@@ -1,12 +1,6 @@
 package org.agmas.noellesroles.roles.morphling;
 
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.GameMode;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.jetbrains.annotations.NotNull;
@@ -17,10 +11,16 @@ import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.UUID;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 
 public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
-    public static final ComponentKey<MorphlingPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "morphling"), MorphlingPlayerComponent.class);
-    private final PlayerEntity player;
+    public static final ComponentKey<MorphlingPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "morphling"), MorphlingPlayerComponent.class);
+    private final Player player;
     public UUID disguise;
     public int morphTicks = 0;
 
@@ -29,7 +29,7 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
         this.sync();
     }
 
-    public MorphlingPlayerComponent(PlayerEntity player) {
+    public MorphlingPlayerComponent(Player player) {
         this.player = player;
     }
 
@@ -42,8 +42,8 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
 
     public void serverTick() {
         if (this.morphTicks > 0 && disguise != null) {
-            if (player.getWorld().getPlayerByUuid(disguise) != null) {
-                if (((ServerPlayerEntity)player.getWorld().getPlayerByUuid(disguise)).interactionManager.getGameMode() == GameMode.SPECTATOR) {
+            if (player.level().getPlayerByUUID(disguise) != null) {
+                if (((ServerPlayer)player.level().getPlayerByUUID(disguise)).gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
                     stopMorph();
                 }
             } else {
@@ -81,14 +81,14 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
         this.sync();
     }
 
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("morphTicks", this.morphTicks);
-        if (disguise == null) disguise = player.getUuid();
-        tag.putUuid("disguise", this.disguise);
+        if (disguise == null) disguise = player.getUUID();
+        tag.putUUID("disguise", this.disguise);
     }
 
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.morphTicks = tag.contains("morphTicks") ? tag.getInt("morphTicks") : 0;
-        this.disguise = tag.contains("disguise") ? tag.getUuid("disguise") : player.getUuid();
+        this.disguise = tag.contains("disguise") ? tag.getUUID("disguise") : player.getUUID();
     }
 }

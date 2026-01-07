@@ -1,11 +1,10 @@
 package org.agmas.noellesroles.packet;
 
-
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
 /**
@@ -16,19 +15,17 @@ import org.agmas.noellesroles.Noellesroles;
  * - charging=true: 开始蓄力
  * - charging=false: 释放突进
  */
-public record StalkerDashC2SPacket(boolean charging) implements CustomPayload {
-    
-    public static final Id<StalkerDashC2SPacket> ID = new Id<>(
-        Identifier.of(Noellesroles.MOD_ID, "stalker_dash")
-    );
-    
-    public static final PacketCodec<RegistryByteBuf, StalkerDashC2SPacket> CODEC = PacketCodec.tuple(
-        PacketCodecs.BOOL, StalkerDashC2SPacket::charging,
-        StalkerDashC2SPacket::new
-    );
-    
+public record StalkerDashC2SPacket(boolean charging) implements CustomPacketPayload {
+
+    public static final Type<StalkerDashC2SPacket> ID = new Type<>(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "stalker_dash"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, StalkerDashC2SPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.BOOL, StalkerDashC2SPacket::charging,
+            StalkerDashC2SPacket::new);
+
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

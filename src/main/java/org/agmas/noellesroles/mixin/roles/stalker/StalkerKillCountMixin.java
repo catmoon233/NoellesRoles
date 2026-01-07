@@ -2,8 +2,8 @@ package org.agmas.noellesroles.mixin.roles.stalker;
 
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,9 +22,9 @@ public abstract class StalkerKillCountMixin {
      * 在玩家被杀死时触发
      * 检查是否是跟踪者用刀击杀，记录击杀数
      */
-    @Inject(method = "killPlayer(Lnet/minecraft/entity/player/PlayerEntity;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Identifier;)V", 
+    @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", 
             at = @At("HEAD"))
-    private static void onKillPlayerForStalker(PlayerEntity victim, boolean spawnBody, PlayerEntity killer, Identifier deathReason, CallbackInfo ci) {
+    private static void onKillPlayerForStalker(Player victim, boolean spawnBody, Player killer, ResourceLocation deathReason, CallbackInfo ci) {
         if (killer == null) return;
         if (victim == null) return;
         

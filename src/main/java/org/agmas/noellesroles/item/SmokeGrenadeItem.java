@@ -2,16 +2,16 @@ package org.agmas.noellesroles.item;
 
 
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.SlipperyGhostPlayerComponent;
@@ -28,44 +28,44 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SmokeGrenadeItem extends Item {
     
-    public SmokeGrenadeItem(Settings settings) {
+    public SmokeGrenadeItem(Properties settings) {
         super(settings);
     }
     
     @Override
-    public TypedActionResult<ItemStack> use(@NotNull World world, @NotNull PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
+    public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
         
         // 检查冷却
-        if (!world.isClient) {
+        if (!world.isClientSide) {
             SlipperyGhostPlayerComponent ghostComp = ModComponents.SLIPPERY_GHOST.get(user);
             if (ghostComp.isSmokeGrenadeOnCooldown()) {
-                user.sendMessage(Text.literal("烟雾弹冷却中！剩余 " + ghostComp.getSmokeGrenadeCooldownSeconds() + " 秒").formatted(Formatting.RED), true);
-                return TypedActionResult.fail(itemStack);
+                user.displayClientMessage(Component.literal("烟雾弹冷却中！剩余 " + ghostComp.getSmokeGrenadeCooldownSeconds() + " 秒").withStyle(ChatFormatting.RED), true);
+                return InteractionResultHolder.fail(itemStack);
             }
         }
         
         // 播放投掷音效
         world.playSound(null, user.getX(), user.getY(), user.getZ(), 
-                TMMSounds.ITEM_GRENADE_THROW, SoundCategory.NEUTRAL, 
+                TMMSounds.ITEM_GRENADE_THROW, SoundSource.NEUTRAL, 
                 0.5F, 1F + (world.random.nextFloat() - .5f) / 10f);
         
-        if (!world.isClient) {
+        if (!world.isClientSide) {
             // 创建烟雾弹实体
             SmokeGrenadeEntity smokeGrenade = new SmokeGrenadeEntity(ModEntities.SMOKE_GRENADE, world);
             smokeGrenade.setOwner(user);
-            smokeGrenade.setPos(user.getX(), user.getEyeY() - 0.1, user.getZ());
-            smokeGrenade.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 0.5F, 1.0F);
-            world.spawnEntity(smokeGrenade);
+            smokeGrenade.setPosRaw(user.getX(), user.getEyeY() - 0.1, user.getZ());
+            smokeGrenade.shootFromRotation(user, user.getXRot(), user.getYRot(), 0.0F, 0.5F, 1.0F);
+            world.addFreshEntity(smokeGrenade);
             
             // 设置冷却
             SlipperyGhostPlayerComponent ghostComp = ModComponents.SLIPPERY_GHOST.get(user);
             ghostComp.setSmokeGrenadeCooldown();
         }
         
-        user.incrementStat(Stats.USED.getOrCreateStat(this));
-        itemStack.decrementUnlessCreative(1, user);
+        user.awardStat(Stats.ITEM_USED.get(this));
+        itemStack.consume(1, user);
         
-        return TypedActionResult.success(itemStack, world.isClient());
+        return InteractionResultHolder.sidedSuccess(itemStack, world.isClientSide());
     }
 }

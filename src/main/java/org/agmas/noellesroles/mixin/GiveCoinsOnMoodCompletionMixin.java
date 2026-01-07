@@ -5,8 +5,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.StoreRenderer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,11 +19,11 @@ public abstract class GiveCoinsOnMoodCompletionMixin {
 
     @Shadow public abstract float getMood();
 
-    @Shadow @Final private PlayerEntity player;
+    @Shadow @Final private Player player;
 
     @Inject(method = "setMood", at = @At("HEAD"))
     void giveCoinsForMood(float mood, CallbackInfo ci) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent)GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorldComponent = (GameWorldComponent)GameWorldComponent.KEY.get(player.level());
         if (mood > getMood()) {
             if (gameWorldComponent.getRole(player) != null) {
                 if (gameWorldComponent.getRole(player).getMoodType().equals(Role.MoodType.REAL)) {

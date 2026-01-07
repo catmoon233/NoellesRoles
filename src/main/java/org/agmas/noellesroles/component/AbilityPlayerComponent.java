@@ -1,8 +1,8 @@
 package org.agmas.noellesroles.component;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -26,7 +26,7 @@ public class AbilityPlayerComponent implements AutoSyncedComponent, ServerTickin
     public static final ComponentKey<AbilityPlayerComponent> KEY = ModComponents.ABILITY;
     
     // 持有该组件的玩家
-    private final PlayerEntity player;
+    private final Player player;
     
     // 技能冷却时间（tick）
     public int cooldown = 0;
@@ -40,7 +40,7 @@ public class AbilityPlayerComponent implements AutoSyncedComponent, ServerTickin
     /**
      * 构造函数
      */
-    public AbilityPlayerComponent(PlayerEntity player) {
+    public AbilityPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -141,14 +141,14 @@ public class AbilityPlayerComponent implements AutoSyncedComponent, ServerTickin
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("cooldown", this.cooldown);
         tag.putInt("charges", this.charges);
         tag.putInt("maxCharges", this.maxCharges);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
         this.charges = tag.contains("charges") ? tag.getInt("charges") : -1;
         this.maxCharges = tag.contains("maxCharges") ? tag.getInt("maxCharges") : -1;

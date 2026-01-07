@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.mixin.roles.morphling;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MorphlingReseterMixin {
 
     @Inject(method = "resetPlayer", at = @At("TAIL"))
-    private static void jesterWrite(ServerPlayerEntity player, CallbackInfo ci) {
+    private static void jesterWrite(ServerPlayer player, CallbackInfo ci) {
         ((MorphlingPlayerComponent)MorphlingPlayerComponent.KEY.get(player)).reset();
         ((VoodooPlayerComponent)VoodooPlayerComponent.KEY.get(player)).reset();
         (RecallerPlayerComponent.KEY.get(player)).reset();

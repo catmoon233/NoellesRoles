@@ -4,9 +4,9 @@ import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
@@ -22,7 +22,7 @@ public class SlipperyGhostPlayerComponent implements AutoSyncedComponent, Server
     // 被动收入金额
     private static final int PASSIVE_INCOME_AMOUNT = 50;
     
-    private final PlayerEntity player;
+    private final Player player;
     private int tickCounter = 0;
     
     // 物品使用冷却
@@ -35,14 +35,14 @@ public class SlipperyGhostPlayerComponent implements AutoSyncedComponent, Server
     private static final int SMOKE_GRENADE_COOLDOWN = 600;     // 30秒
     private static final int BLACKOUT_COOLDOWN = 2400;         // 2分钟
     
-    public SlipperyGhostPlayerComponent(PlayerEntity player) {
+    public SlipperyGhostPlayerComponent(Player player) {
         this.player = player;
     }
     
     @Override
     public void serverTick() {
         // 检查玩家是否为滑头鬼
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.SLIPPERY_GHOST)) {
             return;
         }
@@ -166,7 +166,7 @@ public class SlipperyGhostPlayerComponent implements AutoSyncedComponent, Server
     }
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("TickCounter", tickCounter);
         tag.putInt("BlankCartridgeCooldown", blankCartridgeCooldown);
         tag.putInt("SmokeGrenadeCooldown", smokeGrenadeCooldown);
@@ -174,7 +174,7 @@ public class SlipperyGhostPlayerComponent implements AutoSyncedComponent, Server
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.tickCounter = tag.getInt("TickCounter");
         this.blankCartridgeCooldown = tag.getInt("BlankCartridgeCooldown");
         this.smokeGrenadeCooldown = tag.getInt("SmokeGrenadeCooldown");

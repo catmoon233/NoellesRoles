@@ -4,13 +4,6 @@ import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -20,6 +13,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * 复仇者组件
@@ -34,7 +34,7 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<AvengerPlayerComponent> KEY = ModComponents.AVENGER;
     
-    private final PlayerEntity player;
+    private final Player player;
     
     // 绑定的目标玩家 UUID
     public UUID targetPlayer = null;
@@ -51,7 +51,7 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
     // 是否已绑定目标（第一次使用后设置为 true）
     public boolean bound = false;
     
-    public AvengerPlayerComponent(PlayerEntity player) {
+    public AvengerPlayerComponent(Player player) {
         this.player = player;
     }
     
@@ -80,10 +80,10 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.sync();
         
         // 发送绑定消息
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.sendMessage(
-                Text.translatable("message.noellesroles.avenger.bound", name)
-                    .formatted(Formatting.GOLD),
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.avenger.bound", name)
+                    .withStyle(ChatFormatting.GOLD),
                 false
             );
         }
@@ -93,14 +93,14 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
      * 随机绑定一个无辜玩家
      */
     public void bindRandomTarget() {
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
         
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         List<UUID> innocentPlayers = new ArrayList<>();
         
         gameWorld.getRoles().forEach((uuid, role) -> {
-            if (uuid.equals(player.getUuid())) return; // 排除自己
-            PlayerEntity targetPlayer = player.getWorld().getPlayerByUuid(uuid);
+            if (uuid.equals(player.getUUID())) return; // 排除自己
+            Player targetPlayer = player.level().getPlayerByUUID(uuid);
             if (targetPlayer == null) return;
             if (role.isInnocent() && GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
                 innocentPlayers.add(uuid);
@@ -110,7 +110,7 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
         if (!innocentPlayers.isEmpty()) {
             Collections.shuffle(innocentPlayers);
             UUID targetUuid = innocentPlayers.get(0);
-            PlayerEntity target = player.getWorld().getPlayerByUuid(targetUuid);
+            Player target = player.level().getPlayerByUUID(targetUuid);
             if (target != null) {
                 bindTarget(targetUuid, target.getName().getString());
             }
@@ -128,32 +128,32 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.activated = true;
         this.killerUuid = killer;
         
-        if (player instanceof ServerPlayerEntity serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             // 发送激活消息
-            serverPlayer.sendMessage(
-                Text.translatable("message.noellesroles.avenger.activated", targetName)
-                    .formatted(Formatting.RED, Formatting.BOLD),
+            serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.avenger.activated", targetName)
+                    .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
                 false
             );
             
             // 给予左轮手枪
-            serverPlayer.giveItemStack(new ItemStack(TMMItems.REVOLVER));
+            serverPlayer.addItem(new ItemStack(TMMItems.REVOLVER));
             
             // 如果知道凶手，发送凶手信息
             if (killer != null) {
-                PlayerEntity killerPlayer = player.getWorld().getPlayerByUuid(killer);
+                Player killerPlayer = player.level().getPlayerByUUID(killer);
                 if (killerPlayer != null) {
-                    serverPlayer.sendMessage(
-                        Text.translatable("message.noellesroles.avenger.killer_revealed", 
+                    serverPlayer.displayClientMessage(
+                        Component.translatable("message.noellesroles.avenger.killer_revealed", 
                             killerPlayer.getName().getString())
-                            .formatted(Formatting.RED),
+                            .withStyle(ChatFormatting.RED),
                         false
                     );
                 }
             } else {
-                serverPlayer.sendMessage(
-                    Text.translatable("message.noellesroles.avenger.unknown_killer")
-                        .formatted(Formatting.GRAY),
+                serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.avenger.unknown_killer")
+                        .withStyle(ChatFormatting.GRAY),
                     false
                 );
             }
@@ -167,7 +167,7 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
      */
     public boolean isTargetAlive() {
         if (targetPlayer == null) return false;
-        PlayerEntity target = player.getWorld().getPlayerByUuid(targetPlayer);
+        Player target = player.level().getPlayerByUUID(targetPlayer);
         return target != null && GameFunctions.isPlayerAliveAndSurvival(target);
     }
     
@@ -176,7 +176,7 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
      */
     public String getKillerName() {
         if (killerUuid == null) return "";
-        PlayerEntity killer = player.getWorld().getPlayerByUuid(killerUuid);
+        Player killer = player.level().getPlayerByUUID(killerUuid);
         return killer != null ? killer.getName().getString() : "";
     }
     
@@ -186,7 +186,7 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
     
     @Override
     public void serverTick() {
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.getWorld());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         
         // 只有复仇者角色才处理
         if (!gameWorld.isRole(player, ModRoles.AVENGER)) return;
@@ -209,23 +209,23 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
     // ==================== NBT 序列化 ====================
     
     @Override
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         if (targetPlayer != null) {
-            tag.putUuid("targetPlayer", targetPlayer);
+            tag.putUUID("targetPlayer", targetPlayer);
         }
         tag.putBoolean("activated", activated);
         if (killerUuid != null) {
-            tag.putUuid("killerUuid", killerUuid);
+            tag.putUUID("killerUuid", killerUuid);
         }
         tag.putString("targetName", targetName);
         tag.putBoolean("bound", bound);
     }
     
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
-        this.targetPlayer = tag.contains("targetPlayer") ? tag.getUuid("targetPlayer") : null;
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
+        this.targetPlayer = tag.contains("targetPlayer") ? tag.getUUID("targetPlayer") : null;
         this.activated = tag.getBoolean("activated");
-        this.killerUuid = tag.contains("killerUuid") ? tag.getUuid("killerUuid") : null;
+        this.killerUuid = tag.contains("killerUuid") ? tag.getUUID("killerUuid") : null;
         this.targetName = tag.getString("targetName");
         this.bound = tag.getBoolean("bound");
     }

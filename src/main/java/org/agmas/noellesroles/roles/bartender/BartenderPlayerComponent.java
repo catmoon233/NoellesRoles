@@ -1,10 +1,10 @@
 package org.agmas.noellesroles.roles.bartender;
 
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +15,8 @@ import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
-    public static final ComponentKey<BartenderPlayerComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of(Noellesroles.MOD_ID, "bartender"), BartenderPlayerComponent.class);
-    private final PlayerEntity player;
+    public static final ComponentKey<BartenderPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "bartender"), BartenderPlayerComponent.class);
+    private final Player player;
     public int glowTicks = 0;
     public int armor = 0;
 
@@ -26,7 +26,7 @@ public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTick
         this.sync();
     }
 
-    public BartenderPlayerComponent(PlayerEntity player) {
+    public BartenderPlayerComponent(Player player) {
         this.player = player;
     }
 
@@ -64,12 +64,12 @@ public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTick
         this.sync();
     }
 
-    public void writeToNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("glowTicks", this.glowTicks);
         tag.putInt("armor", this.armor);
     }
 
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.glowTicks = tag.contains("glowTicks") ? tag.getInt("glowTicks") : 0;
         this.armor = tag.contains("armor") ? tag.getInt("armor") : 0;
     }

@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.mixin.roles.framing;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class FramingRolesShopComponentMixin {
     @Shadow public int balance;
 
-    @Shadow @Final private PlayerEntity player;
+    @Shadow @Final private Player player;
 
     @Shadow public abstract void sync();
 
