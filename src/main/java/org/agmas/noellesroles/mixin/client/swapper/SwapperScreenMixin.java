@@ -149,4 +149,9 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<InventoryM
     public void clearWidgets() {
         super.clearWidgets();
     }
+
+    @Override
+    public void clearChildren() {
+        super.clearWidgets();
+    }
 }

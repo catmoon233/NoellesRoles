@@ -30,7 +30,7 @@ public abstract class MorphilingHudMixin {
         PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(Minecraft.getInstance().player);
         if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.MORPHLING)) {
             final var morphTicks = MorphlingPlayerComponent.KEY.get(Minecraft.getInstance().player).getMorphTicks();
-            context.drawString(getFont(), Component.translatable("Morphling.tip" ,((int) (morphTicks * 0.05))), context.guiWidth() - getFont().width(Component.nullToEmpty("Morphing in " + morphTicks)), context.guiHeight() - 20, ModRoles.MORPHLING.color());
+            context.drawString(getFont(), Component.translatable("morphling.tip" ,((int) (morphTicks * 0.05))), context.guiWidth() - getFont().width(Component.nullToEmpty("Morphing in " + morphTicks)), context.guiHeight() - 20, ModRoles.MORPHLING.color());
         }
     }
 }

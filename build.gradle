@@ -12,7 +12,6 @@ base {
 
 loom {
     accessWidenerPath = file("src/main/resources/noellesroles.accesswidener")
-
 }
 
 fabricApi {

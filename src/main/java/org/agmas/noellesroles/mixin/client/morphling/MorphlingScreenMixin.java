@@ -2,30 +2,147 @@ package org.agmas.noellesroles.mixin.client.morphling;
 
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedHandledScreen;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
+import org.agmas.noellesroles.client.PlayerPaginationHelper;
+import org.agmas.noellesroles.client.RoleScreenHelper;
+import org.agmas.noellesroles.client.widget.MorphlingPlayerWidget;
+import org.agmas.noellesroles.role.ModRoles;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.awt.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import net.minecraft.world.level.GameType;
 
 
 @Mixin(LimitedInventoryScreen.class)
-public abstract class MorphlingScreenMixin extends LimitedHandledScreen<InventoryMenu>{
-    @Shadow @Final public LocalPlayer player;
+public abstract class MorphlingScreenMixin extends LimitedHandledScreen<InventoryMenu> implements PlayerPaginationHelper.ScreenWithChildren {
+    @Unique
+    private static final PlayerPaginationHelper.PaginationTextProvider TEXT_PROVIDER = new PlayerPaginationHelper.PaginationTextProvider() {
+        @Override
+        public String getPageTranslationKey() {
+            return "hud.pagination.page";
+        }
+
+        @Override
+        public String getPrevTranslationKey() {
+            return "hud.pagination.prev";
+        }
+
+        @Override
+        public String getNextTranslationKey() {
+            return "hud.pagination.next";
+        }
+    };
+
+    @Shadow @Final
+    public LocalPlayer player;
+
+    @Unique
+    private RoleScreenHelper<AbstractClientPlayer> roleScreenHelper;
 
     public MorphlingScreenMixin(InventoryMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
 
 
-//    @Inject(method = "init", at = @At("TAIL"))
-//    void renderMorphlingHeads(CallbackInfo ci) {
-//        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.getWorld());
-//        if (gameWorldComponent.isRole(player,Noellesroles.MORPHLING)) {
-//
-//        }
-//    }
+    @Unique
+    private RoleScreenHelper<AbstractClientPlayer> getRoleScreenHelper() {
+        if (roleScreenHelper == null) {
+            roleScreenHelper = new RoleScreenHelper<>(
+                    player,
+                    ModRoles.MORPHLING,
+                    this::createMorphlingWidget,
+                    TEXT_PROVIDER,
+                    this::drawMorphlingSelectionHint,
+                    this::getEligiblePlayers
+            );
+        }
+        return roleScreenHelper;
+    }
+    @Unique
+    private MorphlingPlayerWidget createMorphlingWidget(int x, int y, AbstractClientPlayer playerEntity, int index) {
+        MorphlingPlayerWidget widget = new MorphlingPlayerWidget(
+                (LimitedInventoryScreen) (Object) this,
+                x, y, playerEntity, index
+        );
+        addDrawableChild(widget);
+        return widget;
+    }
 
+    @Unique
+    private void drawMorphlingSelectionHint(GuiGraphics context, java.awt.Point point) {
+        Minecraft client = Minecraft.getInstance();
+        Component text = Component.translatable("hud.morphling.player_selection");
+        int color = Color.CYAN.getRGB();
+
+        int textWidth = client.font.width(text);
+        context.drawString(client.font, text,
+                point.x - textWidth / 2, point.y + 40, color);
+    }
+
+    @Unique
+    private List<AbstractClientPlayer> getEligiblePlayers() {
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null || client.player == null) {
+            return List.of();
+        }
+
+        return client.level.players().stream()
+                .filter(a -> a.getUUID() != player.getUUID() && isPlayerInAdventureMode(a))
+                .collect(Collectors.toList());
+    }
+
+    @Unique
+    private boolean isPlayerInAdventureMode(AbstractClientPlayer targetPlayer) {
+        Minecraft client = Minecraft.getInstance();
+        var entry = client.player.connection.getPlayerInfo(targetPlayer.getUUID());
+        return entry != null && entry.getGameMode() == GameType.ADVENTURE;
+    }
+
+    @Inject(method = "render", at = @At("HEAD"))
+    private void noellesroles$onRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        getRoleScreenHelper().onRender(context, this);
+    }
+
+    @Inject(method = "init", at = @At("HEAD"))
+    private void noellesroles$onInit(CallbackInfo ci) {
+        if (roleScreenHelper != null) {
+            roleScreenHelper.getPaginationHelper().clearManagedWidgets(this);
+        }
+        getRoleScreenHelper().onInit(this);
+    }
+
+    @Override
+    public void addDrawableChild(Button button) {
+        super.addRenderableWidget(button);
+    }
+
+    @Override
+    public void removeDrawableChild(Button button) {
+        super.removeWidget(button);
+    }
+
+    @Override
+    public void clearWidgets() {
+        super.clearWidgets();
+    }
+
+    @Override
+    public void clearChildren() {
+        super.clearWidgets();
+    }
 }

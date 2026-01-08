@@ -144,4 +144,9 @@ public abstract class VoodooScreenMixin extends LimitedHandledScreen<InventoryMe
     public void clearWidgets() {
         super.clearWidgets();
     }
+
+    @Override
+    public void clearChildren() {
+        super.clearWidgets();
+    }
 }
