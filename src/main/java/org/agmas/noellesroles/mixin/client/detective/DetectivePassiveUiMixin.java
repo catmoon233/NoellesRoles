@@ -2,7 +2,6 @@ package org.agmas.noellesroles.mixin.client.detective;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;

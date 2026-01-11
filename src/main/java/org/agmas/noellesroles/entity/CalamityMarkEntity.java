@@ -1,14 +1,8 @@
 package org.agmas.noellesroles.entity;
 
 
-import org.agmas.noellesroles.component.ModComponents;
-import org.agmas.noellesroles.component.TrapperPlayerComponent;
-import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -19,6 +13,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.agmas.noellesroles.component.ModComponents;
+import org.agmas.noellesroles.component.TrapperPlayerComponent;
+import org.agmas.noellesroles.role.ModRoles;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 灾厄印记实体

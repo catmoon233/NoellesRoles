@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.roles.bartender;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
+import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.spongepowered.asm.mixin.Final;
@@ -12,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.UUID;
-import net.minecraft.world.entity.player.Player;
 
 @Mixin(PlayerPoisonComponent.class)
 public abstract class PoisonToHealsMixin {

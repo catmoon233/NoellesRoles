@@ -1,11 +1,6 @@
 package org.agmas.noellesroles.client.screen;
 
-import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.client.widget.ConspiratorPlayerWidget;
-import org.agmas.noellesroles.client.widget.ConspiratorRoleWidget;
-import org.agmas.noellesroles.packet.ConspiratorC2SPacket;
 import dev.doctor4t.trainmurdermystery.api.Role;
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,6 +9,11 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.widget.ConspiratorPlayerWidget;
+import org.agmas.noellesroles.client.widget.ConspiratorRoleWidget;
+import org.agmas.noellesroles.packet.ConspiratorC2SPacket;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

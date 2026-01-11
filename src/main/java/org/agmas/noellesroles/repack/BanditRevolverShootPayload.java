@@ -10,7 +10,6 @@ import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import dev.doctor4t.trainmurdermystery.util.GunDropPayload;
 import dev.doctor4t.trainmurdermystery.util.Scheduler;
 import dev.doctor4t.trainmurdermystery.util.ShootMuzzleS2CPayload;
-
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;

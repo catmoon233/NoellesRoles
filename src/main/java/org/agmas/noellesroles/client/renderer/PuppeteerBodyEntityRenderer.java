@@ -1,10 +1,8 @@
 package org.agmas.noellesroles.client.renderer;
 
-import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -16,6 +14,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
+import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
+
+import java.util.UUID;
 
 /**
  * 傀儡本体实体渲染器

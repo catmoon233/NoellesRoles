@@ -3,12 +3,12 @@ package org.agmas.noellesroles.role;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
+import net.minecraft.resources.ResourceLocation;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.noellesroles.Noellesroles;
 
 import java.awt.*;
 import java.util.HashMap;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * 角色定义类

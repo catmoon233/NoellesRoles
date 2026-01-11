@@ -1,7 +1,6 @@
 package org.agmas.noellesroles.repack;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
-
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

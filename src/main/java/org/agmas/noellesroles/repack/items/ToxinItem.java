@@ -18,7 +18,6 @@ import net.minecraft.world.phys.HitResult;
 import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.repack.HSRSounds;
-import org.agmas.noellesroles.repack.ToxinUsePayload;
 import org.jetbrains.annotations.NotNull;
 
 public class ToxinItem extends Item {

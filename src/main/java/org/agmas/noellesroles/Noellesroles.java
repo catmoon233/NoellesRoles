@@ -22,7 +22,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -34,7 +33,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -43,28 +41,28 @@ import net.minecraft.world.phys.Vec3;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.noellesroles.commands.ConfigCommand;
+import org.agmas.noellesroles.commands.SetRoleMaxCommand;
 import org.agmas.noellesroles.component.BoxerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.entity.HallucinationAreaManager;
+import org.agmas.noellesroles.entity.SmokeAreaManager;
+import org.agmas.noellesroles.packet.*;
+import org.agmas.noellesroles.repack.HSRConstants;
+import org.agmas.noellesroles.repack.HSRItems;
+import org.agmas.noellesroles.repack.HSRSounds;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
-import org.agmas.noellesroles.commands.ConfigCommand;
-import org.agmas.noellesroles.commands.SetRoleMaxCommand;
-import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
-import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
-import org.agmas.noellesroles.repack.HSRConstants;
-import org.agmas.noellesroles.repack.HSRItems;
-import org.agmas.noellesroles.repack.HSRSounds;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
-import org.agmas.noellesroles.entity.HallucinationAreaManager;
-import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +71,6 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
-import static org.agmas.noellesroles.RicesRoleRhapsody.onRoleAssigned;
 
 public class Noellesroles implements ModInitializer {
 
@@ -612,6 +609,7 @@ public class Noellesroles implements ModInitializer {
                         itemCooldownManager.addCooldown(TMMItems.REVOLVER, gunCooldownTicks);
                         itemCooldownManager.addCooldown(TMMItems.KNIFE, gunCooldownTicks);
                         itemCooldownManager.addCooldown(ModItems.FAKE_REVOLVER, gunCooldownTicks);
+                        itemCooldownManager.addCooldown(TMMItems.GRENADE, gunCooldownTicks);
                     }
                     gunsCooled = true;
                 }
