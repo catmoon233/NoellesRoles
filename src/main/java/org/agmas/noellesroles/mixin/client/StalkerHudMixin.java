@@ -66,17 +66,20 @@ public class StalkerHudMixin {
         context.drawString(textRenderer, energyText, x, y, 0xAAAAAA);
         y += 12;
         
-        // 二阶段：击杀数和免疫状态
+        // 一阶段：显示盾牌状态
+        if (stalkerComp.phase == 1) {
+            Component immunityText = stalkerComp.immunityUsed ?
+                Component.translatable("hud.noellesroles.stalker.immunity_used").withStyle(ChatFormatting.GRAY) :
+                Component.translatable("hud.noellesroles.stalker.immunity_available").withStyle(ChatFormatting.GREEN);
+            context.drawString(textRenderer, immunityText, x, y, 0xFFFFFF);
+            y += 12;
+        }
+        
+        // 二阶段及以上：击杀数
         if (stalkerComp.phase >= 2) {
             Component killsText = Component.translatable("hud.noellesroles.stalker.kills",
                 stalkerComp.phase2Kills, stalkerComp.getPhase2KillsRequired());
             context.drawString(textRenderer, killsText, x, y, 0xFF6666);
-            y += 12;
-            
-            Component immunityText = stalkerComp.immunityUsed ? 
-                Component.translatable("hud.noellesroles.stalker.immunity_used").withStyle(ChatFormatting.GRAY) : 
-                Component.translatable("hud.noellesroles.stalker.immunity_available").withStyle(ChatFormatting.GREEN);
-            context.drawString(textRenderer, immunityText, x, y, 0xFFFFFF);
             y += 12;
         }
         

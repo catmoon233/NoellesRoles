@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.repack;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
@@ -29,10 +30,10 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 
 public  record BanditRevolverShootPayload(int target) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<BanditRevolverShootPayload> ID = new CustomPacketPayload.Type(Noellesroles.id("banditgunshoot"));
+    public static final Type<BanditRevolverShootPayload> ID = new Type<>(Noellesroles.id("banditgunshoot"));;
     public static final StreamCodec<FriendlyByteBuf, BanditRevolverShootPayload> CODEC;
-
-    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
@@ -41,6 +42,7 @@ public  record BanditRevolverShootPayload(int target) implements CustomPacketPay
     }
 
     public static class Receiver implements ServerPlayNetworking.PlayPayloadHandler<BanditRevolverShootPayload> {
+        @Override
         public void receive(@NotNull BanditRevolverShootPayload payload, ServerPlayNetworking.@NotNull Context context) {
             final var player = context.player();
             extracted(player, player.serverLevel().getEntity(payload.target()));
@@ -61,10 +63,13 @@ public  record BanditRevolverShootPayload(int target) implements CustomPacketPay
                         Item banditrevolver = HSRItems.BANDIT_REVOLVER;
                         boolean backfire = false;
                         if (game.isInnocent(target) && !player.isCreative() && mainHandStack.is(banditrevolver)) {
-                            if (game.isInnocent(player) && player.getRandom().nextFloat() <= game.getBackfireChance()) {
-                                backfire = true;
-                                GameFunctions.killPlayer(player, true, player, GameConstants.DeathReasons.GUN);
-                            } else if (game.isRole(player, ModRoles.BANDIT)) {
+//                            GameFunctions.killPlayer(player, true, player, GameConstants.DeathReasons.GUN);
+//                            if (game.isInnocent(player) && player.getRandom().nextFloat() <= game.getBackfireChance()) {
+//                                backfire = true;
+//
+//                            } else
+                                //if (game.isRole(player, ModRoles.BANDIT) || game.isRole(target, ModRoles.EXECUTIONER)) {
+                                if (true) {
                                 if (player.getRandom().nextFloat() <= 0.2F) {
                                     Scheduler.schedule(() -> {
                                         if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
@@ -78,13 +83,14 @@ public  record BanditRevolverShootPayload(int target) implements CustomPacketPay
                                             ServerPlayNetworking.send(player, new GunDropPayload());
                                         }
                                     }, 4);
-                                } else {
-                                    Scheduler.schedule(() -> {
-                                        if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
-                                            player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1, player.getInventory());
-                                        }
-                                    }, 4);
                                 }
+//                                else {
+//                                    Scheduler.schedule(() -> {
+//                                        if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
+//                                            player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1, player.getInventory());
+//                                        }
+//                                    }, 4);
+//                                }
                             } else {
                                 Scheduler.schedule(() -> {
                                     if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {

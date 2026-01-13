@@ -16,6 +16,7 @@ import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -127,6 +128,11 @@ public class ModComponents implements EntityComponentInitializer , WorldComponen
         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "puppeteer"),
         PuppeteerPlayerComponent.class
     );
+    
+    public static final ComponentKey<ManipulatorPlayerComponent> MANIPULATOR = ComponentRegistry.getOrCreate(
+        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator"),
+        ManipulatorPlayerComponent.class
+    );
 
     public ModComponents() {
         // CCA 需要无参构造函数
@@ -223,6 +229,11 @@ public class ModComponents implements EntityComponentInitializer , WorldComponen
         registry.beginRegistration(Player.class, PUPPETEER)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(PuppeteerPlayerComponent::new);
+        
+        // 注册操纵师组件 - 存储被操纵目标和控制状态
+        registry.beginRegistration(Player.class, MANIPULATOR)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(ManipulatorPlayerComponent::new);
 
         registry.beginRegistration(Player.class, GamblerPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(GamblerPlayerComponent::new);
         registry.beginRegistration(Player.class, MorphlingPlayerComponent.KEY).respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(MorphlingPlayerComponent::new);

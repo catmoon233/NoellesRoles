@@ -22,9 +22,9 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 /**
  * 明星组件
  *
- * 被动技能：每20秒自动发光2秒
- * 主动技能：使用技能让10格范围内的玩家视野都看向自己（30秒冷却）
- * 
+ * 被动技能：无
+ * 主动技能：使用技能让10格范围内的玩家视野都看向自己，并让自己发光2秒（30秒冷却）
+ *
  * 明星为好人阵营（乘客阵营）
  */
 public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
@@ -33,9 +33,6 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     public static final ComponentKey<StarPlayerComponent> KEY = ModComponents.STAR;
     
     // ==================== 常量定义 ====================
-    
-    /** 发光周期（20秒 = 400 tick） */
-    public static final int GLOW_CYCLE = 400;
     
     /** 发光持续时间（2秒 = 40 tick） */
     public static final int GLOW_DURATION = 40;
@@ -50,10 +47,7 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     
     private final Player player;
     
-    /** 发光周期计时器（tick） */
-    public int glowTimer = 0;
-    
-    /** 是否正在发光 */
+    /** 是否正在发光（主动技能触发） */
     public boolean isGlowing = false;
     
     /** 发光剩余时间（tick） */
@@ -77,7 +71,6 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
      * 在游戏开始时或角色分配时调用
      */
     public void reset() {
-        this.glowTimer = 0;
         this.isGlowing = false;
         this.glowTicksRemaining = 0;
         this.abilityCooldown = 0;
@@ -89,7 +82,6 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
      * 清除所有状态
      */
     public void clearAll() {
-        this.glowTimer = 0;
         this.isGlowing = false;
         this.glowTicksRemaining = 0;
         this.abilityCooldown = 0;
@@ -237,15 +229,6 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     }
     
     /**
-     * 获取距离下次发光的时间（秒）
-     */
-    public float getNextGlowSeconds() {
-        if (isGlowing) return 0;
-        int remaining = GLOW_CYCLE - glowTimer;
-        return remaining / 20.0f;
-    }
-    
-    /**
      * 同步到客户端
      */
     public void sync() {
@@ -269,25 +252,11 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
             }
         }
         
-        // 处理发光状态
+        // 处理主动技能触发的发光状态
         if (this.isGlowing) {
             this.glowTicksRemaining--;
             if (this.glowTicksRemaining <= 0) {
                 stopGlowing();
-                this.glowTimer = 0; // 重置周期计时器
-            }
-        } else {
-            // 增加周期计时器
-            this.glowTimer++;
-            
-            // 达到周期时开始发光
-            if (this.glowTimer >= GLOW_CYCLE) {
-                startGlowing();
-            }
-            
-            // 每秒同步一次发光倒计时
-            if (this.glowTimer % 20 == 0) {
-                this.sync();
             }
         }
     }
@@ -296,7 +265,6 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
-        tag.putInt("glowTimer", this.glowTimer);
         tag.putBoolean("isGlowing", this.isGlowing);
         tag.putInt("glowTicksRemaining", this.glowTicksRemaining);
         tag.putInt("abilityCooldown", this.abilityCooldown);
@@ -305,7 +273,6 @@ public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingCo
     
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
-        this.glowTimer = tag.contains("glowTimer") ? tag.getInt("glowTimer") : 0;
         this.isGlowing = tag.contains("isGlowing") && tag.getBoolean("isGlowing");
         this.glowTicksRemaining = tag.contains("glowTicksRemaining") ? tag.getInt("glowTicksRemaining") : 0;
         this.abilityCooldown = tag.contains("abilityCooldown") ? tag.getInt("abilityCooldown") : 0;

@@ -10,6 +10,7 @@ import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
+import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.ShopContent;
@@ -17,6 +18,7 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
+import dev.doctor4t.trainmurdermystery.util.StoreBuyPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -47,6 +49,7 @@ import org.agmas.noellesroles.component.BoxerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
+import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.commands.ConfigCommand;
@@ -63,6 +66,7 @@ import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.repack.HSRSounds;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.jetbrains.annotations.NotNull;
@@ -77,8 +81,6 @@ import static org.agmas.noellesroles.RicesRoleRhapsody.onRoleAssigned;
 
 public class Noellesroles implements ModInitializer {
 
-
-
     public static String MOD_ID = "noellesroles";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
@@ -92,6 +94,7 @@ public class Noellesroles implements ModInitializer {
     public static final CustomPacketPayload.Type<AbilityC2SPacket> ABILITY_PACKET = AbilityC2SPacket.ID;
     public static final CustomPacketPayload.Type<VultureEatC2SPacket> VULTURE_PACKET = VultureEatC2SPacket.ID;
     public static final CustomPacketPayload.Type<ThiefStealC2SPacket> THIEF_PACKET = ThiefStealC2SPacket.ID;
+    public static final CustomPacketPayload.Type<ManipulatorC2SPacket> MANIPULATOR_PACKET = ManipulatorC2SPacket.ID;
     public static final ArrayList<Role> VANNILA_ROLES = new ArrayList<>();
     public static final ArrayList<ResourceLocation> VANNILA_ROLE_IDS = new ArrayList<>();
     public static final CustomPacketPayload.Type<ExecutionerSelectTargetC2SPacket> EXECUTIONER_SELECT_TARGET_PACKET = ExecutionerSelectTargetC2SPacket.ID;
@@ -100,6 +103,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> FRAMING_ROLES_SHOP = new ArrayList<>();
     // ==================== 阴谋家商店 ====================
     public static ArrayList<ShopEntry> CONSPIRATOR_SHOP = new ArrayList<>();
+
+    public static ArrayList<ShopEntry> 柜子区的商店 = new ArrayList<>();
     // ==================== 滑头鬼商店 ====================
     public static ArrayList<ShopEntry> SLIPPERY_GHOST_SHOP = new ArrayList<>();
     // ==================== 工程师商店 ====================
@@ -108,24 +113,25 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> POSTMAN_SHOP = new ArrayList<>();
     // ==================== 迷幻师商店 ====================
     public static ArrayList<ShopEntry> ILLUSIONIST_SHOP = new ArrayList<>();
+    // ==================== 心理学家商店 ====================
+    public static ArrayList<ShopEntry> PSYCHOLOGIST_SHOP = new ArrayList<>();
 
     private static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
     public static final Map<Role, List<Supplier<ItemStack>>> INITIAL_ITEMS_MAP = new HashMap<>();
 
-    public static List<Role> getEnableRoles(){
+    public static List<Role> getEnableRoles() {
         ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES);
         clone.removeIf(
-                r->
-                        HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString())
-        );
+                r -> HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString()));
         return clone;
     }
-    public static List<Role> getEnableKillerRoles(){
+
+    public static List<Role> getEnableKillerRoles() {
         ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES);
         clone.removeIf(
-                r-> !r.canUseKiller() || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString())
-        );
+                r -> !r.canUseKiller()
+                        || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString()));
         return clone;
     }
 
@@ -178,7 +184,6 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, 1);
 
-
         // 注册商店
         shopRegister();
     }
@@ -213,70 +218,86 @@ public class Noellesroles implements ModInitializer {
      * 初始化初始物品映射
      */
     private void initializeInitialItems() {
+
         INITIAL_ITEMS_MAP.clear();
-        
+
         // 医生初始物品
         List<Supplier<ItemStack>> doctorItems = new ArrayList<>();
         doctorItems.add(() -> HSRItems.ANTIDOTE.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.DOCTOR, doctorItems);
-        
+
         // 强盗初始物品
         List<Supplier<ItemStack>> banditItems = new ArrayList<>();
         banditItems.add(() -> HSRItems.BANDIT_REVOLVER.getDefaultInstance());
         banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
-        
+
         // 随从初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
         attendantItems.add(() -> ModItems.MASTER_KEY_P.getDefaultInstance());
-        attendantItems.add(() -> com.sighs.handheldmoon.registry.ModItems.MOONLIGHT_LAMP.getDefaultInstance());
+        // 使用延迟加载方式添加 handheldmoon 模组的物品（如果可用）
+        attendantItems.add(() -> {
+            final var moonlightLampItem = BuiltInRegistries.ITEM
+                    .get(ResourceLocation.tryParse("handheldmoon:moonlight_lamp"));
+            if (moonlightLampItem != Items.AIR) {
+                return moonlightLampItem.getDefaultInstance();
+            }
+            return null; // 如果物品不存在，返回null
+        });
         INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
-        
+
         // 改良型民兵初始物品
         List<Supplier<ItemStack>> betterVigilanteItems = new ArrayList<>();
         betterVigilanteItems.add(() -> TMMItems.GRENADE.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.BETTER_VIGILANTE, betterVigilanteItems);
-        
+
         // 小丑初始物品
         List<Supplier<ItemStack>> jesterItems = new ArrayList<>();
         jesterItems.add(() -> ModItems.FAKE_KNIFE.getDefaultInstance());
         jesterItems.add(() -> ModItems.FAKE_REVOLVER.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.JESTER, jesterItems);
-        
+
         // 列车长初始物品
         List<Supplier<ItemStack>> conductorItems = new ArrayList<>();
         conductorItems.add(() -> ModItems.MASTER_KEY.getDefaultInstance());
         conductorItems.add(() -> Items.SPYGLASS.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.CONDUCTOR, conductorItems);
-        
+
         // Awesome Binglus 初始物品
         List<Supplier<ItemStack>> awesomeBinglusItems = new ArrayList<>();
         // 添加16个便签
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 4; i++) {
             awesomeBinglusItems.add(() -> TMMItems.NOTE.getDefaultInstance());
         }
         // 添加相机和相册（使用延迟加载）
         awesomeBinglusItems.add(() -> {
-            final var cameraItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("exposure_polaroid:instant_camera"));
+            final var cameraItem = BuiltInRegistries.ITEM
+                    .get(ResourceLocation.tryParse("exposure_polaroid:instant_camera"));
             if (cameraItem != Items.AIR) {
                 return cameraItem.getDefaultInstance();
             }
             return null; // 如果物品不存在，返回null
         });
-        awesomeBinglusItems.add(() -> {
-            final var albumItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("exposure:album"));
-            if (albumItem != Items.AIR) {
-                return albumItem.getDefaultInstance();
-            }
-            return null; // 如果物品不存在，返回null
-        });
+//        awesomeBinglusItems.add(() -> {
+//            final var albumItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("exposure:album"));
+//            if (albumItem != Items.AIR) {
+//                return albumItem.getDefaultInstance();
+//            }
+//            return null; // 如果物品不存在，返回null
+//        });
         INITIAL_ITEMS_MAP.put(ModRoles.AWESOME_BINGLUS, awesomeBinglusItems);
+
+        // 心理学家初始物品
+        List<Supplier<ItemStack>> psychologistItems = new ArrayList<>();
+        psychologistItems.add(() -> ModItems.MINT_CANDIES.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.PSYCHOLOGIST, psychologistItems);
     }
 
     /**
      * 为玩家添加指定角色的初始物品
+     * 
      * @param player 玩家
-     * @param role 角色
+     * @param role   角色
      */
     public static void addInitialItemsForRole(Player player, Role role) {
         List<Supplier<ItemStack>> itemSuppliers = INITIAL_ITEMS_MAP.get(role);
@@ -294,15 +315,29 @@ public class Noellesroles implements ModInitializer {
      * 初始化商店
      */
     public static void initShops() {
+        柜子区的商店.add(new ShopEntry(
+                HSRItems.BANDIT_REVOLVER.getDefaultInstance(),
+                130,
+                ShopEntry.Type.TOOL
+        ));
+        柜子区的商店.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), TMMConfig.firecrackerPrice, ShopEntry.Type.TOOL));
+        柜子区的商店.add(new ShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 60, ShopEntry.Type.TOOL));
+        柜子区的商店.add(new ShopEntry(TMMItems.BODY_BAG.getDefaultInstance(), TMMConfig.bodyBagPrice, ShopEntry.Type.TOOL));
+        柜子区的商店.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), TMMConfig.grenadePrice, ShopEntry.Type.TOOL));
+        柜子区的商店.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), TMMConfig.blackoutPrice, ShopEntry.Type.TOOL) {
+            public boolean onBuy(@NotNull Player player) {
+                return PlayerShopComponent.useBlackout(player);
+            }
+        });
         // 阴谋家商店
         CONSPIRATOR_SHOP.add(new ShopEntry(
                 ModItems.CONSPIRACY_PAGE.getDefaultInstance(),
-                150,
+                100,
                 ShopEntry.Type.TOOL));
 
         CONSPIRATOR_SHOP.add(new ShopEntry(
                 dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE.getDefaultInstance(),
-                100,
+                120,
                 ShopEntry.Type.TOOL));
 
         CONSPIRATOR_SHOP.add(new ShopEntry(
@@ -335,11 +370,12 @@ public class Noellesroles implements ModInitializer {
                 ShopEntry.Type.TOOL));
 
         // 关灯 - 300金币 (原版杀手商店物品)
-        SLIPPERY_GHOST_SHOP.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), TMMConfig.blackoutPrice, ShopEntry.Type.TOOL) {
-            public boolean onBuy(@NotNull Player player) {
-                return PlayerShopComponent.useBlackout(player);
-            }
-        });
+        SLIPPERY_GHOST_SHOP.add(
+                new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), TMMConfig.blackoutPrice, ShopEntry.Type.TOOL) {
+                    public boolean onBuy(@NotNull Player player) {
+                        return PlayerShopComponent.useBlackout(player);
+                    }
+                });
 
         // 工程师商店
         // 加固门 - 50金币
@@ -363,21 +399,27 @@ public class Noellesroles implements ModInitializer {
 
         // 迷幻师商店
 
-
-
-
+        // 心理学家商店
+        // 薄荷糖 - 100金币
+        PSYCHOLOGIST_SHOP.add(new ShopEntry(
+                ModItems.MINT_CANDIES.getDefaultInstance(),
+                100,
+                ShopEntry.Type.TOOL));
     }
 
     private void shopRegister() {
         initShops();
         ShopContent.register();
         {
+            ShopContent.customEntries.put(
+                    ModRoles.EXECUTIONER_ID, 柜子区的商店);
+        }
+        {
             List<ShopEntry> entries = new ArrayList<>(ShopContent.defaultEntries);
             entries.add(new ShopEntry(
                     ModItems.HALLUCINATION_BOTTLE.getDefaultInstance(),
                     175,
                     ShopEntry.Type.TOOL));
-
 
             ShopContent.customEntries.put(
                     ModRoles.ILLUSIONIST_ID, entries);
@@ -407,8 +449,6 @@ public class Noellesroles implements ModInitializer {
 
             ShopContent.customEntries.put(
                     ModRoles.NOISEMAKER_ID, entries);
-            ShopContent.customEntries.put(
-                    ModRoles.EXECUTIONER_ID, ShopContent.defaultEntries);
 
         }
         // {
@@ -461,6 +501,12 @@ public class Noellesroles implements ModInitializer {
         ShopContent.customEntries.put(
                 ModRoles.STALKER_ID,
                 List.of(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 75, ShopEntry.Type.TOOL)));
+
+        // 心理学家商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.PSYCHOLOGIST_ID, PSYCHOLOGIST_SHOP);
+        }
     }
 
     public static void registerPackets1() {
@@ -473,10 +519,15 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(AbilityC2SPacket.ID, AbilityC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(VultureEatC2SPacket.ID, VultureEatC2SPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(ManipulatorC2SPacket.ID, ManipulatorC2SPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID,
+                BanditRevolverShootPayload.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID, new BanditRevolverShootPayload.Receiver());
     }
 
     private void registerMaxRoleCount() {
         Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
+        Harpymodloader.setRoleMaximum(ModRoles.MANIPULATOR, 0);
         Harpymodloader.setRoleMaximum(ModRoles.EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
         Harpymodloader.setRoleMaximum(ModRoles.VULTURE_ID, NoellesRolesConfig.HANDLER.instance().vultureMax);
         Harpymodloader.setRoleMaximum(ModRoles.JESTER_ID, NoellesRolesConfig.HANDLER.instance().jesterMax);
@@ -498,6 +549,15 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+        ShouldDropOnDeath.EVENT.register(((itemStack) -> {
+            final var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
+            if ("exposure:album".equals(key) || "exposure:photograph".equals(key)){
+                return true ;
+            }
+
+            return false;
+        }));
+
 
         AllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (identifier == GameConstants.DeathReasons.FELL_OUT_OF_TRAIN)
@@ -556,7 +616,7 @@ public class Noellesroles implements ModInitializer {
             }
             // 使用映射表添加初始物品
             addInitialItemsForRole(player, role);
-            
+
             if (role.equals(ModRoles.GAMBLER)) {
                 org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent gamblerPlayerComponent = org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent.KEY
                         .get(player);
@@ -717,6 +777,7 @@ public class Noellesroles implements ModInitializer {
 
     /**
      * 处理跟踪者免疫
+     * 盾牌只在一阶段有效，进入二阶段后消失
      *
      * @param victim      受害者
      * @param deathReason 死亡原因
@@ -729,10 +790,10 @@ public class Noellesroles implements ModInitializer {
         // 获取跟踪者组件
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(victim);
 
-        // 检查是否是活跃的跟踪者且处于二阶段或以上
+        // 检查是否是活跃的跟踪者且处于一阶段（盾牌只在一阶段有效）
         if (!stalkerComp.isActiveStalker())
             return false;
-        if (stalkerComp.phase < 2)
+        if (stalkerComp.phase != 1)
             return false;
 
         // 检查免疫是否已使用
@@ -874,6 +935,34 @@ public class Noellesroles implements ModInitializer {
                 morphlingPlayerComponent.startMorph(payload.player());
             }
         });
+
+        // 操纵师数据包处理
+        ServerPlayNetworking.registerGlobalReceiver(Noellesroles.MANIPULATOR_PACKET, (payload, context) -> {
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                    .get(context.player().level());
+            AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
+                    .get(context.player());
+
+            if (payload.player() == null)
+                return;
+            if (abilityPlayerComponent.cooldown > 0)
+                return;
+            if (context.player().level().getPlayerByUUID(payload.player()) == null)
+                return;
+
+            if (gameWorldComponent.isRole(context.player(), ModRoles.MANIPULATOR)) {
+                // 设置操纵师的冷却时间（根据配置）
+                abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
+                        NoellesRolesConfig.HANDLER.instance().manipulatorCooldown);
+                abilityPlayerComponent.sync();
+                
+                // 获取操纵师组件并设置目标
+                ManipulatorPlayerComponent manipulatorPlayerComponent = (ManipulatorPlayerComponent) ManipulatorPlayerComponent.KEY
+                        .get(context.player());
+                manipulatorPlayerComponent.setTarget(payload.player());
+            }
+        });
+        
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.VULTURE_PACKET, (payload, context) -> {
             final var player = context.player();
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
@@ -922,9 +1011,22 @@ public class Noellesroles implements ModInitializer {
                             final var size = gameWorldComponent.getAllKillerTeamPlayers().size();
 
                             if (Harpymodloader.VANNILA_ROLES.contains(gameWorldComponent.getRole(player))) {
-                                ServerPlayNetworking.send(player, new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS.indexOf(gameWorldComponent.isRole(player, TMMRoles.KILLER) ? RoleAnnouncementTexts.KILLER : (gameWorldComponent.isRole(player, TMMRoles.VIGILANTE) ? RoleAnnouncementTexts.VIGILANTE : RoleAnnouncementTexts.CIVILIAN)), size, 0));
+                                ServerPlayNetworking.send(player,
+                                        new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS
+                                                .indexOf(gameWorldComponent.isRole(player, TMMRoles.KILLER)
+                                                        ? RoleAnnouncementTexts.KILLER
+                                                        : (gameWorldComponent.isRole(player, TMMRoles.VIGILANTE)
+                                                                ? RoleAnnouncementTexts.VIGILANTE
+                                                                : RoleAnnouncementTexts.CIVILIAN)),
+                                                size, 0));
                             } else {
-                                ServerPlayNetworking.send(player, new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS.indexOf(Harpymodloader.autogeneratedAnnouncements.get(gameWorldComponent.getRole(player))), size, 0));
+                                ServerPlayNetworking
+                                        .send(player,
+                                                new AnnounceWelcomePayload(
+                                                        RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS
+                                                                .indexOf(Harpymodloader.autogeneratedAnnouncements
+                                                                        .get(gameWorldComponent.getRole(player))),
+                                                        size, 0));
                             }
                         }
 
@@ -1008,7 +1110,8 @@ public class Noellesroles implements ModInitializer {
 
                     if (gameWorldComponent.isRole(context.player(), ModRoles.BROADCASTER)) {
                         if (playerShopComponent.balance < 100) {
-                            context.player().displayClientMessage(Component.translatable("message.noellesroles.insufficient_funds"),
+                            context.player().displayClientMessage(
+                                    Component.translatable("message.noellesroles.insufficient_funds"),
                                     true);
                             if (context.player() instanceof ServerPlayer) {
                                 ServerPlayer player = (ServerPlayer) context.player();
@@ -1075,6 +1178,7 @@ public class Noellesroles implements ModInitializer {
 
     /**
      * 获取指定角色的初始物品列表
+     * 
      * @param role 角色
      * @return 初始物品列表
      */

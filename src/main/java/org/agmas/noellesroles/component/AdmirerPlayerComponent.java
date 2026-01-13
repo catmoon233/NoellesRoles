@@ -163,12 +163,13 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         ModdedRoleAssigned.EVENT.invoker().assignModdedRole(player, selectedRole);
         
         // 原版杀手需要额外给刀（因为 onRoleAssigned 中没有处理原版杀手）
+        if (selectedRole.equals(TMMRoles.KILLER)) {
             player.addItem(TMMItems.KNIFE.getDefaultInstance());
             // 给予杀手初始金币
             dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent shopComponent =
                 dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY.get(player);
             shopComponent.addToBalance(200);
-            shopComponent.sync();
+        }
         if (Harpymodloader.VANNILA_ROLES.contains(gameWorld.getRole(player))) {
             ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS.indexOf(gameWorld.isRole(player, TMMRoles.KILLER) ? RoleAnnouncementTexts.KILLER : (gameWorld.isRole(player, TMMRoles.VIGILANTE) ? RoleAnnouncementTexts.VIGILANTE : RoleAnnouncementTexts.CIVILIAN)), gameWorld.getAllKillerTeamPlayers().size(), 0));
         } else {

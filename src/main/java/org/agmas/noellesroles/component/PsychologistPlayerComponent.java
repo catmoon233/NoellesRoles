@@ -1,6 +1,6 @@
 package org.agmas.noellesroles.component;
 
-import  org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -24,64 +24,64 @@ import net.minecraft.world.phys.Vec3;
  * 心理学家组件
  *
  * 管理"心理治疗"技能：
- * - san满的情况下，使用技能对准一个人
+ * - san满70的情况下，使用技能对准一个人
  * - 对方不动，超过10秒可以把对方san回复满
  * - 3分钟冷却
  */
 public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-    
+
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<PsychologistPlayerComponent> KEY = ModComponents.PSYCHOLOGIST;
-    
+
     // ==================== 常量定义 ====================
-    
+
     /** 治疗持续时间（10秒 = 200 tick） */
     public static final int HEALING_DURATION = 200;
-    
+
     /** 技能冷却时间（3分钟 = 3600 tick） */
     public static final int ABILITY_COOLDOWN = 3600;
-    
+
     /** 目标移动阈值（超过这个距离视为移动） */
     public static final double MOVEMENT_THRESHOLD = 0.1;
-    
+
     /** 最大治疗距离 */
     public static final double MAX_HEALING_DISTANCE = 5.0;
-    
+
     /** san满的阈值（1.0表示满，游戏中san值范围是0.0-1.0） */
     public static final float FULL_SANITY = 1.0f;
-    
+
     /** san满的阈值容差（用于浮点数比较） */
     public static final float SANITY_THRESHOLD = 0.7f;
-    
+
     // ==================== 状态变量 ====================
-    
+
     private final Player player;
-    
+
     /** 技能冷却时间（tick） */
     public int cooldown = 0;
-    
+
     /** 当前治疗目标的UUID */
     public UUID healingTarget = null;
-    
+
     /** 治疗目标名称（用于显示） */
     public String healingTargetName = "";
-    
+
     /** 已治疗时间（tick） */
     public int healingTicks = 0;
-    
+
     /** 是否正在治疗 */
     public boolean isHealing = false;
-    
+
     /** 目标上次记录的位置 */
     private Vec3 targetLastPos = null;
-    
+
     /**
      * 构造函数
      */
     public PsychologistPlayerComponent(Player player) {
         this.player = player;
     }
-    
+
     /**
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
@@ -95,21 +95,23 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
         this.targetLastPos = null;
         this.sync();
     }
-    
+
     /**
      * 检查技能是否可用
      */
     public boolean canUseAbility() {
-        if (cooldown > 0) return false;
-        
+        if (cooldown > 0)
+            return false;
+
         // 检查自己的san是否满（使用阈值比较，因为san值是0.0-1.0的浮点数）
         PlayerMoodComponent selfMood = PlayerMoodComponent.KEY.get(player);
         float currentSan = selfMood.getMood();
         return currentSan >= SANITY_THRESHOLD;
     }
-    
+
     /**
      * 开始治疗目标
+     * 
      * @param target 目标玩家
      * @return 是否成功开始
      */
@@ -117,58 +119,61 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
         if (!canUseAbility()) {
             if (cooldown > 0) {
                 player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.on_cooldown",
-                    getCooldownSeconds()), true);
+                        getCooldownSeconds()), true);
             } else {
-                player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.not_full_san"), true);
+                player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.not_full_san"),
+                        true);
             }
             return false;
         }
-        
+
         // 验证是心理学家
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.PSYCHOLOGIST)) {
             return false;
         }
-        
+
         // 不能治疗自己
         if (target.getUUID().equals(player.getUUID())) {
-            player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.cannot_heal_self"), true);
+            player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.cannot_heal_self"),
+                    true);
             return false;
         }
-        
+
         // 检查目标是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(target)) {
-            player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.invalid_target"), true);
+            player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.invalid_target"),
+                    true);
             return false;
         }
-        
+
         // 检查距离
         if (player.distanceToSqr(target) > MAX_HEALING_DISTANCE * MAX_HEALING_DISTANCE) {
             player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.too_far"), true);
             return false;
         }
-        
+
         // 开始治疗
         this.healingTarget = target.getUUID();
         this.healingTargetName = target.getName().getString();
         this.healingTicks = 0;
         this.isHealing = true;
         this.targetLastPos = target.position();
-        
+
         // 发送开始消息
-        player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healing_started", 
-            healingTargetName), true);
-        
+        player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healing_started",
+                healingTargetName), true);
+
         // 通知目标
         if (target instanceof ServerPlayer serverTarget) {
             serverTarget.displayClientMessage(Component.translatable("message.noellesroles.psychologist.being_healed",
-                player.getName().getString()).withStyle(ChatFormatting.GREEN), true);
+                    player.getName().getString()).withStyle(ChatFormatting.GREEN), true);
         }
-        
+
         this.sync();
         return true;
     }
-    
+
     /**
      * 停止治疗
      */
@@ -179,81 +184,81 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
             healingTargetName = "";
             healingTicks = 0;
             targetLastPos = null;
-            
+
             if (reason != null && player instanceof ServerPlayer) {
                 player.displayClientMessage(Component.translatable(reason).withStyle(ChatFormatting.RED), true);
             }
-            
+
             this.sync();
         }
     }
-    
+
     /**
      * 完成治疗
      */
     private void completeHealing(Player target) {
         // 恢复目标的san值到满（san值范围是0.0-1.0）
         PlayerMoodComponent targetMood = PlayerMoodComponent.KEY.get(target);
-        targetMood.setMood(FULL_SANITY);  // 1.0f 表示满san
+        targetMood.setMood(FULL_SANITY); // 1.0f 表示满san
         targetMood.sync();
-        
+
         // 播放治疗完成音效
         player.level().playSound(null, target.blockPosition(),
-            SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.5F);
-        
+                SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.5F);
+
         // 发送完成消息给心理学家
         if (player instanceof ServerPlayer) {
             player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healing_complete",
-                healingTargetName).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), true);
+                    healingTargetName).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), true);
         }
-        
+
         // 发送完成消息给目标
         if (target instanceof ServerPlayer serverTarget) {
             serverTarget.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healed_by",
-                player.getName().getString()).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), true);
+                    player.getName().getString()).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), true);
         }
-        
+
         // 设置冷却
         this.cooldown = ABILITY_COOLDOWN;
-        
+
         // 重置治疗状态
         this.isHealing = false;
         this.healingTarget = null;
         this.healingTargetName = "";
         this.healingTicks = 0;
         this.targetLastPos = null;
-        
+
         this.sync();
     }
-    
+
     /**
      * 获取冷却时间（秒）
      */
     public int getCooldownSeconds() {
         return (cooldown + 19) / 20;
     }
-    
+
     /**
      * 获取已治疗时间（秒）
      */
     public float getHealingSeconds() {
         return healingTicks / 20.0f;
     }
-    
+
     /**
      * 获取治疗剩余时间（秒）
      */
     public float getRemainingHealingSeconds() {
         return (HEALING_DURATION - healingTicks) / 20.0f;
     }
-    
+
     /**
      * 同步到客户端
      */
     public void sync() {
         ModComponents.PSYCHOLOGIST.sync(this.player);
     }
-    
+
     /**
      * 检查是否是活跃的心理学家
      */
@@ -265,9 +270,9 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         return gameWorld.isRole(player, ModRoles.PSYCHOLOGIST);
     }
-    
+
     // ==================== Tick 处理 ====================
-    
+
     @Override
     public void serverTick() {
         // 验证是心理学家
@@ -275,7 +280,7 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
         if (!gameWorld.isRole(player, ModRoles.PSYCHOLOGIST)) {
             return;
         }
-        
+
         // 减少冷却时间
         if (this.cooldown > 0) {
             this.cooldown--;
@@ -284,23 +289,23 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
                 this.sync();
             }
         }
-        
+
         // 处理治疗逻辑
         if (this.isHealing && this.healingTarget != null) {
             Player target = player.level().getPlayerByUUID(healingTarget);
-            
+
             // 检查目标是否还存在且存活
             if (target == null || !GameFunctions.isPlayerAliveAndSurvival(target)) {
                 stopHealing("message.noellesroles.psychologist.target_lost");
                 return;
             }
-            
+
             // 检查距离
             if (player.distanceToSqr(target) > MAX_HEALING_DISTANCE * MAX_HEALING_DISTANCE) {
                 stopHealing("message.noellesroles.psychologist.target_too_far");
                 return;
             }
-            
+
             // 检查目标是否移动
             if (targetLastPos != null) {
                 double movedDistance = target.position().distanceTo(targetLastPos);
@@ -309,30 +314,30 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
                     return;
                 }
             }
-            
+
             // 更新目标位置
             targetLastPos = target.position();
-            
+
             // 增加治疗时间
             healingTicks++;
-            
+
             // 每秒同步并显示进度
             if (healingTicks % 20 == 0) {
                 int seconds = healingTicks / 20;
                 player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.healing_progress",
-                    seconds, HEALING_DURATION / 20), true);
+                        seconds, HEALING_DURATION / 20), true);
                 this.sync();
             }
-            
+
             // 检查是否完成治疗
             if (healingTicks >= HEALING_DURATION) {
                 completeHealing(target);
             }
         }
     }
-    
+
     // ==================== NBT 序列化 ====================
-    
+
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("cooldown", this.cooldown);
@@ -343,7 +348,7 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
             tag.putUUID("healingTarget", this.healingTarget);
         }
     }
-    
+
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;

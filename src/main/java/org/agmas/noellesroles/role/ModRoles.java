@@ -100,6 +100,7 @@ public class ModRoles {
     public static final ResourceLocation CONSPIRATOR_ID = Noellesroles.id("conspirator");
     public static final ResourceLocation TRAPPER_ID = Noellesroles.id("trapper");
     public static final ResourceLocation ILLUSIONIST_ID = Noellesroles.id("illusionist");
+    public static final ResourceLocation MANIPULATOR_ID = Noellesroles.id("manipulator");
 
     // 自定义模组角色 ID - 中立阵营
     public static final ResourceLocation STALKER_ID = Noellesroles.id("stalker");
@@ -141,6 +142,8 @@ public class ModRoles {
 
     // 杀手阵营角色
     public static Role MORPHLING = TMMRoles.registerRole(new Role(MORPHLING_ID, new Color(170, 2, 61).getRGB(), false,
+            true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
+    public static Role MANIPULATOR = TMMRoles.registerRole(new Role(MANIPULATOR_ID, new Color(90, 20, 61).getRGB(), false,
             true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
     public static Role PHANTOM = TMMRoles.registerRole(new Role(PHANTOM_ID, new Color(80, 5, 5, 192).getRGB(), false,
             true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));

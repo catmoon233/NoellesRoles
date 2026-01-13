@@ -3,6 +3,7 @@ package org.agmas.noellesroles.mixin.client;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
+import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
@@ -60,6 +61,15 @@ public abstract class InstinctMixin {
                 if (executionerPlayerComponent!=null&&executionerPlayerComponent.target!=null) {
                     if (executionerPlayerComponent.target.equals(target.getUUID())) {
                         cir.setReturnValue(Color.orange.getRGB());
+                        cir.cancel();
+                    }
+                }
+            }
+            if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.ADMIRER)) {
+                AdmirerPlayerComponent admirerPlayerComponent = (AdmirerPlayerComponent) AdmirerPlayerComponent.KEY.get((Player) Minecraft.getInstance().player);
+                if (admirerPlayerComponent!=null&&admirerPlayerComponent.getBoundTarget()!=null) {
+                    if (admirerPlayerComponent.getBoundTarget().getUUID().equals(target.getUUID())) {
+                        cir.setReturnValue(Color.PINK.getRGB());
                         cir.cancel();
                     }
                 }

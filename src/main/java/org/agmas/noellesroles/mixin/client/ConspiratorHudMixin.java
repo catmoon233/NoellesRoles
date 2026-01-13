@@ -42,10 +42,22 @@ public class ConspiratorHudMixin {
         int yOffset = screenHeight - 28;  // 右下角
         int xOffset = screenWidth - 200;  // 距离右边缘
         
+        // 检查是否有正在进行的诅咒（目标列表中至少有一个猜测正确的目标）
+        boolean hasActiveCurse = false;
+        String targetName = "";
+        for (ConspiratorPlayerComponent.TargetInfo targetInfo : component.targetList) {
+            if (targetInfo.guessCorrect && targetInfo.deathCountdown > 0) {
+                hasActiveCurse = true;
+                // 显示第一个有倒计时的目标
+                targetName = targetInfo.targetName;
+                break;
+            }
+        }
+        
         // 如果有正在进行的诅咒
-        if (component.guessCorrect && component.deathCountdown > 0 && !component.targetName.isEmpty()) {
+        if (hasActiveCurse && !targetName.isEmpty()) {
             Component targetText = Component.translatable("tip.noellesroles.conspirator.target",
-                component.targetName, component.getCountdownSeconds())
+                targetName, component.getCountdownSeconds())
                 .withStyle(ChatFormatting.DARK_PURPLE);
             context.drawString(renderer, targetText, xOffset, yOffset, ModRoles.CONSPIRATOR.color());
         } else {

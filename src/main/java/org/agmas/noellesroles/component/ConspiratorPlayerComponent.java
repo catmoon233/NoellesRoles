@@ -11,10 +11,17 @@ import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,23 +45,34 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
     
     private final Player player;
     
-    // 当前目标玩家 UUID
-    public UUID targetPlayer = null;
+    // 目标玩家信息类
+    public static class TargetInfo {
+        public UUID targetPlayer;
+        public ResourceLocation guessedRole;
+        public String targetName;
+        public int deathCountdown;
+        public boolean guessCorrect;
+        
+        public TargetInfo(UUID targetPlayer, ResourceLocation guessedRole, String targetName) {
+            this.targetPlayer = targetPlayer;
+            this.guessedRole = guessedRole;
+            this.targetName = targetName;
+            this.deathCountdown = 0;
+            this.guessCorrect = false;
+        }
+    }
     
-    // 猜测的角色 ID
-    public ResourceLocation guessedRole = null;
-    
-    // 死亡倒计时（tick）
-    public int deathCountdown = 0;
-    
-    // 是否猜测正确
-    public boolean guessCorrect = false;
-    
-    // 目标玩家名字（用于显示）
-    public String targetName = "";
+    // 目标玩家列表（支持多目标猜测）
+    public List<TargetInfo> targetList = new ArrayList<>();
     
     // 是否已成功击杀（用于判断胜利）
     public boolean hasKilled = false;
+    
+    // 猜错次数（猜错3次会死亡）
+    public int wrongGuessCount = 0;
+    
+    // 最大允许猜错次数
+    public static final int MAX_WRONG_GUESSES = 3;
     
     public ConspiratorPlayerComponent(Player player) {
         this.player = player;
@@ -64,12 +82,9 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
      * 重置组件状态
      */
     public void reset() {
-        this.targetPlayer = null;
-        this.guessedRole = null;
-        this.deathCountdown = 0;
-        this.guessCorrect = false;
-        this.targetName = "";
+        this.targetList.clear();
         this.hasKilled = false;
+        this.wrongGuessCount = 0;
         this.sync();
     }
     
@@ -92,15 +107,37 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
         
         if (actualRole == null) return false;
         
-        this.targetPlayer = targetUuid;
-        this.guessedRole = roleId;
-        this.targetName = target.getName().getString();
+        String targetName = target.getName().getString();
+        
+        // 检查目标是否已经在目标列表中
+        TargetInfo existingTarget = null;
+        for (TargetInfo targetInfo : targetList) {
+            if (targetInfo.targetPlayer.equals(targetUuid)) {
+                existingTarget = targetInfo;
+                break;
+            }
+        }
+        
+        if (existingTarget != null) {
+            // 更新现有目标的猜测
+            existingTarget.guessedRole = roleId;
+        } else {
+            // 添加新目标到列表
+            TargetInfo newTarget = new TargetInfo(targetUuid, roleId, targetName);
+            targetList.add(newTarget);
+        }
         
         // 检查是否猜测正确
         if (actualRole.identifier().equals(roleId)) {
             // 猜测正确！开始死亡倒计时
-            this.guessCorrect = true;
-            this.deathCountdown = DEATH_COUNTDOWN;
+            if (existingTarget != null) {
+                existingTarget.guessCorrect = true;
+                existingTarget.deathCountdown = DEATH_COUNTDOWN;
+            } else {
+                TargetInfo newTarget = targetList.get(targetList.size() - 1); // 获取刚添加的目标
+                newTarget.guessCorrect = true;
+                newTarget.deathCountdown = DEATH_COUNTDOWN;
+            }
             
             serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.conspirator.correct", targetName)
@@ -121,18 +158,33 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
             return true;
         } else {
             // 猜测错误
-            this.guessCorrect = false;
+            this.wrongGuessCount++;
             
+            // 检查是否猜错3次
+            if (this.wrongGuessCount >= MAX_WRONG_GUESSES) {
+                // 猜错3次，阴谋家死亡
+                serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.conspirator.too_many_wrong")
+                        .withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+                    true
+                );
+                
+                // 使用自杀死因
+                ResourceLocation deathReason = Noellesroles.id("conspiracy_backfire");
+                GameFunctions.killPlayer(player, true, null, deathReason);
+                
+                // 重置状态
+                this.targetList.clear();
+                this.sync();
+                return false;
+            }
+            
+            int remainingGuesses = MAX_WRONG_GUESSES - this.wrongGuessCount;
             serverPlayer.displayClientMessage(
-                Component.translatable("message.noellesroles.conspirator.wrong", targetName)
+                Component.translatable("message.noellesroles.conspirator.wrong_with_count", targetName, remainingGuesses)
                     .withStyle(ChatFormatting.RED),
-                false
+                true
             );
-            
-            // 重置目标，允许再次猜测（如果还有书页）
-            this.targetPlayer = null;
-            this.guessedRole = null;
-            this.targetName = "";
             
             this.sync();
             return false;
@@ -143,16 +195,35 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
      * 获取剩余倒计时（秒）
      */
     public int getCountdownSeconds() {
-        return deathCountdown / 20;
+        // 返回所有目标中剩余时间最少的倒计时
+        int minCountdown = 0;
+        for (TargetInfo targetInfo : targetList) {
+            if (targetInfo.deathCountdown > 0 && (minCountdown == 0 || targetInfo.deathCountdown < minCountdown)) {
+                minCountdown = targetInfo.deathCountdown;
+            }
+        }
+        return minCountdown / 20;
     }
     
     /**
      * 检查目标是否存活
      */
-    public boolean isTargetAlive() {
-        if (targetPlayer == null) return false;
-        Player target = player.level().getPlayerByUUID(targetPlayer);
+    public boolean isTargetAlive(UUID targetUuid) {
+        if (targetUuid == null) return false;
+        Player target = player.level().getPlayerByUUID(targetUuid);
         return target != null && GameFunctions.isPlayerAliveAndSurvival(target);
+    }
+    
+    /**
+     * 检查是否有任何目标存活
+     */
+    public boolean hasAnyTargetAlive() {
+        for (TargetInfo targetInfo : targetList) {
+            if (isTargetAlive(targetInfo.targetPlayer)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public void sync() {
@@ -166,53 +237,55 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
         // 只有阴谋家角色才处理
         if (!gameWorld.isRole(player, ModRoles.CONSPIRATOR)) return;
         
-        // 如果有正在进行的死亡倒计时
-        if (deathCountdown > 0 && guessCorrect && targetPlayer != null) {
-            deathCountdown--;
+        // 处理所有目标的倒计时
+        for (int i = targetList.size() - 1; i >= 0; i--) {
+            TargetInfo targetInfo = targetList.get(i);
             
-            // 每秒同步一次
-            if (deathCountdown % 20 == 0) {
-                this.sync();
+            // 如果有正在进行的死亡倒计时
+            if (targetInfo.deathCountdown > 0 && targetInfo.guessCorrect && targetInfo.targetPlayer != null) {
+                targetInfo.deathCountdown--;
                 
-                // 每10秒提醒目标玩家
-                if (deathCountdown % 200 == 0 && deathCountdown > 0) {
-                    Player target = player.level().getPlayerByUUID(targetPlayer);
-                    if (target instanceof ServerPlayer targetServer && GameFunctions.isPlayerAliveAndSurvival(target)) {
-                        targetServer.displayClientMessage(
-                            Component.translatable("message.noellesroles.conspirator.countdown", getCountdownSeconds())
-                                .withStyle(ChatFormatting.DARK_PURPLE),
-                            true
-                        );
-                    }
-                }
-            }
-            
-            // 倒计时结束，目标死亡
-            if (deathCountdown <= 0) {
-                Player target = player.level().getPlayerByUUID(targetPlayer);
-                if (target != null && GameFunctions.isPlayerAliveAndSurvival(target)) {
-                    // 使用心脏麻痹死因（隐藏真实原因）
-                    ResourceLocation deathReason = Noellesroles.id("heart_attack");
-                    GameFunctions.killPlayer(target, true, player, deathReason);
+                // 每秒同步一次
+                if (targetInfo.deathCountdown % 20 == 0) {
+                    this.sync();
                     
-                    this.hasKilled = true;
-                    
-                    // 通知阴谋家
-                    if (player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.displayClientMessage(
-                            Component.translatable("message.noellesroles.conspirator.killed", targetName)
-                                .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
-                            false
-                        );
+                    // 每10秒提醒目标玩家
+                    if (targetInfo.deathCountdown % 200 == 0 && targetInfo.deathCountdown > 0) {
+                        Player target = player.level().getPlayerByUUID(targetInfo.targetPlayer);
+                        if (target instanceof ServerPlayer targetServer && GameFunctions.isPlayerAliveAndSurvival(target)) {
+                            targetServer.displayClientMessage(
+                                Component.translatable("message.noellesroles.conspirator.countdown", targetInfo.deathCountdown / 20)
+                                    .withStyle(ChatFormatting.DARK_PURPLE),
+                                true
+                            );
+                        }
                     }
                 }
                 
-                // 重置状态，可以继续猜测
-                this.targetPlayer = null;
-                this.guessedRole = null;
-                this.guessCorrect = false;
-                this.targetName = "";
-                this.sync();
+                // 倒计时结束，目标死亡
+                if (targetInfo.deathCountdown <= 0) {
+                    Player target = player.level().getPlayerByUUID(targetInfo.targetPlayer);
+                    if (target != null && GameFunctions.isPlayerAliveAndSurvival(target)) {
+                        // 使用心脏麻痹死因（隐藏真实原因）
+                        ResourceLocation deathReason = Noellesroles.id("heart_attack");
+                        GameFunctions.killPlayer(target, true, player, deathReason);
+                        
+                        this.hasKilled = true;
+                        
+                        // 通知阴谋家
+                        if (player instanceof ServerPlayer serverPlayer) {
+                            serverPlayer.displayClientMessage(
+                                Component.translatable("message.noellesroles.conspirator.killed", targetInfo.targetName)
+                                    .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
+                                false
+                            );
+                        }
+                    }
+                    
+                    // 从列表中移除已完成的猜测
+                    targetList.remove(i);
+                    this.sync();
+                }
             }
         }
     }
@@ -221,25 +294,46 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
     
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
-        if (targetPlayer != null) {
-            tag.putUUID("targetPlayer", targetPlayer);
+        // 序列化目标列表
+        ListTag targetListTag = new ListTag();
+        for (TargetInfo targetInfo : targetList) {
+            CompoundTag targetTag = new CompoundTag();
+            if (targetInfo.targetPlayer != null) {
+                targetTag.putUUID("targetPlayer", targetInfo.targetPlayer);
+            }
+            if (targetInfo.guessedRole != null) {
+                targetTag.putString("guessedRole", targetInfo.guessedRole.toString());
+            }
+            targetTag.putInt("deathCountdown", targetInfo.deathCountdown);
+            targetTag.putBoolean("guessCorrect", targetInfo.guessCorrect);
+            targetTag.putString("targetName", targetInfo.targetName);
+            targetListTag.add(targetTag);
         }
-        if (guessedRole != null) {
-            tag.putString("guessedRole", guessedRole.toString());
-        }
-        tag.putInt("deathCountdown", deathCountdown);
-        tag.putBoolean("guessCorrect", guessCorrect);
-        tag.putString("targetName", targetName);
+        tag.put("targetList", targetListTag);
+        
         tag.putBoolean("hasKilled", hasKilled);
+        tag.putInt("wrongGuessCount", wrongGuessCount);
     }
     
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
-        this.targetPlayer = tag.contains("targetPlayer") ? tag.getUUID("targetPlayer") : null;
-        this.guessedRole = tag.contains("guessedRole") ? ResourceLocation.tryParse(tag.getString("guessedRole")) : null;
-        this.deathCountdown = tag.getInt("deathCountdown");
-        this.guessCorrect = tag.getBoolean("guessCorrect");
-        this.targetName = tag.getString("targetName");
+        // 反序列化目标列表
+        targetList.clear();
+        if (tag.contains("targetList")) {
+            ListTag targetListTag = tag.getList("targetList", Tag.TAG_COMPOUND);
+            for (int i = 0; i < targetListTag.size(); i++) {
+                CompoundTag targetTag = targetListTag.getCompound(i);
+                UUID targetPlayer = targetTag.contains("targetPlayer") ? targetTag.getUUID("targetPlayer") : null;
+                ResourceLocation guessedRole = targetTag.contains("guessedRole") ? ResourceLocation.tryParse(targetTag.getString("guessedRole")) : null;
+                String targetName = targetTag.getString("targetName");
+                TargetInfo targetInfo = new TargetInfo(targetPlayer, guessedRole, targetName);
+                targetInfo.deathCountdown = targetTag.getInt("deathCountdown");
+                targetInfo.guessCorrect = targetTag.getBoolean("guessCorrect");
+                targetList.add(targetInfo);
+            }
+        }
+        
         this.hasKilled = tag.getBoolean("hasKilled");
+        this.wrongGuessCount = tag.getInt("wrongGuessCount");
     }
 }

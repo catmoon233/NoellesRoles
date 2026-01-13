@@ -215,6 +215,26 @@ public class PuppeteerBodyEntity extends LivingEntity {
     }
     
     @Override
+    public boolean isAttackable() {
+        return true; // 可以被攻击
+    }
+    
+    @Override
+    public boolean canBeHitByProjectile() {
+        return true; // 可以被远程武器击中（手枪、弓箭等）
+    }
+    
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        // 只对虚空伤害免疫（防止掉入虚空时不死亡）
+        if (source.is(net.minecraft.world.damagesource.DamageTypes.FELL_OUT_OF_WORLD)) {
+            return false; // 不免疫虚空伤害，让实体正常死亡
+        }
+        // 对其他所有伤害都不免疫
+        return false;
+    }
+    
+    @Override
     public Iterable<net.minecraft.world.item.ItemStack> getArmorSlots() {
         return java.util.Collections.emptyList();
     }

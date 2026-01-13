@@ -9,6 +9,7 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.chat.Component;
@@ -43,6 +44,12 @@ public class ConspiratorScreen extends Screen {
     // Widget 列表
     private List<ConspiratorPlayerWidget> playerWidgets = new ArrayList<>();
     private List<ConspiratorRoleWidget> roleWidgets = new ArrayList<>();
+    
+    // 翻页相关
+    private static final int ROLES_PER_PAGE = 12; // 每页最多12个角色
+    private int currentRolePage = 0; // 当前角色页码
+    private Button prevPageButton;
+    private Button nextPageButton;
     
     public ConspiratorScreen() {
         super(Component.translatable("screen.noellesroles.conspirator.title"));
@@ -114,9 +121,25 @@ public class ConspiratorScreen extends Screen {
             return;
         }
         
-        // 计算布局 - 角色名称需要更多空间
-        int columns = Math.min(roles.size(), 5);
-        int rows = (int) Math.ceil(roles.size() / 5.0);
+        // 计算总页数
+        int totalPages = getTotalRolePages();
+        
+        // 确保当前页码有效
+        if (currentRolePage >= totalPages) {
+            currentRolePage = totalPages - 1;
+        }
+        if (currentRolePage < 0) {
+            currentRolePage = 0;
+        }
+        
+        // 计算当前页的角色范围
+        int startIndex = currentRolePage * ROLES_PER_PAGE;
+        int endIndex = Math.min(startIndex + ROLES_PER_PAGE, roles.size());
+        int rolesOnThisPage = endIndex - startIndex;
+        
+        // 计算布局 - 每页最多12个角色，4列3行
+        int columns = Math.min(rolesOnThisPage, 4);
+        int rows = (int) Math.ceil(rolesOnThisPage / 4.0);
         int widgetWidth = 120;
         int widgetHeight = 24;
         int spacingX = 10;
@@ -124,11 +147,13 @@ public class ConspiratorScreen extends Screen {
         int totalWidth = columns * (widgetWidth + spacingX) - spacingX;
         int totalHeight = rows * (widgetHeight + spacingY) - spacingY;
         int startX = (width - totalWidth) / 2;
-        int startY = (height - totalHeight) / 2 + 20;
+        int startY = (height - totalHeight) / 2 + 10;
         
-        for (int i = 0; i < roles.size(); i++) {
-            int col = i % 5;
-            int row = i / 5;
+        // 添加当前页的角色
+        for (int i = startIndex; i < endIndex; i++) {
+            int indexOnPage = i - startIndex;
+            int col = indexOnPage % 4;
+            int row = indexOnPage / 4;
             int x = startX + col * (widgetWidth + spacingX);
             int y = startY + row * (widgetHeight + spacingY);
             
@@ -138,6 +163,53 @@ public class ConspiratorScreen extends Screen {
             roleWidgets.add(widget);
             addRenderableWidget(widget);
         }
+        
+        // 添加翻页按钮
+        int buttonWidth = 60;
+        int buttonHeight = 20;
+        int buttonY = startY + totalHeight + 20;
+        
+        // 上一页按钮
+        prevPageButton = Button.builder(
+            Component.translatable("screen.noellesroles.conspirator.prev_page"),
+            button -> {
+                if (currentRolePage > 0) {
+                    currentRolePage--;
+                    refreshRoleSelection();
+                }
+            }
+        ).bounds(width / 2 - buttonWidth - 30, buttonY, buttonWidth, buttonHeight).build();
+        prevPageButton.active = currentRolePage > 0;
+        addRenderableWidget(prevPageButton);
+        
+        // 下一页按钮
+        nextPageButton = Button.builder(
+            Component.translatable("screen.noellesroles.conspirator.next_page"),
+            button -> {
+                if (currentRolePage < totalPages - 1) {
+                    currentRolePage++;
+                    refreshRoleSelection();
+                }
+            }
+        ).bounds(width / 2 + 30, buttonY, buttonWidth, buttonHeight).build();
+        nextPageButton.active = currentRolePage < totalPages - 1;
+        addRenderableWidget(nextPageButton);
+    }
+    
+    /**
+     * 获取角色总页数
+     */
+    private int getTotalRolePages() {
+        return (int) Math.ceil(roles.size() / (double) ROLES_PER_PAGE);
+    }
+    
+    /**
+     * 刷新角色选择界面
+     */
+    private void refreshRoleSelection() {
+        clearWidgets();
+        roleWidgets.clear();
+        initRoleSelection();
     }
     
     /**
@@ -147,6 +219,7 @@ public class ConspiratorScreen extends Screen {
         this.selectedPlayer = playerUuid;
         this.selectedPlayerName = playerName;
         this.phase = 1;
+        this.currentRolePage = 0; // 重置页码
         
         // 重新初始化，显示角色选择
         clearWidgets();
@@ -193,6 +266,15 @@ public class ConspiratorScreen extends Screen {
         
         context.drawCenteredString(font, title, width / 2, 30, 0xFFFFFF);
         
+        // 渲染页码信息（仅在角色选择阶段）
+        if (phase == 1 && roles.size() > ROLES_PER_PAGE) {
+            int totalPages = getTotalRolePages();
+            Component pageInfo = Component.translatable("screen.noellesroles.conspirator.page_info",
+                currentRolePage + 1, totalPages)
+                .withStyle(ChatFormatting.YELLOW);
+            context.drawCenteredString(font, pageInfo, width / 2, 45, 0xFFFFFF);
+        }
+        
         // 渲染提示
         Component hint = Component.translatable("screen.noellesroles.conspirator.hint")
             .withStyle(ChatFormatting.GRAY);
@@ -215,6 +297,7 @@ public class ConspiratorScreen extends Screen {
                 phase = 0;
                 selectedPlayer = null;
                 selectedPlayerName = "";
+                currentRolePage = 0; // 重置页码
                 clearWidgets();
                 init();
                 return true;

@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * 明星 HUD 显示
- * 
+ *
  * 显示：
- * - 发光倒计时或发光中状态
+ * - 发光中状态（主动技能触发时）
  * - 主动技能冷却时间或就绪提示
  */
 @Mixin(Gui.class)
@@ -55,32 +55,24 @@ public abstract class StarHudMixin {
         Component titleText = Component.translatable("hud.noellesroles.star.title")
             .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         int titleWidth = textRenderer.width(titleText);
-        context.drawString(textRenderer, titleText, 
+        context.drawString(textRenderer, titleText,
             (screenWidth - titleWidth) / 2, baseY - 20, 0xFFD700);
         
-        // ==================== 显示发光状态 ====================
-        Component glowText;
+        // ==================== 显示发光状态（仅在发光时显示） ====================
         if (starComp.isGlowing) {
-            // 正在发光
-            glowText = Component.translatable("hud.noellesroles.star.glowing")
+            Component glowText = Component.translatable("hud.noellesroles.star.glowing")
                 .withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD);
-        } else {
-            // 显示下次发光倒计时
-            float nextGlow = starComp.getNextGlowSeconds();
-            glowText = Component.translatable("hud.noellesroles.star.next_glow", 
-                String.format("%.0f", nextGlow))
-                .withStyle(ChatFormatting.GRAY);
+            int glowWidth = textRenderer.width(glowText);
+            context.drawString(textRenderer, glowText,
+                (screenWidth - glowWidth) / 2, baseY, 0xFFFF00);
         }
-        int glowWidth = textRenderer.width(glowText);
-        context.drawString(textRenderer, glowText, 
-            (screenWidth - glowWidth) / 2, baseY, 
-            starComp.isGlowing ? 0xFFFF00 : 0xAAAAAA);
         
         // ==================== 显示技能状态 ====================
+        int abilityY = starComp.isGlowing ? baseY + 12 : baseY;
         Component abilityText;
         if (starComp.abilityCooldown > 0) {
             // 冷却中
-            abilityText = Component.translatable("hud.noellesroles.star.cooldown", 
+            abilityText = Component.translatable("hud.noellesroles.star.cooldown",
                 String.format("%.0f", starComp.getCooldownSeconds()))
                 .withStyle(ChatFormatting.RED);
         } else {
@@ -89,8 +81,8 @@ public abstract class StarHudMixin {
                 .withStyle(ChatFormatting.GREEN);
         }
         int abilityWidth = textRenderer.width(abilityText);
-        context.drawString(textRenderer, abilityText, 
-            (screenWidth - abilityWidth) / 2, baseY + 12, 
+        context.drawString(textRenderer, abilityText,
+            (screenWidth - abilityWidth) / 2, abilityY,
             starComp.abilityCooldown > 0 ? 0xFF5555 : 0x55FF55);
     }
 }

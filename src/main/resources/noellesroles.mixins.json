@@ -48,7 +48,11 @@
     "roles.thief.ThiefsHonorMixin",
     "roles.thief.ThiefShopMixin",
     "roles.veteran.VeteranKnifeMixin",
-    "roles.voodoo.VoodooVooMixin"
+    "roles.veteran.VeteranKnifeLeftClickMixin",
+    "roles.voodoo.VoodooVooMixin",
+    "roles.manipulator.ManipulatorControlMixin",
+    "roles.puppeteer.PuppeteerBodyKnifePayloadMixin",
+    "roles.puppeteer.PuppeteerBodyGunPayloadMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -61,7 +65,6 @@
     "client.EngineerHudMixin",
     "client.HeldItemFeatureRendererMixin",
     "client.InstinctMixin",
-    "client.LamBugFix",
     "client.LobbyCreditsHudMixin",
     "client.MoneyHudMixin",
     "client.PsychologistHudMixin",
@@ -94,9 +97,13 @@
     "client.swapper.SwapperScreenMixin",
     "client.thief.ThiefHudMixin",
     "client.trapper.TrapperHudMixin",
+	  "client.LamBugFix",
     "client.voodoo.VoodooScreenMixin",
+    "client.manipulator.ManipulatorScreenMixin",
     "client.vulture.VultureEatenBodyMixin",
-    "client.vulture.VultureHudMixin"
+    "client.vulture.VultureHudMixin",
+    "client.puppeteer.PuppeteerBodyKnifeTargetMixin",
+    "client.puppeteer.PuppeteerBodyGunTargetMixin"
   ],
   "overwrites": {
     "requireAnnotations": true

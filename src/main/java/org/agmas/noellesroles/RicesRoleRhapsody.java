@@ -907,11 +907,18 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // ==================== 傀儡师角色处理 ====================
         if (role.equals(ModRoles.PUPPETEER)) {
-            LOGGER.info("Puppeteer reset");
             PuppeteerPlayerComponent puppeteerComponent = ModComponents.PUPPETEER.get(player);
-            // 只有在傀儡师未被标记时才重置（避免返回本体时重置状态）
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
+            
+            // 只有在游戏进行中且傀儡师已被标记时才保留状态（假人死亡返回本体的情况）
+            // 游戏结束或新分配角色时都应该重置组件
+            boolean isGameRunning = gameWorld != null && gameWorld.isRunning();
+            if (isGameRunning && puppeteerComponent.isPuppeteerMarked) {
+                LOGGER.info("Puppeteer returned to body - keeping existing state");
+            } else {
+                LOGGER.info("Puppeteer reset - new game or new puppeteer assignment");
                 puppeteerComponent.reset();
-
+            }
         }
         
         // ==================== 示例：根据角色给予物品 ====================

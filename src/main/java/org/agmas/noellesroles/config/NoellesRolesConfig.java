@@ -132,4 +132,7 @@ public class NoellesRolesConfig {
 
     @SerialEntry(comment = "Thief - Blackout cooldown in seconds (time before can steal again after using blackout)")
     public int thiefBlackoutCooldown = 30;
+
+    @SerialEntry(comment = "Manipulator - Control target cooldown in seconds")
+    public int manipulatorCooldown = 60;
 }

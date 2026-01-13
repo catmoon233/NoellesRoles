@@ -120,6 +120,17 @@ public class ModItems {
             new HallucinationBottleItem(new Item.Properties().stacksTo(1).durability(2)),
             "hallucination_bottle");
 
+    /**
+     * 薄荷糖
+     * - 心理学家专属物品
+     * - 游戏开始时给予一个
+     * - 在商店可以花费100金币购买
+     * - 吃掉时恢复0.35的san值（35%）
+     */
+    public static final Item MINT_CANDIES = register(
+            new MintCandiesItem(new Item.Properties().stacksTo(16)),
+            "mint_candies");
+
 
 //    public static final Item SHERIFF_GUN_MAINTENANCE = register(
 //            new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),

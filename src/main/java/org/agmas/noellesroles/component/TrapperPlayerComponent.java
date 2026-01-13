@@ -270,14 +270,14 @@ public class TrapperPlayerComponent implements AutoSyncedComponent, ServerTickin
             serverVictim.displayClientMessage(
                 Component.translatable("message.noellesroles.trapper.trap_triggered", timeStr)
                     .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
-                false
+                true
             );
             
             if (count > 1) {
                 serverVictim.displayClientMessage(
                     Component.translatable("message.noellesroles.trapper.mark_count", count)
                         .withStyle(ChatFormatting.DARK_RED),
-                    false
+                    true
                 );
             }
         }

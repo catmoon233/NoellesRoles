@@ -34,7 +34,7 @@ public class BanditRevolverItem extends Item {
 
     public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player user, InteractionHand hand) {
         if (!user.isCreative()) {
-            user.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, 20);
+            user.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, 20*12);
         }
         if (world.isClientSide) {
             user.setXRot(user.getXRot() - 4.0F);
