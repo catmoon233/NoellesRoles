@@ -1,13 +1,10 @@
 package org.agmas.noellesroles.item;
 
-import org.agmas.noellesroles.ModItems;
-import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -22,6 +19,10 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.role.ModRoles;
+
+import java.util.List;
 
 /**
  * 加固门道具

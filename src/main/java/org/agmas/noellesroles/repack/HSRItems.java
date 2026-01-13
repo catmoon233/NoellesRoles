@@ -1,7 +1,6 @@
 package org.agmas.noellesroles.repack;
 
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,7 +9,6 @@ import net.minecraft.world.item.Item;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.repack.items.AntidoteItem;
 import org.agmas.noellesroles.repack.items.BanditRevolverItem;
-import org.agmas.noellesroles.repack.items.MasterKeyItem;
 import org.agmas.noellesroles.repack.items.ToxinItem;
 
 public class HSRItems {

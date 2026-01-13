@@ -2,11 +2,6 @@ package org.agmas.noellesroles.entity;
 
 import com.mojang.authlib.GameProfile;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import org.agmas.noellesroles.component.ModComponents;
-import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
-
-import java.util.Optional;
-import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,6 +13,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.agmas.noellesroles.component.ModComponents;
+import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
+
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 傀儡本体实体

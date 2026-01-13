@@ -1,12 +1,12 @@
 package org.agmas.noellesroles.client.screen;
 
-import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
 
 /**
  * 广播者输入屏幕 - 允许玩家输入广播消息

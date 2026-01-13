@@ -1,31 +1,15 @@
 package org.agmas.noellesroles.component;
 
 
-import dev.doctor4t.trainmurdermystery.TMM;
-import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
-import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import org.agmas.harpymodloader.Harpymodloader;
-import org.agmas.noellesroles.ModEntities;
-import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
-import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import org.agmas.harpymodloader.events.ModdedRoleAssigned;
-import org.jetbrains.annotations.NotNull;
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
-import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -40,6 +24,21 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import org.agmas.harpymodloader.Harpymodloader;
+import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.noellesroles.ModEntities;
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
+import org.agmas.noellesroles.role.ModRoles;
+import org.jetbrains.annotations.NotNull;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * 傀儡师组件
