@@ -3,6 +3,7 @@ package org.agmas.noellesroles.mixin.roles.framing;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import net.minecraft.world.entity.player.Player;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

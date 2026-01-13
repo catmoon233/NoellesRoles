@@ -2,9 +2,14 @@ package org.agmas.noellesroles.mixin.client.phantom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.doctor4t.ratatouille.client.render.feature.PlushOnHeadFeatureRenderer;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.LivingEntity;
+import org.agmas.noellesroles.AbilityPlayerComponent;
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;

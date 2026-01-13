@@ -1,5 +1,8 @@
 package org.agmas.noellesroles.mixin.client;
 
+import org.agmas.noellesroles.component.AdmirerPlayerComponent;
+import org.agmas.noellesroles.component.StalkerPlayerComponent;
+import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
@@ -11,9 +14,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import org.agmas.noellesroles.component.AdmirerPlayerComponent;
-import org.agmas.noellesroles.component.StalkerPlayerComponent;
-import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

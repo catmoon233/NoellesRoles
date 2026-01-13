@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
+import org.agmas.noellesroles.entity.ManipulatorBodyEntity;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.entity.RoleMineEntity;
 import org.agmas.noellesroles.entity.SmokeGrenadeEntity;
@@ -55,12 +56,26 @@ public class ModEntities {
                     .build());
 
     /**
+     * 操纵师本体实体 - 操纵师使用操控技能时生成的本体
+     */
+    public static final EntityType<ManipulatorBodyEntity> MANIPULATOR_BODY = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator_body"),
+            FabricEntityTypeBuilder.<ManipulatorBodyEntity>create(MobCategory.MISC, ManipulatorBodyEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.6F, 1.8F)) // 玩家尺寸
+                    .trackRangeBlocks(64)
+                    .trackedUpdateRate(2)
+                    .build());
+
+    /**
      * 初始化实体
      * 注册实体属性（LivingEntity 需要）
      */
     public static void init() {
         // 注册傀儡本体实体属性（LivingEntity 必须注册属性才能生成）
         FabricDefaultAttributeRegistry.register(PUPPETEER_BODY, LivingEntity.createLivingAttributes());
+        // 注册操纵师本体实体属性
+        FabricDefaultAttributeRegistry.register(MANIPULATOR_BODY, LivingEntity.createLivingAttributes());
     }
 
 

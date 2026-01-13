@@ -3,12 +3,12 @@ package org.agmas.noellesroles.role;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
-import net.minecraft.resources.ResourceLocation;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.noellesroles.Noellesroles;
 
 import java.awt.*;
 import java.util.HashMap;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * 角色定义类
@@ -99,7 +99,6 @@ public class ModRoles {
     // 自定义模组角色 ID - 杀手阵营
     public static final ResourceLocation CONSPIRATOR_ID = Noellesroles.id("conspirator");
     public static final ResourceLocation TRAPPER_ID = Noellesroles.id("trapper");
-    public static final ResourceLocation ILLUSIONIST_ID = Noellesroles.id("illusionist");
     public static final ResourceLocation MANIPULATOR_ID = Noellesroles.id("manipulator");
 
     // 自定义模组角色 ID - 中立阵营
@@ -363,11 +362,6 @@ public class ModRoles {
     public static Role TRAPPER;
 
     /**
-     * 迷幻师角色
-     */
-    public static Role ILLUSIONIST;
-
-    /**
      * 明星角色
      * - 属于乘客阵营 (isInnocent = true)
      * - 不能使用杀手能力 (canUseKiller = false)
@@ -601,17 +595,6 @@ public class ModRoles {
                 true // 隐藏计分板
         ));
 
-        // 迷幻师角色 - 杀手阵营
-        ILLUSIONIST = TMMRoles.registerRole(new Role(
-                ILLUSIONIST_ID, // 角色 ID
-                new Color(138, 43, 226).getRGB(), // 紫罗兰色 - 代表迷幻与神秘
-                false, // isInnocent = 非乘客阵营
-                true, // canUseKiller = 有杀手能力
-                Role.MoodType.FAKE, // 假心情
-                Integer.MAX_VALUE, // 无限冲刺
-                true // 隐藏计分板
-        ));
-
         // ==================== 注册中立阵营角色 ====================
 
 
@@ -696,9 +679,6 @@ public class ModRoles {
 
         // 傀儡师每局只能有 1 个
         Harpymodloader.setRoleMaximum(PUPPETEER_ID, 1);
-
-        // 迷幻师每局只能有 1 个
-        Harpymodloader.setRoleMaximum(ILLUSIONIST_ID, 1);
 
     }
 

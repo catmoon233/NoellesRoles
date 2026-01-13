@@ -1,6 +1,9 @@
 package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
+import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
+import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;

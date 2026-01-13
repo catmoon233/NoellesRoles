@@ -1,5 +1,7 @@
 package org.agmas.noellesroles.mixin.client;
 
+import org.agmas.noellesroles.component.BoxerPlayerComponent;
+import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.client.DeltaTracker;
@@ -9,8 +11,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
-import org.agmas.noellesroles.component.BoxerPlayerComponent;
-import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -1,10 +1,26 @@
 package org.agmas.noellesroles.mixin.roles.thief;
 
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerShopComponent.class)
 public abstract class ThiefShopMixin {

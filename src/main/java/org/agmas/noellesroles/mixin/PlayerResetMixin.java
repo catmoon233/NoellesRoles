@@ -2,9 +2,6 @@ package org.agmas.noellesroles.mixin;
 
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 
 /**
  * 玩家重置 Mixin

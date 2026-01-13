@@ -1,5 +1,8 @@
 package org.agmas.noellesroles.mixin.client;
 
+import org.agmas.noellesroles.component.ModComponents;
+import org.agmas.noellesroles.component.StarPlayerComponent;
+import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
@@ -8,9 +11,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import org.agmas.noellesroles.component.ModComponents;
-import org.agmas.noellesroles.component.StarPlayerComponent;
-import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

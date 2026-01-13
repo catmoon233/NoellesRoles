@@ -8,6 +8,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
+import java.util.List;
+
 public class NoellesRolesConfig {
     public static ConfigClassHandler<NoellesRolesConfig> HANDLER = ConfigClassHandler.createBuilder(NoellesRolesConfig.class)
             .id(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "config"))

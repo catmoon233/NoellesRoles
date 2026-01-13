@@ -68,6 +68,7 @@ import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
+import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -111,8 +112,6 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> ENGINEER_SHOP = new ArrayList<>();
     // ==================== 邮差商店 ====================
     public static ArrayList<ShopEntry> POSTMAN_SHOP = new ArrayList<>();
-    // ==================== 迷幻师商店 ====================
-    public static ArrayList<ShopEntry> ILLUSIONIST_SHOP = new ArrayList<>();
     // ==================== 心理学家商店 ====================
     public static ArrayList<ShopEntry> PSYCHOLOGIST_SHOP = new ArrayList<>();
 
@@ -278,13 +277,14 @@ public class Noellesroles implements ModInitializer {
             }
             return null; // 如果物品不存在，返回null
         });
-//        awesomeBinglusItems.add(() -> {
-//            final var albumItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("exposure:album"));
-//            if (albumItem != Items.AIR) {
-//                return albumItem.getDefaultInstance();
-//            }
-//            return null; // 如果物品不存在，返回null
-//        });
+        // awesomeBinglusItems.add(() -> {
+        // final var albumItem =
+        // BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("exposure:album"));
+        // if (albumItem != Items.AIR) {
+        // return albumItem.getDefaultInstance();
+        // }
+        // return null; // 如果物品不存在，返回null
+        // });
         INITIAL_ITEMS_MAP.put(ModRoles.AWESOME_BINGLUS, awesomeBinglusItems);
 
         // 心理学家初始物品
@@ -318,9 +318,9 @@ public class Noellesroles implements ModInitializer {
         柜子区的商店.add(new ShopEntry(
                 HSRItems.BANDIT_REVOLVER.getDefaultInstance(),
                 130,
-                ShopEntry.Type.TOOL
-        ));
-        柜子区的商店.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), TMMConfig.firecrackerPrice, ShopEntry.Type.TOOL));
+                ShopEntry.Type.TOOL));
+        柜子区的商店.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), TMMConfig.firecrackerPrice,
+                ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 60, ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(TMMItems.BODY_BAG.getDefaultInstance(), TMMConfig.bodyBagPrice, ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), TMMConfig.grenadePrice, ShopEntry.Type.TOOL));
@@ -378,16 +378,16 @@ public class Noellesroles implements ModInitializer {
                 });
 
         // 工程师商店
-        // 加固门 - 50金币
+        // 加固门 - 30金币
         ENGINEER_SHOP.add(new ShopEntry(
                 ModItems.REINFORCEMENT.getDefaultInstance(),
-                50,
+                30,
                 ShopEntry.Type.TOOL));
 
-        // 警报陷阱 - 125金币
+        // 警报陷阱 - 75金币
         ENGINEER_SHOP.add(new ShopEntry(
                 ModItems.ALARM_TRAP.getDefaultInstance(),
-                125,
+                75,
                 ShopEntry.Type.TOOL));
 
         // 邮差商店
@@ -396,8 +396,6 @@ public class Noellesroles implements ModInitializer {
                 ModItems.DELIVERY_BOX.getDefaultInstance(),
                 150,
                 ShopEntry.Type.TOOL));
-
-        // 迷幻师商店
 
         // 心理学家商店
         // 薄荷糖 - 100金币
@@ -422,7 +420,7 @@ public class Noellesroles implements ModInitializer {
                     ShopEntry.Type.TOOL));
 
             ShopContent.customEntries.put(
-                    ModRoles.ILLUSIONIST_ID, entries);
+                    ModRoles.MORPHLING_ID, entries);
         }
         ShopContent.customEntries.put(
                 ModRoles.POISONER_ID, HSRConstants.POISONER_SHOP_ENTRIES);
@@ -507,6 +505,12 @@ public class Noellesroles implements ModInitializer {
             ShopContent.customEntries.put(
                     ModRoles.PSYCHOLOGIST_ID, PSYCHOLOGIST_SHOP);
         }
+
+        // 操纵师商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.MANIPULATOR_ID, ShopContent.defaultEntries);
+        }
     }
 
     public static void registerPackets1() {
@@ -522,7 +526,8 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(ManipulatorC2SPacket.ID, ManipulatorC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID,
                 BanditRevolverShootPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID, new BanditRevolverShootPayload.Receiver());
+        ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID,
+                new BanditRevolverShootPayload.Receiver());
     }
 
     private void registerMaxRoleCount() {
@@ -551,13 +556,12 @@ public class Noellesroles implements ModInitializer {
     public void registerEvents() {
         ShouldDropOnDeath.EVENT.register(((itemStack) -> {
             final var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
-            if ("exposure:album".equals(key) || "exposure:photograph".equals(key)){
-                return true ;
+            if ("exposure:album".equals(key) || "exposure:photograph".equals(key)) {
+                return true;
             }
 
             return false;
         }));
-
 
         AllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (identifier == GameConstants.DeathReasons.FELL_OUT_OF_TRAIN)
@@ -629,6 +633,12 @@ public class Noellesroles implements ModInitializer {
                 ghostPlayerComponent.reset();
                 ghostPlayerComponent.sync();
             }
+            // 操纵师角色初始化
+            if (role.equals(ModRoles.MANIPULATOR)) {
+                ManipulatorPlayerComponent manipulatorPlayerComponent = ManipulatorPlayerComponent.KEY.get(player);
+                manipulatorPlayerComponent.reset();
+                manipulatorPlayerComponent.sync();
+            }
             // if (role.equals(SHERIFF)) {
             // player.giveItemStack(TMMItems.REVOLVER.getDefaultStack());
             // org.agmas.noellesroles.roles.sheriff.SheriffPlayerComponent
@@ -694,7 +704,7 @@ public class Noellesroles implements ModInitializer {
         //
         // });
 
-        // 监听玩家死亡事件 - 用于激活复仇者能力、拳击手反制和跟踪者免疫
+        // 监听玩家死亡事件 - 用于激活复仇者能力、拳击手反制、跟踪者免疫和操纵师死亡判定
         AllowPlayerDeath.EVENT.register((victim, deathReason) -> {
             // 检查拳击手无敌反制
             if (handleBoxerInvulnerability(victim, deathReason)) {
@@ -709,6 +719,11 @@ public class Noellesroles implements ModInitializer {
             // 检查傀儡师假人状态
             if (handlePuppeteerDeath(victim, deathReason)) {
                 return false; // 阻止死亡（假人死亡）
+            }
+
+            // 检查操纵师死亡判定
+            if (handleManipulatorDeath(victim, deathReason)) {
+                return false; // 阻止死亡（被操控玩家死亡）
             }
 
             // onPlayerDeath(victim, deathReason);
@@ -849,6 +864,51 @@ public class Noellesroles implements ModInitializer {
         return true; // 阻止真正死亡
     }
 
+    /**
+     * 处理操纵师死亡判定
+     *
+     * @param victim
+     * @param deathReason
+     * @return
+     */
+    private static boolean handleManipulatorDeath(Player victim, ResourceLocation deathReason) {
+        if (victim == null || victim.level().isClientSide())
+            return false;
+
+        ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(victim);
+
+        if (!manipulatorComp.isControlling)
+            return false;
+
+        if (!manipulatorComp.isBodyAlive()) {
+            return false;
+        }
+
+        if (!(victim instanceof ServerPlayer serverPlayer))
+            return false;
+
+        Player targetPlayer = victim.level().getPlayerByUUID(manipulatorComp.target);
+        if (targetPlayer == null) {
+            return false;
+        }
+
+        if (targetPlayer instanceof ServerPlayer serverTarget) {
+            GameFunctions.killPlayer(serverTarget, true, serverPlayer, deathReason);
+
+            serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.manipulator.target_died",
+                            targetPlayer.getName().getString())
+                            .withStyle(ChatFormatting.YELLOW),
+                    false);
+        }
+
+        manipulatorComp.stopControl(false);
+
+        serverPlayer.setHealth(serverPlayer.getMaxHealth());
+
+        return true;
+    }
+
     public void registerPackets() {
         // ServerPlayNetworking.registerGlobalReceiver(ThiefStealC2SPacket.ID, (payload,
         // context) -> {
@@ -955,14 +1015,14 @@ public class Noellesroles implements ModInitializer {
                 abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
                         NoellesRolesConfig.HANDLER.instance().manipulatorCooldown);
                 abilityPlayerComponent.sync();
-                
+
                 // 获取操纵师组件并设置目标
                 ManipulatorPlayerComponent manipulatorPlayerComponent = (ManipulatorPlayerComponent) ManipulatorPlayerComponent.KEY
                         .get(context.player());
                 manipulatorPlayerComponent.setTarget(payload.player());
             }
         });
-        
+
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.VULTURE_PACKET, (payload, context) -> {
             final var player = context.player();
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY

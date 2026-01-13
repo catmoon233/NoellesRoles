@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.mixin.client;
 
+import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
@@ -8,7 +9,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

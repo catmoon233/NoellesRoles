@@ -10,8 +10,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
-import org.agmas.noellesroles.packet.MorphC2SPacket;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
+import org.agmas.noellesroles.packet.MorphC2SPacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;

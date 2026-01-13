@@ -1,6 +1,10 @@
 package org.agmas.noellesroles.screen;
 
 
+import org.agmas.noellesroles.component.DetectivePlayerComponent;
+import org.agmas.noellesroles.component.ModComponents;
+
+import java.util.UUID;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -9,10 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.agmas.noellesroles.component.DetectivePlayerComponent;
-import org.agmas.noellesroles.component.ModComponents;
-
-import java.util.UUID;
 
 /**
  * 私家侦探审查界面的 ScreenHandler

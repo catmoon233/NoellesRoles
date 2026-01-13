@@ -1,9 +1,27 @@
 package org.agmas.noellesroles.client;
 
+import org.agmas.noellesroles.AbilityPlayerComponent;
+import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.ModEntities;
+import org.agmas.noellesroles.Noellesroles;
+
+import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
+import org.agmas.noellesroles.client.renderer.ManipulatorBodyEntityRenderer;
+import org.agmas.noellesroles.client.renderer.PuppeteerBodyEntityRenderer;
+import org.agmas.noellesroles.client.screen.ConspiratorScreen;
+import org.agmas.noellesroles.client.screen.DetectiveInspectScreen;
+import org.agmas.noellesroles.client.screen.PostmanHandledScreen;
+import org.agmas.noellesroles.client.screen.TelegrapherScreen;
+
+import org.agmas.noellesroles.component.*;
+import org.agmas.noellesroles.item.ConspiracyPageItem;
+import org.agmas.noellesroles.packet.*;
+import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
@@ -12,19 +30,9 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.agmas.noellesroles.AbilityPlayerComponent;
-import org.agmas.noellesroles.ModEntities;
-import org.agmas.noellesroles.ModItems;
-import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
-import org.agmas.noellesroles.client.renderer.PuppeteerBodyEntityRenderer;
-import org.agmas.noellesroles.client.screen.ConspiratorScreen;
-import org.agmas.noellesroles.client.screen.DetectiveInspectScreen;
-import org.agmas.noellesroles.client.screen.PostmanHandledScreen;
-import org.agmas.noellesroles.component.*;
-import org.agmas.noellesroles.item.ConspiracyPageItem;
-import org.agmas.noellesroles.packet.*;
-import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
+import org.lwjgl.glfw.GLFW;
+
 
 import static org.agmas.noellesroles.client.NoellesrolesClient.abilityBind;
 
@@ -510,6 +518,9 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
 
         // 傀儡本体实体渲染器 - 使用玩家皮肤渲染
         EntityRendererRegistry.register(ModEntities.PUPPETEER_BODY, PuppeteerBodyEntityRenderer::new);
+        
+        // 操纵师本体实体渲染器 - 使用玩家皮肤渲染
+        EntityRendererRegistry.register(ModEntities.MANIPULATOR_BODY, ManipulatorBodyEntityRenderer::new);
     }
 
     /**

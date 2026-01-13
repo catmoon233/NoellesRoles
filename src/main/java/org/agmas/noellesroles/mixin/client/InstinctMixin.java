@@ -7,8 +7,10 @@ import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -27,13 +29,45 @@ public abstract class InstinctMixin {
 
     @Inject(method = "isInstinctEnabled", at = @At("HEAD"), cancellable = true)
     private static void b(CallbackInfoReturnable<Boolean> cir) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(Minecraft.getInstance().player.level());
-        if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.JESTER)) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
+        
+        // 检查玩家是否正在被操纵师控制 - 如果是，禁止使用杀手本能
+        if (noellesroles$isPlayerBeingControlled(player)) {
+            cir.setReturnValue(false);
+            cir.cancel();
+            return;
+        }
+        
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
+        if (gameWorldComponent.isRole(player, ModRoles.JESTER)) {
             if (instinctKeybind.isDown()) {
                 cir.setReturnValue(true);
                 cir.cancel();
             }
         }
+    }
+    
+    /**
+     * 检查玩家是否正在被操纵师控制
+     */
+    @Unique
+    private static boolean noellesroles$isPlayerBeingControlled(Player player) {
+        if (player == null) return false;
+        
+        // 遍历所有玩家，检查是否有操纵师正在控制当前玩家
+        for (Player otherPlayer : player.level().players()) {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(otherPlayer.level());
+            if (gameWorldComponent.isRole(otherPlayer, ModRoles.MANIPULATOR)) {
+                ManipulatorPlayerComponent manipulatorComponent = ManipulatorPlayerComponent.KEY.get(otherPlayer);
+                if (manipulatorComponent.isControlling &&
+                    manipulatorComponent.target != null &&
+                    manipulatorComponent.target.equals(player.getUUID())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Inject(method = "getInstinctHighlight", at = @At("HEAD"), cancellable = true)
@@ -86,10 +120,12 @@ public abstract class InstinctMixin {
                     cir.cancel();
                 }
             }
-            if (!((Player)target).isSpectator() && TMMClient.isInstinctEnabled()) {
-                if (gameWorldComponent.isRole((Player) target, ModRoles.JESTER) && TMMClient.isKiller() && TMMClient.isPlayerAliveAndInSurvival()) {
-                    cir.setReturnValue(Color.PINK.getRGB());
-                    cir.cancel();
+            if (!((Player)target).isSpectator() && TMMClient.isInstinctEnabled() ) {
+                if (gameWorldComponent.getRole( target.getUUID())!=null && gameWorldComponent.getRole( target.getUUID())!=ModRoles.GHOST) {
+                    if (gameWorldComponent.isRole((Player) target, ModRoles.JESTER) && TMMClient.isKiller() && TMMClient.isPlayerAliveAndInSurvival()) {
+                        cir.setReturnValue(Color.PINK.getRGB());
+                        cir.cancel();
+                    }
                 }
             }
             // 小透明：杀手无法看到高亮
