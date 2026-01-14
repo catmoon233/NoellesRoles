@@ -239,7 +239,12 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
     }
     
     // ==================== Tick 处理 ====================
-    
+
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
+
     @Override
     public void serverTick() {
         // 减少冷却时间

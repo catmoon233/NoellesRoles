@@ -36,7 +36,7 @@ import net.minecraft.world.entity.player.Player;
  * - 处理猜测结果
  */
 public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-    
+
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<ConspiratorPlayerComponent> KEY = ModComponents.CONSPIRATOR;
     
@@ -142,7 +142,7 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
             serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.conspirator.correct", targetName)
                     .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
-                false
+                true
             );
             
             // 通知目标玩家他们被诅咒了（但不告诉是谁）
@@ -150,7 +150,7 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
                 targetServer.displayClientMessage(
                     Component.translatable("message.noellesroles.conspirator.cursed")
                         .withStyle(ChatFormatting.DARK_PURPLE),
-                    false
+                    true
                 );
             }
             

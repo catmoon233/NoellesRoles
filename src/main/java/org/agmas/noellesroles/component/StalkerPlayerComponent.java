@@ -35,7 +35,10 @@ import net.minecraft.world.phys.Vec3;
  * - 三阶段（狂暴追击者）：蓄力突进处决
  */
 public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<StalkerPlayerComponent> KEY = ModComponents.STALKER;
 

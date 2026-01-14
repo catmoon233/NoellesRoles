@@ -1,5 +1,6 @@
 package org.agmas.noellesroles;
 
+import dev.architectury.event.events.common.PlayerEvent;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -71,6 +72,7 @@ import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.jetbrains.annotations.NotNull;
+import org.ladysnake.cca.api.v3.entity.PlayerSyncCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -410,6 +412,10 @@ public class Noellesroles implements ModInitializer {
         ShopContent.register();
         {
             ShopContent.customEntries.put(
+                    ModRoles.MANIPULATOR_ID, ShopContent.defaultEntries);
+        }
+        {
+            ShopContent.customEntries.put(
                     ModRoles.EXECUTIONER_ID, 柜子区的商店);
         }
         {
@@ -449,6 +455,7 @@ public class Noellesroles implements ModInitializer {
                     ModRoles.NOISEMAKER_ID, entries);
 
         }
+
         // {
         // List<ShopEntry> entries = new ArrayList<>();
         // entries.add(new ShopEntry(ModItems.SHERIFF_GUN_MAINTENANCE.getDefaultStack(),
@@ -507,10 +514,7 @@ public class Noellesroles implements ModInitializer {
         }
 
         // 操纵师商店
-        {
-            ShopContent.customEntries.put(
-                    ModRoles.MANIPULATOR_ID, ShopContent.defaultEntries);
-        }
+
     }
 
     public static void registerPackets1() {
@@ -565,6 +569,12 @@ public class Noellesroles implements ModInitializer {
 
         AllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (identifier == GameConstants.DeathReasons.FELL_OUT_OF_TRAIN)
+                return true;
+            if (identifier.getPath().equals("disconnected"))
+                return true;
+            if (identifier.getPath().equals("ignited"))
+                return true;
+            if (identifier.getPath().equals("failed_ignite"))
                 return true;
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.level());
             if (gameWorldComponent.isRole(playerEntity, ModRoles.JESTER)) {
@@ -910,6 +920,7 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerPackets() {
+
         // ServerPlayNetworking.registerGlobalReceiver(ThiefStealC2SPacket.ID, (payload,
         // context) -> {
         // GameWorldComponent gameWorldComponent =

@@ -48,7 +48,10 @@ public class ManipulatorPlayerComponent implements AutoSyncedComponent, ServerTi
     public static final ComponentKey<ManipulatorPlayerComponent> KEY = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator"),
             ManipulatorPlayerComponent.class);
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     public static final int CONTROL_DURATION = 50 * 20;
 
     public static final int CONTROL_COOLDOWN = 60 * 20;

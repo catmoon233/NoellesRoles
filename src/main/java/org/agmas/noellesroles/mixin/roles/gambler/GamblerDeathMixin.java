@@ -41,6 +41,8 @@ public class GamblerDeathMixin {
 
 	@Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At("HEAD"), cancellable = true)
 	private static void onGamblerDeath(Player victim, boolean spawnBody, Player killer, ResourceLocation identifier, CallbackInfo ci) {
+		if (identifier.getPath().equals("fell_out_of_train"))return;
+		if (identifier.getPath().equals("disconnected"))return;
 		final var world = victim.level();
 		if (world.isClientSide)return;
 		GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(world);

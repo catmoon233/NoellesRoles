@@ -2,6 +2,7 @@ package org.agmas.noellesroles.roles.executioner;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.server.level.ServerPlayer;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.role.ModRoles;
@@ -28,7 +29,10 @@ public class ExecutionerPlayerComponent implements AutoSyncedComponent, ServerTi
     public boolean won = false;
     public boolean targetSelected = false;
     public boolean shopUnlocked = false;
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /**
      * 重置组件状态
      */

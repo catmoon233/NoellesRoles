@@ -39,7 +39,10 @@ import net.minecraft.world.phys.Vec3;
  * - 囚禁时间递增：3秒 -> 10秒 -> 25秒
  */
 public class TrapperPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<TrapperPlayerComponent> KEY = ModComponents.TRAPPER;
     
@@ -316,7 +319,7 @@ public class TrapperPlayerComponent implements AutoSyncedComponent, ServerTickin
         // 只在设陷者角色时处理
         if (!isActiveTrapper()) return;
 
-        tickR++;
+        ++tickR;
         if (tickR % 20 == 0) {
             sync();
         }

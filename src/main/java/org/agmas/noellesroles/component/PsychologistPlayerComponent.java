@@ -32,7 +32,10 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
 
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<PsychologistPlayerComponent> KEY = ModComponents.PSYCHOLOGIST;
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     // ==================== 常量定义 ====================
 
     /** 治疗持续时间（10秒 = 200 tick） */
@@ -137,7 +140,7 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
         if (target.getUUID().equals(player.getUUID())) {
             player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.cannot_heal_self"),
                     true);
-            return false;
+            return true;
         }
 
         // 检查目标是否存活
@@ -150,7 +153,7 @@ public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerT
         // 检查距离
         if (player.distanceToSqr(target) > MAX_HEALING_DISTANCE * MAX_HEALING_DISTANCE) {
             player.displayClientMessage(Component.translatable("message.noellesroles.psychologist.too_far"), true);
-            return false;
+            return true;
         }
 
         // 开始治疗

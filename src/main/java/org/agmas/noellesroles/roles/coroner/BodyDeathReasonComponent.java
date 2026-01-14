@@ -46,6 +46,6 @@ public class BodyDeathReasonComponent implements AutoSyncedComponent, ServerTick
 
     @Override
     public void serverTick() {
-        this.sync();
+
     }
 }

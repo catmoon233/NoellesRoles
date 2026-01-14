@@ -20,7 +20,10 @@ import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
  * - 刀使用后（击杀一人）刀消失
  */
 public class VeteranPlayerComponent implements AutoSyncedComponent {
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<VeteranPlayerComponent> KEY = ModComponents.VETERAN;
     

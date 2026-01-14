@@ -49,7 +49,10 @@ import net.minecraft.world.phys.Vec3;
  * - 阶段二（杀手阶段）：制造假人，操控假人
  */
 public class PuppeteerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<PuppeteerPlayerComponent> KEY = ModComponents.PUPPETEER;
     

@@ -1,6 +1,7 @@
 package org.agmas.noellesroles;
 
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -23,7 +24,10 @@ public class AbilityPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.cooldown = 0;
         this.sync();
     }
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     public AbilityPlayerComponent(Player player) {
         this.player = player;
     }
@@ -35,12 +39,15 @@ public class AbilityPlayerComponent implements AutoSyncedComponent, ServerTickin
     public void clientTick() {
     }
 
+    public static int tickR = 0;
+
     public void serverTick() {
         if (this.cooldown > 0) {
             --this.cooldown;
-
-            this.sync();
-        }
+            if (++tickR % 20 == 0) {
+                this.sync();
+            }
+            }
     }
 
     public void setCooldown(int ticks) {

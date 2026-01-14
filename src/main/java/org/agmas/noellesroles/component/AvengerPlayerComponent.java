@@ -66,7 +66,10 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.bound = false;
         this.sync();
     }
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /**
      * 绑定目标玩家
      * 

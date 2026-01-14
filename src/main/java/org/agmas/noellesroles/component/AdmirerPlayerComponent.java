@@ -43,7 +43,10 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
     
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<AdmirerPlayerComponent> KEY = ModComponents.ADMIRER;
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     // ==================== 常量定义 ====================
     
     /** 进阶所需能量 */
@@ -169,6 +172,7 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
             dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent shopComponent =
                 dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY.get(player);
             shopComponent.addToBalance(200);
+            shopComponent.sync();
         }
         if (Harpymodloader.VANNILA_ROLES.contains(gameWorld.getRole(player))) {
             ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS.indexOf(gameWorld.isRole(player, TMMRoles.KILLER) ? RoleAnnouncementTexts.KILLER : (gameWorld.isRole(player, TMMRoles.VIGILANTE) ? RoleAnnouncementTexts.VIGILANTE : RoleAnnouncementTexts.CIVILIAN)), gameWorld.getAllKillerTeamPlayers().size(), 0));

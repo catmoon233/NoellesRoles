@@ -26,7 +26,10 @@ public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickin
     
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<AthletePlayerComponent> KEY = ModComponents.ATHLETE;
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     // ==================== 常量定义 ====================
     
     /** 使用后冷却时间（120秒 = 2400 tick） */

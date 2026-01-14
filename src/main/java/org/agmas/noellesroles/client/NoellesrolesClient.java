@@ -62,24 +62,24 @@ public class NoellesrolesClient implements ClientModInitializer {
     public void onInitializeClient() {
 
         for (Role role : TMMRoles.ROLES) {
-            if (role.identifier().equals(ModRoles.MORPHLING_ID)) {
-                role.addChild(
-                        limitedInventoryScreen -> {
-                            List<AbstractClientPlayer> entries = Minecraft.getInstance().level.players();
-                            entries.removeIf((e) -> e.getUUID().equals(Minecraft.getInstance().player.getUUID()));
-                            int apart = 36;
-                            int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
-                            int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
-                            int y = shouldBeY + 80;
-
-                            for (int i = 0; i < entries.size(); ++i) {
-                                MorphlingPlayerWidget child = new MorphlingPlayerWidget(limitedInventoryScreen,
-                                        x + apart * i, y, entries.get(i), i);
-                                limitedInventoryScreen.addRenderableWidget(child);
-                            }
-
-                        });
-            }
+//            if (role.identifier().equals(ModRoles.MORPHLING_ID)) {
+//                role.addChild(
+//                        limitedInventoryScreen -> {
+//                            List<AbstractClientPlayer> entries = Minecraft.getInstance().level.players();
+//                            entries.removeIf((e) -> e.getUUID().equals(Minecraft.getInstance().player.getUUID()));
+//                            int apart = 36;
+//                            int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
+//                            int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
+//                            int y = shouldBeY + 80;
+//
+//                            for (int i = 0; i < entries.size(); ++i) {
+//                                MorphlingPlayerWidget child = new MorphlingPlayerWidget(limitedInventoryScreen,
+//                                        x + apart * i, y, entries.get(i), i);
+//                                limitedInventoryScreen.addRenderableWidget(child);
+//                            }
+//
+//                        });
+//            }
 
 //            if (role.identifier().equals(ModRoles.THIEF_ID)) {
 //                role.addChild(limitedInventoryScreen -> {

@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.roles.voodoo;
 
+import net.minecraft.server.level.ServerPlayer;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -16,7 +17,10 @@ public class VoodooPlayerComponent implements AutoSyncedComponent {
     public static final ComponentKey<VoodooPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "voodoo"), VoodooPlayerComponent.class);
     private final Player player;
     public UUID target;
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     public void reset() {
         this.target = player.getUUID();
         this.sync();

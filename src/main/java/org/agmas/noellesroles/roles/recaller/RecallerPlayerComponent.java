@@ -3,6 +3,7 @@ package org.agmas.noellesroles.roles.recaller;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,10 @@ public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTicki
     public double x = 0;
     public double y = 0;
     public double z = 0;
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     public void reset() {
         this.placed = false;
         this.x = 0;
@@ -40,7 +44,7 @@ public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTicki
     }
 
     public void serverTick() {
-        this.sync();
+
     }
 
     public void setPosition() {
@@ -53,7 +57,7 @@ public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTicki
 
 
     public void teleport() {
-        player.moveTo(x,y,z);
+        player.teleportTo(x,y,z);
         placed = false;
         this.sync();
     }

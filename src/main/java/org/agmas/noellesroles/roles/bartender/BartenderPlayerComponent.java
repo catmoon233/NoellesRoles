@@ -1,12 +1,16 @@
 package org.agmas.noellesroles.roles.bartender;
 
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -26,6 +30,12 @@ public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTick
         this.sync();
     }
 
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        final var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        return gameWorldComponent.isRole(player, ModRoles.BARTENDER) && GameFunctions.isPlayerAliveAndSurvival( player);
+    }
+
     public BartenderPlayerComponent(Player player) {
         this.player = player;
     }
@@ -36,13 +46,17 @@ public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTick
 
     public void clientTick() {
     }
-
+    public static int tick_ = 0;
     public void serverTick() {
         if (this.glowTicks > 0) {
             --this.glowTicks;
+            if (++tick_ % 20 == 0) {
+                this.sync();
+            }
+
 
         }
-        this.sync();
+
     }
 
     public boolean giveArmor() {

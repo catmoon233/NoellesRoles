@@ -19,8 +19,11 @@ public abstract class CoronerAddDeathReasonMixin {
     private static void setDeathReason(Player victim, boolean spawnBody, Player killer, ResourceLocation identifier, CallbackInfo ci, @Local PlayerBodyEntity playerBodyEntity) {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
         if (gameWorldComponent.getRole(victim) == null) return;
-        (BodyDeathReasonComponent.KEY.get(playerBodyEntity)).deathReason = identifier;
-        (BodyDeathReasonComponent.KEY.get(playerBodyEntity)).playerRole = gameWorldComponent.getRole(victim).identifier();
+        final var bodyDeathReasonComponent = BodyDeathReasonComponent.KEY.get(playerBodyEntity);
+        bodyDeathReasonComponent.deathReason = identifier;
+        bodyDeathReasonComponent.playerRole = gameWorldComponent.getRole(victim).identifier();
+        bodyDeathReasonComponent.sync();
+
     }
 
 }

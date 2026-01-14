@@ -18,7 +18,10 @@ import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
  * - 管理匿名消息发送
  */
 public class TelegrapherPlayerComponent implements AutoSyncedComponent {
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<TelegrapherPlayerComponent> KEY = ModComponents.TELEGRAPHER;
     

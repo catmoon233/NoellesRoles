@@ -28,7 +28,10 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * 明星为好人阵营（乘客阵营）
  */
 public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<StarPlayerComponent> KEY = ModComponents.STAR;
     

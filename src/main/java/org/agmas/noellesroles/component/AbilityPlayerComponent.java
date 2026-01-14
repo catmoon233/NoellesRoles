@@ -2,6 +2,7 @@ package org.agmas.noellesroles.component;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -21,7 +22,11 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 自动同步到客户端（用于 HUD 显示）
  */
 public class AbilityPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
-    
+
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<AbilityPlayerComponent> KEY = ModComponents.ABILITY;
     

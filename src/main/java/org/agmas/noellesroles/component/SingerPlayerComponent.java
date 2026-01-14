@@ -30,7 +30,10 @@ import net.minecraft.world.entity.player.Player;
  * 歌手为好人阵营（乘客阵营）
  */
 public class SingerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<SingerPlayerComponent> KEY = ModComponents.SINGER;
 

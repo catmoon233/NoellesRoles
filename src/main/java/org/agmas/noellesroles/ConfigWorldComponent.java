@@ -62,6 +62,6 @@ public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingC
             if (world.getServer() != null)
                 masterKeyIsVisible =  world.getServer().getPlayerList().getPlayerCount() >= NoellesRolesConfig.HANDLER.instance().playerCountToMakeConducterKeyVisible;
         }
-        this.sync();
+
     }
 }

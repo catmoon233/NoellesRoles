@@ -18,7 +18,10 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 目标玩家移动检测
  */
 public class DetectivePlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-    
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<DetectivePlayerComponent> KEY = ModComponents.DETECTIVE;
     

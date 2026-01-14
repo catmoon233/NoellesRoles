@@ -3,6 +3,7 @@ package org.agmas.noellesroles.roles.gambler;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,10 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
 	public static final ComponentKey<GamblerPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "gambler"), GamblerPlayerComponent.class);
 	private final Player player;
 	public boolean usedAbility = false;
-
+	@Override
+	public boolean shouldSyncWith(ServerPlayer player) {
+		return player == this.player;
+	}
 	public void reset() {
 		this.usedAbility = false;
 		this.sync();
@@ -34,7 +38,7 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
 	}
 
 	public void serverTick() {
-		sync();
+
 	}
 
 	public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {

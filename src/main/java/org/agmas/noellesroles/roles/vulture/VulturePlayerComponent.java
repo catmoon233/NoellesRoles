@@ -3,6 +3,7 @@ package org.agmas.noellesroles.roles.vulture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,10 @@ public class VulturePlayerComponent implements AutoSyncedComponent, ServerTickin
     public int bodiesEaten = 0;
     public int bodiesRequired = 0;
 
-
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
     public void reset() {
         this.bodiesEaten = 0;
         this.bodiesRequired = 0;
@@ -39,7 +43,7 @@ public class VulturePlayerComponent implements AutoSyncedComponent, ServerTickin
     }
 
     public void serverTick() {
-        sync();
+
     }
 
 

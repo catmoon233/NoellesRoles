@@ -40,7 +40,10 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
     public void clientTick() {
     }
 
+
+    public static int tickR = 0;
     public void serverTick() {
+        ++tickR;
         if (this.morphTicks > 0 && disguise != null) {
             if (player.level().getPlayerByUUID(disguise) != null) {
                 if (((ServerPlayer)player.level().getPlayerByUUID(disguise)).gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
@@ -53,11 +56,16 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
                 this.stopMorph();
             }
 
-            this.sync();
+            if (tickR % 20 == 0) {
+                this.sync();
+            }
         }
         if (this.morphTicks < 0) {
             this.morphTicks++;
-            this.sync();
+            if (tickR % 20 == 0) {
+                this.sync();
+            }
+
         }
     }
 
