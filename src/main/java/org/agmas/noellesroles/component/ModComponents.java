@@ -122,6 +122,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                         .getOrCreate(
                                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "better_vigilante"),
                                         BetterVigilantePlayerComponent.class);
+        public static final ComponentKey<RecorderPlayerComponent> RECORDER = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "recorder"),
+                        RecorderPlayerComponent.class);
 
         public ModComponents() {
                 // CCA 需要无参构造函数
@@ -257,6 +260,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 registry.beginRegistration(Player.class, BETTER_VIGILANTE)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(BetterVigilantePlayerComponent::new);
+                // 注册记录员组件 - 存储猜测记录和可用角色
+                registry.beginRegistration(Player.class, RECORDER)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(RecorderPlayerComponent::new);
 
                 // ==================== 示例：注册更多组件 ====================
                 //

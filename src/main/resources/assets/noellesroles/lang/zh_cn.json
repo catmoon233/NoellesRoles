@@ -481,5 +481,26 @@
   "death_reason.noellesroles.puppeteer_puppet": "被傀儡殺死。",
   "==================== 薄荷糖物品 ====================": "",
   "item.noellesroles.mint_candies": "薄荷糖",
+  "item.noellesroles.mint_candies.tooltip": "食用後恢復35%的san值",
+
+  "==================== 记录员角色 ====================": "",
+  "announcement.role.recorder": "记录员",
+  "announcement.goals.recorder": "使用记录笔记猜测其他玩家的角色。如果猜对人数达到总人数的40%，你将获得独立胜利！",
+  "announcement.win.recorder": "记录员胜利！",
+
+  "item.noellesroles.written_note": "记录笔记",
+  "item.noellesroles.written_note.tooltip": "右键使用来记录玩家的身份",
+
+  "screen.noellesroles.recorder.title": "记录笔记",
+  "screen.noellesroles.recorder.select_player": "选择目标玩家",
+  "screen.noellesroles.recorder.select_role": "记录 %s 的角色",
+  "screen.noellesroles.recorder.hint": "按 ESC 返回或取消",
+
+  "message.noellesroles.recorder.already_guessed": "你已经记录过这个玩家了！",
+  "message.noellesroles.recorder.correct_guess": "记录正确！",
+  "message.noellesroles.recorder.wrong_guess": "记录错误！(%s/%s)",
+  "message.noellesroles.recorder.died_from_mistakes": "你因记录错误太多而死亡！",
+  "message.noellesroles.recorder.win": "记录员 %s 完成了所有记录，获得胜利！",
+  "death_reason.noellesroles.recorder_mistake": "因记录错误而死。",
   "item.noellesroles.mint_candies.tooltip": "食用後恢復35%的san值"
 }

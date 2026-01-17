@@ -8,13 +8,11 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
 import org.agmas.noellesroles.client.renderer.ManipulatorBodyEntityRenderer;
 import org.agmas.noellesroles.client.renderer.PuppeteerBodyEntityRenderer;
-import org.agmas.noellesroles.client.screen.ConspiratorScreen;
-import org.agmas.noellesroles.client.screen.DetectiveInspectScreen;
-import org.agmas.noellesroles.client.screen.PostmanHandledScreen;
-import org.agmas.noellesroles.client.screen.TelegrapherScreen;
+import org.agmas.noellesroles.client.screen.*;
 
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.item.ConspiracyPageItem;
+import org.agmas.noellesroles.item.WrittenNoteItem;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -117,6 +115,12 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             if (client.player == null)
                 return;
             client.setScreen(new ConspiratorScreen());
+        };
+        WrittenNoteItem.openScreenCallback = () -> {
+            Minecraft client = Minecraft.getInstance();
+            if (client.player == null)
+                return;
+            client.setScreen(new RecorderScreen());
         };
     }
 

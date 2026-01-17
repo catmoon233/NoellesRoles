@@ -103,6 +103,7 @@ public class Noellesroles implements ModInitializer {
     public static final ArrayList<ResourceLocation> VANNILA_ROLE_IDS = new ArrayList<>();
     public static final CustomPacketPayload.Type<ExecutionerSelectTargetC2SPacket> EXECUTIONER_SELECT_TARGET_PACKET = ExecutionerSelectTargetC2SPacket.ID;
     public static final CustomPacketPayload.Type<InsaneKillerAbilityC2SPacket> INSANE_KILLER_ABILITY_PACKET = InsaneKillerAbilityC2SPacket.ID;
+    public static final CustomPacketPayload.Type<RecorderC2SPacket> RECORDER_PACKET = RecorderC2SPacket.TYPE;
 
     // ==================== 商店项目列表 ====================
     public static ArrayList<ShopEntry> FRAMING_ROLES_SHOP = new ArrayList<>();
@@ -180,7 +181,7 @@ public class Noellesroles implements ModInitializer {
         HSRSounds.init();
 
         // 设置角色最大数量
-        Harpymodloader.setRoleMaximum(ModRoles.BANDIT, 0);
+
         Harpymodloader.setRoleMaximum(ModRoles.POISONER, 0);
         Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
         Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 1);
@@ -233,7 +234,7 @@ public class Noellesroles implements ModInitializer {
         List<Supplier<ItemStack>> banditItems = new ArrayList<>();
         banditItems.add(() -> HSRItems.BANDIT_REVOLVER.getDefaultInstance());
         banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
-        INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
+        // INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
 
         // 随从初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
@@ -251,7 +252,7 @@ public class Noellesroles implements ModInitializer {
 
         // 改良型民兵初始物品
         List<Supplier<ItemStack>> betterVigilanteItems = new ArrayList<>();
-        betterVigilanteItems.add(() -> TMMItems.GRENADE.getDefaultInstance());
+        betterVigilanteItems.add(ModItems.WRITTEN_NOTE::getDefaultInstance);
         INITIAL_ITEMS_MAP.put(ModRoles.BETTER_VIGILANTE, betterVigilanteItems);
 
         // 小丑初始物品
@@ -393,6 +394,10 @@ public class Noellesroles implements ModInitializer {
                 ModItems.ALARM_TRAP.getDefaultInstance(),
                 75,
                 ShopEntry.Type.TOOL));
+        ENGINEER_SHOP.add(new ShopEntry(
+                ModItems.MASTER_KEY_P.getDefaultInstance(),
+                90,
+                ShopEntry.Type.TOOL));
 
         // 邮差商店
         // 传递盒 - 250金币
@@ -438,8 +443,8 @@ public class Noellesroles implements ModInitializer {
         // ShopContent.customEntries.put(
         // POISONER_ID, ShopContent.defaultEntries
         // );
-        ShopContent.customEntries.put(
-                ModRoles.BANDIT_ID, HSRConstants.BANDIT_SHOP_ENTRIES);
+        // ShopContent.customEntries.put(
+        // ModRoles.BANDIT_ID, HSRConstants.BANDIT_SHOP_ENTRIES);
         ShopContent.customEntries.put(
                 ModRoles.JESTER_ID, Noellesroles.FRAMING_ROLES_SHOP);
         {
@@ -535,6 +540,7 @@ public class Noellesroles implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID,
                 new BanditRevolverShootPayload.Receiver());
         PayloadTypeRegistry.playC2S().register(InsaneKillerAbilityC2SPacket.ID, InsaneKillerAbilityC2SPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(RecorderC2SPacket.TYPE, RecorderC2SPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {
@@ -1183,7 +1189,7 @@ public class Noellesroles implements ModInitializer {
                     PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
 
                     if (gameWorldComponent.isRole(context.player(), ModRoles.BROADCASTER)) {
-                        if (playerShopComponent.balance < 100) {
+                        if (playerShopComponent.balance < 75) {
                             context.player().displayClientMessage(
                                     Component.translatable("message.noellesroles.insufficient_funds"),
                                     true);
@@ -1260,6 +1266,7 @@ public class Noellesroles implements ModInitializer {
             component.toggleAbility();
             component.sync();
         });
+        ServerPlayNetworking.registerGlobalReceiver(RecorderC2SPacket.TYPE, RecorderC2SPacket::handle);
     }
 
     /**
