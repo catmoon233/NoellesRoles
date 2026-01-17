@@ -63,7 +63,9 @@
     "noellesroles:veteran",
     "noellesroles:singer",
     "noellesroles:psychologist",
-    "noellesroles:puppeteer"
+    "noellesroles:puppeteer",
+    "noellesroles:better_vigilante",
+    "noellesroles:insane_killer"
   ]
   },
   "mixins": [

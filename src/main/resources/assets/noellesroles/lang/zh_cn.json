@@ -1,7 +1,7 @@
 {
   "announcement.goals.awesome_binglus": "你有超多便条，随便写吧",
   "announcement.goals.bartender": "能透过墙壁看到正在喝酒的玩家！",
-  "announcement.goals.better_vigilante": "Uhhhhhhhhhhhhh",
+  "announcement.goals.better_vigilante": "当场上剩余的平民+义警数量不大于2时，你将获得武器进行最后的反击！",
   "announcement.goals.broadcaster": "向所有玩家广播消息。",
   "announcement.goals.conductor": "使用万能钥匙打开列车上的所有门！",
   "announcement.goals.coroner": "从尸体上获取信息。",
@@ -20,7 +20,7 @@
   "announcement.goals.vulture": "吃掉尸体以转变为杀手。",
   "announcement.role.awesome_binglus": "记者",
   "announcement.role.bartender": "酒保",
-  "announcement.role.better_vigilante": "更好的召回者",
+  "announcement.role.better_vigilante": "红海军",
   "announcement.role.broadcaster": "广播员",
   "announcement.role.conductor": "船长",
   "announcement.role.photographer": "摄影师",

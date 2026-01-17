@@ -47,6 +47,7 @@ import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.component.BoxerPlayerComponent;
+import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
@@ -101,6 +102,7 @@ public class Noellesroles implements ModInitializer {
     public static final ArrayList<Role> VANNILA_ROLES = new ArrayList<>();
     public static final ArrayList<ResourceLocation> VANNILA_ROLE_IDS = new ArrayList<>();
     public static final CustomPacketPayload.Type<ExecutionerSelectTargetC2SPacket> EXECUTIONER_SELECT_TARGET_PACKET = ExecutionerSelectTargetC2SPacket.ID;
+    public static final CustomPacketPayload.Type<InsaneKillerAbilityC2SPacket> INSANE_KILLER_ABILITY_PACKET = InsaneKillerAbilityC2SPacket.ID;
 
     // ==================== 商店项目列表 ====================
     public static ArrayList<ShopEntry> FRAMING_ROLES_SHOP = new ArrayList<>();
@@ -359,10 +361,10 @@ public class Noellesroles implements ModInitializer {
                 150,
                 ShopEntry.Type.TOOL));
 
-        // 烟雾弹 - 300金币
+        // 烟雾弹 - 150金币
         SLIPPERY_GHOST_SHOP.add(new ShopEntry(
                 ModItems.SMOKE_GRENADE.getDefaultInstance(),
-                300,
+                150,
                 ShopEntry.Type.TOOL));
 
         // 撬锁器 - 50金币 (原版杀手商店物品)
@@ -532,6 +534,7 @@ public class Noellesroles implements ModInitializer {
                 BanditRevolverShootPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID,
                 new BanditRevolverShootPayload.Receiver());
+        PayloadTypeRegistry.playC2S().register(InsaneKillerAbilityC2SPacket.ID, InsaneKillerAbilityC2SPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {
@@ -1244,6 +1247,18 @@ public class Noellesroles implements ModInitializer {
                     && abilityPlayerComponent.cooldown <= 0) {
 
             }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(Noellesroles.INSANE_KILLER_ABILITY_PACKET, (payload, context) -> {
+            ServerPlayer player = (ServerPlayer) context.player();
+            InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(player);
+
+            // 检查冷却
+            if (component.cooldown > 0 && !component.isActive)
+                return;
+
+            component.toggleAbility();
+            component.sync();
         });
     }
 
