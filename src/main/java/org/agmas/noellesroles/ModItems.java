@@ -131,6 +131,16 @@ public class ModItems {
             new MintCandiesItem(new Item.Properties().stacksTo(16)),
             "mint_candies");
 
+    /**
+     * 锁
+     * - 工程师专属物品
+     * - 工程师商店购买
+     * - 右键门：将门锁上，使用撬锁器时需要解锁，失败后损坏撬锁器
+     * - 默认长度为6，如有需要以后可以利用json进行配置
+     */
+    public static final Item LOCK_ITEM = register(
+            new LockItem(6, new Item.Properties().stacksTo(1)),
+            "lock");
 
 //    public static final Item SHERIFF_GUN_MAINTENANCE = register(
 //            new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
