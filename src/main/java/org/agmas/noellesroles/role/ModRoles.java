@@ -85,7 +85,7 @@ public class ModRoles {
 
         // 自定义模组角色 ID - 乘客阵营
         public static final ResourceLocation AVENGER_ID = Noellesroles.id("avenger");
-        public static final ResourceLocation EXAMPLE_CREW_ID = Noellesroles.id("example_crew");
+
         public static final ResourceLocation SLIPPERY_GHOST_ID = Noellesroles.id("slippery_ghost");
         public static final ResourceLocation ENGINEER_ID = Noellesroles.id("engineer");
         public static final ResourceLocation BOXER_ID = Noellesroles.id("boxer");
@@ -106,9 +106,9 @@ public class ModRoles {
         public static final ResourceLocation STALKER_ID = Noellesroles.id("stalker");
         public static final ResourceLocation ADMIRER_ID = Noellesroles.id("admirer");
         public static final ResourceLocation PUPPETEER_ID = Noellesroles.id("puppeteer");
-        public static final ResourceLocation EXAMPLE_KILLER_ID = Noellesroles.id("example_killer");
+
         public static final ResourceLocation RECORDER_ID = Noellesroles.id("recorder");
-        public static final ResourceLocation EXAMPLE_NEUTRAL_ID = Noellesroles.id("example_neutral");
+
 
         // ==================== 已注册角色定义 ====================
         // 乘客阵营角色

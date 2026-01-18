@@ -46,6 +46,8 @@ public abstract class PlayerResetMixin {
         
         ConspiratorPlayerComponent conspiratorComp = ModComponents.CONSPIRATOR.get(player);
         conspiratorComp.reset();
+        InsaneKillerPlayerComponent insaneKillerComp = ModComponents.INSANE_KILLER.get(player);
+        insaneKillerComp.reset();
         
         SlipperyGhostPlayerComponent slipperyGhostComp = ModComponents.SLIPPERY_GHOST.get(player);
         slipperyGhostComp.reset();

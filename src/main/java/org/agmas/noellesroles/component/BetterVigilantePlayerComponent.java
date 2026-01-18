@@ -40,10 +40,10 @@ public class BetterVigilantePlayerComponent implements AutoSyncedComponent, Serv
     public boolean lastStandActivated = false;
 
     /** 是否是活跃的红海军 */
-    public boolean isBetterVigilanteMarked = false;
+
 
     /** 检查间隔计时器（每20tick检查一次，减少性能消耗） */
-    private int checkTimer = 0;
+    public static int checkTimer = 0;
 
     @Override
     public boolean shouldSyncWith(ServerPlayer player) {
@@ -63,8 +63,8 @@ public class BetterVigilantePlayerComponent implements AutoSyncedComponent, Serv
      */
     public void reset() {
         this.lastStandActivated = false;
-        this.isBetterVigilanteMarked = true;
-        this.checkTimer = 0;
+
+
         this.sync();
     }
 
@@ -73,8 +73,8 @@ public class BetterVigilantePlayerComponent implements AutoSyncedComponent, Serv
      */
     public void clearAll() {
         this.lastStandActivated = false;
-        this.isBetterVigilanteMarked = false;
-        this.checkTimer = 0;
+
+
         this.sync();
     }
 
@@ -82,8 +82,7 @@ public class BetterVigilantePlayerComponent implements AutoSyncedComponent, Serv
      * 检查是否是活跃的红海军
      */
     public boolean isActiveBetterVigilante() {
-        if (!isBetterVigilanteMarked)
-            return false;
+
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         return gameWorld.isRole(player, ModRoles.BETTER_VIGILANTE);
@@ -173,18 +172,19 @@ public class BetterVigilantePlayerComponent implements AutoSyncedComponent, Serv
             return;
 
         // 每秒检查一次（20 tick）
-        checkTimer++;
-        if (checkTimer < 20)
-            return;
-        checkTimer = 0;
+        ++checkTimer;
+        if (checkTimer % 20 ==0) {
 
+            int aliveCount = countAliveCiviliansAndVigilantes();
+            if (aliveCount <= 2) {
+                activateLastStand();
+            }
+        }
         // 检查场上平民+义警数量
-        int aliveCount = countAliveCiviliansAndVigilantes();
+
 
         // 当存活的平民+义警数量 <= 2 时激活
-        if (aliveCount <= 2) {
-            activateLastStand();
-        }
+
     }
 
     // ==================== NBT 序列化 ====================
@@ -192,13 +192,12 @@ public class BetterVigilantePlayerComponent implements AutoSyncedComponent, Serv
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putBoolean("lastStandActivated", this.lastStandActivated);
-        tag.putBoolean("isBetterVigilanteMarked", this.isBetterVigilanteMarked);
+
     }
 
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.lastStandActivated = tag.contains("lastStandActivated") && tag.getBoolean("lastStandActivated");
-        this.isBetterVigilanteMarked = tag.contains("isBetterVigilanteMarked")
-                && tag.getBoolean("isBetterVigilanteMarked");
+
     }
 }

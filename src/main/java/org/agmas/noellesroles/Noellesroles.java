@@ -1,6 +1,7 @@
 package org.agmas.noellesroles;
 
 import dev.architectury.event.events.common.PlayerEvent;
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -46,11 +47,7 @@ import net.minecraft.world.phys.Vec3;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
-import org.agmas.noellesroles.component.BoxerPlayerComponent;
-import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
-import org.agmas.noellesroles.component.ModComponents;
-import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
-import org.agmas.noellesroles.component.StalkerPlayerComponent;
+import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
@@ -190,6 +187,8 @@ public class Noellesroles implements ModInitializer {
 
         // 注册商店
         shopRegister();
+        TMM.canUseChatHud.add((role -> role.getIdentifier().equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
+        TMM.canUseOtherPerson.add((role -> role.getIdentifier().equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
     }
 
     /**
@@ -253,7 +252,7 @@ public class Noellesroles implements ModInitializer {
         // 改良型民兵初始物品
         List<Supplier<ItemStack>> betterVigilanteItems = new ArrayList<>();
         betterVigilanteItems.add(ModItems.WRITTEN_NOTE::getDefaultInstance);
-        INITIAL_ITEMS_MAP.put(ModRoles.BETTER_VIGILANTE, betterVigilanteItems);
+        INITIAL_ITEMS_MAP.put(ModRoles.RECORDER, betterVigilanteItems);
 
         // 小丑初始物品
         List<Supplier<ItemStack>> jesterItems = new ArrayList<>();
@@ -599,7 +598,17 @@ public class Noellesroles implements ModInitializer {
                 bartenderPlayerComponent.armor--;
                 return false;
             }
-            return true;
+            if (gameWorldComponent.isRole(playerEntity, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)){
+                final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(playerEntity);
+                insaneKillerPlayerComponent.reset();
+                insaneKillerPlayerComponent.sync();
+            }
+            if (gameWorldComponent.isRole(playerEntity, ModRoles.BETTER_VIGILANTE)){
+                final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
+                betterVigilantePlayerComponent.reset();
+                betterVigilantePlayerComponent.sync();
+            }
+                return true;
         }));
         CanSeePoison.EVENT.register((player) -> {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
@@ -608,7 +617,13 @@ public class Noellesroles implements ModInitializer {
             }
             return false;
         });
-
+        ServerTickEvents.END_SERVER_TICK.register(((server) -> {
+            if (server.getPlayerCount() >= 10) {
+                Harpymodloader.setRoleMaximum(ModRoles.RECORDER,1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.RECORDER,0);
+            }
+        }));
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
                     .get(player);
@@ -636,6 +651,21 @@ public class Noellesroles implements ModInitializer {
                             - Math.floor(player.level().players().size() / 6f));
                     vulturePlayerComponent.sync();
                 }
+            }
+            if (role.equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(player);
+                insaneKillerPlayerComponent.reset();
+                insaneKillerPlayerComponent.sync();
+            }
+            if (role.equals(ModRoles.RECORDER)) {
+                final var insaneKillerPlayerComponent = RecorderPlayerComponent.KEY.get(player);
+                insaneKillerPlayerComponent.initializeRoles();
+
+            }
+            if (role.equals(ModRoles.RECORDER)) {
+                final var insaneKillerPlayerComponent = RecallerPlayerComponent.KEY.get(player);
+                insaneKillerPlayerComponent.reset();
+                insaneKillerPlayerComponent.sync();
             }
             // 使用映射表添加初始物品
             addInitialItemsForRole(player, role);

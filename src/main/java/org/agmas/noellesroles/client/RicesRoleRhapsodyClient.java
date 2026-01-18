@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.client;
 
+import net.minecraft.client.CameraType;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.ModEntities;
@@ -426,8 +427,13 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                 return;
 
             InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(client.player);
-            if (component.cooldown <= 0 || component.isActive) {
+            if (component.cooldown <= 0 ) {
                 ClientPlayNetworking.send(new InsaneKillerAbilityC2SPacket());
+                if (!component.isActive) {
+                    Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                }else {
+                    Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+                }
             } else {
                 client.player.displayClientMessage(
                         net.minecraft.network.chat.Component.translatable("message.noellesroles.cooldown",
