@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.entity.LockEntity;
+import org.agmas.noellesroles.entity.LockEntityManager;
 
 /**
  * 门锁
@@ -41,7 +42,7 @@ public class LockItem extends Item implements AdventureUsable {
     /**
      * 计算锁实体的位置
      * @param context 上下文
-     * @param doorFacing 门的朝向（如果是其它方块理论上也可以计算)
+     * @param door 被使用的门
      * @return 锁的坐标
      */
     public Vec3 getLockEntityPos(UseOnContext context, DoorBlockEntity door){
@@ -91,17 +92,19 @@ public class LockItem extends Item implements AdventureUsable {
                 lockEntity.setXRot(0.f);
                 lockEntity.setYRot(door.getFacing().toYRot());
                 world.addFreshEntity(lockEntity);
+                // 在门上方一格记录锁
+                LockEntityManager.getInstance().addLockEntity(door.getBlockPos().above(), lockEntity);
+                if (!player.isCreative()) {
+                    //回放记录
+//                    if (TMM.REPLAY_MANAGER != null) {
+//                        TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(), BuiltInRegistries.ITEM.getKey(this));
+//                    }
+                    //添加锁成功且非创造模式：消耗门锁
+                    player.getItemInHand(context.getHand()).shrink(1);
+                }
+
                 return InteractionResult.SUCCESS;
             }
-
-            //回放记录
-//            if (!player.isCreative()) {
-//                if (TMM.REPLAY_MANAGER != null) {
-//                    TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(), BuiltInRegistries.ITEM.getKey(this));
-//                }
-//                player.getCooldowns().addCooldown(this, GameConstants.ITEM_COOLDOWNS.get(this));
-//            }
-
         }
         return super.useOn(context);
     }
