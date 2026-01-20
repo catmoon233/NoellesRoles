@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.mixin.roles.stalker;
 
-
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -11,6 +10,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,50 +33,53 @@ public abstract class StalkerLeftClickKillMixin {
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     private void onStalkerKnifeAttack(Entity target, CallbackInfo ci) {
         ServerPlayer attacker = (ServerPlayer) (Object) this;
-        
+
         // 检查目标是否是玩家
-        if (!(target instanceof Player targetPlayer)) return;
-        
+        if (!(target instanceof Player targetPlayer))
+            return;
+
         // 检查目标是否存活
-        if (!GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) return;
-        
+        if (!GameFunctions.isPlayerAliveAndSurvival(targetPlayer))
+            return;
+
         // 获取跟踪者组件
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(attacker);
-        
+
         // 检查是否是活跃的跟踪者且处于二阶段
-        if (!stalkerComp.isActiveStalker()) return;
-        if (stalkerComp.phase < 2) return;
-        
+        if (!stalkerComp.isActiveStalker())
+            return;
+        if (stalkerComp.phase < 2)
+            return;
+
         // 检查手持物品是否是刀
         ItemStack mainHand = attacker.getItemInHand(InteractionHand.MAIN_HAND);
-        if (!mainHand.is(TMMItems.KNIFE)) return;
-        
+        if (!mainHand.is(TMMItems.KNIFE))
+            return;
+
         // 三阶段时不能用左键击杀，只能用突进
         if (stalkerComp.phase == 3 && stalkerComp.dashModeActive) {
             ci.cancel();
             return;
         }
-        
+
         // 检查攻击是否在冷却中
         if (stalkerComp.isAttackOnCooldown()) {
             ci.cancel();
             return;
         }
-        
+
         // 二阶段：左键直接击杀
         GameFunctions.killPlayer(targetPlayer, true, attacker, GameConstants.DeathReasons.KNIFE);
-        
+
         // 触发攻击冷却
         stalkerComp.triggerAttackCooldown();
-        
+
         // 击杀后定身0.5秒（10 tick）- 使用缓慢和失明来模拟
         attacker.addEffect(new MobEffectInstance(
-            MobEffects.MOVEMENT_SLOWDOWN, 10, 127, false, false, false
-        ));
+                MobEffects.MOVEMENT_SLOWDOWN, 10, 127, false, false, false));
         attacker.addEffect(new MobEffectInstance(
-            MobEffects.DIG_SLOWDOWN, 10, 127, false, false, false
-        ));
-        
+                MobEffects.DIG_SLOWDOWN, 10, 127, false, false, false));
+
         // 取消原始攻击逻辑
         ci.cancel();
     }
