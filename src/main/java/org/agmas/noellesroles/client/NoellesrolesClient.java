@@ -208,12 +208,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                     net.minecraft.world.item.component.CustomData customData = stack.getOrDefault(
                             net.minecraft.core.component.DataComponents.CUSTOM_DATA,
                             net.minecraft.world.item.component.CustomData.EMPTY);
-                    net.minecraft.nbt.CompoundTag tag = customData.copyTag();
-                    if (tag.contains(org.agmas.noellesroles.item.BombItem.TIMER_KEY)) {
-                        int timer = tag.getInt(org.agmas.noellesroles.item.BombItem.TIMER_KEY);
-                        // 倒计时 <= 200 (10秒) 时可见
-                        return timer <= 200 ? 1.0F : 0.0F;
-                    }
+                    // 非炸弹客始终不可见
                     return 0.0F;
                 });
 

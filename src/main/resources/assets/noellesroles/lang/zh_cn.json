@@ -514,5 +514,7 @@
   "announcement.role.bomber": "炸弹客",
   "announcement.goals.bomber": "购买炸弹并传递给其他玩家。炸弹倒计时20秒，前10秒隐形。每次传递增加1.5秒。",
   "announcement.win.bomber": "杀手胜利！",
+  "hud.noellesroles.bomber.count": "炸弹数量: %s",
+  "hud.noellesroles.bomber.cost": "购买消耗: 100 金币",
   "message.noellesroles.insane_killer.ability_activated": "伪装已激活！"
 }

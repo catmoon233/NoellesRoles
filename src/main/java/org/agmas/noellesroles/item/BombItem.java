@@ -51,8 +51,8 @@ public class BombItem extends Item {
             tag.putInt(TIMER_KEY, timer);
             stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
-            // Play ticking sound every second
-            if (timer % 20 == 0) {
+            // Play ticking sound every second (silent for first 5 seconds)
+            if (timer % 20 == 0 && (MAX_TIMER - timer) > 100) {
                 level.playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS,
                         1.0f, 1.0f + (MAX_TIMER - timer) / 200f);
             }
