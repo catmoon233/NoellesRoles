@@ -197,13 +197,22 @@ public class NoellesrolesClient implements ClientModInitializer {
         // 注册炸弹可见性属性
         net.minecraft.client.renderer.item.ItemProperties.register(ModItems.BOMB, Noellesroles.id("visible"),
                 (stack, world, entity, seed) -> {
+                    // 如果持有者是炸弹客，始终可见
+                    if (entity instanceof Player player) {
+                        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+                        if (gameWorldComponent.isRole(player, ModRoles.BOMBER)) {
+                            return 1.0F;
+                        }
+                    }
+
                     net.minecraft.world.item.component.CustomData customData = stack.getOrDefault(
                             net.minecraft.core.component.DataComponents.CUSTOM_DATA,
                             net.minecraft.world.item.component.CustomData.EMPTY);
                     net.minecraft.nbt.CompoundTag tag = customData.copyTag();
                     if (tag.contains(org.agmas.noellesroles.item.BombItem.TIMER_KEY)) {
                         int timer = tag.getInt(org.agmas.noellesroles.item.BombItem.TIMER_KEY);
-                        return timer <= 100 ? 1.0F : 0.0F;
+                        // 倒计时 <= 200 (10秒) 时可见
+                        return timer <= 200 ? 1.0F : 0.0F;
                     }
                     return 0.0F;
                 });

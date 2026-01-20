@@ -25,7 +25,7 @@ import org.agmas.noellesroles.Noellesroles;
 
 public class BombItem extends Item {
     public static final String TIMER_KEY = "bomb_timer";
-    public static final int MAX_TIMER = 200; // 10 seconds * 20 ticks
+    public static final int MAX_TIMER = 400; // 20 seconds * 20 ticks
 
     public BombItem(Properties properties) {
         super(properties);
