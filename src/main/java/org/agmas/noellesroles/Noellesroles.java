@@ -116,6 +116,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> POSTMAN_SHOP = new ArrayList<>();
     // ==================== 心理学家商店 ====================
     public static ArrayList<ShopEntry> PSYCHOLOGIST_SHOP = new ArrayList<>();
+    // ==================== 炸弹客商店 ====================
+    public static ArrayList<ShopEntry> BOMBER_SHOP = new ArrayList<>();
 
     private static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
@@ -413,6 +415,19 @@ public class Noellesroles implements ModInitializer {
                 ModItems.MINT_CANDIES.getDefaultInstance(),
                 100,
                 ShopEntry.Type.TOOL));
+        // 炸弹客商店
+        BOMBER_SHOP.add(new ShopEntry(
+                TMMItems.GRENADE.getDefaultInstance(),
+                275,
+                ShopEntry.Type.WEAPON));
+        BOMBER_SHOP.add(new ShopEntry(
+                TMMItems.FIRECRACKER.getDefaultInstance(),
+                25,
+                ShopEntry.Type.TOOL));
+        BOMBER_SHOP.add(new ShopEntry(
+                TMMItems.LOCKPICK.getDefaultInstance(),
+                80,
+                ShopEntry.Type.TOOL));
     }
 
     private void shopRegister() {
@@ -523,6 +538,10 @@ public class Noellesroles implements ModInitializer {
 
         // 操纵师商店
 
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.BOMBER_ID, BOMBER_SHOP);
+        }
     }
 
     public static void registerPackets1() {
@@ -565,6 +584,7 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ModRoles.GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
         Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, NoellesRolesConfig.HANDLER.instance().thiefMax);
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
+        Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
     }
 
     public void registerEvents() {
@@ -696,6 +716,11 @@ public class Noellesroles implements ModInitializer {
                 ManipulatorPlayerComponent manipulatorPlayerComponent = ManipulatorPlayerComponent.KEY.get(player);
                 manipulatorPlayerComponent.reset();
                 manipulatorPlayerComponent.sync();
+            }
+            if (role.equals(ModRoles.BOMBER)) {
+                BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(player);
+                // bomberPlayerComponent.reset(); // 如果有 reset 方法
+                ModComponents.BOMBER.sync(player);
             }
             // if (role.equals(SHERIFF)) {
             // player.giveItemStack(TMMItems.REVOLVER.getDefaultStack());
@@ -1304,6 +1329,19 @@ public class Noellesroles implements ModInitializer {
 
             component.toggleAbility();
             component.sync();
+        });
+        ServerPlayNetworking.registerGlobalReceiver(Noellesroles.ABILITY_PACKET, (payload, context) -> {
+            AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
+                    .get(context.player());
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                    .get(context.player().level());
+
+            if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
+                BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(context.player());
+                bomberPlayerComponent.buyBomb();
+            }
+
+            // ... existing code ...
         });
         ServerPlayNetworking.registerGlobalReceiver(RecorderC2SPacket.TYPE, RecorderC2SPacket::handle);
     }

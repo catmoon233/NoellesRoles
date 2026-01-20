@@ -125,6 +125,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         public static final ComponentKey<RecorderPlayerComponent> RECORDER = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "recorder"),
                         RecorderPlayerComponent.class);
+        public static final ComponentKey<BomberPlayerComponent> BOMBER = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "bomber"),
+                        BomberPlayerComponent.class);
 
         public ModComponents() {
                 // CCA 需要无参构造函数
@@ -264,6 +267,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 registry.beginRegistration(Player.class, RECORDER)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(RecorderPlayerComponent::new);
+                // 注册炸弹客组件
+                registry.beginRegistration(Player.class, BOMBER)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(BomberPlayerComponent::new);
 
                 // ==================== 示例：注册更多组件 ====================
                 //

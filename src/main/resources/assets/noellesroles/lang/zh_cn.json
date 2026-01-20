@@ -481,6 +481,8 @@
   "message.noellesroles.manipulator.body_died": "你的本体被杀死了！游戏结束。",
   "message.noellesroles.manipulator.target_died": "%s 在你操控期间被杀死了！",
 
+  "death_reason.noellesroles.bomb_death": "被炸弹炸死。",
+  "item.noellesroles.bomb": "炸弹",
   "death_reason.noellesroles.puppeteer_puppet": "被傀儡殺死。",
   "==================== 薄荷糖物品 ====================": "",
   "item.noellesroles.mint_candies": "薄荷糖",
@@ -508,5 +510,9 @@
   "item.noellesroles.mint_candies.tooltip": "食用後恢復35%的san值",
   "==================== 亡语杀手角色 ====================": "",
   "message.noellesroles.insane_killer.ability_deactivated": "伪装已关闭，进入冷却...",
+  "==================== 炸弹客角色 ====================": "",
+  "announcement.role.bomber": "炸弹客",
+  "announcement.goals.bomber": "购买炸弹并传递给其他玩家。炸弹倒计时10秒，前5秒隐形。",
+  "announcement.win.bomber": "杀手胜利！",
   "message.noellesroles.insane_killer.ability_activated": "伪装已激活！"
 }

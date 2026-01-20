@@ -136,6 +136,15 @@ public class ModItems {
         public static final Item WRITTEN_NOTE = register(
                         new WrittenNoteItem(new Item.Properties().stacksTo(1)),
                         "written_note");
+        /**
+         * 炸弹
+         * - 炸弹客专属物品
+         * - 倒计时10秒，前5秒隐形
+         * - 右键传递
+         */
+        public static final Item BOMB = register(
+                        new BombItem(new Item.Properties().stacksTo(1)),
+                        "bomb");
 
         // public static final Item SHERIFF_GUN_MAINTENANCE = register(
         // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),

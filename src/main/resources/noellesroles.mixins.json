@@ -61,6 +61,7 @@
   "client": [
     "KeyBindingMixin",
     "client.AvengerHudMixin",
+    "client.BomberHudMixin",
     "client.BoxerHudMixin",
     "client.ConspiratorHudMixin",
     "client.DetectiveHudMixin",

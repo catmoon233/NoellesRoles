@@ -100,6 +100,7 @@ public class ModRoles {
         // 自定义模组角色 ID - 杀手阵营
         public static final ResourceLocation CONSPIRATOR_ID = Noellesroles.id("conspirator");
         public static final ResourceLocation TRAPPER_ID = Noellesroles.id("trapper");
+        public static final ResourceLocation BOMBER_ID = Noellesroles.id("bomber");
         public static final ResourceLocation MANIPULATOR_ID = Noellesroles.id("manipulator");
 
         // 自定义模组角色 ID - 中立阵营
@@ -108,7 +109,6 @@ public class ModRoles {
         public static final ResourceLocation PUPPETEER_ID = Noellesroles.id("puppeteer");
 
         public static final ResourceLocation RECORDER_ID = Noellesroles.id("recorder");
-
 
         // ==================== 已注册角色定义 ====================
         // 乘客阵营角色
@@ -204,6 +204,14 @@ public class ModRoles {
          * - 如果猜测正确，目标玩家40秒后死亡
          * - 猜测错误无惩罚，但书页消耗
          */
+        /**
+         * 炸弹客角色
+         * - 属于杀手阵营 (isInnocent = false, canUseKiller = true)
+         * - 可以在商店购买炸弹
+         * - 炸弹倒计时10秒，前5秒隐形
+         * - 右键传递炸弹
+         */
+        public static Role BOMBER;
         public static Role CONSPIRATOR;
 
         /**
@@ -243,7 +251,6 @@ public class ModRoles {
          * - 目标：使用笔记选择人和对应职业，如果正确人数达到2/5,获得独立胜利
          */
         public static Role RECORDER;
-
 
         /**
          * 滑头鬼角色
@@ -614,6 +621,17 @@ public class ModRoles {
                                 true // 隐藏计分板
                 ));
 
+                // 炸弹客角色 - 杀手阵营
+                BOMBER = TMMRoles.registerRole(new Role(
+                                BOMBER_ID, // 角色 ID
+                                new Color(51, 51, 51).getRGB(), // 黑色/深灰色
+                                false, // isInnocent = 非乘客阵营
+                                true, // canUseKiller = 有杀手能力
+                                Role.MoodType.FAKE, // 假心情
+                                TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+                                true // 隐藏计分板
+                ));
+
                 // ==================== 注册中立阵营角色 ====================
 
                 // 跟踪者角色 - 杀手阵营（一开始就是杀手，通过阶段控制能力）
@@ -689,6 +707,8 @@ public class ModRoles {
                 Harpymodloader.setRoleMaximum(ADMIRER_ID, 1);
 
                 // 设陷者每局只能有 1 个
+                // 炸弹客每局只能有 1 个
+                Harpymodloader.setRoleMaximum(BOMBER_ID, 1);
                 Harpymodloader.setRoleMaximum(TRAPPER_ID, 1);
 
                 // 明星每局只能有 1 个

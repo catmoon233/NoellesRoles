@@ -83,7 +83,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             //
             // });
             // }
-
+            //
             // if (role.identifier().equals(ModRoles.THIEF_ID)) {
             // role.addChild(limitedInventoryScreen -> {
             // List<ShopEntry> entries = new ArrayList<>();
@@ -193,6 +193,20 @@ public class NoellesrolesClient implements ClientModInitializer {
 
         // 4. 设置物品回调
         setupItemCallbacks();
+
+        // 注册炸弹可见性属性
+        net.minecraft.client.renderer.item.ItemProperties.register(ModItems.BOMB, Noellesroles.id("visible"),
+                (stack, world, entity, seed) -> {
+                    net.minecraft.world.item.component.CustomData customData = stack.getOrDefault(
+                            net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                            net.minecraft.world.item.component.CustomData.EMPTY);
+                    net.minecraft.nbt.CompoundTag tag = customData.copyTag();
+                    if (tag.contains(org.agmas.noellesroles.item.BombItem.TIMER_KEY)) {
+                        int timer = tag.getInt(org.agmas.noellesroles.item.BombItem.TIMER_KEY);
+                        return timer <= 100 ? 1.0F : 0.0F;
+                    }
+                    return 0.0F;
+                });
 
         // 5. 注册实体渲染器
         registerEntityRenderers();
