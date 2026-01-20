@@ -637,6 +637,9 @@ public class Noellesroles implements ModInitializer {
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
             if (role.equals(ModRoles.BROADCASTER)) {
                 abilityPlayerComponent.cooldown = 0;
+                PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(player);
+                playerShopComponent.setBalance(200);
+                playerShopComponent.sync();
             } else {
                 abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
             }
