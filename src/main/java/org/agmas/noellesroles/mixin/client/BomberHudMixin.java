@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.mixin.client;
 
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.Gui;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BomberHudMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void renderBombTimer(GuiGraphics guiGraphics, float partialTick, CallbackInfo ci) {
+    private void renderBombTimer(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         Player player = client.player;
         if (player == null)
