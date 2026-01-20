@@ -13,16 +13,20 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * 记录员选择屏幕
- * 
+ *
  * 两阶段选择：
  * 1. 选择目标玩家（显示所有玩家头像）
  * 2. 选择角色（显示当前局有的身份）
@@ -35,9 +39,6 @@ public class RecorderScreen extends Screen {
     // 选中的玩家
     private UUID selectedPlayer = null;
     private String selectedPlayerName = "";
-
-    // 玩家列表
-    private List<AbstractClientPlayer> players = new ArrayList<>();
 
     // 角色列表
     private List<Role> roles = new ArrayList<>();
@@ -78,18 +79,36 @@ public class RecorderScreen extends Screen {
         if (minecraft == null || minecraft.level == null || minecraft.player == null)
             return;
 
-        // 获取所有其他玩家
-        players = new ArrayList<>(minecraft.level.players());
-        players.removeIf(p -> p.getUUID().equals(minecraft.player.getUUID()));
+        // 尝试从组件获取开局玩家列表
+        RecorderPlayerComponent recorder = ModComponents.RECORDER.get(minecraft.player);
+        Map<UUID, String> startPlayers = recorder.getStartPlayers();
 
-        if (players.isEmpty()) {
+        List<UUID> playerUuids = new ArrayList<>();
+        Map<UUID, String> playerNames = new HashMap<>();
+
+        if (!startPlayers.isEmpty()) {
+            for (Map.Entry<UUID, String> entry : startPlayers.entrySet()) {
+                playerUuids.add(entry.getKey());
+                playerNames.put(entry.getKey(), entry.getValue());
+            }
+        } else {
+            // 回退到当前在线玩家
+            for (AbstractClientPlayer p : minecraft.level.players()) {
+                if (!p.getUUID().equals(minecraft.player.getUUID())) {
+                    playerUuids.add(p.getUUID());
+                    playerNames.put(p.getUUID(), p.getName().getString());
+                }
+            }
+        }
+
+        if (playerUuids.isEmpty()) {
             onClose();
             return;
         }
 
         // 计算布局
-        int columns = Math.min(players.size(), 8);
-        int rows = (int) Math.ceil(players.size() / 8.0);
+        int columns = Math.min(playerUuids.size(), 8);
+        int rows = (int) Math.ceil(playerUuids.size() / 8.0);
         int widgetSize = 32;
         int spacing = 8;
         int totalWidth = columns * (widgetSize + spacing) - spacing;
@@ -97,14 +116,26 @@ public class RecorderScreen extends Screen {
         int startX = (width - totalWidth) / 2;
         int startY = (height - totalHeight) / 2 + 20;
 
-        for (int i = 0; i < players.size(); i++) {
+        for (int i = 0; i < playerUuids.size(); i++) {
             int col = i % 8;
             int row = i / 8;
             int x = startX + col * (widgetSize + spacing);
             int y = startY + row * (widgetSize + spacing);
 
+            UUID uuid = playerUuids.get(i);
+            String name = playerNames.get(uuid);
+
+            // 获取皮肤
+            ResourceLocation skin = DefaultPlayerSkin.get(uuid).texture();
+            if (minecraft.getConnection() != null) {
+                PlayerInfo info = minecraft.getConnection().getPlayerInfo(uuid);
+                if (info != null) {
+                    skin = info.getSkin().texture();
+                }
+            }
+
             RecorderPlayerWidget widget = new RecorderPlayerWidget(
-                    this, x, y, widgetSize, players.get(i), i);
+                    this, x, y, widgetSize, uuid, name, skin, i);
             playerWidgets.add(widget);
             addRenderableWidget(widget);
         }

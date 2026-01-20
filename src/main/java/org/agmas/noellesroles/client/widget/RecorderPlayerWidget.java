@@ -9,22 +9,28 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import java.util.UUID;
 
 public class RecorderPlayerWidget extends Button {
 
     public final RecorderScreen screen;
-    public final AbstractClientPlayer player;
+    private final UUID playerUuid;
+    private final String playerName;
+    private final ResourceLocation skinTexture;
     private final int size;
 
     public RecorderPlayerWidget(RecorderScreen screen, int x, int y, int size,
-            @NotNull AbstractClientPlayer player, int index) {
-        super(x, y, size, size, player.getName(),
-                (button) -> screen.onPlayerSelected(player.getUUID(), player.getName().getString()),
+            UUID playerUuid, String playerName, ResourceLocation skinTexture, int index) {
+        super(x, y, size, size, Component.literal(playerName),
+                (button) -> screen.onPlayerSelected(playerUuid, playerName),
                 DEFAULT_NARRATION);
         this.screen = screen;
-        this.player = player;
+        this.playerUuid = playerUuid;
+        this.playerName = playerName;
+        this.skinTexture = skinTexture;
         this.size = size;
     }
 
@@ -36,14 +42,16 @@ public class RecorderPlayerWidget extends Button {
         int borderColor = this.isHovered() ? new Color(150, 100, 200).getRGB() : new Color(75, 50, 100).getRGB();
         context.renderOutline(getX() - 2, getY() - 2, size + 4, size + 4, borderColor);
 
-        PlayerFaceRenderer.draw(context, player.getSkin().texture(), getX(), getY(), size);
+        if (skinTexture != null) {
+            PlayerFaceRenderer.draw(context, skinTexture, getX(), getY(), size);
+        }
 
         if (this.isHovered()) {
             drawShopSlotHighlight(context, getX(), getY(), 0);
 
             Font textRenderer = Minecraft.getInstance().font;
-            int textWidth = textRenderer.width(player.getName());
-            context.renderTooltip(textRenderer, player.getName(),
+            int textWidth = textRenderer.width(getMessage());
+            context.renderTooltip(textRenderer, getMessage(),
                     getX() + size / 2 - textWidth / 2, getY() - 12);
         }
     }

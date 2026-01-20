@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.mixin;
 
-
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
@@ -32,73 +31,78 @@ public abstract class PlayerResetMixin {
         // 清除跟踪者组件状态
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
-        
+
         // 清除慕恋者组件状态
         AdmirerPlayerComponent admirerComp = ModComponents.ADMIRER.get(player);
         admirerComp.clearAll();
-        
+
         // 清除其他自定义组件状态
         AbilityPlayerComponent abilityComp = ModComponents.ABILITY.get(player);
         abilityComp.reset();
-        
+
         AvengerPlayerComponent avengerComp = ModComponents.AVENGER.get(player);
         avengerComp.reset();
-        
+
         ConspiratorPlayerComponent conspiratorComp = ModComponents.CONSPIRATOR.get(player);
         conspiratorComp.reset();
         InsaneKillerPlayerComponent insaneKillerComp = ModComponents.INSANE_KILLER.get(player);
         insaneKillerComp.reset();
-        
+
         SlipperyGhostPlayerComponent slipperyGhostComp = ModComponents.SLIPPERY_GHOST.get(player);
         slipperyGhostComp.reset();
-        
+
         TelegrapherPlayerComponent telegrapherComp = ModComponents.TELEGRAPHER.get(player);
         telegrapherComp.reset();
-        
+
         PostmanPlayerComponent postmanComp = ModComponents.POSTMAN.get(player);
         postmanComp.reset();
-        
+
         DetectivePlayerComponent detectiveComp = ModComponents.DETECTIVE.get(player);
         detectiveComp.reset();
-        
+
         BoxerPlayerComponent boxerComp = ModComponents.BOXER.get(player);
         boxerComp.reset();
-        
+
         AthletePlayerComponent athleteComp = ModComponents.ATHLETE.get(player);
         athleteComp.reset();
-        
+
         // 清除设陷者组件状态
         TrapperPlayerComponent trapperComp = ModComponents.TRAPPER.get(player);
         trapperComp.clearAll();
-        
+
         // 清除傀儡师组件状态
         PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(player);
+
+        // 清除记录员组件状态
+        RecorderPlayerComponent recorderComp = ModComponents.RECORDER.get(player);
+        recorderComp.reset();
         puppeteerComp.clearAll();
-        
+
         // 清除该玩家放置的所有灾厄印记实体
         clearCalamityMarks(player);
     }
-    
+
     /**
      * 清除指定玩家放置的所有灾厄印记实体
      */
     private static void clearCalamityMarks(ServerPlayer player) {
         ServerLevel world = player.serverLevel();
-        if (world == null) return;
-        
+        if (world == null)
+            return;
+
         // 收集需要移除的实体（避免在遍历时修改集合）
         List<Entity> toRemove = new ArrayList<>();
-        
+
         for (Entity entity : world.getAllEntities()) {
             if (entity instanceof CalamityMarkEntity mark) {
                 // 检查是否是该玩家放置的
                 if (mark.getOwnerUuid().isPresent() &&
-                    mark.getOwnerUuid().get().equals(player.getUUID())) {
+                        mark.getOwnerUuid().get().equals(player.getUUID())) {
                     toRemove.add(mark);
                 }
             }
         }
-        
+
         // 移除所有标记的实体
         for (Entity entity : toRemove) {
             entity.discard();

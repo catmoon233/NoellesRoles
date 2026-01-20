@@ -38,17 +38,33 @@ public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTicki
 
     private Map<UUID, ResourceLocation> guesses = new HashMap<>();
 
+    private Map<UUID, String> startPlayers = new HashMap<>();
+
     private int wrongGuessCount = 0;
-    private static final int MAX_WRONG_GUESSES = 3;
+    private static final int MAX_WRONG_GUESSES = 10;
 
     private boolean rolesInitialized = false;
+    private boolean wasRunning = false;
 
     public RecorderPlayerComponent(Player player) {
         this.player = player;
     }
 
+    public void reset() {
+        this.guesses.clear();
+        this.availableRoles.clear();
+        this.startPlayers.clear();
+        this.wrongGuessCount = 0;
+        this.rolesInitialized = false;
+        ModComponents.RECORDER.sync(this.player);
+    }
+
     public List<ResourceLocation> getAvailableRoles() {
         return availableRoles;
+    }
+
+    public Map<UUID, String> getStartPlayers() {
+        return startPlayers;
     }
 
     public void setAvailableRoles(List<ResourceLocation> roles) {
@@ -79,15 +95,15 @@ public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTicki
         int playerCount = player.level().players().size();
         int cooldownSeconds;
         if (playerCount < 10) {
-            cooldownSeconds = 45;
-        } else if (playerCount < 15) {
             cooldownSeconds = 30;
-        } else if (playerCount < 20) {
+        } else if (playerCount < 15) {
             cooldownSeconds = 25;
-        } else if (playerCount < 30) {
+        } else if (playerCount < 20) {
             cooldownSeconds = 15;
-        } else {
+        } else if (playerCount < 30) {
             cooldownSeconds = 10;
+        } else {
+            cooldownSeconds = 5;
         }
         serverPlayer.getCooldowns().addCooldown(ModItems.WRITTEN_NOTE, cooldownSeconds * 20);
         if (target != null) {
@@ -113,7 +129,7 @@ public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTicki
                     true);
 
             if (wrongGuessCount >= MAX_WRONG_GUESSES) {
-                // 猜错3次，立刻死亡
+                // 猜错10次，立刻死亡
                 GameFunctions.killPlayer(player, true, null, Noellesroles.id("recorder_mistake"));
                 serverPlayer.displayClientMessage(
                         Component.translatable("message.noellesroles.recorder.died_from_mistakes")
