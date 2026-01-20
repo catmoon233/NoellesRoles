@@ -35,23 +35,22 @@ public class ToxinItem extends Item {
     public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
         if (!user.isSpectator()) {
             if (remainingUseTicks < this.getUseDuration(stack, user) - 1 && user instanceof Player) {
-                Player attacker = (Player)user;
+                Player attacker = (Player) user;
                 if (!world.isClientSide) {
                     HitResult collision = getToxinTarget(attacker);
                     if (collision instanceof EntityHitResult) {
-                        EntityHitResult entityHitResult = (EntityHitResult)collision;
+                        EntityHitResult entityHitResult = (EntityHitResult) collision;
                         Entity target1 = entityHitResult.getEntity();
                         if (user instanceof ServerPlayer player) {
                             if (target1 instanceof Player target) {
-                                if (!((double) target.distanceTo(player) > (double) 3.0F)) {
-                                    ((PlayerPoisonComponent) PlayerPoisonComponent.KEY.get(target)).setPoisonTicks(HSRConstants.toxinPoisonTime, player.getUUID());
-                                    player.playSound(HSRSounds.ITEM_SYRINGE_STAB, 0.15F, 1.0F);
-                                    player.swing(InteractionHand.MAIN_HAND);
-                                    if (!player.isCreative()) {
-                                        player.getMainHandItem().shrink(1);
-                                        player.getCooldowns().addCooldown(HSRItems.TOXIN, (Integer) HSRConstants.ITEM_COOLDOWNS.get(HSRItems.TOXIN));
-                                    }
-
+                                ((PlayerPoisonComponent) PlayerPoisonComponent.KEY.get(target))
+                                        .setPoisonTicks(HSRConstants.toxinPoisonTime, player.getUUID());
+                                player.playSound(HSRSounds.ITEM_SYRINGE_STAB, 0.15F, 1.0F);
+                                player.swing(InteractionHand.MAIN_HAND);
+                                if (!player.isCreative()) {
+                                    player.getMainHandItem().shrink(1);
+                                    player.getCooldowns().addCooldown(HSRItems.TOXIN,
+                                            (Integer) HSRConstants.ITEM_COOLDOWNS.get(HSRItems.TOXIN));
                                 }
                             }
                         }
@@ -76,7 +75,7 @@ public class ToxinItem extends Item {
 
             var10000 = false;
             return var10000;
-        }, (double)3.0F);
+        }, (double) 30.0F);
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {

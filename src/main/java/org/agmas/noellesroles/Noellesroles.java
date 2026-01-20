@@ -187,8 +187,10 @@ public class Noellesroles implements ModInitializer {
 
         // 注册商店
         shopRegister();
-        TMM.canUseChatHud.add((role -> role.getIdentifier().equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
-        TMM.canUseOtherPerson.add((role -> role.getIdentifier().equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
+        TMM.canUseChatHud.add((role -> role.getIdentifier()
+                .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
+        TMM.canUseOtherPerson.add((role -> role.getIdentifier()
+                .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
     }
 
     /**
@@ -598,30 +600,34 @@ public class Noellesroles implements ModInitializer {
                 bartenderPlayerComponent.armor--;
                 return false;
             }
-            if (gameWorldComponent.isRole(playerEntity, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)){
+            if (gameWorldComponent.isRole(playerEntity,
+                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
                 final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(playerEntity);
                 insaneKillerPlayerComponent.reset();
                 insaneKillerPlayerComponent.sync();
             }
-            if (gameWorldComponent.isRole(playerEntity, ModRoles.BETTER_VIGILANTE)){
+            if (gameWorldComponent.isRole(playerEntity, ModRoles.BETTER_VIGILANTE)) {
                 final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
                 betterVigilantePlayerComponent.reset();
                 betterVigilantePlayerComponent.sync();
             }
-                return true;
+            return true;
         }));
         CanSeePoison.EVENT.register((player) -> {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
             if (gameWorldComponent.isRole((Player) player, ModRoles.BARTENDER)) {
                 return true;
             }
+            if (gameWorldComponent.isRole((Player) player, ModRoles.POISONER)) {
+                return true;
+            }
             return false;
         });
         ServerTickEvents.END_SERVER_TICK.register(((server) -> {
             if (server.getPlayerCount() >= 10) {
-                Harpymodloader.setRoleMaximum(ModRoles.RECORDER,1);
+                Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 1);
             } else {
-                Harpymodloader.setRoleMaximum(ModRoles.RECORDER,0);
+                Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 0);
             }
         }));
         ModdedRoleAssigned.EVENT.register((player, role) -> {
