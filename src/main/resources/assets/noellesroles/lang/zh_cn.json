@@ -509,7 +509,7 @@
   "message.noellesroles.insane_killer.ability_deactivated": "伪装已关闭，进入冷却...",
   "message.noellesroles.insane_killer.ability_activated": "伪装已激活！",
   "insane.tip.over": "按下G结束假死",
-  "insane.tip": "伪装冷却中",
+  "insane.tip": "伪装冷却中，还需 %s 秒",
   "insane.tip.ready": "伪装就绪 - 按G激活",
   "==================== 炸弹客角色 ====================": "",
   "announcement.role.bomber": "炸弹客",
