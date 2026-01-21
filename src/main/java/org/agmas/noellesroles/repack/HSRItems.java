@@ -33,6 +33,7 @@ public class HSRItems {
                 .register((ItemGroupEvents.ModifyEntries) (entries) -> {
                     entries.accept(ANTIDOTE);
                     entries.accept(TOXIN);
+                    entries.accept(CATALYST);
                     // entries.add(MASTER_KEY);
                 });
     }
