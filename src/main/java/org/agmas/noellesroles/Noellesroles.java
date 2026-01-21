@@ -1297,6 +1297,12 @@ public class Noellesroles implements ModInitializer {
                     .get(context.player());
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                     .get(context.player().level());
+            if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
+                BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(context.player());
+                bomberPlayerComponent.buyBomb();
+                return;
+            }
+
             if (gameWorldComponent.isRole(context.player(), ModRoles.RECALLER)
                     && abilityPlayerComponent.cooldown <= 0) {
                 RecallerPlayerComponent recallerPlayerComponent = RecallerPlayerComponent.KEY.get(context.player());
@@ -1322,9 +1328,6 @@ public class Noellesroles implements ModInitializer {
             } else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
                     && abilityPlayerComponent.cooldown <= 0) {
 
-            } else if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
-                BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(context.player());
-                bomberPlayerComponent.buyBomb();
             }
         });
 
