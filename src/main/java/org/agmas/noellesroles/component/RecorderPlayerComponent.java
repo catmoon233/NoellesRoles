@@ -203,6 +203,24 @@ public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTicki
         if (!gameWorld.isRole(player, ModRoles.RECORDER))
             return;
 
+        // 初始化开局玩家列表（仅在为空时初始化）
+        if (startPlayers.isEmpty()) {
+            for (Player p : player.level().players()) {
+                if (p.getUUID().equals(player.getUUID()))
+                    continue;
+                startPlayers.put(p.getUUID(), p.getName().getString());
+            }
+            ModComponents.RECORDER.sync(this.player);
+        }
+
+        updateAvailableRoles();
+    }
+
+    public void updateAvailableRoles() {
+        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel))
+            return;
+
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         List<ResourceLocation> roles = new ArrayList<>();
         for (Player p : player.level().players()) {
             if (p.getUUID().equals(player.getUUID()))
@@ -245,6 +263,20 @@ public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTicki
             }
         }
 
+        startPlayers.clear();
+        if (tag.contains("startPlayers")) {
+            CompoundTag startPlayersTag = tag.getCompound("startPlayers");
+            for (String key : startPlayersTag.getAllKeys()) {
+                try {
+                    UUID targetUuid = UUID.fromString(key);
+                    String name = startPlayersTag.getString(key);
+                    startPlayers.put(targetUuid, name);
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+
         wrongGuessCount = tag.getInt("wrongGuessCount");
         rolesInitialized = tag.getBoolean("rolesInitialized");
     }
@@ -266,6 +298,12 @@ public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTicki
             }
         }
         tag.put("guesses", guessesTag);
+
+        CompoundTag startPlayersTag = new CompoundTag();
+        for (Map.Entry<UUID, String> entry : startPlayers.entrySet()) {
+            startPlayersTag.putString(entry.getKey().toString(), entry.getValue());
+        }
+        tag.put("startPlayers", startPlayersTag);
 
         tag.putInt("wrongGuessCount", wrongGuessCount);
         tag.putBoolean("rolesInitialized", rolesInitialized);

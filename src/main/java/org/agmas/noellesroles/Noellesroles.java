@@ -253,10 +253,10 @@ public class Noellesroles implements ModInitializer {
         });
         INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
 
-        // 改良型民兵初始物品
-        List<Supplier<ItemStack>> betterVigilanteItems = new ArrayList<>();
-        betterVigilanteItems.add(ModItems.WRITTEN_NOTE::getDefaultInstance);
-        INITIAL_ITEMS_MAP.put(ModRoles.RECORDER, betterVigilanteItems);
+        // 记录员初始物品
+        List<Supplier<ItemStack>> recorderItems = new ArrayList<>();
+        recorderItems.add(ModItems.WRITTEN_NOTE::getDefaultInstance);
+        INITIAL_ITEMS_MAP.put(ModRoles.RECORDER, recorderItems);
 
         // 小丑初始物品
         List<Supplier<ItemStack>> jesterItems = new ArrayList<>();
@@ -689,7 +689,13 @@ public class Noellesroles implements ModInitializer {
             if (role.equals(ModRoles.RECORDER)) {
                 final var insaneKillerPlayerComponent = RecorderPlayerComponent.KEY.get(player);
                 insaneKillerPlayerComponent.initializeRoles();
+            }
 
+            // 更新所有记录员的可用角色列表
+            for (ServerPlayer p : player.getServer().getPlayerList().getPlayers()) {
+                if (GameWorldComponent.KEY.get(p.level()).isRole(p, ModRoles.RECORDER)) {
+                    RecorderPlayerComponent.KEY.get(p).updateAvailableRoles();
+                }
             }
             if (role.equals(ModRoles.RECORDER)) {
                 final var insaneKillerPlayerComponent = RecallerPlayerComponent.KEY.get(player);
@@ -1316,6 +1322,9 @@ public class Noellesroles implements ModInitializer {
             } else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
                     && abilityPlayerComponent.cooldown <= 0) {
 
+            } else if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
+                BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(context.player());
+                bomberPlayerComponent.buyBomb();
             }
         });
 
@@ -1329,19 +1338,6 @@ public class Noellesroles implements ModInitializer {
 
             component.toggleAbility();
             component.sync();
-        });
-        ServerPlayNetworking.registerGlobalReceiver(Noellesroles.ABILITY_PACKET, (payload, context) -> {
-            AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
-                    .get(context.player());
-            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
-                    .get(context.player().level());
-
-            if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
-                BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(context.player());
-                bomberPlayerComponent.buyBomb();
-            }
-
-            // ... existing code ...
         });
         ServerPlayNetworking.registerGlobalReceiver(RecorderC2SPacket.TYPE, RecorderC2SPacket::handle);
     }

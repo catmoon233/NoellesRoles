@@ -156,12 +156,20 @@ public class NoellesrolesClient implements ClientModInitializer {
                     handleAdmirerContinuousInput(client);
                     if (Minecraft.getInstance().player == null)
                         return;
+
+                    GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                            .get(Minecraft.getInstance().player.level());
+
+                    // 优先处理炸弹客，避免被 onAbilityKeyPressed 干扰
+                    if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BOMBER)) {
+                        ClientPlayNetworking.send(new AbilityC2SPacket());
+                        return;
+                    }
+
                     // while (abilityBind.wasPressed()) {
                     onAbilityKeyPressed(client);
                     // }
 
-                    GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
-                            .get(Minecraft.getInstance().player.level());
                     if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)) {
                         if (targetBody == null)
                             return;
