@@ -2,8 +2,10 @@
 .idea/*
 build/*
 run/*
+.vscode/*
 
 /.kilocode/
 /run/
 /.idea/
 
+/.vscode/

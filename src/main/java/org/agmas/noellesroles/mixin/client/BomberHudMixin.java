@@ -48,7 +48,7 @@ public class BomberHudMixin {
         }
     }
 
-    @Inject(method = "renderEffects", at = @At("RETURN"))
+    @Inject(method = "render", at = @At("TAIL"))
     private void renderBomberStatus(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null)
