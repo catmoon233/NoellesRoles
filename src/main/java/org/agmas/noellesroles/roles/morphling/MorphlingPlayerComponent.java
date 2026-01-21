@@ -23,6 +23,7 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
     private final Player player;
     public UUID disguise;
     public int morphTicks = 0;
+    public int tickR = 0;
 
     public void reset() {
         this.stopMorph();
@@ -40,31 +41,38 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
     public void clientTick() {
     }
 
-
-    public static int tickR = 0;
     public void serverTick() {
-        ++tickR;
-        if (this.morphTicks > 0 && disguise != null) {
-            if (player.level().getPlayerByUUID(disguise) != null) {
-                if (((ServerPlayer)player.level().getPlayerByUUID(disguise)).gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
+        if (this.morphTicks != 0) {
+            ++tickR;
+            if (this.morphTicks > 0) {
+                if (disguise != null) {
+                    if (player.level().getPlayerByUUID(disguise) != null) {
+                        if (((ServerPlayer)player.level().getPlayerByUUID(disguise)).gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
+                            stopMorph();
+                            return;
+                        }
+                    } else {
+                        stopMorph();
+                        return;
+                    }
+                } else {
                     stopMorph();
+                    return;
                 }
-            } else {
-                stopMorph();
+
+                if (--this.morphTicks == 0) {
+                    this.stopMorph();
+                }
+            } else if (this.morphTicks < 0) {
+                this.morphTicks++;
+                if (this.morphTicks == 0) {
+                    this.sync();
+                }
             }
-            if (--this.morphTicks == 0) {
-                this.stopMorph();
+
+            if (tickR % 20 == 0) {
+                this.sync();
             }
-
-
-        }
-        if (this.morphTicks < 0) {
-            this.morphTicks++;
-
-
-        }
-        if (tickR % 20 == 0) {
-            this.sync();
         }
     }
 
@@ -77,6 +85,7 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
 
     public void stopMorph() {
         this.morphTicks = -GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphCooldown);
+        this.sync();
     }
 
     public int getMorphTicks() {
