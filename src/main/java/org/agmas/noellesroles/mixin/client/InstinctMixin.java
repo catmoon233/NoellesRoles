@@ -84,7 +84,7 @@ public abstract class InstinctMixin {
                     cir.setReturnValue(Color.BLUE.getRGB());
                     cir.cancel();
                 }
-                if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BARTENDER) && playerPoisonComponent.poisonTicks > 0) {
+                if ((gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BARTENDER) || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.POISONER)) && playerPoisonComponent.poisonTicks > 0) {
                     cir.setReturnValue(Color.RED.getRGB());
                 }
             }
