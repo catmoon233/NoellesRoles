@@ -87,9 +87,10 @@ public abstract class MorphlingRendererMixin {
     
     @WrapOperation(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getSkin()Lnet/minecraft/client/resources/PlayerSkin;"))
     PlayerSkin renderArm(AbstractClientPlayer instance, Operation<PlayerSkin> original) {
-        if ((MorphlingPlayerComponent.KEY.get(instance)).getMorphTicks() > 0) {
-            if (instance.getCommandSenderWorld().getPlayerByUUID((MorphlingPlayerComponent.KEY.get(instance)).disguise) != null) {
-                 AbstractClientPlayer disguisePlayer = (AbstractClientPlayer) instance.getCommandSenderWorld().getPlayerByUUID((MorphlingPlayerComponent.KEY.get(instance)).disguise);
+        var component = MorphlingPlayerComponent.KEY.get(instance);
+        if (component != null && component.getMorphTicks() > 0) {
+            if (instance.getCommandSenderWorld().getPlayerByUUID(component.disguise) != null) {
+                 AbstractClientPlayer disguisePlayer = (AbstractClientPlayer) instance.getCommandSenderWorld().getPlayerByUUID(component.disguise);
                  if (disguisePlayer != null && disguisePlayer != instance) { // 防止自己伪装成自己导致递归
                      return disguisePlayer.getSkin();
                  }
@@ -99,7 +100,10 @@ public abstract class MorphlingRendererMixin {
         }
         if (TMMClient.moodComponent != null) {
             if ((ConfigWorldComponent.KEY.get(instance.level())).insaneSeesMorphs && TMMClient.moodComponent.isLowerThanDepressed() && NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.containsKey(instance.getUUID())) {
-                return TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(instance.getUUID())).getSkin();
+                var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(instance.getUUID()));
+                if (playerInfo != null) {
+                    return playerInfo.getSkin();
+                }
             }
         }
         return original.call(instance);
