@@ -1,6 +1,5 @@
 package org.agmas.noellesroles;
 
-
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -48,15 +47,13 @@ import static org.agmas.noellesroles.Noellesroles.MOD_ID;
  * 4. 初始化物品和配置
  */
 public class RicesRoleRhapsody implements ModInitializer {
-    
+
     // ==================== 常量定义 ====================
 
-
-    
     // ==================== 原版角色列表（用于判断） ====================
     public static final ArrayList<Role> VANILLA_ROLES = new ArrayList<>();
     public static final ArrayList<ResourceLocation> VANILLA_ROLE_IDS = new ArrayList<>();
-    
+
     // ==================== 网络包 ID ====================
     public static final CustomPacketPayload.Type<ConspiratorC2SPacket> CONSPIRATOR_PACKET = ConspiratorC2SPacket.ID;
     public static final CustomPacketPayload.Type<TelegrapherC2SPacket> TELEGRAPHER_PACKET = TelegrapherC2SPacket.ID;
@@ -72,41 +69,41 @@ public class RicesRoleRhapsody implements ModInitializer {
     public static final CustomPacketPayload.Type<SingerAbilityC2SPacket> SINGER_ABILITY_PACKET = SingerAbilityC2SPacket.ID;
     public static final CustomPacketPayload.Type<PsychologistC2SPacket> PSYCHOLOGIST_PACKET = PsychologistC2SPacket.ID;
     public static final CustomPacketPayload.Type<PuppeteerC2SPacket> PUPPETEER_PACKET = PuppeteerC2SPacket.ID;
-    public static final CustomPacketPayload.Type<LockGameC2Packet> LOCK_GAME_PACKET = LockGameC2Packet.ID;
 
     @Override
     public void onInitialize() {
-        
-//        // 1. 初始化原版角色列表（用于后续判断）
-//        initVanillaRoles();
-//
-//        // 2. 注册自定义角色
-//        ModRoles.init();
-//
-//        // 3. 注册物品
-//        ModItems.init();
-//
-//        // 4. 注册实体
-//        ModEntities.init();
-//
-//        // 5. 注册 ScreenHandlers
-//        ModScreenHandlers.init();
-//
-//        // 6. 初始化商店
-//
-//
-//        // 7. 注册网络包（如果有自定义技能需要客户端-服务端通信）
-//        registerPackets();
-//
-//        // 8. 注册事件监听
-//        registerEvents();
-//
-//        // 9. 加载配置（如果使用 YACL）
-//        // ModConfig.HANDLER.load();
-//
-//        // 10. 注册傀儡师尸体收集事件
-//        registerPuppeteerBodyCollect();
+
+        // // 1. 初始化原版角色列表（用于后续判断）
+        // initVanillaRoles();
+        //
+        // // 2. 注册自定义角色
+        // ModRoles.init();
+        //
+        // // 3. 注册物品
+        // ModItems.init();
+        //
+        // // 4. 注册实体
+        // ModEntities.init();
+        //
+        // // 5. 注册 ScreenHandlers
+        // ModScreenHandlers.init();
+        //
+        // // 6. 初始化商店
+        //
+        //
+        // // 7. 注册网络包（如果有自定义技能需要客户端-服务端通信）
+        // registerPackets();
+        //
+        // // 8. 注册事件监听
+        // registerEvents();
+        //
+        // // 9. 加载配置（如果使用 YACL）
+        // // ModConfig.HANDLER.load();
+        //
+        // // 10. 注册傀儡师尸体收集事件
+        // registerPuppeteerBodyCollect();
     }
+
     public static void onInitialize1() {
 
         // 1. 初始化原版角色列表（用于后续判断）
@@ -125,7 +122,6 @@ public class RicesRoleRhapsody implements ModInitializer {
         ModScreenHandlers.init();
 
         // 6. 初始化商店
-
 
         // 7. 注册网络包（如果有自定义技能需要客户端-服务端通信）
         registerPackets();
@@ -147,43 +143,48 @@ public class RicesRoleRhapsody implements ModInitializer {
     private static void registerPuppeteerBodyCollect() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             // 只在服务端处理
-            if (world.isClientSide()) return net.minecraft.world.InteractionResult.PASS;
-            
+            if (world.isClientSide())
+                return net.minecraft.world.InteractionResult.PASS;
+
             // 检查实体是否是玩家尸体
-            if (!(entity instanceof PlayerBodyEntity body)) return net.minecraft.world.InteractionResult.PASS;
-            
+            if (!(entity instanceof PlayerBodyEntity body))
+                return net.minecraft.world.InteractionResult.PASS;
+
             // 检查玩家是否存活
-            if (!GameFunctions.isPlayerAliveAndSurvival(player)) return net.minecraft.world.InteractionResult.PASS;
-            
+            if (!GameFunctions.isPlayerAliveAndSurvival(player))
+                return net.minecraft.world.InteractionResult.PASS;
+
             // 检查玩家是否是傀儡师
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(world);
-            if (!gameWorld.isRole(player, ModRoles.PUPPETEER)) return net.minecraft.world.InteractionResult.PASS;
-            
+            if (!gameWorld.isRole(player, ModRoles.PUPPETEER))
+                return net.minecraft.world.InteractionResult.PASS;
+
             // 获取傀儡师组件
             PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(player);
-            
+
             // 检查是否可以回收（阶段一且不在冷却中）
-            if (!puppeteerComp.canCollectBody()) return net.minecraft.world.InteractionResult.PASS;
-            
+            if (!puppeteerComp.canCollectBody())
+                return net.minecraft.world.InteractionResult.PASS;
+
             // 获取尸体对应的玩家UUID
             java.util.UUID bodyOwnerUuid = body.getPlayerUuid();
-            
+
             // 获取游戏总人数
             int totalPlayers = 1;
             if (world instanceof net.minecraft.server.level.ServerLevel serverWorld) {
                 totalPlayers = serverWorld.players().size();
             }
-            
+
             // 回收尸体
             puppeteerComp.collectBody(bodyOwnerUuid, totalPlayers);
-            
+
             // 让尸体消失
             body.discard();
-            
+
             return net.minecraft.world.InteractionResult.SUCCESS;
         });
     }
-    
+
     /**
      * 初始化原版角色列表
      */
@@ -192,13 +193,12 @@ public class RicesRoleRhapsody implements ModInitializer {
         VANILLA_ROLES.add(TMMRoles.VIGILANTE);
         VANILLA_ROLES.add(TMMRoles.CIVILIAN);
         VANILLA_ROLES.add(TMMRoles.LOOSE_END);
-        
+
         VANILLA_ROLE_IDS.add(TMMRoles.KILLER.identifier());
         VANILLA_ROLE_IDS.add(TMMRoles.VIGILANTE.identifier());
         VANILLA_ROLE_IDS.add(TMMRoles.CIVILIAN.identifier());
         VANILLA_ROLE_IDS.add(TMMRoles.LOOSE_END.identifier());
     }
-    
 
     /**
      * 注册网络包
@@ -206,50 +206,51 @@ public class RicesRoleRhapsody implements ModInitializer {
      */
     private static void registerPackets() {
 
-
-        //PayloadTypeRegistry.playC2S().register(ThiefStealC2SPacket.ID, ThiefStealC2SPacket.CODEC);
+        // PayloadTypeRegistry.playC2S().register(ThiefStealC2SPacket.ID,
+        // ThiefStealC2SPacket.CODEC);
 
         // 注册阴谋家猜测包
         PayloadTypeRegistry.playC2S().register(ConspiratorC2SPacket.ID, ConspiratorC2SPacket.CODEC);
-        
+
         // 注册电报员消息包
         PayloadTypeRegistry.playC2S().register(TelegrapherC2SPacket.ID, TelegrapherC2SPacket.CODEC);
-        
+
         // 注册邮差传递包
         PayloadTypeRegistry.playC2S().register(PostmanC2SPacket.ID, PostmanC2SPacket.CODEC);
-        
+
         // 注册私家侦探审查包
         PayloadTypeRegistry.playC2S().register(DetectiveC2SPacket.ID, DetectiveC2SPacket.CODEC);
-        
+
         // 注册拳击手技能包
         PayloadTypeRegistry.playC2S().register(BoxerAbilityC2SPacket.ID, BoxerAbilityC2SPacket.CODEC);
-        
+
         // 注册跟踪者窥视包
         PayloadTypeRegistry.playC2S().register(StalkerGazeC2SPacket.ID, StalkerGazeC2SPacket.CODEC);
-        
+
         // 注册跟踪者突进包
         PayloadTypeRegistry.playC2S().register(StalkerDashC2SPacket.ID, StalkerDashC2SPacket.CODEC);
-        
+
         // 注册运动员技能包
         PayloadTypeRegistry.playC2S().register(AthleteAbilityC2SPacket.ID, AthleteAbilityC2SPacket.CODEC);
-        
+
         // 注册慕恋者窥视包
         PayloadTypeRegistry.playC2S().register(AdmirerGazeC2SPacket.ID, AdmirerGazeC2SPacket.CODEC);
-        
+
         // 注册设陷者技能包
         PayloadTypeRegistry.playC2S().register(TrapperC2SPacket.ID, TrapperC2SPacket.CODEC);
-        
+
         // 注册明星技能包
         PayloadTypeRegistry.playC2S().register(StarAbilityC2SPacket.ID, StarAbilityC2SPacket.CODEC);
-        
+
         // 注册歌手技能包
         PayloadTypeRegistry.playC2S().register(SingerAbilityC2SPacket.ID, SingerAbilityC2SPacket.CODEC);
-        
+
         // 注册心理学家技能包
         PayloadTypeRegistry.playC2S().register(PsychologistC2SPacket.ID, PsychologistC2SPacket.CODEC);
-        
+
         // 注册傀儡师技能包
         PayloadTypeRegistry.playC2S().register(PuppeteerC2SPacket.ID, PuppeteerC2SPacket.CODEC);
+
 
         // 注册撬锁小游戏完成包
         PayloadTypeRegistry.playC2S().register(LOCK_GAME_PACKET, LockGameC2Packet.CODEC);
@@ -257,20 +258,25 @@ public class RicesRoleRhapsody implements ModInitializer {
         // 处理阴谋家猜测包
         ServerPlayNetworking.registerGlobalReceiver(CONSPIRATOR_PACKET, (payload, context) -> {
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
-            
+
             // 验证玩家是阴谋家
-            if (!gameWorld.isRole(context.player(), ModRoles.CONSPIRATOR)) return;
-            
+            if (!gameWorld.isRole(context.player(), ModRoles.CONSPIRATOR))
+                return;
+
             // 验证玩家存活
-            if (!GameFunctions.isPlayerAliveAndSurvival(context.player())) return;
-            
+            if (!GameFunctions.isPlayerAliveAndSurvival(context.player()))
+                return;
+
             // 验证目标玩家
-            if (payload.targetPlayer() == null) return;
+            if (payload.targetPlayer() == null)
+                return;
             Player target = context.player().level().getPlayerByUUID(payload.targetPlayer());
-            if (target == null) return;
-            
+            if (target == null)
+                return;
+
             // 验证角色 ID
-            if (payload.roleId() == null || payload.roleId().isEmpty()) return;
+            if (payload.roleId() == null || payload.roleId().isEmpty())
+                return;
             ResourceLocation roleId = ResourceLocation.tryParse(payload.roleId());
             if (roleId == null) return;
             
@@ -707,21 +713,6 @@ public class RicesRoleRhapsody implements ModInitializer {
                         puppeteerComp.returnToBody(false);
                     }
                 }
-            }
-        });
-
-        // 处理锁游戏包
-        ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
-            ServerPlayer player = context.player();
-            ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if(payload.result())
-            {
-                LockEntityManager.getInstance().removeLockEntity(payload.pos(), payload.entityId());
-            }
-            else if(lockPick.getItem() == TMMItems.LOCKPICK)
-            {
-                // TODO : 应该给撬锁器添加损坏动画和音效，但是它本来就没有耐久，如果要做可能要引入多个包，暂不处理
-                lockPick.shrink(1);
             }
         });
     }

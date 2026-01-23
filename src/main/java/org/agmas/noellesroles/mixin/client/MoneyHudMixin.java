@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public class MoneyHudMixin {
     
-    @Inject(method = "renderEffects", at = @At("RETURN"))
+    @Inject(method = "render", at = @At("TAIL"))
     private void renderMoneyDisplay(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
 //        MinecraftClient client = MinecraftClient.getInstance();
 //        if (client.player == null || client.world == null) return;

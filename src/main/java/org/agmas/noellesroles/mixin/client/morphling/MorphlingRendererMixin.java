@@ -6,6 +6,7 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
@@ -45,14 +46,19 @@ public abstract class MorphlingRendererMixin {
             
             if (TMMClient.moodComponent != null) {
                 if ((ConfigWorldComponent.KEY.get(abstractClientPlayerEntity.level())).insaneSeesMorphs && TMMClient.moodComponent.isLowerThanDepressed() && NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.containsKey(abstractClientPlayerEntity.getUUID())) {
-                    final var texture = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(abstractClientPlayerEntity.getUUID())).getSkin().texture();
+                    final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(abstractClientPlayerEntity.getUUID()));
+                    if (playerInfo==null)return;
+                    final var skin = playerInfo.getSkin();
+                    if (skin==null)return;
+                    final var texture = skin.texture();
                     cir.setReturnValue(texture);
                     cir.cancel();
                     return;
                 }
+
             }
             final var morphlingPlayerComponent = MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity);
-            if (morphlingPlayerComponent.getMorphTicks() > 0 ) {
+            if (morphlingPlayerComponent != null && morphlingPlayerComponent.getMorphTicks() > 0 ) {
                 if (abstractClientPlayerEntity.getCommandSenderWorld().getPlayerByUUID((MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity)).disguise) != null) {
                     AbstractClientPlayer disguisePlayer = (AbstractClientPlayer) abstractClientPlayerEntity.getCommandSenderWorld().getPlayerByUUID((MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity)).disguise);
                     if (disguisePlayer != null && disguisePlayer != abstractClientPlayerEntity) { // 防止自己伪装成自己导致递归
@@ -62,15 +68,18 @@ public abstract class MorphlingRendererMixin {
                     }
                 } else {
                     Log.info(LogCategory.GENERAL, "Morphling disguise is null!!!");
+
                 }
-                if (MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise.equals(Minecraft.getInstance().player.getUUID())) {
+                if (Minecraft.getInstance().player != null && MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise.equals(Minecraft.getInstance().player.getUUID())) {
                     if (Minecraft.getInstance().player != abstractClientPlayerEntity) { // 防止自己伪装成自己导致递归
                         cir.setReturnValue(getTextureLocation(Minecraft.getInstance().player));
                         cir.cancel();
-                        return;
                     }
                 }
-            }
+                        return;
+                    }
+
+
         } finally {
             isInMorphingCall.set(false);
         }
@@ -78,9 +87,10 @@ public abstract class MorphlingRendererMixin {
     
     @WrapOperation(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getSkin()Lnet/minecraft/client/resources/PlayerSkin;"))
     PlayerSkin renderArm(AbstractClientPlayer instance, Operation<PlayerSkin> original) {
-        if ((MorphlingPlayerComponent.KEY.get(instance)).getMorphTicks() > 0) {
-            if (instance.getCommandSenderWorld().getPlayerByUUID((MorphlingPlayerComponent.KEY.get(instance)).disguise) != null) {
-                 AbstractClientPlayer disguisePlayer = (AbstractClientPlayer) instance.getCommandSenderWorld().getPlayerByUUID((MorphlingPlayerComponent.KEY.get(instance)).disguise);
+        var component = MorphlingPlayerComponent.KEY.get(instance);
+        if (component != null && component.getMorphTicks() > 0) {
+            if (instance.getCommandSenderWorld().getPlayerByUUID(component.disguise) != null) {
+                 AbstractClientPlayer disguisePlayer = (AbstractClientPlayer) instance.getCommandSenderWorld().getPlayerByUUID(component.disguise);
                  if (disguisePlayer != null && disguisePlayer != instance) { // 防止自己伪装成自己导致递归
                      return disguisePlayer.getSkin();
                  }
@@ -90,7 +100,10 @@ public abstract class MorphlingRendererMixin {
         }
         if (TMMClient.moodComponent != null) {
             if ((ConfigWorldComponent.KEY.get(instance.level())).insaneSeesMorphs && TMMClient.moodComponent.isLowerThanDepressed() && NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.containsKey(instance.getUUID())) {
-                return TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(instance.getUUID())).getSkin();
+                var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(instance.getUUID()));
+                if (playerInfo != null) {
+                    return playerInfo.getSkin();
+                }
             }
         }
         return original.call(instance);

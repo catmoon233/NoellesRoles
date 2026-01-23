@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public class StalkerHudMixin {
     
-    @Inject(method = "renderEffects", at = @At("RETURN"))
+    @Inject(method = "render", at = @At("TAIL"))
     private void renderStalkerHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null) return;

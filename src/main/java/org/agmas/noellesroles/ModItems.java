@@ -120,36 +120,55 @@ public class ModItems {
             new HallucinationBottleItem(new Item.Properties().stacksTo(1).durability(2)),
             "hallucination_bottle");
 
-    /**
-     * 薄荷糖
-     * - 心理学家专属物品
-     * - 游戏开始时给予一个
-     * - 在商店可以花费100金币购买
-     * - 吃掉时恢复0.35的san值（35%）
-     */
-    public static final Item MINT_CANDIES = register(
-            new MintCandiesItem(new Item.Properties().stacksTo(16)),
-            "mint_candies");
+        /**
+         * 薄荷糖
+         * - 心理学家专属物品
+         * - 游戏开始时给予一个
+         * - 在商店可以花费100金币购买
+         * - 吃掉时恢复0.35的san值（35%）
+         */
+        public static final Item MINT_CANDIES = register(
+                        new MintCandiesItem(new Item.Properties().stacksTo(16)),
+                        "mint_candies");
+        /**
+         * 记录笔记
+         * - 记录员专属物品
+         * - 开局给予
+         * - 右键使用打开记录界面
+         */
+        public static final Item WRITTEN_NOTE = register(
+                        new WrittenNoteItem(new Item.Properties().stacksTo(1)),
+                        "written_note");
+        /**
+         * 炸弹
+         * - 炸弹客专属物品
+         * - 倒计时10秒，前5秒隐形
+         * - 右键传递
+         */
+        public static final Item BOMB = register(
+                        new BombItem(new Item.Properties().stacksTo(1)),
+                        "bomb");
 
-    /**
-     * 锁
-     * - 工程师专属物品
-     * - 工程师商店购买
-     * - 右键门：将门锁上，使用撬锁器时需要解锁，失败后损坏撬锁器
-     * - 默认长度为6，如有需要以后可以利用json进行配置
-     */
-    public static final Item LOCK_ITEM = register(
-            new LockItem(6, 0.1f,new Item.Properties().stacksTo(1)),
-            "lock");
 
-//    public static final Item SHERIFF_GUN_MAINTENANCE = register(
-//            new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
-//            "sheriff_gun_maintenance"
-//    );
-    
-    public static Item register(Item item, String id) {
-        // Create the identifier for the item.
-        ResourceLocation itemID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, id);
+        /**
+         * 锁
+         * - 工程师专属物品
+         * - 工程师商店购买
+         * - 右键门：将门锁上，使用撬锁器时需要解锁，失败后损坏撬锁器
+         * - 默认长度为6，如有需要以后可以利用json进行配置
+         */
+        public static final Item LOCK_ITEM = register(
+                new LockItem(6, 0.1f,new Item.Properties().stacksTo(1)),
+                "lock");
+
+        // public static final Item SHERIFF_GUN_MAINTENANCE = register(
+        // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
+        // "sheriff_gun_maintenance"
+        // );
+
+        public static Item register(Item item, String id) {
+                // Create the identifier for the item.
+                ResourceLocation itemID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, id);
 
         // Register the item.
         Item registeredItem = Registry.register(BuiltInRegistries.ITEM, itemID, item);

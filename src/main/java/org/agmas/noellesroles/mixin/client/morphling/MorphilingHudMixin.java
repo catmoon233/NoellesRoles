@@ -25,9 +25,7 @@ public abstract class MorphilingHudMixin {
     @Inject(method = "render", at = @At("TAIL"))
     public void phantomHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(Minecraft.getInstance().player.level());
-        AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
-        RecallerPlayerComponent recallerPlayerComponent = RecallerPlayerComponent.KEY.get(Minecraft.getInstance().player);
-        PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(Minecraft.getInstance().player);
+
         if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.MORPHLING)) {
             final var morphTicks = MorphlingPlayerComponent.KEY.get(Minecraft.getInstance().player).getMorphTicks();
             context.drawString(getFont(), Component.translatable("morphling.tip" ,((int) (morphTicks * 0.05))), context.guiWidth() - getFont().width(Component.nullToEmpty("Morphing in " + morphTicks)), context.guiHeight() - 20, ModRoles.MORPHLING.color());

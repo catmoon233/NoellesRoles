@@ -19,7 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
 public abstract class BroadcasterHudMixin {
-    @Shadow public abstract Font getFont();
+    @Shadow
+    public abstract Font getFont();
 
     @Inject(method = "render", at = @At("TAIL"))
     public void broadcasterHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
@@ -37,22 +38,27 @@ public abstract class BroadcasterHudMixin {
             int y = 20;
             int padding = 4;
             int bgColor = 0x80000000;
-            context.fill(x - padding, y - padding, x + textWidth + padding, y + textRenderer.lineHeight + padding, bgColor);
+            context.fill(x - padding, y - padding, x + textWidth + padding, y + textRenderer.lineHeight + padding,
+                    bgColor);
             context.drawString(textRenderer, message, x, y, 0xFFFFFF);
         }
-        
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(Minecraft.getInstance().player.level());
-        AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
+
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                .get(Minecraft.getInstance().player.level());
+        AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
+                .get(Minecraft.getInstance().player);
         PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(Minecraft.getInstance().player);
-        
+
         if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BROADCASTER)) {
             int drawY = context.guiHeight();
 
             Component line;
-            line = Component.translatable("tip.broadcaster.with_cost", NoellesrolesClient.abilityBind.getTranslatedKeyMessage(), 150);
+            line = Component.translatable("tip.broadcaster.with_cost",
+                    NoellesrolesClient.abilityBind.getTranslatedKeyMessage(), 100);
 
             drawY -= getFont().wordWrapHeight(line, 999999);
-            context.drawString(getFont(), line, context.guiWidth() - getFont().width(line), drawY, ModRoles.BROADCASTER.color());
+            context.drawString(getFont(), line, context.guiWidth() - getFont().width(line), drawY,
+                    ModRoles.BROADCASTER.color());
         }
     }
 }

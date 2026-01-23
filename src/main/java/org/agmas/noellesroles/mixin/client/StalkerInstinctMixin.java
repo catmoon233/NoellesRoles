@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.client;
 
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
+import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -32,57 +33,58 @@ import net.minecraft.world.entity.player.Player;
  */
 @Mixin(TMMClient.class)
 public class StalkerInstinctMixin {
-    
+
     @Shadow
     public static KeyMapping instinctKeybind;
-    
+
     // 渐变色配置 - 从红色到橙色到黄色循环
     @Unique
     private static final int[] GRADIENT_COLORS = {
-        new Color(255, 0, 0).getRGB(),      // 红色
-        new Color(255, 85, 0).getRGB(),     // 橙红
-        new Color(255, 170, 0).getRGB(),    // 橙色
-        new Color(255, 255, 0).getRGB(),    // 黄色
-        new Color(255, 170, 0).getRGB(),    // 橙色
-        new Color(255, 85, 0).getRGB(),     // 橙红
+            new Color(255, 0, 0).getRGB(), // 红色
+            new Color(255, 85, 0).getRGB(), // 橙红
+            new Color(255, 170, 0).getRGB(), // 橙色
+            new Color(255, 255, 0).getRGB(), // 黄色
+            new Color(255, 170, 0).getRGB(), // 橙色
+            new Color(255, 85, 0).getRGB(), // 橙红
     };
-    
+
     // 渐变周期（tick）
     @Unique
     private static final int GRADIENT_CYCLE = 60; // 3秒一个周期
-    
+
     // 定义杀手透视时显示绿色的乘客角色列表
     private static final int INNOCENT_GREEN = new Color(0, 255, 0).getRGB();
     private static final Set<Role> INNOCENT_ROLES_FOR_KILLER_INSTINCT = Set.of(
-        ModRoles.PUPPETEER
-    );
-    
+            ModRoles.PUPPETEER);
+
     /**
      * 获取渐变颜色
+     * 
      * @param tickOffset 每个实体的偏移量，使不同实体颜色略有不同
      * @return 当前渐变颜色
      */
     @Unique
     private static int getGradientColor(int tickOffset) {
         Minecraft client = Minecraft.getInstance();
-        if (client.level == null) return GRADIENT_COLORS[0];
-        
+        if (client.level == null)
+            return GRADIENT_COLORS[0];
+
         long worldTime = client.level.getGameTime();
         int cyclePosition = (int) ((worldTime + tickOffset) % GRADIENT_CYCLE);
-        
+
         // 计算在颜色数组中的位置
         float progress = (float) cyclePosition / GRADIENT_CYCLE * GRADIENT_COLORS.length;
         int colorIndex = (int) progress;
         float blend = progress - colorIndex;
-        
+
         // 获取当前颜色和下一个颜色
         int currentColor = GRADIENT_COLORS[colorIndex % GRADIENT_COLORS.length];
         int nextColor = GRADIENT_COLORS[(colorIndex + 1) % GRADIENT_COLORS.length];
-        
+
         // 混合两个颜色
         return blendColors(currentColor, nextColor, blend);
     }
-    
+
     /**
      * 混合两个颜色
      */
@@ -91,28 +93,29 @@ public class StalkerInstinctMixin {
         int r1 = (color1 >> 16) & 0xFF;
         int g1 = (color1 >> 8) & 0xFF;
         int b1 = color1 & 0xFF;
-        
+
         int r2 = (color2 >> 16) & 0xFF;
         int g2 = (color2 >> 8) & 0xFF;
         int b2 = color2 & 0xFF;
-        
+
         int r = (int) (r1 + (r2 - r1) * blend);
         int g = (int) (g1 + (g2 - g1) * blend);
         int b = (int) (b1 + (b2 - b1) * blend);
-        
+
         return (r << 16) | (g << 8) | b;
     }
-    
+
     /**
      * 让爱慕者和傀儡师操控假人时可以使用杀手本能（类似小丑）
      */
     @Inject(method = "isInstinctEnabled", at = @At("HEAD"), cancellable = true)
     private static void admirerAndPuppeteerCanUseInstinct(CallbackInfoReturnable<Boolean> cir) {
         Minecraft client = Minecraft.getInstance();
-        if (client.player == null || client.level == null) return;
-        
+        if (client.player == null || client.level == null)
+            return;
+
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
-        
+
         // 爱慕者可以使用本能侦查（类似小丑）
         if (gameWorld.isRole(client.player, ModRoles.ADMIRER)) {
             if (instinctKeybind.isDown()) {
@@ -121,7 +124,7 @@ public class StalkerInstinctMixin {
                 return;
             }
         }
-        
+
         // 傀儡师操控假人时可以使用本能侦查
         // 注意：操控假人时角色会临时变成其他杀手，所以需要检查组件状态而不是角色
         PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(client.player);
@@ -130,7 +133,7 @@ public class StalkerInstinctMixin {
             cir.cancel();
         }
     }
-    
+
     /**
      * 处理杀手本能高亮颜色
      * 1. 跟踪者显示跟踪者颜色
@@ -139,31 +142,36 @@ public class StalkerInstinctMixin {
     @Inject(method = "getInstinctHighlight", at = @At("HEAD"), cancellable = true)
     private static void customInstinctHighlight(Entity target, CallbackInfoReturnable<Integer> cir) {
         Minecraft client = Minecraft.getInstance();
-        if (client.player == null || client.level == null) return;
-        
-        if (!(target instanceof Player targetPlayer)) return;
-        if (targetPlayer.isSpectator()) return;
-        
+        if (client.player == null || client.level == null)
+            return;
+
+        if (!(target instanceof Player targetPlayer))
+            return;
+        if (targetPlayer.isSpectator())
+            return;
+
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
-        
+
         // 只有在杀手本能激活时才处理
-        if (!TMMClient.isInstinctEnabled()) return;
-        
+        if (!TMMClient.isInstinctEnabled())
+            return;
+
         // 计算实体偏移量（使不同玩家渐变稍有不同）
         int entityOffset = targetPlayer.getId() * 7;
-        
+
         // =============== 跟踪者处理 ===============
         // 杀手透视跟踪者时，显示渐变色
-//        StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(targetPlayer);
-//        if (stalkerComp.isStalkerMarked && stalkerComp.phase > 0) {
-//            if (TMMClient.isKiller() && TMMClient.isPlayerAliveAndInSurvival()) {
-//                // 使用渐变色
-//                cir.setReturnValue(getGradientColor(entityOffset));
-//                cir.cancel();
-//                return;
-//            }
-//        }
-        
+        // StalkerPlayerComponent stalkerComp =
+        // StalkerPlayerComponent.KEY.get(targetPlayer);
+        // if (stalkerComp.isStalkerMarked && stalkerComp.phase > 0) {
+        // if (TMMClient.isKiller() && TMMClient.isPlayerAliveAndInSurvival()) {
+        // // 使用渐变色
+        // cir.setReturnValue(getGradientColor(entityOffset));
+        // cir.cancel();
+        // return;
+        // }
+        // }
+
         // =============== 傀儡师处理 ===============
         // 杀手透视傀儡师时（阶段一和阶段二），显示渐变色
         PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(targetPlayer);
@@ -174,7 +182,7 @@ public class StalkerInstinctMixin {
                 return;
             }
         }
-        
+
         // 傀儡师操控假人时透视其他人，显示渐变色
         // 注意：操控假人时角色会临时变成其他杀手，所以需要检查组件状态而不是角色
         PuppeteerPlayerComponent selfPuppeteerComp = ModComponents.PUPPETEER.get(client.player);
@@ -183,7 +191,7 @@ public class StalkerInstinctMixin {
             cir.cancel();
             return;
         }
-        
+
         // =============== 爱慕者处理 ===============
         // 1. 杀手透视爱慕者时，显示爱慕者颜色（类似小丑）
         if (gameWorld.isRole(targetPlayer, ModRoles.ADMIRER)) {
@@ -193,7 +201,7 @@ public class StalkerInstinctMixin {
                 return;
             }
         }
-        
+
         // 2. 爱慕者透视其他人时，显示粉色（类似小丑）
         if (gameWorld.isRole(client.player, ModRoles.ADMIRER) && TMMClient.isPlayerAliveAndInSurvival()) {
             cir.setReturnValue(Color.PINK.getRGB());

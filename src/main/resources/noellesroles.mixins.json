@@ -7,6 +7,7 @@
   "mixins": [
     "AbstractContainerMenuMixin",
     "EntityClear",
+    "accessor.PlayerPoisonComponentAccessor",
     "GiveCoinsOnMoodCompletionMixin",
     "MasterKeyDoorMixin",
     "PlayerResetMixin",
@@ -61,12 +62,16 @@
     "defaultRequire": 1
   },
   "client": [
+    "KeyBindingMixin",
     "client.AvengerHudMixin",
+    "client.BomberHudMixin",
     "client.BoxerHudMixin",
     "client.ConspiratorHudMixin",
     "client.DetectiveHudMixin",
     "client.EngineerHudMixin",
     "client.HeldItemFeatureRendererMixin",
+    "client.InsaneHudMixin",
+    "client.InsaneKillerRenderMixin",
     "client.InstinctMixin",
     "client.LamBugFix",
     "client.LobbyCreditsHudMixin",
