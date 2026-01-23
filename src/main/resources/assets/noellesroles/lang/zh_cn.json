@@ -1,4 +1,5 @@
 {
+  "==================== 正文 ====================":"",
   "announcement.goals.awesome_binglus": "你有超多便条和一台立拍得，尽可能的记录下犯罪现场。",
   "announcement.goals.bartender": "能透过墙壁看到正在喝酒的玩家并使用防御药剂保护平民！",
   "announcement.goals.better_vigilante": "当场上剩余的平民+义警数量不大于2时，你将获得强力的武器背水一战！",
@@ -35,7 +36,6 @@
   "announcement.role.recaller": "召回者",
   "announcement.role.swapper": "交换者",
   "announcement.role.the_insane_damned_paranoid_killer": "亡语杀手",
-  "announcement.role.trapper": "设陷者",
   "announcement.role.voodoo": "巫毒师",
   "announcement.role.vulture": "秃鹫",
   "announcement.role.sheriff": "警长!",
@@ -310,7 +310,6 @@
   "announcement.role.stalker": "潜行者",
   "announcement.goals.stalker": "在阴影中观察，汲取恐惧的力量。完成进化，狩猎所有人。",
   "announcement.win.stalker": "潜行者完成了他的狩猎。",
-  
   "hud.noellesroles.stalker.phase1": "阶段一：观察",
   "hud.noellesroles.stalker.phase2": "阶段二：狩猎",
   "hud.noellesroles.stalker.phase3": "阶段三：处刑",
@@ -486,7 +485,6 @@
   "death_reason.noellesroles.puppeteer_puppet": "被傀儡殺死。",
   "==================== 薄荷糖物品 ====================": "",
   "item.noellesroles.mint_candies": "薄荷糖",
-  "item.noellesroles.mint_candies.tooltip": "食用後恢復35%的san值",
 
   "==================== 记录员角色 ====================": "",
   "announcement.role.recorder": "记录员",
@@ -507,14 +505,25 @@
   "message.noellesroles.recorder.died_from_mistakes": "你因记录错误太多而死亡！",
   "message.noellesroles.recorder.win": "记录员 %s 完成了所有记录，获得胜利！",
   "death_reason.noellesroles.recorder_mistake": "因记录错误而死。",
-  "item.noellesroles.mint_candies.tooltip": "食用後恢復35%的san值",
+  "item.noellesroles.mint_candies.tooltip": "食用后恢复35%的san值",
   "==================== 亡语杀手角色 ====================": "",
   "message.noellesroles.insane_killer.ability_deactivated": "伪装已关闭，进入冷却...",
+  "message.noellesroles.insane_killer.ability_activated": "伪装已激活！",
+  "insane.tip.over": "按下G结束假死",
+  "insane.tip": "伪装冷却中，还需 %s 秒",
+  "insane.tip.ready": "伪装就绪 - 按G激活",
   "==================== 炸弹客角色 ====================": "",
   "announcement.role.bomber": "炸弹客",
   "announcement.goals.bomber": "购买炸弹并传递给其他玩家。炸弹倒计时20秒，前10秒隐形。每次传递增加1.5秒。",
   "announcement.win.bomber": "杀手胜利！",
   "hud.noellesroles.bomber.count": "炸弹数量: %s",
   "hud.noellesroles.bomber.cost": "购买消耗: 100 金币",
-  "message.noellesroles.insane_killer.ability_activated": "伪装已激活！"
+  "message.noellesroles.cooldown":"无法使用技能：技能冷却中",
+  "==================== 补充翻译键 ====================":"",
+  "announcement.role.ghost":"小透明",
+  "announcement.role.noellesroles.ghost":"小透明",
+  "announcement.role.doctor":"医生",
+  "announcement.role.noellesroles.doctor":"医生",
+  "announcement.role.noellesroles.recorder":"记录员",
+  "announcement.role.noellesroles.attendant":"乘务员"
 }
