@@ -9,6 +9,7 @@ import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -31,12 +32,12 @@ import org.agmas.noellesroles.entity.LockEntityManager;
  * - 锁的强度由长度决定
  *
  * TODO: 一扇门是否可以放置多个锁（暂时允许多个锁）
- * TODO: 锁门的功能实现
  */
 public class LockItem extends Item implements AdventureUsable {
-    public LockItem(int length, Properties properties) {
+    public LockItem(int length, float strength, Properties properties) {
         super(properties);
         this.length = length;
+        this.resistance = strength;
     }
 
     /**
@@ -88,6 +89,8 @@ public class LockItem extends Item implements AdventureUsable {
             if(!world.isClientSide)
             {
                 LockEntity lockEntity = new LockEntity(ModEntities.LOCK_ENTITY, world);
+                lockEntity.setLength(length);
+                lockEntity.setResistance(resistance);
                 lockEntity.setPos(getLockEntityPos(context, door));
                 lockEntity.setXRot(0.f);
                 lockEntity.setYRot(door.getFacing().toYRot());
@@ -109,6 +112,13 @@ public class LockItem extends Item implements AdventureUsable {
         return super.useOn(context);
     }
 
+    public void setLength(int length){
+        this.length = length;
+    }
+    public void setResistance(float resistance){
+        this.resistance = resistance;
+    }
 
-    private final int length;
+    private float resistance;
+    private int length;
 }

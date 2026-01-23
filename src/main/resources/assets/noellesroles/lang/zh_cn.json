@@ -173,9 +173,11 @@
   "item.noellesroles.reinforcement.tooltip": "右键门加固，防御一次撬棍；蹲下右键解除卡住取出道具",
   "item.noellesroles.alarm_trap": "警报陷阱",
   "item.noellesroles.alarm_trap.tooltip": "右键门放置陷阱，撬棍触发时发出警报",
+  "item.noellesroles.lock": "锁",
+  "item.noellesroles.lock.tooltip": "右键锁门，可以阻挡撬锁器",
   "item.noellesroles.delivery_box": "邮件",
   "item.noellesroles.delivery_box.tooltip": "指针对准玩家并右键使用，打开隐秘传递界面",
-  
+
   "==================== HUD / 提示 ====================": "",
   "tip.noellesroles.ability_cooldown": "技能将在 %s 秒后可用",
   "tip.noellesroles.ability_ready": "按 %s 使用技能！",
@@ -244,6 +246,7 @@
   "message.noellesroles.engineer.trap_placed": "警报陷阱已放置！",
   "message.noellesroles.engineer.trap_triggered": "警报！有人正在破坏门锁！",
   "message.noellesroles.engineer.reinforcement_consumed": "加固被撬棍破坏了，但门仍然完好",
+  "message.noellesroles.engineer.removed_lock": "锁已取下",
   "tip.noellesroles.engineer.shop": "按 TAB 打开工程师商店",
   "tip.noellesroles.engineer.balance": "金币：%s",
   

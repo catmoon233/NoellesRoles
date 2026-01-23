@@ -1,19 +1,27 @@
 package org.agmas.noellesroles.mixin.roles.engineer;
 
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
+import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import org.agmas.noellesroles.client.screen.LockGameScreen;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static dev.doctor4t.trainmurdermystery.block.SmallDoorBlock.HALF;
 
 /**
  * 撬锁器小游戏启动逻辑：
@@ -35,22 +43,51 @@ public class LockMixin {
             CallbackInfoReturnable<InteractionResult> cir
             )
     {
-        /**
-         * 判断门是否有锁，理论上应该是对于门的上下两半都应该定位到门的上半部分的格子进行查找
-         * 但正常门上面应该不会有门，因此门上半部分的上面一格也将不会有锁（如果门的上一格有锁此逻辑也会阻塞）
-         * 所以对于正常情况直接判断即可，如果有门上加门的特殊情况，那就改一下（虽然概率很低）
-         */
-        if((LockEntityManager.getInstance().getLockEntity(pos) != null ||
-            LockEntityManager.getInstance().getLockEntity(pos.above()) != null) &&
-                player.getMainHandItem().is(TMMItems.LOCKPICK))
+        // 用于小游戏结束后查询锁的位置
+        BlockPos lockPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos;
+        if(player.getMainHandItem().is(TMMItems.LOCKPICK))
         {
-            // 当手持撬锁器且该门上锁时：进入撬锁小游戏
+            // 当当前门上无锁时，检查附近门的情况：实现锁对附近门的影响
+            if(LockEntityManager.getInstance().getLockEntity(lockPos) == null)
+            {
+                if (world.getBlockEntity(lockPos.below()) instanceof SmallDoorBlockEntity entity) {
+                    switch (entity.getFacing())
+                    {
+                    case NORTH:
+                    case SOUTH:
+                        if(LockEntityManager.getInstance().getLockEntity(lockPos.east()) != null)
+                            lockPos = lockPos.east();
+                        else if (LockEntityManager.getInstance().getLockEntity(lockPos.west()) != null) {
+                            lockPos = lockPos.west();
+                        }
+                        break;
+                    case EAST:
+                    case WEST:
+                        if(LockEntityManager.getInstance().getLockEntity(lockPos.north()) != null)
+                            lockPos = lockPos.north();
+                        else if (LockEntityManager.getInstance().getLockEntity(lockPos.south()) != null) {
+                            lockPos = lockPos.south();
+                        }
+                        break;
+                    }
+                }
+            }
 
-            //TODO : 让玩家执行撬锁小游戏
-            player.displayClientMessage(Component.literal("开始撬锁小游戏"), true);
+            if(LockEntityManager.getInstance().getLockEntity(lockPos) != null) {
+                // 当手持撬锁器且该门上锁时：进入撬锁小游戏
 
-            // 返回 false 阻止原始方法执行
-            cir.setReturnValue(InteractionResult.FAIL);
+                player.displayClientMessage(Component.literal("开始撬锁小游戏"), true);
+                // 客户端：打开GUI
+                if (world.isClientSide()) {
+                    Minecraft client = Minecraft.getInstance();
+                    if (client.player == null)
+                        return;
+                    client.setScreen(new LockGameScreen(lockPos, LockEntityManager.getInstance().getLockEntity(lockPos)));
+                }
+
+                // 返回 false 阻止原始方法执行
+                cir.setReturnValue(InteractionResult.FAIL);
+            }
         }
     }
 

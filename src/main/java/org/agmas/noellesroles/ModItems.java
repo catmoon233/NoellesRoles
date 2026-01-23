@@ -139,7 +139,7 @@ public class ModItems {
      * - 默认长度为6，如有需要以后可以利用json进行配置
      */
     public static final Item LOCK_ITEM = register(
-            new LockItem(6, new Item.Properties().stacksTo(1)),
+            new LockItem(6, 0.1f,new Item.Properties().stacksTo(1)),
             "lock");
 
 //    public static final Item SHERIFF_GUN_MAINTENANCE = register(

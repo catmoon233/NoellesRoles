@@ -25,7 +25,7 @@
 
 ### 注册方式：
 
-实体类创建java文件后在ModEntities.java文件中进行注册
+实体类创建java文件后在ModEntities.java件中进行注册
 
 再在client.renderer中创建EntityRender.java渲染器类用于客户端渲染，
 并在NoellesrolesClient.java中的registerEntityRenderers方法中对实体的渲染器进行注册
@@ -39,6 +39,31 @@
 - 声明新的静态商品对象列表
 - 在initShops()函数中对列表进行初始化添加新物品
 - 在shopRegiester()函数中为角色注册商店
+
+## 注册网络包
+
+### 定义网络包
+
+在packet下创建___C2Packets.java类继承CustomPacketPayload作为网络包包含：
+
+- 网络包的唯一标识符ResourcesLocatiom
+- 网络包类型标识符
+- 序列化/反序列化编解码
+- 定义编解码器写入读取方法
+- 需要传输的内容等
+
+### 注册网络包
+
+- 在模组初始化调用registerPackets函数中注册网络包
+- 随后对该网络包进行处理
+
+## 创建GUI
+
+### 创建方式：
+
+client下创建___Screen.java类继承Screen作为新GUI
+
+重写init函数对GUI进行初始化：注意布局以及添加到渲染列表中
 
 ## 对列车谋杀案模组修改
 

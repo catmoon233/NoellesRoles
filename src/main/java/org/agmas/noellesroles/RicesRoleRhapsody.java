@@ -8,6 +8,8 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -16,12 +18,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.component.AbilityPlayerComponent;
+import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.screen.DetectiveInspectScreenHandler;
@@ -67,6 +72,7 @@ public class RicesRoleRhapsody implements ModInitializer {
     public static final CustomPacketPayload.Type<SingerAbilityC2SPacket> SINGER_ABILITY_PACKET = SingerAbilityC2SPacket.ID;
     public static final CustomPacketPayload.Type<PsychologistC2SPacket> PSYCHOLOGIST_PACKET = PsychologistC2SPacket.ID;
     public static final CustomPacketPayload.Type<PuppeteerC2SPacket> PUPPETEER_PACKET = PuppeteerC2SPacket.ID;
+    public static final CustomPacketPayload.Type<LockGameC2Packet> LOCK_GAME_PACKET = LockGameC2Packet.ID;
 
     @Override
     public void onInitialize() {
@@ -244,7 +250,10 @@ public class RicesRoleRhapsody implements ModInitializer {
         
         // 注册傀儡师技能包
         PayloadTypeRegistry.playC2S().register(PuppeteerC2SPacket.ID, PuppeteerC2SPacket.CODEC);
-        
+
+        // 注册撬锁小游戏完成包
+        PayloadTypeRegistry.playC2S().register(LOCK_GAME_PACKET, LockGameC2Packet.CODEC);
+
         // 处理阴谋家猜测包
         ServerPlayNetworking.registerGlobalReceiver(CONSPIRATOR_PACKET, (payload, context) -> {
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
@@ -698,6 +707,21 @@ public class RicesRoleRhapsody implements ModInitializer {
                         puppeteerComp.returnToBody(false);
                     }
                 }
+            }
+        });
+
+        // 处理锁游戏包
+        ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
+            ServerPlayer player = context.player();
+            ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
+            if(payload.result())
+            {
+                LockEntityManager.getInstance().removeLockEntity(payload.pos(), payload.entityId());
+            }
+            else if(lockPick.getItem() == TMMItems.LOCKPICK)
+            {
+                // TODO : 应该给撬锁器添加损坏动画和音效，但是它本来就没有耐久，如果要做可能要引入多个包，暂不处理
+                lockPick.shrink(1);
             }
         });
     }
