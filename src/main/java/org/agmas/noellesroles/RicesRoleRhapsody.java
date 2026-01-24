@@ -253,7 +253,7 @@ public class RicesRoleRhapsody implements ModInitializer {
 
 
         // 注册撬锁小游戏完成包
-        PayloadTypeRegistry.playC2S().register(LOCK_GAME_PACKET, LockGameC2Packet.CODEC);
+        PayloadTypeRegistry.playC2S().register(LockGameC2Packet.ID, LockGameC2Packet.CODEC);
 
         // 处理阴谋家猜测包
         ServerPlayNetworking.registerGlobalReceiver(CONSPIRATOR_PACKET, (payload, context) -> {
