@@ -88,7 +88,7 @@ public class SmokeGrenadeEntity extends ThrowableItemProjectile {
             SmokeAreaManager.createSmokeArea(world, this.position(), SMOKE_RADIUS, SMOKE_DURATION_TICKS);
             
             // 初始烟雾粒子爆发 - 大幅增强效果（10倍粒子）
-            for (int i = 0; i < 1500; i++) {
+            for (int i = 0; i < 150; i++) {
                 double offsetX = (this.random.nextDouble() - 0.5) * SMOKE_RADIUS * 2;
                 double offsetY = this.random.nextDouble() * 3;  // 增加高度范围
                 double offsetZ = (this.random.nextDouble() - 0.5) * SMOKE_RADIUS * 2;
