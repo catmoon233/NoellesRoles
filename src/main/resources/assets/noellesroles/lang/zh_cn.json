@@ -534,5 +534,13 @@
   "gui.noellesroles.ghost.cooldown": "隐身: %ss",
   "gui.noellesroles.ghost.ready": "隐身: 可用",
   "==================== 还没做 ====================": "",
+  "==================== 监察员角色 ====================": "",
+  "announcement.role.monitor": "监察员",
+  "announcement.goals.monitor": "你可以标记一名玩家并透视其位置。",
+  "announcement.win.monitor": "乘客胜利！",
+  "message.noellesroles.monitor.marked": "你标记了 %s",
+  "message.noellesroles.monitor.cooldown": "技能冷却中: %s秒",
+  "message.noellesroles.monitor.no_target": "请将准星对准一名玩家！",
+  "message.noellesroles.monitor.target_not_found": "目标无效或已死亡！",
   "announcement.role.discovery_civilian": "发觉者（未实装）"
 }

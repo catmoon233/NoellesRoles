@@ -101,6 +101,7 @@ public class Noellesroles implements ModInitializer {
     public static final CustomPacketPayload.Type<ExecutionerSelectTargetC2SPacket> EXECUTIONER_SELECT_TARGET_PACKET = ExecutionerSelectTargetC2SPacket.ID;
     public static final CustomPacketPayload.Type<InsaneKillerAbilityC2SPacket> INSANE_KILLER_ABILITY_PACKET = InsaneKillerAbilityC2SPacket.ID;
     public static final CustomPacketPayload.Type<RecorderC2SPacket> RECORDER_PACKET = RecorderC2SPacket.TYPE;
+    public static final CustomPacketPayload.Type<MonitorMarkC2SPacket> MONITOR_MARK_PACKET = MonitorMarkC2SPacket.ID;
 
     // ==================== 商店项目列表 ====================
     public static ArrayList<ShopEntry> FRAMING_ROLES_SHOP = new ArrayList<>();
@@ -568,6 +569,7 @@ public class Noellesroles implements ModInitializer {
                 new BanditRevolverShootPayload.Receiver());
         PayloadTypeRegistry.playC2S().register(InsaneKillerAbilityC2SPacket.ID, InsaneKillerAbilityC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(RecorderC2SPacket.TYPE, RecorderC2SPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(MonitorMarkC2SPacket.ID, MonitorMarkC2SPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {
@@ -732,6 +734,11 @@ public class Noellesroles implements ModInitializer {
             }
             if (role.equals(ModRoles.BOMBER)) {
                 BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(player);
+                if (role.equals(ModRoles.MONITOR)) {
+                    MonitorPlayerComponent monitorComponent = MonitorPlayerComponent.KEY.get(player);
+                    monitorComponent.reset();
+                    monitorComponent.sync();
+                }
                 // bomberPlayerComponent.reset(); // 如果有 reset 方法
                 ModComponents.BOMBER.sync(player);
             }
@@ -1357,6 +1364,41 @@ public class Noellesroles implements ModInitializer {
             component.sync();
         });
         ServerPlayNetworking.registerGlobalReceiver(RecorderC2SPacket.TYPE, RecorderC2SPacket::handle);
+        ServerPlayNetworking.registerGlobalReceiver(Noellesroles.MONITOR_MARK_PACKET, (payload, context) -> {
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                    .get(context.player().level());
+            if (gameWorldComponent.isRole(context.player(), ModRoles.MONITOR)) {
+                MonitorPlayerComponent monitorComponent = MonitorPlayerComponent.KEY.get(context.player());
+
+                // 检查冷却
+                if (monitorComponent.canUseAbility()) {
+                    if (payload.target() != null) {
+                        Player targetPlayer = context.player().level().getPlayerByUUID(payload.target());
+                        if (targetPlayer != null && GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
+                            // 标记目标
+                            monitorComponent.markTarget(payload.target());
+
+                            // 发送成功消息
+                            context.player().displayClientMessage(
+                                    Component
+                                            .translatable("message.noellesroles.monitor.marked",
+                                                    targetPlayer.getName().getString())
+                                            .withStyle(ChatFormatting.AQUA),
+                                    true);
+                        } else {
+                            context.player().displayClientMessage(
+                                    Component.translatable("message.noellesroles.monitor.target_not_found"), true);
+                        }
+                    }
+                } else {
+                    // 冷却中
+                    context.player().displayClientMessage(
+                            Component.translatable("message.noellesroles.monitor.cooldown",
+                                    String.format("%.1f", monitorComponent.getCooldownSeconds())),
+                            true);
+                }
+            }
+        });
     }
 
     /**

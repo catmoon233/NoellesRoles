@@ -107,6 +107,7 @@ public class ModRoles {
         public static final ResourceLocation STALKER_ID = Noellesroles.id("stalker");
         public static final ResourceLocation ADMIRER_ID = Noellesroles.id("admirer");
         public static final ResourceLocation PUPPETEER_ID = Noellesroles.id("puppeteer");
+        public static final ResourceLocation MONITOR_ID = Noellesroles.id("monitor");
 
         public static final ResourceLocation RECORDER_ID = Noellesroles.id("recorder");
 
@@ -464,6 +465,12 @@ public class ModRoles {
          * - 操控限时1分钟，技能冷却3分钟
          * - 本体状态无法购买商店
          */
+        /**
+         * 监察员角色
+         * - 属于好人阵营 (isInnocent = true)
+         * - 技能：标记一名玩家并透视其位置，冷却60秒
+         */
+        public static Role MONITOR;
         public static Role PUPPETEER;
 
         public static HashMap<Role, RoleAnnouncementTexts.RoleAnnouncementText> roleRoleAnnouncementTextHashMap = new HashMap<>();
@@ -726,6 +733,19 @@ public class ModRoles {
                 // 傀儡师每局只能有 1 个
                 // 记录员每局只能有 1 个
                 Harpymodloader.setRoleMaximum(RECORDER_ID, 1);
+                // 监察员角色 - 好人阵营
+                MONITOR = TMMRoles.registerRole(new Role(
+                                MONITOR_ID, // 角色 ID
+                                new Color(0, 255, 255).getRGB(), // 青色
+                                true, // isInnocent = 好人阵营
+                                false, // canUseKiller = 无杀手能力
+                                Role.MoodType.REAL, // 真实心情
+                                TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+                                false // 不隐藏计分板
+                ));
+
+                // 监察员每局只能有 1 个
+                Harpymodloader.setRoleMaximum(MONITOR_ID, 1);
                 Harpymodloader.setRoleMaximum(PUPPETEER_ID, 1);
 
         }

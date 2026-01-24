@@ -428,17 +428,46 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                 return;
 
             InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(client.player);
-            if (component.cooldown <= 0 ) {
+            if (component.cooldown <= 0) {
                 ClientPlayNetworking.send(new InsaneKillerAbilityC2SPacket());
                 if (!component.isActive) {
                     Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
-                }else {
+                } else {
                     Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
                 }
             } else {
                 client.player.displayClientMessage(
                         net.minecraft.network.chat.Component.translatable("message.noellesroles.cooldown",
                                 component.cooldown / 20),
+                        true);
+            }
+            return;
+        }
+        // 监察员：标记目标
+        if (gameWorld.isRole(client.player, ModRoles.MONITOR)) {
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
+                return;
+
+            MonitorPlayerComponent monitorComponent = MonitorPlayerComponent.KEY.get(client.player);
+
+            // 检查冷却
+            if (!monitorComponent.canUseAbility()) {
+                client.player.displayClientMessage(
+                        net.minecraft.network.chat.Component.translatable("message.noellesroles.monitor.cooldown",
+                                String.format("%.1f", monitorComponent.getCooldownSeconds())),
+                        true);
+                return;
+            }
+
+            net.minecraft.world.phys.HitResult hitResult = client.hitResult;
+            if (hitResult != null && hitResult.getType() == net.minecraft.world.phys.HitResult.Type.ENTITY) {
+                net.minecraft.world.phys.EntityHitResult entityHit = (net.minecraft.world.phys.EntityHitResult) hitResult;
+                if (entityHit.getEntity() instanceof Player targetPlayer) {
+                    ClientPlayNetworking.send(new MonitorMarkC2SPacket(targetPlayer.getUUID()));
+                }
+            } else {
+                client.player.displayClientMessage(
+                        net.minecraft.network.chat.Component.translatable("message.noellesroles.monitor.no_target"),
                         true);
             }
             return;
