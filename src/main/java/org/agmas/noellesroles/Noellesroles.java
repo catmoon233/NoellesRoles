@@ -561,6 +561,7 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(VultureEatC2SPacket.ID, VultureEatC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(ManipulatorC2SPacket.ID, ManipulatorC2SPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(OpenLockGuiC2SPacket.ID, OpenLockGuiC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID,
                 BanditRevolverShootPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID,

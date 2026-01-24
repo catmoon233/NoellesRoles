@@ -3,10 +3,14 @@ package org.agmas.noellesroles.mixin.roles.engineer;
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -16,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.client.screen.LockGameScreen;
 import org.agmas.noellesroles.entity.LockEntityManager;
+import org.agmas.noellesroles.packet.OpenLockGuiC2SPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,9 +38,7 @@ public class LockMixin {
             method = "useWithoutItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z",
-                    ordinal = 0
-            ),
+                    target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z",ordinal = 0),
             cancellable = true
     )
     private void injectLockPickGame(
@@ -78,13 +81,10 @@ public class LockMixin {
 
                 player.displayClientMessage(Component.literal("开始撬锁小游戏"), true);
                 // 客户端：打开GUI
-                if (world.isClientSide()) {
-                    Minecraft client = Minecraft.getInstance();
-                    if (client.player == null)
-                        return;
-                    client.setScreen(new LockGameScreen(lockPos, LockEntityManager.getInstance().getLockEntity(lockPos)));
-                }
 
+                if (player instanceof ServerPlayer serverPlayer) {
+                    ServerPlayNetworking.send(serverPlayer, new OpenLockGuiC2SPacket());
+                }
                 // 返回 false 阻止原始方法执行
                 cir.setReturnValue(InteractionResult.FAIL);
             }

@@ -38,6 +38,7 @@ import org.agmas.noellesroles.client.widget.MorphlingPlayerWidget;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
+import org.agmas.noellesroles.packet.OpenLockGuiC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 
 import org.agmas.noellesroles.role.ModRoles;
@@ -120,6 +121,16 @@ public class NoellesrolesClient implements ClientModInitializer {
                     currentBroadcastMessage = payload.message();
                     broadcastMessageTicks = GameConstants.getInTicks(0,
                             NoellesRolesConfig.HANDLER.instance().broadcasterMessageDuration);
+                }
+            });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OpenLockGuiC2SPacket.ID, (payload, context) -> {
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null) {
+                    if (!isPlayerInAdventureMode(client.player))
+                        return;
+
                 }
             });
         });
