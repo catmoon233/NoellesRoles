@@ -106,7 +106,9 @@ public class TelegrapherScreen extends Screen {
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         // 渲染背景
         renderBackground(context, mouseX, mouseY, delta);
-        
+
+        super.render(context, mouseX, mouseY, delta);
+        // 在super.render之后渲染文本，确保它在最上层
         // 渲染标题
         Component title = Component.translatable("screen.noellesroles.telegrapher.title")
             .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD);
@@ -122,9 +124,7 @@ public class TelegrapherScreen extends Screen {
             .withStyle(ChatFormatting.GRAY);
         context.drawCenteredString(font, hint, width / 2, height / 2 - 30, 0x888888);
         
-        super.render(context, mouseX, mouseY, delta);
         
-        // 在super.render之后渲染文本输入框，确保它在最上层
         messageField.render(context, mouseX, mouseY, delta);
     }
     

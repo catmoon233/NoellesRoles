@@ -70,6 +70,8 @@ public class BroadcasterInputScreen extends Screen {
 
     @Override
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+
         // 绘制自定义背景（70% 不透明以消除模糊）
         context.fill(0, 0, this.width, this.height, 0xB3000000);
         // 渲染标题（无背景矩形，因为背景已足够深）
@@ -86,7 +88,6 @@ public class BroadcasterInputScreen extends Screen {
         
         // 渲染文本框
         this.messageField.render(context, mouseX, mouseY, delta);
-        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override
