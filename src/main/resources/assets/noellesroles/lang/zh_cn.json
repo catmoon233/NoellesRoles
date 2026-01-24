@@ -195,6 +195,7 @@
   "screen.noellesroles.conspirator.select_player": "选择目标玩家",
   "screen.noellesroles.conspirator.select_role": "猜测 %s 的角色",
   "screen.noellesroles.conspirator.hint": "按 ESC 返回或取消",
+  "screen.noellesroles.conspirator.search": "搜索...",
   "==================== 滑头鬼消息 ====================": "",
   "message.noellesroles.slippery_ghost.passive_income": "+50 金币 (被动收入)",
   "message.noellesroles.slippery_ghost.blank_success": "成功干扰 %s 的武器！",
@@ -436,6 +437,7 @@
   "==================== 记录员角色 ====================": "",
   "announcement.role.recorder": "记录员",
   "announcement.goals.recorder": "使用记录笔记猜测其他玩家的角色。如果猜对人数达到总人数的40%，你将获得独立胜利！",
+  "announcement.goals.noellesroles.recorder": "使用记录笔记猜测其他玩家的角色。如果猜对人数达到总人数的40%，你将获得独立胜利！",
   "announcement.win.recorder": "记录员胜利！",
   "item.noellesroles.written_note": "记录笔记",
   "item.noellesroles.written_note.tooltip": "右键使用来记录玩家的身份",
@@ -443,6 +445,7 @@
   "screen.noellesroles.recorder.select_player": "选择目标玩家",
   "screen.noellesroles.recorder.select_role": "记录 %s 的角色",
   "screen.noellesroles.recorder.hint": "按 ESC 返回或取消",
+  "screen.noellesroles.recorder.search": "搜索...",
   "message.noellesroles.recorder.already_guessed": "你已经记录过这个玩家了！",
   "message.noellesroles.recorder.correct_guess": "记录正确！",
   "message.noellesroles.recorder.wrong_guess": "记录错误！(%s/%s)",
@@ -469,5 +472,7 @@
   "announcement.role.doctor": "医生",
   "announcement.role.noellesroles.doctor": "医生",
   "announcement.role.noellesroles.recorder": "记录员",
-  "announcement.role.noellesroles.attendant": "乘务员"
+  "announcement.role.noellesroles.attendant": "乘务员",
+  "==================== 还没做 ====================": "",
+  "announcement.role.discovery_civilian": "发觉者（未实装）"
 }

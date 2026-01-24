@@ -17,10 +17,11 @@ import java.util.UUID;
 public class RecorderPlayerWidget extends Button {
 
     public final RecorderScreen screen;
-    private final UUID playerUuid;
-    private final String playerName;
+    public final UUID playerUuid;
+    public final String playerName;
     private final ResourceLocation skinTexture;
     private final int size;
+    public boolean highlight = true;
 
     public RecorderPlayerWidget(RecorderScreen screen, int x, int y, int size,
             UUID playerUuid, String playerName, ResourceLocation skinTexture, int index) {
@@ -36,6 +37,7 @@ public class RecorderPlayerWidget extends Button {
 
     @Override
     protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
+
         int bgColor = this.isHovered() ? new Color(100, 50, 150, 200).getRGB() : new Color(50, 25, 75, 150).getRGB();
         context.fill(getX() - 2, getY() - 2, getX() + size + 2, getY() + size + 2, bgColor);
 
@@ -43,7 +45,11 @@ public class RecorderPlayerWidget extends Button {
         context.renderOutline(getX() - 2, getY() - 2, size + 4, size + 4, borderColor);
 
         if (skinTexture != null) {
-            PlayerFaceRenderer.draw(context, skinTexture, getX(), getY(), size);
+            if (highlight || this.isHovered())
+                PlayerFaceRenderer.draw(context, skinTexture, getX(), getY(), size);
+            else {
+                context.fill(getX(), getY(), getX() + size, getY() + size, new Color(127, 127, 127).getRGB());
+            }
         }
 
         if (this.isHovered()) {

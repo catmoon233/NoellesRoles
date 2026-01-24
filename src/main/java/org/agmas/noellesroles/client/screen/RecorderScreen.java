@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -39,6 +40,10 @@ public class RecorderScreen extends Screen {
     // 选中的玩家
     private UUID selectedPlayer = null;
     private String selectedPlayerName = "";
+
+    // 搜索框
+    EditBox searchWidget = null;
+    String searchContent = null;
 
     // 角色列表
     private List<Role> roles = new ArrayList<>();
@@ -115,7 +120,13 @@ public class RecorderScreen extends Screen {
         int totalHeight = rows * (widgetSize + spacing) - spacing;
         int startX = (width - totalWidth) / 2;
         int startY = (height - totalHeight) / 2 + 20;
-
+        searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
+                Component.nullToEmpty(""));
+        searchWidget.setEditable(true);
+        searchWidget.setResponder((text) -> {
+            onPlayerSearch(text);
+        });
+        addRenderableWidget(searchWidget);
         for (int i = 0; i < playerUuids.size(); i++) {
             int col = i % 8;
             int row = i / 8;
@@ -138,6 +149,28 @@ public class RecorderScreen extends Screen {
                     this, x, y, widgetSize, uuid, name, skin, i);
             playerWidgets.add(widget);
             addRenderableWidget(widget);
+        }
+    }
+
+    /**
+     * 玩家选择：搜索玩家
+     */
+    private void onPlayerSearch(String text) {
+        if (text == null || minecraft == null || minecraft.level == null || minecraft.player == null)
+            return;
+        String lowerCaseText = text.toLowerCase();
+
+        for (int i = 0; i < playerWidgets.size(); i++) {
+            String lowerCaseName = playerWidgets.get(i).playerName.toLowerCase();
+            if (text == "") {
+                playerWidgets.get(i).highlight = true;
+            } else {
+                if (lowerCaseName.contains(lowerCaseText)) {
+                    playerWidgets.get(i).highlight = true;
+                } else {
+                    playerWidgets.get(i).highlight = false;
+                }
+            }
         }
     }
 
@@ -268,7 +301,7 @@ public class RecorderScreen extends Screen {
         this.selectedPlayerName = playerName;
         this.phase = 1;
         this.currentRolePage = 0; // 重置页码
-
+        this.searchWidget = null;
         // 重新初始化，显示角色选择
         clearWidgets();
         init();
@@ -296,6 +329,7 @@ public class RecorderScreen extends Screen {
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         // 渲染背景
         renderBackground(context, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
 
         // 渲染标题
         Component title;
@@ -323,7 +357,6 @@ public class RecorderScreen extends Screen {
                 .withStyle(ChatFormatting.GRAY);
         context.drawCenteredString(font, hint, width / 2, height - 30, 0x888888);
 
-        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override

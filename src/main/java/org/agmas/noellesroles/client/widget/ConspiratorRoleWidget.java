@@ -38,7 +38,7 @@ public class ConspiratorRoleWidget extends Button {
     /**
      * 获取角色的显示名称
      */
-    private static Component getRoleName(Role role) {
+    public static Component getRoleName(Role role) {
         // 尝试获取翻译后的角色名称
         String translationKey = "announcement.role." + role.identifier().getPath();
         return Component.translatable(translationKey);
