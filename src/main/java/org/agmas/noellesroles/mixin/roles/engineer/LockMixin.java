@@ -83,7 +83,10 @@ public class LockMixin {
                 // 客户端：打开GUI
 
                 if (player instanceof ServerPlayer serverPlayer) {
-                    ServerPlayNetworking.send(serverPlayer, new OpenLockGuiC2SPacket());
+                    ServerPlayNetworking.send(serverPlayer, new OpenLockGuiC2SPacket(
+                            Vec3.atCenterOf(lockPos),
+                            LockEntityManager.getInstance().getLockEntity(lockPos).getId()
+                    ));
                 }
                 // 返回 false 阻止原始方法执行
                 cir.setReturnValue(InteractionResult.FAIL);

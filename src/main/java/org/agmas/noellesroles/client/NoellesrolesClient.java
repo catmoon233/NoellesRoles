@@ -23,6 +23,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -30,12 +31,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.screen.BroadcasterInputScreen;
+import org.agmas.noellesroles.client.screen.LockGameScreen;
 import org.agmas.noellesroles.client.screen.TelegrapherScreen;
 import org.agmas.noellesroles.client.widget.MorphlingPlayerWidget;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
 import org.agmas.noellesroles.packet.OpenLockGuiC2SPacket;
@@ -130,7 +134,8 @@ public class NoellesrolesClient implements ClientModInitializer {
                 if (client.player != null) {
                     if (!isPlayerInAdventureMode(client.player))
                         return;
-
+                    final var pos = payload.pos();
+                    Minecraft.getInstance().setScreen(new LockGameScreen(new Vec3i((int) pos.x, (int) pos.y, (int) pos.z), (LockEntity) context.player().level().getEntity(payload.lockId())));
                 }
             });
         });
