@@ -531,6 +531,8 @@
   "announcement.role.noellesroles.doctor": "医生",
   "announcement.role.noellesroles.recorder": "记录员",
   "announcement.role.noellesroles.attendant": "乘务员",
+  "gui.noellesroles.ghost.cooldown": "隐身: %ss",
+  "gui.noellesroles.ghost.ready": "隐身: 可用",
   "==================== 还没做 ====================": "",
   "announcement.role.discovery_civilian": "发觉者（未实装）"
 }

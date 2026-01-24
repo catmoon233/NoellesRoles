@@ -405,8 +405,7 @@ public class Noellesroles implements ModInitializer {
         ENGINEER_SHOP.add(new ShopEntry(
                 ModItems.LOCK_ITEM.getDefaultInstance(),
                 200,
-                ShopEntry.Type.TOOL
-                ));
+                ShopEntry.Type.TOOL));
 
         // 邮差商店
         // 传递盒 - 250金币
@@ -1308,6 +1307,13 @@ public class Noellesroles implements ModInitializer {
             if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
                 BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(context.player());
                 bomberPlayerComponent.buyBomb();
+                return;
+            }
+
+            if (gameWorldComponent.isRole(context.player(), ModRoles.GHOST)) {
+                org.agmas.noellesroles.roles.ghost.GhostPlayerComponent ghostPlayerComponent = org.agmas.noellesroles.roles.ghost.GhostPlayerComponent.KEY
+                        .get(context.player());
+                ghostPlayerComponent.useAbility();
                 return;
             }
 
