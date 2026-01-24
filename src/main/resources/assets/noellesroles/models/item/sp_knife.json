@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "noellesroles:item/knife"
+        "layer0": "noellesroles:item/sp_knife"
     },
     "display": {
         "thirdperson_righthand": {
