@@ -1,6 +1,9 @@
 package org.agmas.noellesroles.item;
 
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.entity.LockEntity;
+import org.agmas.noellesroles.entity.LockEntityManager;
 import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
@@ -100,6 +103,27 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                                     .withStyle(ChatFormatting.GREEN), true);
                                 // 返还警报陷阱物品
                                 player.addItem(new ItemStack(ModItems.ALARM_TRAP));
+                            }
+                            return InteractionResult.SUCCESS;
+                        }
+
+                        // 检查门是否有锁
+                        if (LockEntityManager.getInstance().getLockEntity(lowerPos.above()) != null)
+                        {
+                            if (!world.isClientSide) {
+                                world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
+                                        TMMSounds.BLOCK_DOOR_LOCKED, SoundSource.BLOCKS, 0.7f, 1.2f);
+                                player.displayClientMessage(Component.translatable("message.noellesroles.engineer.removed_lock")
+                                        .withStyle(ChatFormatting.GREEN), true);
+                                LockEntity lockEntity = LockEntityManager.getInstance().getLockEntity(lowerPos.above());
+                                // 返还锁物品
+                                ItemStack itemStack = new ItemStack(ModItems.LOCK_ITEM);
+                                if(itemStack.getItem() instanceof LockItem lockItem){
+                                    lockItem.setLength(lockEntity.getLength());
+                                    lockItem.setResistance(lockEntity.getResistance());
+                                }
+                                LockEntityManager.getInstance().removeLockEntity(lowerPos.above(), lockEntity);
+                                player.addItem(itemStack);
                             }
                             return InteractionResult.SUCCESS;
                         }

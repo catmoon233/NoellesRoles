@@ -2,10 +2,12 @@
 .idea/*
 build/*
 run/*
+out/*
 .vscode/*
 
 /.kilocode/
 /run/
 /.idea/
 
+commitCache
 /.vscode/

@@ -7,6 +7,7 @@ import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.Noellesroles;
 
 import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
+import org.agmas.noellesroles.client.renderer.LockEntityRender;
 import org.agmas.noellesroles.client.renderer.ManipulatorBodyEntityRenderer;
 import org.agmas.noellesroles.client.renderer.PuppeteerBodyEntityRenderer;
 import org.agmas.noellesroles.client.screen.*;
@@ -550,6 +551,9 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
 
         // 操纵师本体实体渲染器 - 使用玩家皮肤渲染
         EntityRendererRegistry.register(ModEntities.MANIPULATOR_BODY, ManipulatorBodyEntityRenderer::new);
+
+        // 锁实体渲染器 - 使用自定义渲染器
+        EntityRendererRegistry.register(ModEntities.LOCK_ENTITY, LockEntityRender::new);
     }
 
     /**

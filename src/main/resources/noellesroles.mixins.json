@@ -6,6 +6,7 @@
   "plugin": "org.agmas.noellesroles.client.NRMixinPlugin",
   "mixins": [
     "AbstractContainerMenuMixin",
+    "EntityClear",
     "accessor.PlayerPoisonComponentAccessor",
     "GiveCoinsOnMoodCompletionMixin",
     "MasterKeyDoorMixin",
@@ -24,6 +25,7 @@
     "roles.bartender.PoisonToHealsMixin",
     "roles.coroner.CoronerAddDeathReasonMixin",
     "roles.engineer.EngineerCrowbarMixin",
+    "roles.engineer.LockMixin",
     "roles.executioner.ExecutionerConfirmMixin",
     "roles.executioner.ExecutionerShopMixin",
     "roles.executioner.NoTargetBackfireMixin",

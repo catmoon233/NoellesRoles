@@ -402,6 +402,12 @@ public class Noellesroles implements ModInitializer {
                 90,
                 ShopEntry.Type.TOOL));
 
+        ENGINEER_SHOP.add(new ShopEntry(
+                ModItems.LOCK_ITEM.getDefaultInstance(),
+                200,
+                ShopEntry.Type.TOOL
+                ));
+
         // 邮差商店
         // 传递盒 - 250金币
         POSTMAN_SHOP.add(new ShopEntry(

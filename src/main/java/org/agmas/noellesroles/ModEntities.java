@@ -9,11 +9,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import org.agmas.noellesroles.entity.CalamityMarkEntity;
-import org.agmas.noellesroles.entity.ManipulatorBodyEntity;
-import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
-import org.agmas.noellesroles.entity.RoleMineEntity;
-import org.agmas.noellesroles.entity.SmokeGrenadeEntity;
+import org.agmas.noellesroles.entity.*;
 
 public class ModEntities {
     public static final EntityType<RoleMineEntity> ROLE_MINE_ENTITY_ENTITY_TYPE = Registry.register(
@@ -66,9 +62,20 @@ public class ModEntities {
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator_body"),
             FabricEntityTypeBuilder.<ManipulatorBodyEntity>create(MobCategory.MISC, ManipulatorBodyEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.6F, 1.8F)) // 玩家尺寸
+                    .dimensions(EntityDimensions.fixed(0.6F, 1.8F))
                     .trackRangeBlocks(64)
                     .trackedUpdateRate(2)
+                    .build());
+
+    /**
+     * 锁实体 - 保护门不被撬锁器打开
+     */
+    public static final EntityType<LockEntity> LOCK_ENTITY = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "lock"),
+            FabricEntityTypeBuilder.<LockEntity>create(MobCategory.MISC, LockEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.2F, 0.2F))
+                    .trackRangeBlocks(32)
                     .build());
 
     /**
