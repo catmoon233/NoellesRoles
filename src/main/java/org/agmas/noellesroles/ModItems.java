@@ -15,6 +15,10 @@ public class ModItems {
             new FakeKnifeItem(new Item.Properties().stacksTo(1)),
             "fake_knife"
     );
+    public static final Item SP_KNIFE = register(
+            new FakeKnifeItem(new Item.Properties().stacksTo(1)),
+            "sp_knife"
+    );
     public static final Item FAKE_REVOLVER = register(
             new FakeRevolverItem(new Item.Properties().stacksTo(1).durability(4)),
             "fake_revolver"

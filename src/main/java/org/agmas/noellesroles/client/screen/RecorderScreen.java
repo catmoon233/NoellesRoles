@@ -81,6 +81,24 @@ public class RecorderScreen extends Screen {
      * 初始化玩家选择阶段
      */
     private void initPlayerSelection() {
+        refreshPlayerSelection(null);
+    }
+
+    /**
+     * 玩家选择：搜索玩家
+     */
+    private void onPlayerSearch(String text) {
+        if (text == null || minecraft == null || minecraft.level == null || minecraft.player == null)
+            return;
+        
+        // 重新初始化玩家选择以应用搜索过滤
+        refreshPlayerSelection(text);
+    }
+    
+    /**
+     * 刷新玩家选择界面，可带搜索过滤
+     */
+    private void refreshPlayerSelection(String searchText) {
         if (minecraft == null || minecraft.level == null || minecraft.player == null)
             return;
 
@@ -110,30 +128,60 @@ public class RecorderScreen extends Screen {
             onClose();
             return;
         }
+        
+        // 如果有搜索文本，则过滤玩家列表
+        List<UUID> filteredPlayerUuids = new ArrayList<>();
+        if (searchText != null && !searchText.trim().isEmpty()) {
+            String lowerCaseSearch = searchText.toLowerCase();
+            for (UUID uuid : playerUuids) {
+                String playerName = playerNames.get(uuid);
+                if (playerName.toLowerCase().contains(lowerCaseSearch)) {
+                    filteredPlayerUuids.add(uuid);
+                }
+            }
+        } else {
+            filteredPlayerUuids.addAll(playerUuids);
+        }
 
+        if (filteredPlayerUuids.isEmpty()) {
+            // 如果没有匹配的玩家，但仍有原始玩家列表，则显示全部
+            filteredPlayerUuids.addAll(playerUuids);
+        }
+
+        // 清除现有的widgets
+        clearWidgets();
+        playerWidgets.clear();
+        
         // 计算布局
-        int columns = Math.min(playerUuids.size(), 8);
-        int rows = (int) Math.ceil(playerUuids.size() / 8.0);
+        int columns = Math.min(filteredPlayerUuids.size(), 8);
+        int rows = (int) Math.ceil(filteredPlayerUuids.size() / 8.0);
         int widgetSize = 32;
         int spacing = 8;
         int totalWidth = columns * (widgetSize + spacing) - spacing;
         int totalHeight = rows * (widgetSize + spacing) - spacing;
         int startX = (width - totalWidth) / 2;
         int startY = (height - totalHeight) / 2 + 20;
+        
+        // 创建搜索框
         searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
                 Component.nullToEmpty(""));
         searchWidget.setEditable(true);
         searchWidget.setResponder((text) -> {
             onPlayerSearch(text);
         });
+        if (searchText != null) {
+            searchWidget.setValue(searchText); // 保持搜索内容
+        }
         addRenderableWidget(searchWidget);
-        for (int i = 0; i < playerUuids.size(); i++) {
+        
+        // 创建过滤后的玩家widgets
+        for (int i = 0; i < filteredPlayerUuids.size(); i++) {
             int col = i % 8;
             int row = i / 8;
             int x = startX + col * (widgetSize + spacing);
             int y = startY + row * (widgetSize + spacing);
 
-            UUID uuid = playerUuids.get(i);
+            UUID uuid = filteredPlayerUuids.get(i);
             String name = playerNames.get(uuid);
 
             // 获取皮肤
@@ -149,28 +197,6 @@ public class RecorderScreen extends Screen {
                     this, x, y, widgetSize, uuid, name, skin, i);
             playerWidgets.add(widget);
             addRenderableWidget(widget);
-        }
-    }
-
-    /**
-     * 玩家选择：搜索玩家
-     */
-    private void onPlayerSearch(String text) {
-        if (text == null || minecraft == null || minecraft.level == null || minecraft.player == null)
-            return;
-        String lowerCaseText = text.toLowerCase();
-
-        for (int i = 0; i < playerWidgets.size(); i++) {
-            String lowerCaseName = playerWidgets.get(i).playerName.toLowerCase();
-            if (text == "") {
-                playerWidgets.get(i).highlight = true;
-            } else {
-                if (lowerCaseName.contains(lowerCaseText)) {
-                    playerWidgets.get(i).highlight = true;
-                } else {
-                    playerWidgets.get(i).highlight = false;
-                }
-            }
         }
     }
 
