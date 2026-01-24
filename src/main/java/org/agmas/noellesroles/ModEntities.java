@@ -18,6 +18,7 @@ public class ModEntities {
             EntityType.Builder.of(RoleMineEntity::new, MobCategory.MISC).sized(0.75f, 0.75f).build("cube")
     );
 
+    @SuppressWarnings("deprecation")
     public static final EntityType<SmokeGrenadeEntity> SMOKE_GRENADE = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "smoke_grenade"),
@@ -30,6 +31,7 @@ public class ModEntities {
     /**
      * 灾厄印记实体 - 设陷者专属隐形陷阱
      */
+    @SuppressWarnings("deprecation")
     public static final EntityType<CalamityMarkEntity> CALAMITY_MARK = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "calamity_mark"),
@@ -42,6 +44,7 @@ public class ModEntities {
     /**
      * 傀儡本体实体 - 傀儡师使用假人技能时生成的本体
      */
+    @SuppressWarnings("deprecation")
     public static final EntityType<PuppeteerBodyEntity> PUPPETEER_BODY = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "puppeteer_body"),
@@ -54,6 +57,7 @@ public class ModEntities {
     /**
      * 操纵师本体实体 - 操纵师使用操控技能时生成的本体
      */
+    @SuppressWarnings("deprecation")
     public static final EntityType<ManipulatorBodyEntity> MANIPULATOR_BODY = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator_body"),

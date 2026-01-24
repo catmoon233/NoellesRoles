@@ -8,6 +8,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
@@ -31,14 +33,17 @@ public abstract class InsaneHudMixin {
 
             final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(Minecraft.getInstance().player);
             if (insaneKillerPlayerComponent.isActive) {
-                context.drawString(getFont(), Component.translatable("insane.tip.over", NoellesrolesClient.abilityBind.getTranslatedKeyMessage().getString()), context.guiWidth() - getFont().width(Component.nullToEmpty("Morphing in    a" )), context.guiHeight() - 20, ModRoles.MORPHLING.color());
+                var text = Component.translatable("insane.tip.over", NoellesrolesClient.abilityBind.getTranslatedKeyMessage().getString()).append(" ");
+                context.drawString(getFont(), text, context.guiWidth() - getFont().width(text), context.guiHeight() - 20, ModRoles.MORPHLING.color());
 
             } else {
                 final var morphTicks = insaneKillerPlayerComponent.cooldown;
                 if (morphTicks > 0) {
-                    context.drawString(getFont(), Component.translatable("insane.tip", ((int) (morphTicks * 0.05))), context.guiWidth() - getFont().width(Component.nullToEmpty("Morphing in   a " + morphTicks)), context.guiHeight() - 20, ModRoles.MORPHLING.color());
+                    var text = Component.translatable("insane.tip", ((int) (morphTicks * 0.05))).append(" ");
+                    context.drawString(getFont(), text, context.guiWidth() - getFont().width(text), context.guiHeight() - 20, ModRoles.MORPHLING.color());
                 }else {
-                    context.drawString(getFont(), Component.translatable("insane.tip.ready", NoellesrolesClient.abilityBind.getTranslatedKeyMessage().getString()),context.guiWidth() - getFont().width(Component.nullToEmpty("Morphing in  adaada   " + morphTicks)), context.guiHeight() - 20, ModRoles.MORPHLING.color());
+                    var text = Component.translatable("insane.tip.ready", NoellesrolesClient.abilityBind.getTranslatedKeyMessage().getString()).append(" ");
+                    context.drawString(getFont(), text, context.guiWidth() - getFont().width(text), context.guiHeight() - 20, ModRoles.MORPHLING.color());
                 }
             }
         }
