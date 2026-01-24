@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.client.screen;
 
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.widget.ConspiratorPlayerWidget;
 import org.agmas.noellesroles.client.widget.RecorderPlayerWidget;
 import org.agmas.noellesroles.client.widget.RecorderRoleWidget;
 import org.agmas.noellesroles.component.ModComponents;
@@ -19,6 +20,8 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,11 +93,11 @@ public class RecorderScreen extends Screen {
     private void onPlayerSearch(String text) {
         if (text == null || minecraft == null || minecraft.level == null || minecraft.player == null)
             return;
-        
+
         // 重新初始化玩家选择以应用搜索过滤
         refreshPlayerSelection(text);
     }
-    
+
     /**
      * 刷新玩家选择界面，可带搜索过滤
      */
@@ -128,7 +131,7 @@ public class RecorderScreen extends Screen {
             onClose();
             return;
         }
-        
+
         // 如果有搜索文本，则过滤玩家列表
         List<UUID> filteredPlayerUuids = new ArrayList<>();
         if (searchText != null && !searchText.trim().isEmpty()) {
@@ -143,15 +146,17 @@ public class RecorderScreen extends Screen {
             filteredPlayerUuids.addAll(playerUuids);
         }
 
+        // 清除现有的widgets
+        for (RecorderPlayerWidget widget : playerWidgets) {
+            this.removeWidget(widget);
+        }
+        playerWidgets.clear();
+        boolean isSearchEmpty = false;
         if (filteredPlayerUuids.isEmpty()) {
+            isSearchEmpty = true;
             // 如果没有匹配的玩家，但仍有原始玩家列表，则显示全部
             filteredPlayerUuids.addAll(playerUuids);
         }
-
-        // 清除现有的widgets
-        clearWidgets();
-        playerWidgets.clear();
-        
         // 计算布局
         int columns = Math.min(filteredPlayerUuids.size(), 8);
         int rows = (int) Math.ceil(filteredPlayerUuids.size() / 8.0);
@@ -161,19 +166,25 @@ public class RecorderScreen extends Screen {
         int totalHeight = rows * (widgetSize + spacing) - spacing;
         int startX = (width - totalWidth) / 2;
         int startY = (height - totalHeight) / 2 + 20;
-        
+
         // 创建搜索框
-        searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
-                Component.nullToEmpty(""));
-        searchWidget.setEditable(true);
-        searchWidget.setResponder((text) -> {
-            onPlayerSearch(text);
-        });
-        if (searchText != null) {
-            searchWidget.setValue(searchText); // 保持搜索内容
+        if (searchWidget == null) {
+            searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
+                    Component.nullToEmpty(""));
+            searchWidget.setEditable(true);
+            searchWidget.setResponder((text) -> {
+                onPlayerSearch(text);
+            });
+        }
+        if (isSearchEmpty) {
+            // 如果没有匹配的玩家，则变红
+            searchWidget.setTextColor(Color.RED.getRGB());
+        } else {
+            // 变回白色
+            searchWidget.setTextColor(Color.WHITE.getRGB());
         }
         addRenderableWidget(searchWidget);
-        
+
         // 创建过滤后的玩家widgets
         for (int i = 0; i < filteredPlayerUuids.size(); i++) {
             int col = i % 8;

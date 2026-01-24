@@ -16,6 +16,8 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -93,11 +95,11 @@ public class ConspiratorScreen extends Screen {
     private void onPlayerSearch(String text) {
         if (text == null || minecraft == null || minecraft.level == null || minecraft.player == null)
             return;
-        
+
         // 重新初始化玩家选择以应用搜索过滤
         refreshPlayerSelection(text);
     }
-    
+
     /**
      * 刷新玩家选择界面，可带搜索过滤
      */
@@ -113,13 +115,15 @@ public class ConspiratorScreen extends Screen {
             onClose();
             return;
         }
-        
+
         // 如果有搜索文本，则过滤玩家列表
         List<AbstractClientPlayer> filteredPlayers = new ArrayList<>();
         if (searchText != null && !searchText.trim().isEmpty()) {
             String lowerCaseSearch = searchText.toLowerCase();
             for (AbstractClientPlayer player : players) {
                 String playerName = player.getName().getString();
+                if (player.isCreative() || player.isSpectator())
+                    continue;
                 if (playerName.toLowerCase().contains(lowerCaseSearch)) {
                     filteredPlayers.add(player);
                 }
@@ -128,15 +132,17 @@ public class ConspiratorScreen extends Screen {
             filteredPlayers.addAll(players);
         }
 
+        // 清除现有的widgets
+        for (ConspiratorPlayerWidget widget : playerWidgets) {
+            this.removeWidget(widget);
+        }
+        playerWidgets.clear();
+        boolean isSearchEmpty = false;
         if (filteredPlayers.isEmpty()) {
+            isSearchEmpty = true;
             // 如果没有匹配的玩家，但仍有原始玩家列表，则显示全部
             filteredPlayers.addAll(players);
         }
-
-        // 清除现有的widgets
-        clearWidgets();
-        playerWidgets.clear();
-        
         // 计算布局
         int columns = Math.min(filteredPlayers.size(), 8);
         int rows = (int) Math.ceil(filteredPlayers.size() / 8.0);
@@ -146,19 +152,26 @@ public class ConspiratorScreen extends Screen {
         int totalHeight = rows * (widgetSize + spacing) - spacing;
         int startX = (width - totalWidth) / 2;
         int startY = (height - totalHeight) / 2 + 20;
-        
+
         // 创建搜索框
-        searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
-                Component.nullToEmpty(""));
-        searchWidget.setEditable(true);
-        searchWidget.setResponder((text) -> {
-            onPlayerSearch(text);
-        });
-        if (searchText != null) {
-            searchWidget.setValue(searchText); // 保持搜索内容
+        if (searchWidget == null) {
+            searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
+                    Component.nullToEmpty(""));
+            searchWidget.setEditable(true);
+            searchWidget.setResponder((text) -> {
+                onPlayerSearch(text);
+
+            });
+            addRenderableWidget(searchWidget);
+
         }
-        addRenderableWidget(searchWidget);
-        
+        if (isSearchEmpty) {
+            // 如果没有匹配的玩家，则文本变红
+            searchWidget.setTextColor(Color.RED.getRGB());
+        } else {
+            // 变回白色
+            searchWidget.setTextColor(Color.WHITE.getRGB());
+        }
         // 创建过滤后的玩家widgets
         for (int i = 0; i < filteredPlayers.size(); i++) {
             int col = i % 8;
@@ -177,6 +190,8 @@ public class ConspiratorScreen extends Screen {
      * 初始化玩家选择阶段
      */
     private void initPlayerSelection() {
+        clearWidgets();
+        this.searchWidget = null;
         refreshPlayerSelection(null);
     }
 
@@ -226,7 +241,6 @@ public class ConspiratorScreen extends Screen {
             var role = roles.get(i);
             String roleName = ConspiratorRoleWidget.getRoleName(role).getString();
             if (searchContent == null || roleName.contains(searchContent)) {
-
                 if (count >= startIndex && count < endIndex) {
                     int indexOnPage = count - startIndex;
                     int col = indexOnPage % 4;
@@ -249,7 +263,6 @@ public class ConspiratorScreen extends Screen {
         int buttonWidth = 60;
         int buttonHeight = 20;
         int buttonY = startY + totalHeight + 20;
-
         // 上一页按钮
         if (prevPageButton != null) {
 
@@ -284,6 +297,12 @@ public class ConspiratorScreen extends Screen {
                 onRoleSearch(text);
             });
             addRenderableWidget(searchWidget);
+        }
+        if (count <= 0) {
+            // 没有
+            searchWidget.setTextColor(Color.RED.getRGB());
+        } else {
+            searchWidget.setTextColor(Color.WHITE.getRGB());
         }
 
     }
