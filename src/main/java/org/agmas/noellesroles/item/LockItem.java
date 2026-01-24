@@ -7,6 +7,7 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMEntities;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -24,6 +26,8 @@ import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
+
+import java.util.List;
 
 /**
  * 门锁
@@ -117,6 +121,13 @@ public class LockItem extends Item implements AdventureUsable {
     }
     public void setResistance(float resistance){
         this.resistance = resistance;
+    }
+
+    // 添加工具提示
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        tooltip.add(Component.translatable("item.noellesroles.lock.tooltip")
+                .withStyle(ChatFormatting.GRAY));
     }
 
     private float resistance;
