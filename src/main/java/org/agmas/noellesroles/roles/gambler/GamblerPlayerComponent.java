@@ -66,7 +66,7 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
 		
 		GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
 		if (!gameWorld.isRole(player, ModRoles.GAMBLER)) return;
-		if (!gameWorld.isGameRunning()) return;
+		if (!gameWorld.isRunning()) return;
 
 		roleDrawTimer++;
 		if (roleDrawTimer >= DRAW_INTERVAL) {

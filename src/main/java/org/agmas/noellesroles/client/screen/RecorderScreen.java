@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.client.screen;
 
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.utils.RoleUtils;
 import org.agmas.noellesroles.client.widget.ConspiratorPlayerWidget;
 import org.agmas.noellesroles.client.widget.RecorderPlayerWidget;
 import org.agmas.noellesroles.client.widget.RecorderRoleWidget;
@@ -60,6 +61,7 @@ public class RecorderScreen extends Screen {
     private int currentRolePage = 0; // 当前角色页码
     private Button prevPageButton;
     private Button nextPageButton;
+    private int totalPages = 0;
 
     public RecorderScreen() {
         super(Component.translatable("screen.noellesroles.recorder.title"));
@@ -215,6 +217,37 @@ public class RecorderScreen extends Screen {
      * 初始化角色选择阶段
      */
     private void initRoleSelection() {
+        searchWidget = null;
+        clearWidgets();
+        nextPageButton = null;
+        prevPageButton = null;
+        roleWidgets.clear();
+        currentRolePage = 0;
+        refreshRoleSelection(null);
+    }
+
+    private void onRoleSearch(String text) {
+        if (text == null || minecraft == null || minecraft.level == null || minecraft.player == null)
+            return;
+        currentRolePage = 0;
+        refreshRoleSelection(text);
+    }
+
+    /**
+     * 刷新角色选择界面
+     */
+    private void refreshRoleSelection(String searchText) {
+
+        for (int i = 0; i < roleWidgets.size(); i++) {
+            this.removeWidget(roleWidgets.get(i));
+        }
+        roleWidgets.clear();
+
+        if (nextPageButton != null)
+            this.removeWidget(nextPageButton);
+        if (prevPageButton != null)
+            this.removeWidget(prevPageButton);
+
         if (minecraft == null || minecraft.player == null)
             return;
 
@@ -242,15 +275,14 @@ public class RecorderScreen extends Screen {
             return;
         }
 
-        // 计算总页数
-        int totalPages = getTotalRolePages();
-
         // 确保当前页码有效
-        if (currentRolePage >= totalPages) {
-            currentRolePage = totalPages - 1;
-        }
-        if (currentRolePage < 0) {
-            currentRolePage = 0;
+        if (totalPages != 0) {
+            if (currentRolePage >= totalPages) {
+                currentRolePage = totalPages - 1;
+            }
+            if (currentRolePage < 0) {
+                currentRolePage = 0;
+            }
         }
 
         // 计算当前页的角色范围
@@ -270,32 +302,47 @@ public class RecorderScreen extends Screen {
         int startX = (width - totalWidth) / 2;
         int startY = (height - totalHeight) / 2 + 10;
 
+        int totalRoles = 0;
         // 添加当前页的角色
-        for (int i = startIndex; i < endIndex; i++) {
-            int indexOnPage = i - startIndex;
-            int col = indexOnPage % 4;
-            int row = indexOnPage / 4;
-            int x = startX + col * (widgetWidth + spacingX);
-            int y = startY + row * (widgetHeight + spacingY);
+        int k = 0;
+        String lowerCasedSearchText = searchText;
+        if (searchText != null) {
+            lowerCasedSearchText = searchText.toLowerCase();
+        }
+        for (Role role : roles) {
+            String roleName = RoleUtils.getRoleName(role).getString();
+            if (roleName == null)
+                continue;
+            roleName = roleName.toLowerCase();
+            if (searchText == null || searchText == "" || roleName.contains(lowerCasedSearchText)) {
+                if (totalRoles >= startIndex && totalRoles < endIndex) {
+                    int col = k % 4;
+                    int row = k / 4;
+                    int x = startX + col * (widgetWidth + spacingX);
+                    int y = startY + row * (widgetHeight + spacingY);
 
-            RecorderRoleWidget widget = new RecorderRoleWidget(
-                    this, x, y, widgetWidth, widgetHeight, roles.get(i), i);
-            roleWidgets.add(widget);
-            addRenderableWidget(widget);
+                    RecorderRoleWidget widget = new RecorderRoleWidget(
+                            this, x, y, widgetWidth, widgetHeight, role, k);
+                    roleWidgets.add(widget);
+                    addRenderableWidget(widget);
+                    k++;
+                }
+                totalRoles++;
+            }
         }
 
         // 添加翻页按钮
         int buttonWidth = 60;
         int buttonHeight = 20;
         int buttonY = startY + totalHeight + 20;
-
+        totalPages = (int) Math.ceil(totalRoles / (double) ROLES_PER_PAGE);
         // 上一页按钮
         prevPageButton = Button.builder(
                 Component.translatable("screen.noellesroles.conspirator.prev_page"),
                 button -> {
                     if (currentRolePage > 0) {
                         currentRolePage--;
-                        refreshRoleSelection();
+                        refreshRoleSelection(searchText);
                     }
                 }).bounds(width / 2 - buttonWidth - 30, buttonY, buttonWidth, buttonHeight).build();
         prevPageButton.active = currentRolePage > 0;
@@ -307,27 +354,25 @@ public class RecorderScreen extends Screen {
                 button -> {
                     if (currentRolePage < totalPages - 1) {
                         currentRolePage++;
-                        refreshRoleSelection();
+                        refreshRoleSelection(searchText);
                     }
                 }).bounds(width / 2 + 30, buttonY, buttonWidth, buttonHeight).build();
         nextPageButton.active = currentRolePage < totalPages - 1;
         addRenderableWidget(nextPageButton);
-    }
-
-    /**
-     * 获取角色总页数
-     */
-    private int getTotalRolePages() {
-        return (int) Math.ceil(roles.size() / (double) ROLES_PER_PAGE);
-    }
-
-    /**
-     * 刷新角色选择界面
-     */
-    private void refreshRoleSelection() {
-        clearWidgets();
-        roleWidgets.clear();
-        initRoleSelection();
+        if (searchWidget == null) {
+            searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
+                    Component.nullToEmpty(""));
+            searchWidget.setEditable(true);
+            searchWidget.setResponder((text) -> {
+                onRoleSearch(text);
+            });
+            addRenderableWidget(searchWidget);
+        }
+        if (totalRoles <= 0) {
+            searchWidget.setTextColor(Color.RED.getRGB());
+        } else {
+            searchWidget.setTextColor(Color.WHITE.getRGB());
+        }
     }
 
     /**
@@ -382,7 +427,6 @@ public class RecorderScreen extends Screen {
 
         // 渲染页码信息（仅在角色选择阶段）
         if (phase == 1 && roles.size() > ROLES_PER_PAGE) {
-            int totalPages = getTotalRolePages();
             Component pageInfo = Component.translatable("screen.noellesroles.conspirator.page_info",
                     currentRolePage + 1, totalPages)
                     .withStyle(ChatFormatting.YELLOW);

@@ -2,6 +2,7 @@ package org.agmas.noellesroles.client.screen;
 
 import net.minecraft.client.gui.components.EditBox;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.utils.RoleUtils;
 import org.agmas.noellesroles.client.widget.ConspiratorPlayerWidget;
 import org.agmas.noellesroles.client.widget.ConspiratorRoleWidget;
 import org.agmas.noellesroles.packet.ConspiratorC2SPacket;
@@ -239,7 +240,7 @@ public class ConspiratorScreen extends Screen {
 
         for (int i = 0; i < roles.size(); i++) {
             var role = roles.get(i);
-            String roleName = ConspiratorRoleWidget.getRoleName(role).getString();
+            String roleName = RoleUtils.getRoleName(role).getString();
             if (searchContent == null || roleName.contains(searchContent)) {
                 if (count >= startIndex && count < endIndex) {
                     int indexOnPage = count - startIndex;

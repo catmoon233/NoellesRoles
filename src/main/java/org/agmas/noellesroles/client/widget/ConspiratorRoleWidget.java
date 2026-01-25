@@ -1,6 +1,8 @@
 package org.agmas.noellesroles.client.widget;
 
 import org.agmas.noellesroles.client.screen.ConspiratorScreen;
+import org.agmas.noellesroles.client.utils.RoleUtils;
+
 import dev.doctor4t.trainmurdermystery.api.Role;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,22 +28,13 @@ public class ConspiratorRoleWidget extends Button {
     
     public ConspiratorRoleWidget(ConspiratorScreen screen, int x, int y, int width, int height,
                                  @NotNull Role role, int index) {
-        super(x, y, width, height, getRoleName(role),
+        super(x, y, width, height, RoleUtils.getRoleName(role),
             (button) -> screen.onRoleSelected(role),
             DEFAULT_NARRATION);
         this.screen = screen;
         this.role = role;
         this.buttonWidth = width;
         this.buttonHeight = height;
-    }
-    
-    /**
-     * 获取角色的显示名称
-     */
-    public static Component getRoleName(Role role) {
-        // 尝试获取翻译后的角色名称
-        String translationKey = "announcement.role." + role.identifier().getPath();
-        return Component.translatable(translationKey);
     }
     
     @Override
@@ -76,7 +69,7 @@ public class ConspiratorRoleWidget extends Button {
         context.renderOutline(getX(), getY(), buttonWidth, buttonHeight, borderColor.getRGB());
         
         // 绘制角色名称
-        Component roleName = getRoleName(role);
+        Component roleName = RoleUtils.getRoleName(role);
         int textWidth = textRenderer.width(roleName);
         int textX = getX() + (buttonWidth - textWidth) / 2;
         int textY = getY() + (buttonHeight - 8) / 2;

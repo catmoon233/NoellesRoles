@@ -23,12 +23,11 @@ import java.util.UUID;
  * 
  */
 public class MonitorPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
-    public static final ComponentKey<MonitorPlayerComponent> KEY = ComponentRegistry.getOrCreate(
-            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "monitor"), MonitorPlayerComponent.class);
+    public static final ComponentKey<MonitorPlayerComponent> KEY = ModComponents.MONITOR;
 
     private final Player player;
 
-    public UUID markedTarget;
+    public UUID markedTarget = null;
 
     public int cooldown = 0;
 
@@ -78,16 +77,18 @@ public class MonitorPlayerComponent implements AutoSyncedComponent, ServerTickin
 
     @Override
     public void serverTick() {
-        if (cooldown > 0) {
-            cooldown--;
-            if (cooldown % 20 == 0 || cooldown == 0) {
+        if (this.cooldown > 0) {
+            this.cooldown--;
+            if (this.cooldown % 20 == 0 || this.cooldown == 0) {
                 this.sync();
             }
         }
-
+        if (this.player.level() == null) {
+            return;
+        }
         // 检查目标是否存活，如果死亡则清除标记
-        if (markedTarget != null) {
-            Player targetPlayer = player.level().getPlayerByUUID(markedTarget);
+        if (this.markedTarget != null) {
+            Player targetPlayer = this.player.level().getPlayerByUUID(this.markedTarget);
             if (targetPlayer == null || !GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
                 // 目标不存在或已死亡，清除标记
                 this.markedTarget = null;
@@ -97,7 +98,9 @@ public class MonitorPlayerComponent implements AutoSyncedComponent, ServerTickin
     }
 
     public void sync() {
-        KEY.sync(this.player);
+        if (player != null && !player.level().isClientSide()) {
+            KEY.sync(this.player);
+        }
     }
 
     @Override
@@ -113,4 +116,5 @@ public class MonitorPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.markedTarget = tag.contains("markedTarget") ? tag.getUUID("markedTarget") : null;
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
     }
+
 }

@@ -1,5 +1,5 @@
 {
-  "==================== 正文 ====================":"",
+  "==================== 正文 ====================": "",
   "announcement.goals.awesome_binglus": "你有超多便条和一台立拍得，尽可能的记录下犯罪现场。",
   "announcement.goals.bartender": "能透过墙壁看到正在喝酒的玩家并使用防御药剂保护平民！",
   "announcement.goals.better_vigilante": "当场上剩余的平民+义警数量不大于2时，你将获得强力的武器背水一战！",
@@ -109,62 +109,57 @@
   "screen.noellesroles.conspirator.prev_page": "上一页",
   "screen.noellesroles.conspirator.next_page": "下一页",
   "screen.noellesroles.conspirator.page_info": "第 %s / %s 页",
-
-    "==================== 复仇者角色 ====================": "",
+  
+  "screen.noellesroles.recorder.prev_page": "上一页",
+  "screen.noellesroles.recorder.next_page": "下一页",
+  "screen.noellesroles.recorder.page_info": "第 %s / %s 页",
+  "==================== 赌徒角色 ====================": "",
+  "gui.noellesroles.gambler.title": "赌徒角色选择",
+  "gui.noellesroles.gambler.selected": "你已经选择过角色了！",
+  "==================== 复仇者角色 ====================": "",
   "announcement.role.avenger": "复仇者",
   "announcement.goals.avenger": "保护你绑定的目标。如果他们死亡，你将获得复仇的力量！",
   "announcement.win.avenger": "乘客胜利！",
-  
   "==================== 阴谋家角色 ====================": "",
   "announcement.role.conspirator": "阴谋家",
   "announcement.goals.conspirator": "猜测其他玩家的角色。如果猜对，他们将在20秒后死亡！",
   "announcement.win.conspirator": "阴谋家胜利！",
-  
   "==================== 示例乘客角色 ====================": "",
   "announcement.role.example_crew": "示例乘客",
   "announcement.goals.example_crew": "完成你的任务并存活下来！",
   "announcement.win.example_crew": "乘客胜利！",
-  
   "==================== 示例杀手角色 ====================": "",
   "announcement.role.example_killer": "示例杀手",
   "announcement.goals.example_killer": "消灭所有乘客，不要被发现。",
   "announcement.win.example_killer": "杀手胜利！",
-  
   "==================== 示例中立角色 ====================": "",
   "announcement.role.example_neutral": "示例中立",
   "announcement.goals.example_neutral": "达成你独特的胜利条件。",
   "announcement.win.example_neutral": "中立胜利！",
-  
   "==================== 滑头鬼角色 ====================": "",
   "announcement.role.slippery_ghost": "滑头鬼",
   "announcement.goals.slippery_ghost": "利用你的专属商店干扰其他玩家，与杀手共同胜利！",
   "announcement.win.slippery_ghost": "杀手胜利！",
-  
   "==================== 电报员角色 ====================": "",
   "announcement.role.telegrapher": "电报员",
   "announcement.goals.telegrapher": "使用你的能力向所有玩家发送匿名消息，最多6次！",
   "announcement.win.telegrapher": "乘客胜利！",
-  
   "==================== 工程师角色 ====================": "",
   "announcement.role.engineer": "工程师",
   "announcement.goals.engineer": "使用维修工具和警报陷阱保护乘客，防止杀手破坏！",
   "announcement.win.engineer": "乘客胜利！",
-  
   "==================== 拳击手角色 ====================": "",
   "announcement.role.boxer": "拳击手",
   "announcement.goals.boxer": "使用钢筋铁骨技能反制攻击者，保护自己和乘客！",
   "announcement.win.boxer": "乘客胜利！",
-  
   "==================== 邮差角色 ====================": "",
   "announcement.role.postman": "邮差",
   "announcement.goals.postman": "使用邮件与玩家隐秘地交换物品。",
   "announcement.win.postman": "乘客胜利！",
-  
   "==================== 私家侦探角色 ====================": "",
   "announcement.role.detective": "私家侦探",
   "announcement.goals.detective": "花费200金币审查玩家的物品栏。如果目标移动，界面会关闭！",
   "announcement.win.detective": "乘客胜利！",
-  
   "==================== 物品 ====================": "",
   "item.noellesroles.conspiracy_page": "阴谋之书页",
   "item.noellesroles.conspiracy_page.tooltip": "右键使用来猜测一名玩家的角色",
@@ -180,13 +175,11 @@
   "item.noellesroles.lock.tooltip": "右键锁门，可以阻挡撬锁器",
   "item.noellesroles.delivery_box": "邮件",
   "item.noellesroles.delivery_box.tooltip": "指针对准玩家并右键使用，打开隐秘传递界面",
-
   "==================== HUD / 提示 ====================": "",
   "tip.noellesroles.ability_cooldown": "技能将在 %s 秒后可用",
   "tip.noellesroles.ability_ready": "按 %s 使用技能！",
   "tip.noellesroles.charges_remaining": "剩余次数：%s/%s",
   "tip.noellesroles.money.balance": "金币：%s",
-  
   "==================== 复仇者消息 ====================": "",
   "message.noellesroles.avenger.bound": "你正在保护 %s。如果他们死亡，你将获得复仇的力量！",
   "message.noellesroles.avenger.activated": "%s 已被杀害！你的复仇之心觉醒了！",
@@ -195,7 +188,6 @@
   "tip.noellesroles.avenger.target": "正在保护：%s",
   "tip.noellesroles.avenger.activated": "复仇已激活！凶手：%s",
   "tip.noellesroles.avenger.waiting": "等待绑定目标...",
-  
   "==================== 阴谋家消息 ====================": "",
   "message.noellesroles.conspirator.correct": "你猜对了！%s 将在20秒后死亡...",
   "message.noellesroles.conspirator.wrong": "你猜错了！%s 并不是这个角色。",
@@ -207,7 +199,6 @@
   "message.noellesroles.conspirator.not_conspirator": "只有阴谋家才能使用这个物品！",
   "tip.noellesroles.conspirator.target": "目标：%s - 倒计时：%s秒",
   "tip.noellesroles.conspirator.no_target": "使用阴谋之书页来猜测玩家角色",
-  
   "==================== 阴谋家屏幕 ====================": "",
   "screen.noellesroles.conspirator.title": "阴谋之书",
   "screen.noellesroles.conspirator.select_player": "选择目标玩家",
@@ -221,7 +212,6 @@
   "message.noellesroles.slippery_ghost.smoke_hit": "%s 被烟雾弹直接命中，san值清空！",
   "tip.noellesroles.slippery_ghost.shop": "按 TAB 打开滑头鬼商店",
   "tip.noellesroles.slippery_ghost.balance": "金币：%s",
-  
   "==================== 电报员消息 ====================": "",
   "message.noellesroles.telegrapher.sent": "匿名消息已发送！剩余次数：%s",
   "message.noellesroles.telegrapher.no_uses": "你已经用完所有发送次数！",
@@ -230,7 +220,6 @@
   "message.noellesroles.telegrapher.anonymous": "匿名电报",
   "tip.noellesroles.telegrapher.uses": "剩余发送次数：%s/6",
   "tip.noellesroles.telegrapher.hint": "按 G 键打开电报编辑界面",
-  
   "==================== 电报员屏幕 ====================": "",
   "screen.noellesroles.telegrapher.title": "电报编辑",
   "screen.noellesroles.telegrapher.message": "消息内容",
@@ -238,7 +227,6 @@
   "screen.noellesroles.telegrapher.confirm": "发送",
   "screen.noellesroles.telegrapher.remaining": "剩余次数：%s/6",
   "screen.noellesroles.telegrapher.hint": "输入消息并点击发送按钮",
-  
   "==================== 工程师消息 ====================": "",
   "message.noellesroles.engineer.reinforced": "门已加固！可以防御一次撬棍攻击。",
   "message.noellesroles.engineer.unjammed": "门已解除卡住状态！",
@@ -252,7 +240,6 @@
   "message.noellesroles.engineer.removed_lock": "锁已取下",
   "tip.noellesroles.engineer.shop": "按 TAB 打开工程师商店",
   "tip.noellesroles.engineer.balance": "金币：%s",
-  
   "==================== 邮差消息 ====================": "",
   "message.noellesroles.postman.no_target": "请将准星对准一名玩家！",
   "message.noellesroles.postman.delivery_started": "开始与 %s 传递物品",
@@ -261,7 +248,6 @@
   "message.noellesroles.postman.delivery_cancelled": "传递已取消",
   "tip.noellesroles.postman.shop": "按 TAB 打开邮差商店",
   "tip.noellesroles.postman.balance": "金币：%s",
-  
   "==================== 私家侦探消息 ====================": "",
   "message.noellesroles.detective.on_cooldown": "技能冷却中，还需 %s 秒",
   "message.noellesroles.detective.insufficient_funds": "金币不足！需要 200 金币",
@@ -274,18 +260,15 @@
   "hud.noellesroles.detective.ready": "审查已就绪！按G并瞄准目标",
   "hud.noellesroles.detective.ready_cost": "审查就绪（200金币）",
   "screen.noellesroles.detective.read_only": "只读模式",
-  
   "==================== 邮差屏幕 ====================": "",
   "screen.noellesroles.postman.title": "隐秘传递",
   "screen.noellesroles.postman.confirm": "确认交换",
   "screen.noellesroles.postman.cancel": "取消",
   "screen.noellesroles.postman.hint": "点击物品槽放入物品，双方确认后完成交换",
   "screen.noellesroles.postman.exchanging": "交换中...",
-  
   "==================== 死因翻译 ====================": "",
   "death_reason.noellesroles.heart_attack": "心脏麻痹。",
   "death_reason.noellesroles.conspiracy_backfire": "阴谋反噬。",
-  
   "==================== 拳击手消息 ====================": "",
   "message.noellesroles.boxer.ability_activated": "钢筋铁骨激活！1.5秒内免疫任何死亡！",
   "message.noellesroles.boxer.ability_ended": "钢筋铁骨效果结束",
@@ -296,19 +279,16 @@
   "hud.noellesroles.boxer.cooldown": "钢筋铁骨冷却：%s秒",
   "hud.noellesroles.boxer.ready": "钢筋铁骨就绪 - 按G激活",
   "hud.noellesroles.boxer.active": "钢筋铁骨激活中！%s秒",
-  
   "==================== 运动员角色 ====================": "",
   "announcement.role.athlete": "运动员",
   "announcement.goals.athlete": "利用你的无限体力和疾跑技能，帮助乘客完成任务！",
   "announcement.win.athlete": "乘客胜利！",
-  
   "message.noellesroles.athlete.ability_activated": "疾跑激活！速度提升20秒！",
   "message.noellesroles.athlete.ability_ended": "疾跑效果结束",
   "message.noellesroles.athlete.on_cooldown": "疾跑冷却中，还需 %s 秒",
   "hud.noellesroles.athlete.cooldown": "疾跑冷却：%s秒",
   "hud.noellesroles.athlete.ready": "疾跑就绪 - 按G激活",
   "hud.noellesroles.athlete.active": "疾跑中！剩余%s秒",
-  
   "==================== 跟踪者角色 ====================": "",
   "announcement.role.stalker": "潜行者",
   "announcement.goals.stalker": "在阴影中观察，汲取恐惧的力量。完成进化，狩猎所有人。",
@@ -327,7 +307,6 @@
   "hud.noellesroles.stalker.gazing": "凝视 %d 目标",
   "hud.noellesroles.stalker.charging": "蓄力 %s/%ss",
   "hud.noellesroles.stalker.dashing": "—— 冲锋 ——",
-  
   "message.noellesroles.stalker.phase2_advance": "本能觉醒……",
   "message.noellesroles.stalker.phase3_advance": "杀意，达到顶峰。",
   "message.noellesroles.stalker.phase_regress": "狂热退却，猎手归来。",
@@ -336,9 +315,7 @@
   "stalker.shop_blocked": "潜行者无法使用商店",
   "hud.noellesroles.stalker.attack_cooldown": "攻击冷却：%s秒",
   "hud.noellesroles.stalker.dash_cooldown": "突进冷却：%s秒",
-  
   "death_reason.noellesroles.stalker_execution": "被潜行者献祭。",
-  
   "==================== 慕恋者角色 ====================": "",
   "announcement.role.admirer": "爱慕者",
   "announcement.goals.admirer": "观察你的绑定对象来积累能量，满能量后转化为操纵师！",
@@ -351,12 +328,9 @@
   "message.noellesroles.admirer.bound": "你的绑定对象是: %s",
   "message.noellesroles.admirer.target_died": "你的绑定对象已死亡！正在重新绑定...",
   "message.noellesroles.admirer.transform": "能量已满！你转化为了 %s！",
-  
   "==================== 按键绑定 ====================": "",
   "key.noellesroles.ability": "使用技能",
-
   "==================== 设陷者角色 ====================": "",
-
   "hud.noellesroles.trapper.charges": "陷阱: %s/%s",
   "hud.noellesroles.trapper.recharge": "恢复中: %s秒",
   "hud.noellesroles.trapper.ready": "已就绪",
@@ -368,53 +342,42 @@
   "message.noellesroles.trapper.trap_triggered_notify": "%s 触发了你的陷阱！",
   "message.noellesroles.trapper.prison_ended": "囚禁结束",
   "announcement.role.trapper": "设陷者",
-
   "==================== 明星角色 ====================": "",
   "announcement.role.star": "明星",
   "announcement.goals.star": "你是聚光灯下的焦点！每20秒自动发光2秒，使用技能让周围玩家的目光都看向你！",
   "announcement.win.star": "乘客胜利！",
-
   "hud.noellesroles.star.title": "明星",
   "hud.noellesroles.star.glowing": "✨ 发光中 ✨",
   "hud.noellesroles.star.next_glow": "下次发光：%s秒",
   "hud.noellesroles.star.cooldown": "聚光灯冷却：%s秒",
   "hud.noellesroles.star.ready": "聚光灯就绪 - 按G使用",
-
   "message.noellesroles.star.ability_used": "聚光灯！%d 名玩家的目光被吸引！",
   "message.noellesroles.star.attracted": "✨ 你的目光被明星吸引了！",
   "message.noellesroles.star.on_cooldown": "聚光灯冷却中，还需 %s 秒",
-
   "==================== 退伍军人角色 ====================": "",
   "announcement.role.veteran": "退伍军人",
   "announcement.goals.veteran": "你是一名退伍军人，开局拥有一把刀。使用它击杀一人后，刀将会消失。",
   "announcement.win.veteran": "乘客胜利！",
-
   "message.noellesroles.veteran.knife_used": "你的刀已使用并消失了！",
-
   "==================== 歌手角色 ====================": "",
   "announcement.role.singer": "歌手",
   "announcement.goals.singer": "你是一名歌手！按技能键随机播放一首唱片音乐，让周围的人都能听到你的歌声！",
   "announcement.win.singer": "乘客胜利！",
-
   "hud.noellesroles.singer.title": "歌手",
   "hud.noellesroles.singer.cooldown": "唱歌冷却：%s秒",
   "hud.noellesroles.singer.ready": "唱歌就绪 - 按G演唱",
-
   "message.noellesroles.singer.music_played": "♪ 你播放了《%s》！",
   "message.noellesroles.singer.music_heard": "♪ 你听到了 %s 的歌声！",
   "message.noellesroles.singer.on_cooldown": "唱歌冷却中，还需 %s 秒",
-
   "==================== 心理学家角色 ====================": "",
   "announcement.role.psychologist": "心理学家",
   "announcement.goals.psychologist": "当你的san值70以上时，瞄准一名玩家并让其保持静止10秒，可以完全恢复其san值！",
   "announcement.win.psychologist": "乘客胜利！",
-
   "hud.noellesroles.psychologist.title": "心理学家",
   "hud.noellesroles.psychologist.cooldown": "治疗冷却：%s秒",
   "hud.noellesroles.psychologist.ready": "治疗就绪 - 按G并瞄准目标",
   "hud.noellesroles.psychologist.not_ready": "你的san值必须满足70以上才能治疗他人",
   "hud.noellesroles.psychologist.healing": "正在治疗 %s：%s/%s秒",
-
   "message.noellesroles.psychologist.on_cooldown": "治疗冷却中，还需 %s 秒",
   "message.noellesroles.psychologist.not_full_san": "你的san值必须满70以上才能使用此技能！",
   "message.noellesroles.psychologist.cannot_heal_self": "不能治疗自己！",
@@ -430,12 +393,10 @@
   "message.noellesroles.psychologist.target_too_far": "目标离得太远了！",
   "message.noellesroles.psychologist.no_target": "请将准星对准一名玩家！",
   "message.noellesroles.psychologist.cancelled": "治疗已取消。",
-
   "==================== 傀儡师角色 ====================": "",
   "announcement.role.puppeteer": "傀儡师",
   "announcement.goals.puppeteer": "收集尸体以进化。进化后，用收集的尸体制作傀儡并操控它们进行狩猎！",
   "announcement.win.puppeteer": "傀儡师胜利！",
-
   "hud.noellesroles.puppeteer.title": "傀儡师",
   "hud.noellesroles.puppeteer.phase1": "阶段一 - 收集者",
   "hud.noellesroles.puppeteer.phase2": "阶段二 - 傀儡大师",
@@ -447,7 +408,6 @@
   "hud.noellesroles.puppeteer.controlling": "操控傀儡中：剩余%s秒",
   "hud.noellesroles.puppeteer.body_mode": "【本体模式】- 无法使用商店",
   "hud.noellesroles.puppeteer.no_puppets": "没有可用的傀儡",
-
   "message.noellesroles.puppeteer.collected": "收集了尸体！（%d/%d）",
   "message.noellesroles.puppeteer.on_cooldown": "收集冷却中，还需 %s 秒",
   "message.noellesroles.puppeteer.phase2_advance": "你已收集足够的尸体！你现在是傀儡大师了！",
@@ -460,19 +420,16 @@
   "message.noellesroles.puppeteer.ability_cooldown": "傀儡技能冷却中，还需 %s 秒",
   "message.noellesroles.puppeteer.returned_to_body": "已返回本体。",
   "message.noellesroles.puppeteer.collect_more": "还需要收集更多尸体！（%d/%d）",
-
   "==================== 操纵师角色 ====================": "",
   "announcement.role.manipulator": "操纵师",
   "announcement.goals.manipulator": "选择一名玩家作为目标进行操控。你将在原地留下本体，同时获得目标的外观、物品栏和角色能力！持续50秒，本体死亡时你也会死亡！",
   "announcement.win.manipulator": "杀手胜利！",
-
   "hud.noellesroles.manipulator.title": "操纵师",
   "hud.noellesroles.manipulator.cooldown": "操纵冷却：%s秒",
   "hud.noellesroles.manipulator.ready": "操纵就绪 - 选择目标玩家",
   "hud.noellesroles.manipulator.controlling": "正在操控 %s：剩余 %s 秒",
   "hud.noellesroles.manipulator.player_selection": "选择要操纵的玩家",
   "hud.manipulator.player_selection": "选择要操纵的玩家",
-
   "message.noellesroles.manipulator.on_cooldown": "操纵冷却中，还需 %s 秒",
   "message.noellesroles.manipulator.target_selected": "已选择 %s 作为操纵目标",
   "message.noellesroles.manipulator.control_started": "开始操纵 %s！你有50秒的时间！",
@@ -482,28 +439,23 @@
   "message.noellesroles.manipulator.being_controlled": "你被操纵师控制了！无法行动...",
   "message.noellesroles.manipulator.body_died": "你的本体被杀死了！游戏结束。",
   "message.noellesroles.manipulator.target_died": "%s 在你操控期间被杀死了！",
-
   "death_reason.noellesroles.bomb_death": "被炸弹炸死。",
   "item.noellesroles.bomb": "炸弹",
   "death_reason.noellesroles.puppeteer_puppet": "被傀儡殺死。",
   "==================== 薄荷糖物品 ====================": "",
   "item.noellesroles.mint_candies": "薄荷糖",
-
   "==================== 记录员角色 ====================": "",
   "announcement.role.recorder": "记录员",
   "announcement.goals.recorder": "使用记录笔记猜测其他玩家的角色。如果猜对人数达到总人数的40%，你将获得独立胜利！",
   "announcement.goals.noellesroles.recorder": "使用记录笔记猜测其他玩家的角色。如果猜对人数达到总人数的40%，你将获得独立胜利！",
   "announcement.win.recorder": "记录员胜利！",
-
   "item.noellesroles.written_note": "记录笔记",
   "item.noellesroles.written_note.tooltip": "右键使用来记录玩家的身份",
-
   "screen.noellesroles.recorder.title": "记录笔记",
   "screen.noellesroles.recorder.select_player": "选择目标玩家",
   "screen.noellesroles.recorder.select_role": "记录 %s 的角色",
   "screen.noellesroles.recorder.hint": "按 ESC 返回或取消",
   "screen.noellesroles.recorder.search": "搜索...",
-
   "message.noellesroles.recorder.already_guessed": "你已经记录过这个玩家了！",
   "message.noellesroles.recorder.correct_guess": "记录正确！",
   "message.noellesroles.recorder.wrong_guess": "记录错误！(%s/%s)",

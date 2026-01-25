@@ -1,6 +1,8 @@
 package org.agmas.noellesroles.client.widget;
 
 import org.agmas.noellesroles.client.screen.RecorderScreen;
+import org.agmas.noellesroles.client.utils.RoleUtils;
+
 import dev.doctor4t.trainmurdermystery.api.Role;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -29,8 +31,7 @@ public class RecorderRoleWidget extends Button {
     }
 
     private static Component getRoleName(Role role) {
-        String translationKey = "announcement.role." + role.identifier().getPath();
-        return Component.translatable(translationKey);
+        return RoleUtils.getRoleName(role);
     }
 
     @Override

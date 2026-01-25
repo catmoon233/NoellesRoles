@@ -53,8 +53,8 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
 
     // ==================== 原版唱片音乐列表 ====================
     private static final SoundEvent[] MUSIC_DISCS = {
-            SoundEvents.MUSIC_DISC_13.value(),
-            SoundEvents.MUSIC_DISC_CAT.value(),
+            SoundEvents.MUSIC_DISC_CREATOR.value(),
+            SoundEvents.MUSIC_DISC_CREATOR_MUSIC_BOX.value(),
             SoundEvents.MUSIC_DISC_BLOCKS.value(),
             SoundEvents.MUSIC_DISC_CHIRP.value(),
             SoundEvents.MUSIC_DISC_FAR.value(),
@@ -192,7 +192,7 @@ public class SingerPlayerComponent implements AutoSyncedComponent, ServerTicking
      */
     private String getMusicName(int index) {
         String[] musicNames = {
-                "13", "Cat", "Blocks", "Chirp", "Far", "Mall", "Mellohi", "Stal",
+                "Creator", "Creator (Music BOX ver.)", "Blocks", "Chirp", "Far", "Mall", "Mellohi", "Stal",
                 "Strad", "Ward", "11", "Wait", "Pigstep", "Otherside", "5", "Relic"
         };
         if (index >= 0 && index < musicNames.length) {

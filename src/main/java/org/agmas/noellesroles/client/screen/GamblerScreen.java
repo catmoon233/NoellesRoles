@@ -1,12 +1,11 @@
 package org.agmas.noellesroles.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
-import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.RoleScreen;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +15,7 @@ import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GamblerScreen extends RoleScreen {
+public class GamblerScreen extends Screen {
     private final GamblerPlayerComponent component;
     private final List<Role> availableRoles = new ArrayList<>();
     private Role selectedRole;
