@@ -22,7 +22,7 @@ public class SetRoleMaxCommand {
                     .then(Commands.literal("setmax")
                             .then(Commands.argument("role", ResourceLocationArgument.id())
                                     .suggests((context, builder) -> {
-                                        for (Role role : TMMRoles.ROLES) {
+                                        for (Role role : TMMRoles.ROLES.values()) {
                                             ResourceLocation id = role.identifier();
                                             builder.suggest(id.toString());
                                         }
@@ -34,7 +34,7 @@ public class SetRoleMaxCommand {
                                                 int value = IntegerArgumentType.getInteger(context, "value");
 
                                                 Role roleObj = null;
-                                                for (Role role : TMMRoles.ROLES) {
+                                                for (Role role : TMMRoles.ROLES.values()) {
                                                     if (role.identifier().equals(roleId)) {
                                                         roleObj = role;
                                                         break;

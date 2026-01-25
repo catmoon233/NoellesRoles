@@ -8,7 +8,6 @@
     "AbstractContainerMenuMixin",
     "EntityClear",
     "accessor.PlayerPoisonComponentAccessor",
-    "GiveCoinsOnMoodCompletionMixin",
     "MasterKeyDoorMixin",
     "PlayerResetMixin",
     "SimpleRolePurchaseMixin",

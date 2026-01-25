@@ -108,7 +108,7 @@ public abstract class CoronerHudMixin {
                 }
                 context.drawString(renderer, name, -renderer.width(name) / 2, 32, CommonColors.RED);
                 Role foundRole = TMMRoles.CIVILIAN;
-                for (Role role : TMMRoles.ROLES) {
+                for (Role role : TMMRoles.ROLES.values()) {
                     if (role.identifier().equals(bodyDeathReasonComponent.playerRole))
                         foundRole = role;
                 }

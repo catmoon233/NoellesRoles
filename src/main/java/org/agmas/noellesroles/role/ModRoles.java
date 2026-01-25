@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.role;
 
+import dev.doctor4t.trainmurdermystery.api.NoramlRole;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
@@ -113,76 +114,76 @@ public class ModRoles {
 
         // ==================== 已注册角色定义 ====================
         // 乘客阵营角色
-        public static Role JESTER = TMMRoles.registerRole(new Role(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
+        public static Role JESTER = TMMRoles.registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
                         false, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
         public static Role CONDUCTOR = TMMRoles
-                        .registerRole(new Role(CONDUCTOR_ID, new Color(184, 134, 11).getRGB(), true,
+                        .registerRole(new NoramlRole(CONDUCTOR_ID, new Color(184, 134, 11).getRGB(), true,
                                         false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
         public static Role BARTENDER = TMMRoles
-                        .registerRole(new Role(BARTENDER_ID, new Color(217, 241, 240).getRGB(), true,
+                        .registerRole(new NoramlRole(BARTENDER_ID, new Color(217, 241, 240).getRGB(), true,
                                         false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
         public static Role NOISEMAKER = TMMRoles
-                        .registerRole(new Role(NOISEMAKER_ID, new Color(200, 255, 0).getRGB(), true,
+                        .registerRole(new NoramlRole(NOISEMAKER_ID, new Color(200, 255, 0).getRGB(), true,
                                         false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
         public static Role AWESOME_BINGLUS = TMMRoles
-                        .registerRole(new Role(AWESOME_BINGLUS_ID, new Color(155, 255, 168).getRGB(), true, false,
+                        .registerRole(new NoramlRole(AWESOME_BINGLUS_ID, new Color(155, 255, 168).getRGB(), true, false,
                                         Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
-        public static Role VOODOO = TMMRoles.registerRole(new Role(VOODOO_ID, new Color(128, 114, 253).getRGB(), true,
+        public static Role VOODOO = TMMRoles.registerRole(new NoramlRole(VOODOO_ID, new Color(128, 114, 253).getRGB(), true,
                         false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
         public static Role RECALLER = TMMRoles
-                        .registerRole(new Role(RECALLER_ID, new Color(135, 206, 235).getRGB(), true,
+                        .registerRole(new NoramlRole(RECALLER_ID, new Color(135, 206, 235).getRGB(), true,
                                         false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
         public static Role BETTER_VIGILANTE = TMMRoles
-                        .registerRole(new Role(BETTER_VIGILANTE_ID, new Color(0, 255, 255).getRGB(), true, false,
+                        .registerRole(new NoramlRole(BETTER_VIGILANTE_ID, new Color(0, 255, 255).getRGB(), true, false,
                                         Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
         public static Role BROADCASTER = TMMRoles
-                        .registerRole(new Role(BROADCASTER_ID, new Color(0, 255, 0).getRGB(), true,
+                        .registerRole(new NoramlRole(BROADCASTER_ID, new Color(0, 255, 0).getRGB(), true,
                                         false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
         public static Role GHOST = TMMRoles
-                        .registerRole(new Role(GHOST_ID, new Color(200, 200, 200).getRGB(), true, false,
+                        .registerRole(new NoramlRole(GHOST_ID, new Color(200, 200, 200).getRGB(), true, false,
                                         Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
         // public static Role PHOTOGRAPHER = TMMRoles.registerRole(new
         // Role(PHOTOGRAPHER_ID, (new Color(0, 128, 255)).getRGB(),
         // true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),
         // false));
-        public static Role DOCTOR = TMMRoles.registerRole(new Role(DOCTOR_ID, new Color(30, 144, 255).getRGB(), true,
+        public static Role DOCTOR = TMMRoles.registerRole(new NoramlRole(DOCTOR_ID, new Color(30, 144, 255).getRGB(), true,
                         false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
-        public static Role ATTENDANT = TMMRoles.registerRole(new Role(ATTENDANT_ID, (new Color(198, 185, 36)).getRGB(),
+        public static Role ATTENDANT = TMMRoles.registerRole(new NoramlRole(ATTENDANT_ID, (new Color(198, 185, 36)).getRGB(),
                         true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
 
         // 杀手阵营角色
         public static Role MORPHLING = TMMRoles
-                        .registerRole(new Role(MORPHLING_ID, new Color(220, 20, 60).getRGB(), false,
+                        .registerRole(new NoramlRole(MORPHLING_ID, new Color(220, 20, 60).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
         public static Role MANIPULATOR = TMMRoles
-                        .registerRole(new Role(MANIPULATOR_ID, new Color(90, 20, 61).getRGB(), false,
+                        .registerRole(new NoramlRole(MANIPULATOR_ID, new Color(90, 20, 61).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
         public static Role PHANTOM = TMMRoles
-                        .registerRole(new Role(PHANTOM_ID, new Color(80, 5, 5, 192).getRGB(), false,
+                        .registerRole(new NoramlRole(PHANTOM_ID, new Color(80, 5, 5, 192).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
-        public static Role SWAPPER = TMMRoles.registerRole(new Role(SWAPPER_ID, new Color(255, 0, 255).getRGB(), false,
+        public static Role SWAPPER = TMMRoles.registerRole(new NoramlRole(SWAPPER_ID, new Color(255, 0, 255).getRGB(), false,
                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
-        public static Role EXECUTIONER = TMMRoles.registerRole(new Role(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),
+        public static Role EXECUTIONER = TMMRoles.registerRole(new NoramlRole(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),
                         false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
-        public static Role GAMBLER = TMMRoles.registerRole(new Role(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
+        public static Role GAMBLER = TMMRoles.registerRole(new NoramlRole(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
                         false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
         public static Role THIEF = TMMRoles
-                        .registerRole(new Role(THIEF_ID, new Color(139, 69, 19).getRGB(), false, false,
+                        .registerRole(new NoramlRole(THIEF_ID, new Color(139, 69, 19).getRGB(), false, false,
                                         Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
         public static Role POISONER = TMMRoles
-                        .registerRole(new Role(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false,
+                        .registerRole(new NoramlRole(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
 
         public static Role THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES = TMMRoles
-                        .registerRole(new Role(
+                        .registerRole(new NoramlRole(
                                         THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID,
                                         new Color(255, 0, 0, 192).getRGB(), false, true, Role.MoodType.FAKE,
                                         Integer.MAX_VALUE, true));
 
         // 中立阵营角色
-        public static Role VULTURE = TMMRoles.registerRole(new Role(VULTURE_ID, new Color(210, 105, 30).getRGB(), false,
+        public static Role VULTURE = TMMRoles.registerRole(new NoramlRole(VULTURE_ID, new Color(210, 105, 30).getRGB(), false,
                         false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
-        public static Role CORONER = TMMRoles.registerRole(new Role(CORONER_ID, new Color(122, 122, 122).getRGB(), true,
+        public static Role CORONER = TMMRoles.registerRole(new NoramlRole(CORONER_ID, new Color(122, 122, 122).getRGB(), true,
                         false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
 
         // ==================== 自定义角色对象定义 ====================
@@ -484,7 +485,7 @@ public class ModRoles {
                 // ==================== 注册乘客阵营角色 ====================
 
                 // 复仇者角色 - 乘客阵营
-                AVENGER = TMMRoles.registerRole(new Role(
+                AVENGER = TMMRoles.registerRole(new NoramlRole(
                                 AVENGER_ID, // 角色 ID
                                 new Color(139, 0, 0).getRGB(), // 暗红色 - 代表复仇的血色
                                 true, // isInnocent = 乘客阵营
@@ -495,7 +496,7 @@ public class ModRoles {
                 ));
 
                 // 滑头鬼角色 - 中立阵营（使用专属商店）
-                SLIPPERY_GHOST = TMMRoles.registerRole(new Role(
+                SLIPPERY_GHOST = TMMRoles.registerRole(new NoramlRole(
                                 SLIPPERY_GHOST_ID, // 角色 ID
                                 new Color(176, 196, 222).getRGB(), // 灰色 - 代表滑头鬼的隐匿
                                 false, // isInnocent = 非乘客阵营
@@ -506,7 +507,7 @@ public class ModRoles {
                 ));
 
                 // 工程师角色 - 乘客阵营
-                ENGINEER = TMMRoles.registerRole(new Role(
+                ENGINEER = TMMRoles.registerRole(new NoramlRole(
                                 ENGINEER_ID, // 角色 ID
                                 new Color(255, 140, 0).getRGB(), // 橙色 - 代表工程帽/工具
                                 true, // isInnocent = 乘客阵营
@@ -517,7 +518,7 @@ public class ModRoles {
                 ));
 
                 // 拳击手角色 - 乘客阵营
-                BOXER = TMMRoles.registerRole(new Role(
+                BOXER = TMMRoles.registerRole(new NoramlRole(
                                 BOXER_ID, // 角色 ID
                                 new Color(205, 92, 92).getRGB(), // 猩红色 - 代表热血/格斗
                                 true, // isInnocent = 乘客阵营
@@ -528,7 +529,7 @@ public class ModRoles {
                 ));
 
                 // 邮差角色 - 乘客阵营
-                POSTMAN = TMMRoles.registerRole(new Role(
+                POSTMAN = TMMRoles.registerRole(new NoramlRole(
                                 POSTMAN_ID, // 角色 ID
                                 new Color(70, 130, 180).getRGB(), // 钢蓝色 - 代表邮差制服
                                 true, // isInnocent = 乘客阵营
@@ -539,7 +540,7 @@ public class ModRoles {
                 ));
 
                 // 私家侦探角色 - 乘客阵营
-                DETECTIVE = TMMRoles.registerRole(new Role(
+                DETECTIVE = TMMRoles.registerRole(new NoramlRole(
                                 DETECTIVE_ID, // 角色 ID
                                 new Color(205, 133, 63).getRGB(), // 棕色 - 代表侦探风衣
                                 true, // isInnocent = 乘客阵营
@@ -550,7 +551,7 @@ public class ModRoles {
                 ));
 
                 // 运动员角色 - 乘客阵营
-                ATHLETE = TMMRoles.registerRole(new Role(
+                ATHLETE = TMMRoles.registerRole(new NoramlRole  (
                                 ATHLETE_ID, // 角色 ID
                                 new Color(65, 105, 225).getRGB(), // 天蓝色 - 代表运动/活力
                                 true, // isInnocent = 乘客阵营
@@ -561,7 +562,7 @@ public class ModRoles {
                 ));
 
                 // 明星角色 - 乘客阵营
-                STAR = TMMRoles.registerRole(new Role(
+                STAR = TMMRoles.registerRole(new NoramlRole(
                                 STAR_ID, // 角色 ID
                                 new Color(255, 215, 0).getRGB(), // 金色 - 代表明星的光芒
                                 true, // isInnocent = 乘客阵营
@@ -572,7 +573,7 @@ public class ModRoles {
                 ));
 
                 // 退伍军人角色 - 好人阵营
-                VETERAN = TMMRoles.registerRole(new Role(
+                VETERAN = TMMRoles.registerRole(new NoramlRole(
                                 VETERAN_ID, // 角色 ID
                                 new Color(85, 107, 47).getRGB(), // 暗橄榄绿 - 代表军装颜色
                                 true, // isInnocent = 好人阵营
@@ -583,7 +584,7 @@ public class ModRoles {
                 ));
 
                 // 歌手角色 - 好人阵营
-                SINGER = TMMRoles.registerRole(new Role(
+                SINGER = TMMRoles.registerRole(new NoramlRole(
                                 SINGER_ID, // 角色 ID
                                 new Color(255, 105, 180).getRGB(), // 热粉色 - 代表音乐与激情
                                 true, // isInnocent = 好人阵营
@@ -594,7 +595,7 @@ public class ModRoles {
                 ));
 
                 // 心理学家角色 - 好人阵营
-                PSYCHOLOGIST = TMMRoles.registerRole(new Role(
+                PSYCHOLOGIST = TMMRoles.registerRole(new NoramlRole(
                                 PSYCHOLOGIST_ID, // 角色 ID
                                 new Color(64, 224, 208).getRGB(), // 青绿色 - 代表心灵治愈
                                 true, // isInnocent = 好人阵营
@@ -607,7 +608,7 @@ public class ModRoles {
                 // ==================== 注册杀手阵营角色 ====================
 
                 // 阴谋家角色 - 杀手阵营
-                CONSPIRATOR = TMMRoles.registerRole(new Role(
+                CONSPIRATOR = TMMRoles.registerRole(new NoramlRole(
                                 CONSPIRATOR_ID, // 角色 ID
                                 new Color(85, 26, 139).getRGB(), // 深紫色 - 代表阴谋与神秘
                                 false, // isInnocent = 非乘客阵营
@@ -618,7 +619,7 @@ public class ModRoles {
                 ));
 
                 // 设陷者角色 - 杀手阵营
-                TRAPPER = TMMRoles.registerRole(new Role(
+                TRAPPER = TMMRoles.registerRole(new NoramlRole(
                                 TRAPPER_ID, // 角色 ID
                                 new Color(239, 69, 30).getRGB(), // 棕色 - 代表陷阱与大地
                                 false, // isInnocent = 非乘客阵营
@@ -629,7 +630,7 @@ public class ModRoles {
                 ));
 
                 // 炸弹客角色 - 杀手阵营
-                BOMBER = TMMRoles.registerRole(new Role(
+                BOMBER = TMMRoles.registerRole(new NoramlRole(
                                 BOMBER_ID, // 角色 ID
                                 new Color(51, 51, 51).getRGB(), // 黑色/深灰色
                                 false, // isInnocent = 非乘客阵营
@@ -642,7 +643,7 @@ public class ModRoles {
                 // ==================== 注册中立阵营角色 ====================
 
                 // 跟踪者角色 - 杀手阵营（一开始就是杀手，通过阶段控制能力）
-                STALKER = TMMRoles.registerRole(new Role(
+                STALKER = TMMRoles.registerRole(new NoramlRole  (
                                 STALKER_ID, // 角色 ID
                                 new Color(47, 79, 79).getRGB(), // 暗紫色 #4B0082
                                 false, // isInnocent = 非乘客阵营
@@ -653,13 +654,13 @@ public class ModRoles {
                 ));
 
                 // 慕恋者角色 - 中立阵营
-                ADMIRER = TMMRoles.registerRole(new Role(
+                ADMIRER = TMMRoles.registerRole(new NoramlRole(
                                 ADMIRER_ID, // 角色 ID
                                 new Color(255, 192, 203).getRGB(), false, false, Role.MoodType.FAKE, Integer.MAX_VALUE,
                                 true));
 
                 // 傀儡师角色 - 中立阵营（初始）
-                PUPPETEER = TMMRoles.registerRole(new Role(
+                PUPPETEER = TMMRoles.registerRole(new NoramlRole(
                                 PUPPETEER_ID, // 角色 ID
                                 new Color(138, 43, 226).getRGB(), // 深紫罗兰色 - 代表操控与神秘
                                 false, // isInnocent = 非乘客阵营
@@ -670,7 +671,7 @@ public class ModRoles {
                 ));
 
                 // 记录员角色 - 中立阵营
-                RECORDER = TMMRoles.registerRole(new Role(
+                RECORDER = TMMRoles.registerRole(new NoramlRole(
                                 RECORDER_ID, // 角色 ID
                                 new Color(95, 158, 160).getRGB(), // 矢车菊蓝
                                 false, // isInnocent = 非乘客阵营
@@ -734,7 +735,7 @@ public class ModRoles {
                 // 记录员每局只能有 1 个
                 Harpymodloader.setRoleMaximum(RECORDER_ID, 1);
                 // 监察员角色 - 好人阵营
-                MONITOR = TMMRoles.registerRole(new Role(
+                MONITOR = TMMRoles.registerRole(new NoramlRole(
                                 MONITOR_ID, // 角色 ID
                                 new Color(0, 255, 255).getRGB(), // 青色
                                 true, // isInnocent = 好人阵营

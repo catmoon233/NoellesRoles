@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.roles.morphling;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -28,6 +29,11 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
     public void reset() {
         this.stopMorph();
         this.sync();
+    }
+
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player1) {
+        return player == player1;
     }
 
     public MorphlingPlayerComponent(Player player) {
@@ -79,13 +85,26 @@ public class MorphlingPlayerComponent implements AutoSyncedComponent, ServerTick
     public boolean startMorph(UUID id) {
         setMorphTicks(GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphDuration));
         disguise = id;
-        this.sync();
+        TMM.SERVER.getPlayerList().getPlayers().forEach(
+                player -> {
+                    final var morphlingPlayerComponent = KEY.get(player);
+                    morphlingPlayerComponent.disguise = disguise;
+                    KEY.sync(player);
+                }
+        );
+
         return true;
     }
 
     public void stopMorph() {
         this.morphTicks = -GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphCooldown);
-        this.sync();
+        TMM.SERVER.getPlayerList().getPlayers().forEach(
+                player -> {
+                    final var morphlingPlayerComponent = KEY.get(player);
+                    morphlingPlayerComponent.disguise = disguise;
+                    KEY.sync(player);
+                }        );
+
     }
 
     public int getMorphTicks() {
