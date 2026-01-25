@@ -39,6 +39,7 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     public boolean shouldSyncWith(ServerPlayer player) {
         return player == this.player;
     }
+
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<StalkerPlayerComponent> KEY = ModComponents.STALKER;
 
@@ -68,8 +69,8 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     /** 每秒蓄力增加的突进距离（格）- 缩短距离 */
     public static final double DASH_DISTANCE_PER_SECOND = 6.0;
 
-    /** 二阶段攻击冷却（2秒 = 40 tick） */
-    public static final int PHASE_2_ATTACK_COOLDOWN = 60;
+    /** 二阶段攻击冷却（10秒 = 200 tick） */
+    public static final int PHASE_2_ATTACK_COOLDOWN = 200;
 
     /** 三阶段突进冷却（2秒 = 40 tick） */
     public static final int DASH_COOLDOWN = 20;
@@ -339,6 +340,11 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
             this.phase2Kills++;
             // 设置攻击冷却
             this.attackCooldown = PHASE_2_ATTACK_COOLDOWN;
+
+            // 播放击杀音效
+            player.level().playSound(null, player.blockPosition(),
+                    SoundEvents.TRIDENT_THROW.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
+
             checkPhaseAdvance();
             this.sync();
         }
