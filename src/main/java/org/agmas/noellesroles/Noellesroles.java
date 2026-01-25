@@ -591,7 +591,7 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ModRoles.BROADCASTER_ID, NoellesRolesConfig.HANDLER.instance().broadcasterMax);
         Harpymodloader.setRoleMaximum(ModRoles.GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
         Harpymodloader.setRoleMaximum(ModRoles.GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
-        Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, NoellesRolesConfig.HANDLER.instance().thiefMax);
+        // Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, NoellesRolesConfig.HANDLER.instance().thiefMax);
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
     }
