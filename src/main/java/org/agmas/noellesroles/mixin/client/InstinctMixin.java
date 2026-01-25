@@ -41,6 +41,13 @@ public abstract class InstinctMixin {
             return;
         }
 
+        // 检查死亡惩罚
+        if (org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(player).hasPenalty()) {
+            cir.setReturnValue(false);
+            cir.cancel();
+            return;
+        }
+
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
         if (gameWorldComponent.isRole(player, ModRoles.JESTER)) {
             if (instinctKeybind.isDown()) {

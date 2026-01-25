@@ -58,7 +58,7 @@ public class HSRConstants {
     }
 
     public static void init() {
-        ITEM_COOLDOWNS.put(HSRItems.ANTIDOTE, getInTicks(2, 0));
+        ITEM_COOLDOWNS.put(HSRItems.ANTIDOTE, getInTicks(1, 30));
         ITEM_COOLDOWNS.put(HSRItems.TOXIN, getInTicks(0, 50));
         ITEM_COOLDOWNS.put(HSRItems.BANDIT_REVOLVER, getInTicks(0, 40));
         ITEM_COOLDOWNS.put(TMMItems.SCORPION, getInTicks(0, 35));
