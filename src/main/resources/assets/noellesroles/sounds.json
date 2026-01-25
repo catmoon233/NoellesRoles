@@ -1,7 +1,7 @@
 {
 	"block.cargo_box.close": {
 		"sounds": [
-			"noellesroles:gamber_died.ogg"
+			"noellesroles:gamber_died"
 		],
 		"subtitle": "subtitles.gamber_died"
 	},

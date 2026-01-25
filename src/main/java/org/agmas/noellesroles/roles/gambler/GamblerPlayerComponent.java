@@ -36,7 +36,7 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
     public List<ResourceLocation> availableRoles = new ArrayList<>();
     public ResourceLocation selectedRole = null;
     public int roleDrawTimer = 0;
-    public static final int DRAW_INTERVAL = 1 * 20; // 30秒 // DEBUG MODE
+    public static final int DRAW_INTERVAL = 30 * 20; // 30秒 // DEBUG MODE
 
     @Override
     public boolean shouldSyncWith(ServerPlayer player) {
@@ -84,7 +84,7 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
 
     private void drawNewRole() {
         List<Role> allRoles = new ArrayList<>(Noellesroles.getEnableRoles());
-
+        
         // 过滤掉禁用的角色、赌徒自己、已经在列表中的角色
         List<Role> validRoles = allRoles.stream()
                 .filter(role -> !HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()))

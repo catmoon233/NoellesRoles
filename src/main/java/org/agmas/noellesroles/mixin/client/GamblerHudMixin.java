@@ -54,12 +54,12 @@ public class GamblerHudMixin {
 
         Font textRenderer = client.font;
         int roleDrawLeft = GamblerPlayerComponent.DRAW_INTERVAL - gamblerComponent.roleDrawTimer;
-        if (gamblerComponent.usedAbility) {
+        if (gamblerComponent.selectedRole != null) {
             Component readyText = Component.translatable("hud.noellesroles.gambler.selected_tip",
-                    RoleUtils.getRoleName(gamblerComponent.selectedRole),
-                    Component.keybind("key.noellesroles.ability"));
-            context.drawString(textRenderer, readyText, x, y - 20, CommonColors.GREEN);
-        } else if (gamblerComponent.availableRoles.size() > 0) {
+                    RoleUtils.getRoleName(gamblerComponent.selectedRole));
+            context.drawString(textRenderer, readyText, x, y - 40, CommonColors.GREEN);
+        }
+        if (gamblerComponent.availableRoles.size() > 0) {
             Component readyText = Component.translatable("hud.noellesroles.gambler.tip",
                     Component.keybind("key.noellesroles.ability"));
             context.drawString(textRenderer, readyText, x, y - 20, CommonColors.GREEN);

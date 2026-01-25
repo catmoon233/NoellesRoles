@@ -39,7 +39,6 @@ import static org.agmas.noellesroles.role.ModRoles.EXECUTIONER_ID;
 
 @Mixin(GameFunctions.class)
 public class GamblerDeathMixin {
-
 	@Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At("HEAD"), cancellable = true)
 	private static void onGamblerDeath(Player victim, boolean spawnBody, Player killer, ResourceLocation identifier, CallbackInfo ci) {
 		if (identifier.getPath().equals("fell_out_of_train"))return;
@@ -47,7 +46,6 @@ public class GamblerDeathMixin {
 		final var world = victim.level();
 		if (world.isClientSide)return;
 		GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(world);
-		
 		if (gameWorldComponent.isRole(victim, ModRoles.GAMBLER)) {
 			GamblerPlayerComponent gamblerPlayerComponent = GamblerPlayerComponent.KEY.get(victim);
 
@@ -76,7 +74,7 @@ public class GamblerDeathMixin {
 				ModdedRoleAssigned.EVENT.invoker().assignModdedRole(victim,TMMRoles.VIGILANTE);
 				ServerPlayNetworking.send((ServerPlayer) victim, new AnnounceWelcomePayload(gameWorldComponent.getRole(victim).getIdentifier().toString(), gameWorldComponent.getAllKillerTeamPlayers().size(), 0));
 
-				teleport( victim);
+				teleport(victim);
 				// 取消死亡，玩家会在自己的房间复活
 				ci.cancel();
 			}

@@ -6,6 +6,7 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.roles.gambler.GamblerRole;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -165,8 +166,8 @@ public class ModRoles {
                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
         public static Role EXECUTIONER = TMMRoles.registerRole(new NoramlRole(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),
                         false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
-        public static Role GAMBLER = TMMRoles.registerRole(new NoramlRole(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
-                        false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
+        public static Role GAMBLER = TMMRoles.registerRole(new GamblerRole(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
+                        false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true)).setCanPickUpRevolver(true);
 //        public static Role THIEF = TMMRoles
 //                        .registerRole(new NoramlRole(THIEF_ID, new Color(139, 69, 19).getRGB(), false, false,
 //                                        Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));

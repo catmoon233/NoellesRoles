@@ -3,6 +3,7 @@ package org.agmas.noellesroles.client.utils;
 import org.agmas.noellesroles.Noellesroles;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -28,11 +29,10 @@ public class RoleUtils {
      * @return 返回Role
      */
     public static Role getRoleFromName(String roleName) {
-        var roles = Noellesroles.getEnableRoles();
-        for (var role : roles) {
-            if (role.getIdentifier().getPath() == roleName)
-                return role;
-        }
-        return null;
+        var roles = Noellesroles.id(roleName);
+        return TMMRoles.ROLES.get(roles);
+    }
+    public static Role getRole(ResourceLocation role) {
+        return TMMRoles.ROLES.get(role);
     }
 }

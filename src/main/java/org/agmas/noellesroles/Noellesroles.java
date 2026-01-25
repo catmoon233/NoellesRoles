@@ -128,7 +128,13 @@ public class Noellesroles implements ModInitializer {
     public static List<Role> getEnableRoles() {
         ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
         clone.removeIf(
-                r -> HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString()));
+                r -> {
+                    if (HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString()))
+                        return true;
+                    if (String.valueOf(r.identifier()) == "trainmurdermystery:discovery_civilian")
+                        return true;
+                    return false;
+                });
         return clone;
     }
 
@@ -595,7 +601,7 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ModRoles.BROADCASTER_ID, NoellesRolesConfig.HANDLER.instance().broadcasterMax);
         Harpymodloader.setRoleMaximum(ModRoles.GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
         Harpymodloader.setRoleMaximum(ModRoles.GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
-//        Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 0);
+        // Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 0);
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
     }
@@ -1180,7 +1186,8 @@ public class Noellesroles implements ModInitializer {
 
                             final var size = gameWorldComponent.getAllKillerTeamPlayers().size();
 
-                            ServerPlayNetworking.send(player, new AnnounceWelcomePayload(gameWorldComponent .getRole(player).getIdentifier().toString(), size, 0));
+                            ServerPlayNetworking.send(player, new AnnounceWelcomePayload(
+                                    gameWorldComponent.getRole(player).getIdentifier().toString(), size, 0));
 
                         }
 
@@ -1342,10 +1349,10 @@ public class Noellesroles implements ModInitializer {
                 abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
                         NoellesRolesConfig.HANDLER.instance().phantomInvisibilityCooldown);
             }
-//            else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
-//                    && abilityPlayerComponent.cooldown <= 0) {
-//
-//            }
+            // else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
+            // && abilityPlayerComponent.cooldown <= 0) {
+            //
+            // }
         });
 
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.INSANE_KILLER_ABILITY_PACKET, (payload, context) -> {

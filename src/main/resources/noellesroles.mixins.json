@@ -75,6 +75,7 @@
     "client.LamBugFix",
     "client.LobbyCreditsHudMixin",
     "client.GamblerHudMixin",
+    "client.GhostHudMixin",
     "client.MoneyHudMixin",
     "client.PsychologistHudMixin",
     "client.PuppeteerHudMixin",

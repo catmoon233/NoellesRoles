@@ -1,8 +1,6 @@
 package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.spongepowered.asm.mixin.Mixin;
