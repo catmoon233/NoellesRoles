@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.packet;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -10,10 +10,11 @@ import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.jetbrains.annotations.NotNull;
 
 public record GamblerSelectRoleC2SPacket(ResourceLocation roleId) implements CustomPacketPayload {
-    public static final Type<GamblerSelectRoleC2SPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "gambler_select_role"));
-    public static final StreamCodec<FriendlyByteBuf, GamblerSelectRoleC2SPacket> CODEC = StreamCodec.composite(
-        ResourceLocation.STREAM_CODEC, GamblerSelectRoleC2SPacket::roleId,
-        GamblerSelectRoleC2SPacket::new
+    public static final ResourceLocation GAMBLER_SELECT_ROLE_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "gambler_select_role");
+    public static final Type<GamblerSelectRoleC2SPacket> ID = new Type<>(GAMBLER_SELECT_ROLE_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, GamblerSelectRoleC2SPacket> CODEC = StreamCodec.ofMember(
+        (packet, buf) -> buf.writeResourceLocation(packet.roleId()),
+        buf -> new GamblerSelectRoleC2SPacket(buf.readResourceLocation())
     );
 
     @Override

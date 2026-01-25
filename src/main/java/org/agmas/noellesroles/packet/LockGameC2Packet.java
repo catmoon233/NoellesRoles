@@ -5,10 +5,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.Noellesroles;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import org.agmas.noellesroles.entity.LockEntity;
 
 /**
  * 撬锁游戏网络包

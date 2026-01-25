@@ -443,6 +443,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             }
             return;
         }
+
         // 监察员：标记目标
         if (gameWorld.isRole(client.player, ModRoles.MONITOR)) {
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
@@ -471,6 +472,11 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                         true);
             }
             return;
+        }
+        // 赌徒：选择职业
+        if (gameWorld.isRole(client.player, ModRoles.GAMBLER)) {
+            // 发送技能使用包到服务端
+            client.setScreen(new GamblerScreen(client.player));
         }
 
         if (abilityComponent.cooldown > 0) {

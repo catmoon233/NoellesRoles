@@ -27,121 +27,128 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
-	public static final ComponentKey<GamblerPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "gambler"), GamblerPlayerComponent.class);
-	private final Player player;
-	public boolean usedAbility = false;
-	
-	// 角色抽取相关
-	public List<ResourceLocation> availableRoles = new ArrayList<>();
-	public ResourceLocation selectedRole = null;
-	public int roleDrawTimer = 0;
-	public static final int DRAW_INTERVAL = 30 * 20; // 30秒
+    public static final ComponentKey<GamblerPlayerComponent> KEY = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "gambler"), GamblerPlayerComponent.class);
+    private final Player player;
+    public boolean usedAbility = false;
 
-	@Override
-	public boolean shouldSyncWith(ServerPlayer player) {
-		return player == this.player;
-	}
-	
-	public void reset() {
-		this.usedAbility = false;
-		this.availableRoles.clear();
-		this.selectedRole = null;
-		this.roleDrawTimer = 0;
-		this.sync();
-	}
+    // 角色抽取相关
+    public List<ResourceLocation> availableRoles = new ArrayList<>();
+    public ResourceLocation selectedRole = null;
+    public int roleDrawTimer = 0;
+    public static final int DRAW_INTERVAL = 30 * 20; // 30秒
 
-	public GamblerPlayerComponent(Player player) {
-		this.player = player;
-	}
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player;
+    }
 
-	public void sync() {
-		KEY.sync(this.player);
-	}
+    public void reset() {
+        this.usedAbility = false;
+        this.availableRoles.clear();
+        this.selectedRole = null;
+        this.roleDrawTimer = 0;
+        this.sync();
+    }
 
-	public void clientTick() {
-	}
+    public GamblerPlayerComponent(Player player) {
+        this.player = player;
+    }
 
-	public void serverTick() {
-		if (player.level().isClientSide) return;
-		
-		GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
-		if (!gameWorld.isRole(player, ModRoles.GAMBLER)) return;
-		if (!gameWorld.isRunning()) return;
+    public void sync() {
+        KEY.sync(this.player);
+    }
 
-		roleDrawTimer++;
-		if (roleDrawTimer >= DRAW_INTERVAL) {
-			roleDrawTimer = 0;
-			drawNewRole();
-		}
-	}
+    public void clientTick() {
+    }
 
-	private void drawNewRole() {
-		List<Role> allRoles = new ArrayList<>(TMMRoles.ROLES);
-		
-		// 过滤掉禁用的角色、赌徒自己、已经在列表中的角色
-		List<Role> validRoles = allRoles.stream()
-			.filter(role -> !HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()))
-			.filter(role -> !role.identifier().equals(ModRoles.GAMBLER_ID))
-			.filter(role -> !availableRoles.contains(role.identifier()))
-			.collect(Collectors.toList());
+    public void serverTick() {
+        if (player.level().isClientSide)
+            return;
 
-		if (!validRoles.isEmpty()) {
-			Collections.shuffle(validRoles);
-			Role drawnRole = validRoles.get(0);
-			availableRoles.add(drawnRole.identifier());
-			
-			// 如果还没有选择角色，默认选择第一个抽到的
-			if (selectedRole == null) {
-				selectedRole = drawnRole.identifier();
-			}
-			
-			this.sync();
-		}
-	}
-	
-	public void selectRole(ResourceLocation roleId) {
-		if (availableRoles.contains(roleId)) {
-			this.selectedRole = roleId;
-			this.sync();
-		}
-	}
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorld.isRole(player, ModRoles.GAMBLER))
+            return;
+        if (!gameWorld.isRunning())
+            return;
 
-	public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
-		tag.putBoolean("usedAbility", this.usedAbility);
-		
-		ListTag rolesTag = new ListTag();
-		for (ResourceLocation roleId : availableRoles) {
-			rolesTag.add(StringTag.valueOf(roleId.toString()));
-		}
-		tag.put("availableRoles", rolesTag);
-		
-		if (selectedRole != null) {
-			tag.putString("selectedRole", selectedRole.toString());
-		}
-		
-		tag.putInt("roleDrawTimer", roleDrawTimer);
-	}
+        roleDrawTimer++;
+        if (roleDrawTimer >= DRAW_INTERVAL) {
+            roleDrawTimer = 0;
+            drawNewRole();
+        }
+        if (roleDrawTimer % 20 == 0) {
+            sync();
+        }
+    }
 
-	public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
-		this.usedAbility = tag.getBoolean("usedAbility");
-		
-		availableRoles.clear();
-		if (tag.contains("availableRoles")) {
-			ListTag rolesTag = tag.getList("availableRoles", Tag.TAG_STRING);
-			for (int i = 0; i < rolesTag.size(); i++) {
-				ResourceLocation roleId = ResourceLocation.tryParse(rolesTag.getString(i));
-				if (roleId != null) {
-					availableRoles.add(roleId);
-				}
-			}
-		}
-		
-		if (tag.contains("selectedRole")) {
-			selectedRole = ResourceLocation.tryParse(tag.getString("selectedRole"));
-		} else {
-			selectedRole = null;
-		}
-		
-		roleDrawTimer = tag.getInt("roleDrawTimer");
-	}
+    private void drawNewRole() {
+        List<Role> allRoles = new ArrayList<>(TMMRoles.ROLES);
+
+        // 过滤掉禁用的角色、赌徒自己、已经在列表中的角色
+        List<Role> validRoles = allRoles.stream()
+                .filter(role -> !HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()))
+                .filter(role -> !role.identifier().equals(ModRoles.GAMBLER_ID))
+                .filter(role -> !availableRoles.contains(role.identifier()))
+                .collect(Collectors.toList());
+
+        if (!validRoles.isEmpty()) {
+            Collections.shuffle(validRoles);
+            Role drawnRole = validRoles.get(0);
+            availableRoles.add(drawnRole.identifier());
+
+            // 如果还没有选择角色，默认选择第一个抽到的
+            if (selectedRole == null) {
+                selectedRole = drawnRole.identifier();
+            }
+
+            this.sync();
+        }
+    }
+
+    public void selectRole(ResourceLocation roleId) {
+        if (availableRoles.contains(roleId)) {
+            this.selectedRole = roleId;
+            this.sync();
+        }
+    }
+
+    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
+        tag.putBoolean("usedAbility", this.usedAbility);
+
+        ListTag rolesTag = new ListTag();
+        for (ResourceLocation roleId : availableRoles) {
+            rolesTag.add(StringTag.valueOf(roleId.toString()));
+        }
+        tag.put("availableRoles", rolesTag);
+
+        if (selectedRole != null) {
+            tag.putString("selectedRole", selectedRole.toString());
+        }
+
+        tag.putInt("roleDrawTimer", roleDrawTimer);
+    }
+
+    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
+        this.usedAbility = tag.getBoolean("usedAbility");
+
+        availableRoles.clear();
+        if (tag.contains("availableRoles")) {
+            ListTag rolesTag = tag.getList("availableRoles", Tag.TAG_STRING);
+            for (int i = 0; i < rolesTag.size(); i++) {
+                ResourceLocation roleId = ResourceLocation.tryParse(rolesTag.getString(i));
+                if (roleId != null) {
+                    availableRoles.add(roleId);
+                }
+            }
+        }
+
+        if (tag.contains("selectedRole")) {
+            selectedRole = ResourceLocation.tryParse(tag.getString("selectedRole"));
+        } else {
+            selectedRole = null;
+        }
+
+        roleDrawTimer = tag.getInt("roleDrawTimer");
+    }
 }

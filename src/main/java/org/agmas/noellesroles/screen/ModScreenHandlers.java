@@ -42,7 +42,7 @@ public class ModScreenHandlers {
                 UUIDUtil.STREAM_CODEC.cast()
             )
         );
-    
+    // 
     /**
      * 初始化并注册所有 ScreenHandler
      */
