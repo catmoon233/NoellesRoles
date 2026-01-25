@@ -120,6 +120,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> PSYCHOLOGIST_SHOP = new ArrayList<>();
     // ==================== 炸弹客商店 ====================
     public static ArrayList<ShopEntry> BOMBER_SHOP = new ArrayList<>();
+    // ==================== 医生商店 ====================
+    public static ArrayList<ShopEntry> DOCTOR_SHOP = new ArrayList<>();
 
     private static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
@@ -233,6 +235,7 @@ public class Noellesroles implements ModInitializer {
         // 医生初始物品
         List<Supplier<ItemStack>> doctorItems = new ArrayList<>();
         doctorItems.add(() -> HSRItems.ANTIDOTE.getDefaultInstance());
+        doctorItems.add(() -> ModItems.DEFIBRILLATOR.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.DOCTOR, doctorItems);
 
         // 强盗初始物品
@@ -435,6 +438,12 @@ public class Noellesroles implements ModInitializer {
                 TMMItems.LOCKPICK.getDefaultInstance(),
                 80,
                 ShopEntry.Type.TOOL));
+
+        // 医生商店
+        DOCTOR_SHOP.add(new ShopEntry(
+                ModItems.ANTIDOTE_REAGENT.getDefaultInstance(),
+                50,
+                ShopEntry.Type.TOOL));
     }
 
     private void shopRegister() {
@@ -549,6 +558,10 @@ public class Noellesroles implements ModInitializer {
             ShopContent.customEntries.put(
                     ModRoles.BOMBER_ID, BOMBER_SHOP);
         }
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.DOCTOR_ID, DOCTOR_SHOP);
+        }
     }
 
     public static void registerPackets1() {
@@ -595,7 +608,7 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ModRoles.BROADCASTER_ID, NoellesRolesConfig.HANDLER.instance().broadcasterMax);
         Harpymodloader.setRoleMaximum(ModRoles.GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
         Harpymodloader.setRoleMaximum(ModRoles.GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
-//        Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 0);
+        // Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 0);
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
     }
@@ -833,8 +846,50 @@ public class Noellesroles implements ModInitializer {
                 return false; // 阻止死亡（被操控玩家死亡）
             }
 
+            // 检查起搏器
+            if (handleDefibrillator(victim)) {
+                // 允许死亡，但已标记复活
+            }
+
+            // 检查死亡惩罚
+            handleDeathPenalty(victim);
+
             // onPlayerDeath(victim, deathReason);
             return true; // 允许死亡
+        });
+
+        // 服务器Tick事件 - 处理复活
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(player);
+                if (component.isDead && player.level().getGameTime() >= component.resurrectionTime) {
+                    // 复活逻辑
+                    player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+                    if (component.deathPos != null) {
+                        player.teleportTo(component.deathPos.x, component.deathPos.y, component.deathPos.z);
+                    }
+                    player.setHealth(player.getMaxHealth());
+
+                    // 移除尸体
+                    if (component.corpseEntityId != null) {
+                        net.minecraft.world.entity.Entity entity = ((net.minecraft.server.level.ServerLevel) player
+                                .level()).getEntity(component.corpseEntityId);
+                        if (entity != null) {
+                            entity.discard();
+                        }
+                    }
+
+                    component.reset();
+                    player.displayClientMessage(Component.translatable("message.noellesroles.defibrillator.revived"),
+                            true);
+                }
+
+                // 检查死亡惩罚过期
+                DeathPenaltyComponent penaltyComponent = ModComponents.DEATH_PENALTY.get(player);
+                if (penaltyComponent.hasPenalty() && player.level().getGameTime() >= penaltyComponent.penaltyExpiry) {
+                    penaltyComponent.reset();
+                }
+            }
         });
 
         // 示例：监听是否能看到毒药
@@ -1012,6 +1067,36 @@ public class Noellesroles implements ModInitializer {
         manipulatorComp.stopControl(false);
 
         serverPlayer.setHealth(serverPlayer.getMaxHealth());
+    private static boolean handleDefibrillator(Player victim) {
+        DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(victim);
+        if (component.hasProtection()) {
+            // 查找尸体ID比较复杂，这里我们假设尸体会在稍后生成
+            // 实际上，AllowPlayerDeath 返回 true 后，TMM 会生成尸体
+            // 我们需要在尸体生成后获取其ID。但这比较困难。
+            // 替代方案：在复活时，搜索附近的尸体并移除。
+            
+            component.triggerDeath(30 * 20, null, victim.position());
+            return true;
+        }
+        return false;
+    }
+
+    private static void handleDeathPenalty(Player victim) {
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
+        boolean doctorAlive = false;
+        for (Player player : victim.level().players()) {
+            if (gameWorldComponent.isRole(player, ModRoles.DOCTOR) && GameFunctions.isPlayerAliveAndSurvival(player)) {
+                doctorAlive = true;
+                break;
+            }
+        }
+
+        if (doctorAlive) {
+            DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
+            component.setPenalty(45 * 20);
+            victim.displayClientMessage(Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED), true);
+        }
+    }
 
         return true;
     }
@@ -1180,7 +1265,8 @@ public class Noellesroles implements ModInitializer {
 
                             final var size = gameWorldComponent.getAllKillerTeamPlayers().size();
 
-                            ServerPlayNetworking.send(player, new AnnounceWelcomePayload(gameWorldComponent .getRole(player).getIdentifier().toString(), size, 0));
+                            ServerPlayNetworking.send(player, new AnnounceWelcomePayload(
+                                    gameWorldComponent.getRole(player).getIdentifier().toString(), size, 0));
 
                         }
 
@@ -1342,10 +1428,10 @@ public class Noellesroles implements ModInitializer {
                 abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
                         NoellesRolesConfig.HANDLER.instance().phantomInvisibilityCooldown);
             }
-//            else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
-//                    && abilityPlayerComponent.cooldown <= 0) {
-//
-//            }
+            // else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
+            // && abilityPlayerComponent.cooldown <= 0) {
+            //
+            // }
         });
 
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.INSANE_KILLER_ABILITY_PACKET, (payload, context) -> {
