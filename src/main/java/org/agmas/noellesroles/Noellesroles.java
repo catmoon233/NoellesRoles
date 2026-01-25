@@ -1067,6 +1067,10 @@ public class Noellesroles implements ModInitializer {
         manipulatorComp.stopControl(false);
 
         serverPlayer.setHealth(serverPlayer.getMaxHealth());
+
+
+        return true;
+    }
     private static boolean handleDefibrillator(Player victim) {
         DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(victim);
         if (component.hasProtection()) {
@@ -1074,7 +1078,7 @@ public class Noellesroles implements ModInitializer {
             // 实际上，AllowPlayerDeath 返回 true 后，TMM 会生成尸体
             // 我们需要在尸体生成后获取其ID。但这比较困难。
             // 替代方案：在复活时，搜索附近的尸体并移除。
-            
+
             component.triggerDeath(30 * 20, null, victim.position());
             return true;
         }
@@ -1097,10 +1101,6 @@ public class Noellesroles implements ModInitializer {
             victim.displayClientMessage(Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED), true);
         }
     }
-
-        return true;
-    }
-
     public void registerPackets() {
 
         // ServerPlayNetworking.registerGlobalReceiver(ThiefStealC2SPacket.ID, (payload,
