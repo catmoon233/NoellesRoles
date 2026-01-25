@@ -591,7 +591,7 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ModRoles.BROADCASTER_ID, NoellesRolesConfig.HANDLER.instance().broadcasterMax);
         Harpymodloader.setRoleMaximum(ModRoles.GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
         Harpymodloader.setRoleMaximum(ModRoles.GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
-        Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 0);
+//        Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 0);
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
     }
@@ -1332,10 +1332,11 @@ public class Noellesroles implements ModInitializer {
                         NoellesRolesConfig.HANDLER.instance().phantomInvisibilityDuration * 20, 0, true, false, true));
                 abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
                         NoellesRolesConfig.HANDLER.instance().phantomInvisibilityCooldown);
-            } else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
-                    && abilityPlayerComponent.cooldown <= 0) {
-
             }
+//            else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
+//                    && abilityPlayerComponent.cooldown <= 0) {
+//
+//            }
         });
 
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.INSANE_KILLER_ABILITY_PACKET, (payload, context) -> {

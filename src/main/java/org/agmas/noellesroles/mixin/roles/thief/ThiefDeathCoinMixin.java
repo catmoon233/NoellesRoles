@@ -17,40 +17,40 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Player.class)
 public abstract class ThiefDeathCoinMixin {
     
-    @Inject(method = "die", at = @At("TAIL"))
-    void thiefOnDeath(DamageSource damageSource, CallbackInfo ci) {
-        Player thief = (Player) (Object) this;
-        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(thief.level());
-        
-        if (gameWorldComponent.isRole(thief, ModRoles.THIEF)) {
-            PlayerShopComponent thiefShop = PlayerShopComponent.KEY.get(thief);
-            int coins = thiefShop.balance;
-            
-            if (coins <= 0) {
-                return;
-            }
-
-            int killerTeamShare = coins / 2;
-
-            List<UUID> killerUUIDs = gameWorldComponent.getAllKillerTeamPlayers();
-            List<Player> killers = new ArrayList<>();
-                        for (UUID uuid : killerUUIDs) {
-                Player player = thief.level().getPlayerByUUID(uuid);
-                if (player != null && GameFunctions.isPlayerAliveAndSurvival(player)) {
-                    killers.add(player);
-                }
-            }
-            
-            if (!killers.isEmpty()) {
-                int coinsPerKiller = killerTeamShare / killers.size();
-                int remainder = killerTeamShare % killers.size();
-                
-                for (Player killer : killers) {
-                    PlayerShopComponent killerShop = PlayerShopComponent.KEY.get(killer);
-                    killerShop.balance += coinsPerKiller + (remainder-- > 0 ? 1 : 0);
-                    killerShop.sync();
-                }
-            }
-        }
-    }
+//    @Inject(method = "die", at = @At("TAIL"))
+//    void thiefOnDeath(DamageSource damageSource, CallbackInfo ci) {
+//        Player thief = (Player) (Object) this;
+//        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(thief.level());
+//
+//        if (gameWorldComponent.isRole(thief, ModRoles.THIEF)) {
+//            PlayerShopComponent thiefShop = PlayerShopComponent.KEY.get(thief);
+//            int coins = thiefShop.balance;
+//
+//            if (coins <= 0) {
+//                return;
+//            }
+//
+//            int killerTeamShare = coins / 2;
+//
+//            List<UUID> killerUUIDs = gameWorldComponent.getAllKillerTeamPlayers();
+//            List<Player> killers = new ArrayList<>();
+//                        for (UUID uuid : killerUUIDs) {
+//                Player player = thief.level().getPlayerByUUID(uuid);
+//                if (player != null && GameFunctions.isPlayerAliveAndSurvival(player)) {
+//                    killers.add(player);
+//                }
+//            }
+//
+//            if (!killers.isEmpty()) {
+//                int coinsPerKiller = killerTeamShare / killers.size();
+//                int remainder = killerTeamShare % killers.size();
+//
+//                for (Player killer : killers) {
+//                    PlayerShopComponent killerShop = PlayerShopComponent.KEY.get(killer);
+//                    killerShop.balance += coinsPerKiller + (remainder-- > 0 ? 1 : 0);
+//                    killerShop.sync();
+//                }
+//            }
+//        }
+//    }
 }
