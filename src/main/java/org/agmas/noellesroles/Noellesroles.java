@@ -57,6 +57,7 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
+import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
@@ -125,14 +126,14 @@ public class Noellesroles implements ModInitializer {
     public static final Map<Role, List<Supplier<ItemStack>>> INITIAL_ITEMS_MAP = new HashMap<>();
 
     public static List<Role> getEnableRoles() {
-        ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES);
+        ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
         clone.removeIf(
                 r -> HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString()));
         return clone;
     }
 
     public static List<Role> getEnableKillerRoles() {
-        ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES);
+        ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
         clone.removeIf(
                 r -> !r.canUseKiller()
                         || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString()));
@@ -555,6 +556,9 @@ public class Noellesroles implements ModInitializer {
                 ExecutionerSelectTargetC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BroadcasterC2SPacket.ID, BroadcasterC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(BroadcastMessageS2CPacket.ID, BroadcastMessageS2CPacket.CODEC);
+
+        PayloadTypeRegistry.playC2S().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);
 
         PayloadTypeRegistry.playC2S().register(MorphC2SPacket.ID, MorphC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(AbilityC2SPacket.ID, AbilityC2SPacket.CODEC);
@@ -1157,7 +1161,7 @@ public class Noellesroles implements ModInitializer {
                         player.playSound(SoundEvents.PLAYER_BURP, 1.0F, 0.5F);
                         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 2));
                         if (vulturePlayerComponent.bodiesEaten >= vulturePlayerComponent.bodiesRequired) {
-                            ArrayList<Role> shuffledKillerRoles = new ArrayList<>(TMMRoles.ROLES);
+                            ArrayList<Role> shuffledKillerRoles = new ArrayList<>(TMMRoles.ROLES.values());
                             shuffledKillerRoles.removeIf(role -> role.identifier().equals(ModRoles.EXECUTIONER_ID)
                                     || Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller()
                                     || HarpyModLoaderConfig.HANDLER.instance().disabled
@@ -1176,13 +1180,12 @@ public class Noellesroles implements ModInitializer {
 
                             if (Harpymodloader.VANNILA_ROLES.contains(gameWorldComponent.getRole(player))) {
                                 ServerPlayNetworking.send(player,
-                                        new AnnounceWelcomePayload(RoleAnnouncementTexts.ROLE_ANNOUNCEMENT_TEXTS
-                                                .indexOf(gameWorldComponent.isRole(player, TMMRoles.KILLER)
+                                        new AnnounceWelcomePayload(gameWorldComponent.isRole(player, TMMRoles.KILLER)
                                                         ? RoleAnnouncementTexts.KILLER
                                                         : (gameWorldComponent.isRole(player, TMMRoles.VIGILANTE)
-                                                                ? RoleAnnouncementTexts.VIGILANTE
-                                                                : RoleAnnouncementTexts.CIVILIAN)),
-                                                size, 0));
+                                                                ? RoleAnnouncementTexts.VIGILANTE.welcomeText
+                                                                : RoleAnnouncementTexts.CIVILIAN.welcomeText)),
+                                                size, 0);
                             } else {
                                 ServerPlayNetworking
                                         .send(player,
@@ -1265,7 +1268,12 @@ public class Noellesroles implements ModInitializer {
                         }
                     }
                 });
-
+        ServerPlayNetworking.registerGlobalReceiver(GamblerSelectRoleC2SPacket.ID, (payload, context) -> {
+            context.server().execute(() -> {
+                GamblerPlayerComponent component = GamblerPlayerComponent.KEY.get(context.player());
+                component.selectRole(payload.roleId());
+            });
+        });
         ServerPlayNetworking.registerGlobalReceiver(org.agmas.noellesroles.packet.BroadcasterC2SPacket.ID,
                 (payload, context) -> {
                     AbilityPlayerComponent abilityPlayerComponent = AbilityPlayerComponent.KEY.get(context.player());

@@ -507,7 +507,7 @@ public class ManipulatorPlayerComponent implements AutoSyncedComponent, ServerTi
             String roleId = tag.getString("victimRole");
             ResourceLocation roleLocation = ResourceLocation.tryParse(roleId);
             if (roleLocation != null) {
-                for (var role : TMMRoles.ROLES) {
+                for (var role : TMMRoles.ROLES.values()) {
                     if (role.identifier().equals(roleLocation)) {
                         this.victimOriginalRole = role;
                         break;

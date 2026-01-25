@@ -42,6 +42,7 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
+import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
 import org.agmas.noellesroles.packet.OpenLockGuiC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 
@@ -135,7 +136,9 @@ public class NoellesrolesClient implements ClientModInitializer {
                     if (!isPlayerInAdventureMode(client.player))
                         return;
                     final var pos = payload.pos();
-                    Minecraft.getInstance().setScreen(new LockGameScreen(new Vec3i((int) pos.x, (int) pos.y, (int) pos.z), (LockEntity) context.player().level().getEntity(payload.lockId())));
+                    Minecraft.getInstance()
+                            .setScreen(new LockGameScreen(new Vec3i((int) pos.x, (int) pos.y, (int) pos.z),
+                                    (LockEntity) context.player().level().getEntity(payload.lockId())));
                 }
             });
         });

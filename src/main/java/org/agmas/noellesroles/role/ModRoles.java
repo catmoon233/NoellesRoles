@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.role;
 
-import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import org.agmas.harpymodloader.Harpymodloader;
