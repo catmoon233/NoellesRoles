@@ -1,8 +1,6 @@
 package org.agmas.noellesroles.client.widget;
 
 import org.agmas.noellesroles.client.screen.RecorderScreen;
-import org.jetbrains.annotations.NotNull;
-
 import java.awt.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

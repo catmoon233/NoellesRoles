@@ -22,13 +22,12 @@ public record GamblerSelectRoleC2SPacket(ResourceLocation roleId) implements Cus
         return ID;
     }
 
-    public static class Receiver implements ServerPlayNetworking.PlayPayloadHandler<GamblerSelectRoleC2SPacket> {
-        @Override
-        public void receive(@NotNull GamblerSelectRoleC2SPacket payload, ServerPlayNetworking.@NotNull Context context) {
-            context.player().server.execute(() -> {
-                GamblerPlayerComponent component = GamblerPlayerComponent.KEY.get(context.player());
-                component.selectRole(payload.roleId());
-            });
-        }
-    }
+    // public static class Receiver implements ServerPlayNetworking.PlayPayloadHandler<GamblerSelectRoleC2SPacket> {
+    //     @Override
+    //     public void receive(@NotNull GamblerSelectRoleC2SPacket payload, ServerPlayNetworking.@NotNull Context context) {
+    //         context.player().server.execute(() -> {
+                
+    //         });
+    //     }
+    // }
 }
