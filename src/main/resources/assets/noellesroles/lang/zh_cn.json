@@ -335,6 +335,7 @@
   "message.noellesroles.admirer.transform": "能量已满！你转化为了 %s！",
   "==================== 按键绑定 ====================": "",
   "key.noellesroles.ability": "使用技能",
+  "key.noellesroles.guess_role": "身份猜测记录",
   "==================== 设陷者角色 ====================": "",
   "hud.noellesroles.trapper.charges": "陷阱: %s/%s",
   "hud.noellesroles.trapper.recharge": "恢复中: %s秒",
@@ -500,4 +501,6 @@
   "message.noellesroles.monitor.no_target": "请将准星对准一名玩家！",
   "message.noellesroles.monitor.target_not_found": "目标无效或已死亡！",
   "announcement.role.discovery_civilian": "发觉者（未实装）"
+,
+  "screen.noellesroles.guess_role.title": "身份猜测记录"
 }
