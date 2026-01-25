@@ -94,7 +94,7 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
 
         if (!validRoles.isEmpty()) {
             Collections.shuffle(validRoles);
-            Role drawnRole = validRoles.get(0);
+            Role drawnRole = validRoles.getFirst();
             availableRoles.add(drawnRole.identifier());
 
             // 如果还没有选择角色，默认选择第一个抽到的

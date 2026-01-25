@@ -406,7 +406,7 @@ public class Noellesroles implements ModInitializer {
 
         ENGINEER_SHOP.add(new ShopEntry(
                 ModItems.LOCK_ITEM.getDefaultInstance(),
-                200,
+                175,
                 ShopEntry.Type.TOOL));
 
         // 邮差商店
