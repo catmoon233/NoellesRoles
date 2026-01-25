@@ -257,7 +257,7 @@ public class RecorderScreen extends Screen {
 
         roles.clear();
         for (ResourceLocation id : availableRoleIds) {
-            for (Role role : TMMRoles.ROLES) {
+            for (Role role : Noellesroles.getEnableRoles()) {
                 if (role.identifier().equals(id)) {
                     roles.add(role);
                     break;

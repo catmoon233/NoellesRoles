@@ -83,8 +83,7 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
     }
 
     private void drawNewRole() {
-        
-        List<Role> allRoles = new ArrayList<>(TMMRoles.ROLES.values());
+        List<Role> allRoles = new ArrayList<>(Noellesroles.getEnableRoles());
 
         // 过滤掉禁用的角色、赌徒自己、已经在列表中的角色
         List<Role> validRoles = allRoles.stream()

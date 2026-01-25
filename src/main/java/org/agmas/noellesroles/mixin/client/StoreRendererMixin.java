@@ -38,8 +38,9 @@ public abstract class StoreRendererMixin {
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.DETECTIVE)
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.POSTMAN)
         || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.PSYCHOLOGIST)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.ENGINEER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.THIEF)) {
+        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.ENGINEER))
+//        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.THIEF))
+        {
             int balance = ((PlayerShopComponent)PlayerShopComponent.KEY.get(player)).balance;
             if (view.getTarget() != (float)balance) {
                 offsetDelta = (float)balance > view.getTarget() ? 0.6F : -0.6F;

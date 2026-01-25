@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.utils.RoleUtils;
 import org.agmas.noellesroles.client.widget.GamblerRoleWidget;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
@@ -58,7 +59,7 @@ public class GamblerScreen extends Screen {
 
         // 加载可用角色
         for (ResourceLocation roleId : component.availableRoles) {
-            for (Role role : TMMRoles.ROLES) {
+            for (Role role : Noellesroles.getEnableRoles()) {
                 if (role.identifier().equals(roleId)) {
                     availableRoles.add(role);
                     break;

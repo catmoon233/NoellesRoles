@@ -68,50 +68,9 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
-        for (Role role : TMMRoles.ROLES) {
-            // if (role.identifier().equals(ModRoles.MORPHLING_ID)) {
-            // role.addChild(
-            // limitedInventoryScreen -> {
-            // List<AbstractClientPlayer> entries = Minecraft.getInstance().level.players();
-            // entries.removeIf((e) ->
-            // e.getUUID().equals(Minecraft.getInstance().player.getUUID()));
-            // int apart = 36;
-            // int x = limitedInventoryScreen.width / 2 - (entries.size()) * apart / 2 + 9;
-            // int shouldBeY = (limitedInventoryScreen.height - 32) / 2;
-            // int y = shouldBeY + 80;
-            //
-            // for (int i = 0; i < entries.size(); ++i) {
-            // MorphlingPlayerWidget child = new
-            // MorphlingPlayerWidget(limitedInventoryScreen,
-            // x + apart * i, y, entries.get(i), i);
-            // limitedInventoryScreen.addRenderableWidget(child);
-            // }
-            //
-            // });
-            // }
-            //
-            // if (role.identifier().equals(ModRoles.THIEF_ID)) {
-            // role.addChild(limitedInventoryScreen -> {
-            // List<ShopEntry> entries = new ArrayList<>();
-            // entries.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 100,
-            // ShopEntry.Type.TOOL));
-            // entries.add(new ShopEntry(ModItems.MASTER_KEY.getDefaultInstance(), 200,
-            // ShopEntry.Type.TOOL));
-            // entries.add(new ShopEntry(ModItems.FAKE_KNIFE.getDefaultInstance(), 1000,
-            // ShopEntry.Type.WEAPON));
-            // int apart = 36;
-            // int x = limitedInventoryScreen.width / 2 - entries.size() * apart / 2 + 9;
-            // int y = (limitedInventoryScreen.height - 32) / 2 - 46;
-            //
-            // for (int i = 0; i < entries.size(); ++i) {
-            // limitedInventoryScreen.addRenderableWidget(new
-            // LimitedInventoryScreen.StoreItemWidget(
-            // limitedInventoryScreen, x + apart * i, y, entries.get(i), i));
-            // }
-            // });
-            // break;
-            // }
-        }
+//        for (Role role : TMMRoles.ROLES) {
+//
+//        }
 
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".ability",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
