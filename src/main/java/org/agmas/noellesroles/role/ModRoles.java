@@ -74,7 +74,7 @@ public class ModRoles {
         public static ResourceLocation SWAPPER_ID = Noellesroles.id("swapper");
         public static ResourceLocation EXECUTIONER_ID = Noellesroles.id("executioner");
         public static ResourceLocation GAMBLER_ID = Noellesroles.id("gambler");
-        // public static ResourceLocation THIEF_ID = Noellesroles.id("thief");
+        public static ResourceLocation THIEF_ID = Noellesroles.id("thief");
         public static ResourceLocation POISONER_ID = Noellesroles.id("poisoner");
 
         public static ResourceLocation THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Noellesroles
@@ -166,9 +166,9 @@ public class ModRoles {
                         false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
         public static Role GAMBLER = TMMRoles.registerRole(new Role(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
                         false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
-        // public static Role THIEF = TMMRoles
-        //                 .registerRole(new Role(THIEF_ID, new Color(139, 69, 19).getRGB(), false, false,
-        //                                 Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
+        public static Role THIEF = TMMRoles
+                         .registerRole(new Role(THIEF_ID, new Color(139, 69, 19).getRGB(), false, false,
+                                         Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
         public static Role POISONER = TMMRoles
                         .registerRole(new Role(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
