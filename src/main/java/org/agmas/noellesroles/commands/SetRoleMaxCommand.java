@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import org.agmas.harpymodloader.Harpymodloader;
-import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.jetbrains.annotations.NotNull;
 

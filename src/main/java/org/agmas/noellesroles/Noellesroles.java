@@ -182,8 +182,6 @@ public class Noellesroles implements ModInitializer {
         HSRSounds.init();
 
         // 设置角色最大数量
-
-        Harpymodloader.setRoleMaximum(ModRoles.POISONER, 0);
         Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
@@ -1265,7 +1263,6 @@ public class Noellesroles implements ModInitializer {
 
                             ServerPlayNetworking.send(player, new AnnounceWelcomePayload(
                                     gameWorldComponent.getRole(player).getIdentifier().toString(), size, 0));
-
                         }
 
                         bodyDeathReasonComponent.vultured = true;

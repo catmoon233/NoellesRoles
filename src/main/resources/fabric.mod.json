@@ -29,6 +29,8 @@
   "accessWidener": "noellesroles.accesswidener",
   "custom": {
     "cardinal-components": [
+      "noellesroles:defibrillator",
+      "noellesroles:death_penalty",
       "noellesroles:morphling",
       "noellesroles:bartender",
       "noellesroles:ability",
@@ -65,7 +67,8 @@
       "noellesroles:recorder",
       "noellesroles:insane_killer",
       "noellesroles:bomber",
-      "noellesroles:monitor"
+      "noellesroles:monitor",
+      "noellesroles:death_penalty"
     ]
   },
   "mixins": [

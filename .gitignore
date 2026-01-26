@@ -4,10 +4,13 @@ build/*
 run/*
 out/*
 .vscode/*
+bin/*
 
 /.kilocode/
 /run/
 /.idea/
+bin/
 
 commitCache
 /.vscode/
+/bin/
