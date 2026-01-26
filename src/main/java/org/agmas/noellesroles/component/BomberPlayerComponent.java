@@ -23,6 +23,10 @@ public class BomberPlayerComponent implements RoleComponent {
         this.player = player;
     }
 
+    @Override
+    public void reset() {
+    }
+
     public void buyBomb() {
         if (player.level().isClientSide)
             return;

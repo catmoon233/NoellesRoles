@@ -77,6 +77,11 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
         this.player = player;
     }
 
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
     /**
      * 重置组件状态
      */

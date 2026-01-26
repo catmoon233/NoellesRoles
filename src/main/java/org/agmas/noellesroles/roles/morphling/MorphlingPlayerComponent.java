@@ -32,8 +32,8 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player1) {
-        return player == player1;
+    public Player getPlayer() {
+        return player;
     }
 
     public MorphlingPlayerComponent(Player player) {

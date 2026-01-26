@@ -6,6 +6,7 @@ import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -26,6 +27,11 @@ public class BodyDeathReasonComponent implements RoleComponent, ServerTickingCom
 
     public BodyDeathReasonComponent(PlayerBodyEntity playerBodyEntity) {
         this.playerBodyEntity = playerBodyEntity;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return null;
     }
 
     public void sync() {

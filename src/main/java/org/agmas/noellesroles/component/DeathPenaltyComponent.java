@@ -13,6 +13,11 @@ public class DeathPenaltyComponent implements RoleComponent {
         this.player = player;
     }
 
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
     public void setPenalty(long durationTicks) {
         this.penaltyExpiry = player.level().getGameTime() + durationTicks;
         ModComponents.DEATH_PENALTY.sync(player);

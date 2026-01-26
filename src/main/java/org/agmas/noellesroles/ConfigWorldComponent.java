@@ -8,6 +8,7 @@ import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 import net.minecraft.core.HolderLookup;
@@ -29,6 +30,11 @@ public class ConfigWorldComponent implements RoleComponent, ServerTickingCompone
 
     public ConfigWorldComponent(Level world) {
         this.world = world;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return null;
     }
 
     public void sync() {

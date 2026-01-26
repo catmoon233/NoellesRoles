@@ -31,9 +31,8 @@ public class BartenderPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        final var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-        return gameWorldComponent.isRole(player, ModRoles.BARTENDER) && GameFunctions.isPlayerAliveAndSurvival( player);
+    public Player getPlayer() {
+        return player;
     }
 
     public BartenderPlayerComponent(Player player) {

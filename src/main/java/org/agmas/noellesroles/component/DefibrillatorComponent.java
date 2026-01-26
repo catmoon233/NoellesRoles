@@ -22,6 +22,11 @@ public class DefibrillatorComponent implements RoleComponent {
         this.player = player;
     }
 
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
     public void setProtection(long durationTicks) {
         this.protectionExpiry = player.level().getGameTime() + durationTicks;
         ModComponents.DEFIBRILLATOR.sync(player);

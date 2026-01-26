@@ -38,15 +38,15 @@ public class InsaneKillerPlayerComponent
         this.isActive = false;
     }
 
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
     public void reset() {
         isActive = false;
         cooldown = 200;
     }
-
-    // @Override
-    // public boolean shouldSyncWith(ServerPlayer player) {
-    // return player == this.player;
-    // }
 
     public void toggleAbility() {
         if (isActive) {
