@@ -37,6 +37,15 @@ public class BanditRevolverItem extends Item {
             user.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, 20*12);
         }
         if (world.isClientSide) {
+            final var gameComponent = TMMClient.gameComponent;
+            if (gameComponent != null) {
+                final var role = gameComponent.getRole(user);
+                if (role != null) {
+                    if (!role.onUseGun(user)) {
+                        return InteractionResultHolder.fail(user.getItemInHand(hand));
+                    }
+                }
+            }
             user.setXRot(user.getXRot() - 4.0F);
             spawnHandParticle();
 
@@ -47,7 +56,18 @@ public class BanditRevolverItem extends Item {
                 this.dropChance += 0.3;
                 ClientPlayNetworking.send(new BanditRevolverShootPayload(target.getId()));
             } else {
+                
                 ClientPlayNetworking.send(new BanditRevolverShootPayload(-1));
+            }
+        }else{
+            final var gameComponent = TMMClient.gameComponent;
+            if (gameComponent != null) {
+                final var role = gameComponent.getRole(user);
+                if (role != null) {
+                    if (!role.onUseGun(user)) {
+                        return InteractionResultHolder.fail(user.getItemInHand(hand));
+                    }
+                }
             }
         }
         return InteractionResultHolder.consume(user.getItemInHand(hand));

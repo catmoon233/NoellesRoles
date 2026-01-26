@@ -103,7 +103,7 @@ public class RicesRoleRhapsody implements ModInitializer {
         initVanillaRoles();
 
         // 2. 注册自定义角色
-        ModRoles.init();
+        // ModRoles.init();
 
         // 3. 注册物品
         ModItems.init();

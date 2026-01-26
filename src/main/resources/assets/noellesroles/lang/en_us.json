@@ -1,4 +1,8 @@
+
 {
+  "item.noellesroles.written_note": "Written Note",
+  "item.noellesroles.written_note.tooltip": "Right click to record roles of players",
+  
   "announcement.goals.awesome_binglus": "You have lots of notes, feel free to write.",
   "announcement.goals.bartender": "Can see through walls to spot players who are drinking!",
   "announcement.goals.better_vigilante": "Uhhhhhhhhhhhhh",
@@ -364,7 +368,6 @@
   "message.noellesroles.trapper.mark_count": "You have been marked %s times, imprisonment extended!",
   "message.noellesroles.trapper.trap_triggered_notify": "%s triggered your trap!",
   "message.noellesroles.trapper.prison_ended": "Imprisonment ended",
-  "announcement.role.trapper": "Trapper",
 
   "==================== 明星角色 ====================": "",
   "announcement.role.star": "Star",

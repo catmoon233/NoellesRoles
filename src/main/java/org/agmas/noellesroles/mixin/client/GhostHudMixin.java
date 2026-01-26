@@ -36,15 +36,15 @@ public abstract class GhostHudMixin {
 
         GhostPlayerComponent ghostComponent = GhostPlayerComponent.KEY.get(client.player);
 
-        String text;
+        Component text;
         int color;
 
         if (ghostComponent.cooldown > 0) {
             int seconds = (ghostComponent.cooldown + 19) / 20;
-            text = Component.translatable("gui.noellesroles.ghost.cooldown", seconds).getString();
+            text = Component.translatable("gui.noellesroles.ghost.cooldown", seconds);
             color = 0xFF5555; // 红色
         } else {
-            text = Component.translatable("gui.noellesroles.ghost.ready").getString();
+            text = Component.translatable("gui.noellesroles.ghost.ready");
             color = 0x55FF55; // 绿色
         }
 

@@ -127,6 +127,8 @@ public class Noellesroles implements ModInitializer {
                         return true;
                     if (String.valueOf(r.identifier()).equals("trainmurdermystery:discovery_civilian"))
                         return true;
+                    if (String.valueOf(r.identifier()).equals("trainmurdermystery:loose_end"))
+                        return true;
                     return false;
                 });
         return clone;
@@ -147,6 +149,9 @@ public class Noellesroles implements ModInitializer {
     @Override
     public void onInitialize() {
         HSRConstants.init();
+        
+        // 初始化模组角色列表
+        ModRoles.init();
         // 初始化初始物品映射
         initializeInitialItems();
 
@@ -227,6 +232,10 @@ public class Noellesroles implements ModInitializer {
     private void initializeInitialItems() {
 
         INITIAL_ITEMS_MAP.clear();
+        // 义警初始物品
+        List<Supplier<ItemStack>> vigilanteItems = new ArrayList<>();
+        vigilanteItems.add(() -> TMMItems.REVOLVER.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(TMMRoles.VIGILANTE, vigilanteItems);
 
         // 医生初始物品
         List<Supplier<ItemStack>> doctorItems = new ArrayList<>();
@@ -234,11 +243,11 @@ public class Noellesroles implements ModInitializer {
         doctorItems.add(() -> ModItems.DEFIBRILLATOR.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.DOCTOR, doctorItems);
 
-        // 强盗初始物品
-        List<Supplier<ItemStack>> banditItems = new ArrayList<>();
-        banditItems.add(() -> HSRItems.BANDIT_REVOLVER.getDefaultInstance());
-        banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
-        // INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
+        // // 强盗初始物品
+        // List<Supplier<ItemStack>> banditItems = new ArrayList<>();
+        // banditItems.add(() -> HSRItems.BANDIT_REVOLVER.getDefaultInstance());
+        // banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
+        // // INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
 
         // 随从初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
@@ -254,9 +263,14 @@ public class Noellesroles implements ModInitializer {
         });
         INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
 
+        // 心理学家初始物品
+        List<Supplier<ItemStack>> psychologistItems = new ArrayList<>();
+        psychologistItems.add(() -> ModItems.MINT_CANDIES.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.PSYCHOLOGIST, psychologistItems);
+
         // 记录员初始物品
         List<Supplier<ItemStack>> recorderItems = new ArrayList<>();
-        recorderItems.add(ModItems.WRITTEN_NOTE::getDefaultInstance);
+        recorderItems.add(() -> ModItems.WRITTEN_NOTE.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.RECORDER, recorderItems);
 
         // 小丑初始物品
@@ -277,6 +291,7 @@ public class Noellesroles implements ModInitializer {
         for (int i = 0; i < 4; i++) {
             awesomeBinglusItems.add(() -> TMMItems.NOTE.getDefaultInstance());
         }
+
         // 添加相机和相册（使用延迟加载）
         awesomeBinglusItems.add(() -> {
             final var cameraItem = BuiltInRegistries.ITEM
@@ -286,20 +301,7 @@ public class Noellesroles implements ModInitializer {
             }
             return null; // 如果物品不存在，返回null
         });
-        // awesomeBinglusItems.add(() -> {
-        // final var albumItem =
-        // BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("exposure:album"));
-        // if (albumItem != Items.AIR) {
-        // return albumItem.getDefaultInstance();
-        // }
-        // return null; // 如果物品不存在，返回null
-        // });
         INITIAL_ITEMS_MAP.put(ModRoles.AWESOME_BINGLUS, awesomeBinglusItems);
-
-        // 心理学家初始物品
-        List<Supplier<ItemStack>> psychologistItems = new ArrayList<>();
-        psychologistItems.add(() -> ModItems.MINT_CANDIES.getDefaultInstance());
-        INITIAL_ITEMS_MAP.put(ModRoles.PSYCHOLOGIST, psychologistItems);
     }
 
     /**
@@ -311,13 +313,14 @@ public class Noellesroles implements ModInitializer {
     public static void addInitialItemsForRole(Player player, Role role) {
         List<Supplier<ItemStack>> itemSuppliers = INITIAL_ITEMS_MAP.get(role);
         if (itemSuppliers != null) {
+
             for (Supplier<ItemStack> itemSupplier : itemSuppliers) {
                 ItemStack itemStack = itemSupplier.get();
                 if (itemStack != null && !itemStack.isEmpty()) {
                     player.addItem(itemStack.copy());
                 }
             }
-        }
+        } 
     }
 
     /**
@@ -675,8 +678,8 @@ public class Noellesroles implements ModInitializer {
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
                     .get(player);
-            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
+
             if (role.equals(ModRoles.BROADCASTER)) {
                 abilityPlayerComponent.cooldown = 0;
                 PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(player);
@@ -709,8 +712,8 @@ public class Noellesroles implements ModInitializer {
                 insaneKillerPlayerComponent.sync();
             }
             if (role.equals(ModRoles.RECORDER)) {
-                final var insaneKillerPlayerComponent = RecorderPlayerComponent.KEY.get(player);
-                insaneKillerPlayerComponent.initializeRoles();
+                final var recorderPlayerComponent = RecorderPlayerComponent.KEY.get(player);
+                recorderPlayerComponent.initializeRoles();
             }
 
             // 更新所有记录员的可用角色列表
@@ -720,9 +723,9 @@ public class Noellesroles implements ModInitializer {
                 }
             }
             if (role.equals(ModRoles.RECORDER)) {
-                final var insaneKillerPlayerComponent = RecallerPlayerComponent.KEY.get(player);
-                insaneKillerPlayerComponent.reset();
-                insaneKillerPlayerComponent.sync();
+                final var recorderPlayerComponent = RecorderPlayerComponent.KEY.get(player);
+                recorderPlayerComponent.reset();
+                recorderPlayerComponent.sync();
             }
             // 使用映射表添加初始物品
             addInitialItemsForRole(player, role);
@@ -1064,9 +1067,9 @@ public class Noellesroles implements ModInitializer {
 
         serverPlayer.setHealth(serverPlayer.getMaxHealth());
 
-
         return true;
     }
+
     private static boolean handleDefibrillator(Player victim) {
         DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(victim);
         if (component.hasProtection()) {
@@ -1094,9 +1097,11 @@ public class Noellesroles implements ModInitializer {
         if (doctorAlive) {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
             component.setPenalty(45 * 20);
-            victim.displayClientMessage(Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED), true);
+            victim.displayClientMessage(
+                    Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED), true);
         }
     }
+
     public void registerPackets() {
 
         // ServerPlayNetworking.registerGlobalReceiver(ThiefStealC2SPacket.ID, (payload,

@@ -24,28 +24,28 @@ public abstract class MonitorHudMixin {
     public abstract Font getFont();
 
     @Inject(method = "render", at = @At("TAIL"))
-    public void renderGhostHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+    public void renderMonitorHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null)
             return;
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
-        if (!gameWorld.isRole(client.player, ModRoles.GHOST))
+        if (!gameWorld.isRole(client.player, ModRoles.MONITOR))
             return;
         if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
             return;
 
-        MonitorPlayerComponent ghostComponent = MonitorPlayerComponent.KEY.get(client.player);
+        MonitorPlayerComponent monitorComponent = MonitorPlayerComponent.KEY.get(client.player);
 
-        String text;
+        Component text;
         int color;
 
-        if (ghostComponent.cooldown > 0) {
-            int seconds = (ghostComponent.cooldown + 19) / 20;
-            text = Component.translatable("gui.noellesroles.monitor.cooldown", seconds).getString();
+        if (monitorComponent.cooldown > 0) {
+            int seconds = (monitorComponent.cooldown + 19) / 20;
+            text = Component.translatable("gui.noellesroles.monitor.cooldown", seconds);
             color = 0xFF5555; // 红色
         } else {
-            text = Component.translatable("gui.noellesroles.monitor.ready").getString();
+            text = Component.translatable("gui.noellesroles.monitor.ready");
             color = 0x55FF55; // 绿色
         }
 

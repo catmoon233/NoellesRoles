@@ -216,6 +216,10 @@ public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTicki
         updateAvailableRoles();
     }
 
+    public void sync() {
+        ModComponents.RECORDER.sync(this.player);
+    }
+
     public void updateAvailableRoles() {
         if (!(player.level() instanceof net.minecraft.server.level.ServerLevel))
             return;

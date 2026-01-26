@@ -2,6 +2,7 @@ package org.agmas.noellesroles.roles.gambler;
 
 import static dev.doctor4t.trainmurdermystery.game.GameFunctions.getSpawnPos;
 import static dev.doctor4t.trainmurdermystery.game.GameFunctions.roomToPlayer;
+import net.minecraft.world.entity.Entity;
 
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.events.ModdedRoleRemoved;
@@ -14,6 +15,8 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
+import dev.doctor4t.trainmurdermystery.util.GunShootPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +25,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class GamblerRole extends Role {
@@ -50,6 +54,11 @@ public class GamblerRole extends Role {
                 if (oldRole != null) {
                     ((ModdedRoleRemoved) ModdedRoleRemoved.EVENT.invoker()).removeModdedRole(player, oldRole);
                 }
+                for (int i = 0; i < player.getInventory().items.size(); i++) {
+                    if (player.getInventory().items.get(i).is(TMMItems.REVOLVER)) {
+                        player.getInventory().items.set(i, ItemStack.EMPTY);
+                    }
+                }
                 var role = RoleUtils.getRole(gamblerPlayerComponent.selectedRole);
                 if (role == null) {
                     return false;
@@ -67,18 +76,16 @@ public class GamblerRole extends Role {
                             gameWorldComponent.getRole(player).getIdentifier().toString(), size, 0));
                     teleport(player);
                 }
-                for (int i = 0; i < player.getInventory().items.size(); i++) {
-                    if (player.getInventory().items.get(i).is(TMMItems.REVOLVER)) {
-                        player.getInventory().items.set(i, ItemStack.EMPTY);
-                    }
-                }
+
                 player.level().players().forEach(
                         p -> {
                             p.playNotifySound(NRSounds.GAMBER_DEATH, SoundSource.PLAYERS, 0.5F, 1.3F);
                             p.playNotifySound(SoundEvents.BAT_HURT, SoundSource.PLAYERS, 0.5F, 1.3F);
                         });
             } else {
-                player.kill();
+                Entity target = player;
+                if (player.level().isClientSide())
+                    ClientPlayNetworking.send(new GunShootPayload(target.getId()));
             }
             return false;
         }
