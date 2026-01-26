@@ -1,9 +1,9 @@
 package org.agmas.noellesroles.mixin.client;
 
-import org.agmas.noellesroles.client.utils.RoleUtils;
 import org.agmas.noellesroles.component.DetectivePlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;

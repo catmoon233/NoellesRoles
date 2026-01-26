@@ -1,13 +1,14 @@
 package org.agmas.noellesroles.client.screen;
 
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.client.utils.RoleUtils;
 import org.agmas.noellesroles.client.widget.ConspiratorPlayerWidget;
 import org.agmas.noellesroles.client.widget.RecorderPlayerWidget;
 import org.agmas.noellesroles.client.widget.RecorderRoleWidget;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.packet.RecorderC2SPacket;
+import org.agmas.noellesroles.utils.RoleUtils;
+
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;

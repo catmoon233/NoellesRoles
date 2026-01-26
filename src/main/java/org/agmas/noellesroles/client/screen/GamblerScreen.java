@@ -11,10 +11,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.client.utils.RoleUtils;
 import org.agmas.noellesroles.client.widget.GamblerRoleWidget;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
