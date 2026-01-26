@@ -36,7 +36,7 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
     public List<ResourceLocation> availableRoles = new ArrayList<>();
     public ResourceLocation selectedRole = null;
     public int roleDrawTimer = 0;
-    public static final int DRAW_INTERVAL = 5; // 30秒 //debug
+    public static final int DRAW_INTERVAL = 30 * 20; // 30秒 //debug
 
     @Override
     public boolean shouldSyncWith(ServerPlayer player) {

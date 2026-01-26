@@ -510,6 +510,7 @@
   "item.noellesroles.mint_candies": "薄荷糖",
   "==================== 记录员角色 ====================": "",
   "announcement.role.recorder": "记录员",
+  "game.win.recorder": "记录员成功猜出40%的玩家，获得胜利！",
   "announcement.goals.recorder": "使用记录笔记猜测其他玩家的角色。如果猜对人数达到总人数的40%，你将获得独立胜利！",
   "announcement.goals.noellesroles.recorder": "使用记录笔记猜测其他玩家的角色。如果猜对人数达到总人数的40%，你将获得独立胜利！",
   "announcement.win.recorder": "记录员胜利！",
