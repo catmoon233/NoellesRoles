@@ -9,11 +9,11 @@ import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
-public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
+public class RecallerPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     public static final ComponentKey<RecallerPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "recaller"), RecallerPlayerComponent.class);
     private final Player player;
     public boolean placed = false;
@@ -21,8 +21,8 @@ public class RecallerPlayerComponent implements AutoSyncedComponent, ServerTicki
     public double y = 0;
     public double z = 0;
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     public void reset() {
         this.placed = false;

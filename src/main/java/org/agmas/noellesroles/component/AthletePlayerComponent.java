@@ -11,7 +11,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -22,13 +22,13 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 使用后冷却120秒（2分钟）
  * - 角色特点：无限奔跑时间
  */
-public class AthletePlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class AthletePlayerComponent implements RoleComponent, ServerTickingComponent {
     
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<AthletePlayerComponent> KEY = ModComponents.ATHLETE;
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     // ==================== 常量定义 ====================
     

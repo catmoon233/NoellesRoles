@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -29,7 +29,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 开局冷却60秒（1200 tick）
  * - 使用后冷却120秒（2400 tick）
  */
-public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class BoxerPlayerComponent implements RoleComponent, ServerTickingComponent {
     
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<BoxerPlayerComponent> KEY = ModComponents.BOXER;
@@ -241,8 +241,8 @@ public class BoxerPlayerComponent implements AutoSyncedComponent, ServerTickingC
     // ==================== Tick 处理 ====================
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
 
     @Override

@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -17,10 +17,10 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 当前正在查看的目标玩家
  * - 目标玩家移动检测
  */
-public class DetectivePlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class DetectivePlayerComponent implements RoleComponent, ServerTickingComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<DetectivePlayerComponent> KEY = ModComponents.DETECTIVE;

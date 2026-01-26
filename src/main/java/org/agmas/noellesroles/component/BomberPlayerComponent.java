@@ -13,9 +13,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 
-public class BomberPlayerComponent implements AutoSyncedComponent {
+public class BomberPlayerComponent implements RoleComponent {
     public static final int BOMB_COST = 100;
     private final Player player;
 
@@ -58,7 +58,7 @@ public class BomberPlayerComponent implements AutoSyncedComponent {
     }
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
 }

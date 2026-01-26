@@ -6,7 +6,7 @@ import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.HashMap;
@@ -38,10 +38,10 @@ import net.minecraft.world.phys.Vec3;
  * - 施加"标记"，被标记者被囚禁
  * - 囚禁时间递增：3秒 -> 10秒 -> 25秒
  */
-public class TrapperPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class TrapperPlayerComponent implements RoleComponent, ServerTickingComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<TrapperPlayerComponent> KEY = ModComponents.TRAPPER;

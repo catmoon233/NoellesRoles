@@ -16,7 +16,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -27,10 +27,10 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  *
  * 明星为好人阵营（乘客阵营）
  */
-public class StarPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class StarPlayerComponent implements RoleComponent, ServerTickingComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<StarPlayerComponent> KEY = ModComponents.STAR;

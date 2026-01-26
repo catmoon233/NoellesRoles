@@ -3,9 +3,9 @@ package org.agmas.noellesroles.component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.player.Player;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 
-public class DeathPenaltyComponent implements AutoSyncedComponent {
+public class DeathPenaltyComponent implements RoleComponent {
     private final Player player;
     public long penaltyExpiry = 0;
 

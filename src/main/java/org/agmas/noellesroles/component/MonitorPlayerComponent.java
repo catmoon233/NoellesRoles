@@ -11,7 +11,7 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -22,7 +22,7 @@ import java.util.UUID;
  * 
  * 
  */
-public class MonitorPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class MonitorPlayerComponent implements RoleComponent, ServerTickingComponent {
     public static final ComponentKey<MonitorPlayerComponent> KEY = ModComponents.MONITOR;
 
     private final Player player;
@@ -39,8 +39,8 @@ public class MonitorPlayerComponent implements AutoSyncedComponent, ServerTickin
     }
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
 
     /**

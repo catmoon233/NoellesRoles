@@ -6,7 +6,7 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.UUID;
@@ -28,13 +28,13 @@ import net.minecraft.world.phys.Vec3;
  * - 对方不动，超过10秒可以把对方san回复满
  * - 3分钟冷却
  */
-public class PsychologistPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class PsychologistPlayerComponent implements RoleComponent, ServerTickingComponent {
 
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<PsychologistPlayerComponent> KEY = ModComponents.PSYCHOLOGIST;
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     // ==================== 常量定义 ====================
 

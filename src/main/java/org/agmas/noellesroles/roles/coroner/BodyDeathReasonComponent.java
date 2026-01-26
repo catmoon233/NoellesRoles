@@ -10,10 +10,10 @@ import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
-public class BodyDeathReasonComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class BodyDeathReasonComponent implements RoleComponent, ServerTickingComponent {
     public static final ComponentKey<BodyDeathReasonComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "body_death_reason"), BodyDeathReasonComponent.class);
     public ResourceLocation deathReason = GameConstants.DeathReasons.GENERIC;
     public ResourceLocation playerRole = TMMRoles.CIVILIAN.identifier();

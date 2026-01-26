@@ -5,7 +5,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.Random;
@@ -29,10 +29,10 @@ import net.minecraft.world.entity.player.Player;
  * 
  * 歌手为好人阵营（乘客阵营）
  */
-public class SingerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class SingerPlayerComponent implements RoleComponent, ServerTickingComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<SingerPlayerComponent> KEY = ModComponents.SINGER;

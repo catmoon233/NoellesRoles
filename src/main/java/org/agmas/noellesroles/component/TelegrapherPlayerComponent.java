@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 
 /**
  * 电报员组件
@@ -17,10 +17,10 @@ import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
  * - 存储剩余使用次数（最多6次）
  * - 管理匿名消息发送
  */
-public class TelegrapherPlayerComponent implements AutoSyncedComponent {
+public class TelegrapherPlayerComponent implements RoleComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<TelegrapherPlayerComponent> KEY = ModComponents.TELEGRAPHER;
