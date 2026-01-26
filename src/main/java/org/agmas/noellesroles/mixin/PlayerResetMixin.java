@@ -29,6 +29,10 @@ public abstract class PlayerResetMixin {
     @Inject(method = "resetPlayer", at = @At("TAIL"))
     private static void clearAllComponentsOnReset(ServerPlayer player, CallbackInfo ci) {
         // 清除跟踪者组件状态
+        clearAllComponents(player);
+    }
+
+    private static void clearAllComponents(ServerPlayer player) {
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
 

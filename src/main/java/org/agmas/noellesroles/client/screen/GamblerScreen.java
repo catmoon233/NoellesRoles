@@ -1,7 +1,6 @@
 package org.agmas.noellesroles.client.screen;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,7 +15,6 @@ import org.agmas.noellesroles.client.utils.RoleUtils;
 import org.agmas.noellesroles.client.widget.GamblerRoleWidget;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -211,6 +209,8 @@ public class GamblerScreen extends Screen {
         if (this.selectedRole == null) {
             return;
         }
+        // LoggerFactory.getLogger("Noellesroles").info(String.valueOf(selectedRole.identifier()));
+
         ClientPlayNetworking.send(new GamblerSelectRoleC2SPacket(this.selectedRole.identifier()));
         // 关闭屏幕
         onClose();

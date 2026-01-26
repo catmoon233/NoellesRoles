@@ -1,11 +1,8 @@
 package org.agmas.noellesroles.component;
 
-import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;

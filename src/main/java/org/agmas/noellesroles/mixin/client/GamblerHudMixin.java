@@ -58,6 +58,9 @@ public class GamblerHudMixin {
             Component readyText = Component.translatable("hud.noellesroles.gambler.selected_tip",
                     RoleUtils.getRoleName(gamblerComponent.selectedRole));
             context.drawString(textRenderer, readyText, x, y - 40, CommonColors.GREEN);
+            Component readyText2 = Component.translatable("hud.noellesroles.gambler.revolver_tip",
+                    RoleUtils.getRoleName(gamblerComponent.selectedRole));
+            context.drawString(textRenderer, readyText2, x, y - 60, CommonColors.GREEN);
         }
         if (gamblerComponent.availableRoles.size() > 0) {
             Component readyText = Component.translatable("hud.noellesroles.gambler.tip",

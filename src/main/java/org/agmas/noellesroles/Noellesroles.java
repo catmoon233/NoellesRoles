@@ -1,6 +1,5 @@
 package org.agmas.noellesroles;
 
-import dev.architectury.event.events.common.PlayerEvent;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -8,7 +7,6 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
@@ -20,13 +18,11 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
-import dev.doctor4t.trainmurdermystery.util.StoreBuyPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -38,7 +34,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -68,10 +63,8 @@ import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
-import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.jetbrains.annotations.NotNull;
-import org.ladysnake.cca.api.v3.entity.PlayerSyncCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +72,6 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
-import static org.agmas.noellesroles.RicesRoleRhapsody.onRoleAssigned;
 
 public class Noellesroles implements ModInitializer {
 
@@ -131,7 +123,7 @@ public class Noellesroles implements ModInitializer {
                 r -> {
                     if (HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString()))
                         return true;
-                    if (String.valueOf(r.identifier()) == "trainmurdermystery:discovery_civilian")
+                    if (String.valueOf(r.identifier()).equals("trainmurdermystery:discovery_civilian"))
                         return true;
                     return false;
                 });

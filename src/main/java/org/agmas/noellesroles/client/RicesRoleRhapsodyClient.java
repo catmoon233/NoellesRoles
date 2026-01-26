@@ -17,6 +17,8 @@ import org.agmas.noellesroles.item.ConspiracyPageItem;
 import org.agmas.noellesroles.item.WrittenNoteItem;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
+
+import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.api.ClientModInitializer;
@@ -150,7 +152,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     public static void onAbilityKeyPressed(Minecraft client) {
         if (client.player == null)
             return;
-
+        boolean flag = false;
         // 获取游戏世界组件
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
 
@@ -473,15 +475,15 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             }
             return;
         }
-        // 赌徒：选择职业
-        if (gameWorld.isRole(client.player, ModRoles.GAMBLER)) {
-            // 发送技能使用包到服务端
-            client.setScreen(new GamblerScreen(client.player));
+
+        Role player_role = gameWorld.getRole(client.player);
+        if (player_role != null) {
+            player_role.onPressAbilityKey(client);
         }
 
-        if (abilityComponent.cooldown > 0) {
-            return;
-        }
+        // if (abilityComponent.cooldown > 0) {
+        // return;
+        // }
 
         // ==================== 示例：根据角色执行不同技能 ====================
         //

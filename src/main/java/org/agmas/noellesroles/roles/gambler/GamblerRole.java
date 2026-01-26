@@ -4,24 +4,23 @@ import static dev.doctor4t.trainmurdermystery.game.GameFunctions.getSpawnPos;
 import static dev.doctor4t.trainmurdermystery.game.GameFunctions.roomToPlayer;
 
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.harpymodloader.events.ModdedRoleRemoved;
 import org.agmas.noellesroles.NRSounds;
+import org.agmas.noellesroles.client.screen.GamblerScreen;
 import org.agmas.noellesroles.client.utils.RoleUtils;
-
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -33,6 +32,11 @@ public class GamblerRole extends Role {
     }
 
     @Override
+    public void onPressAbilityKey(Minecraft client) {
+        client.setScreen(new GamblerScreen(client.player));
+    }
+
+    @Override
     public boolean onUseGun(Player player) {
         if (player.level().isClientSide())
             return false;
@@ -40,19 +44,17 @@ public class GamblerRole extends Role {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
             GamblerPlayerComponent gamblerPlayerComponent = GamblerPlayerComponent.KEY.get(player);
             gamblerPlayerComponent.usedAbility = true;
-            player.getAllSlots().forEach(slot -> {
-                if (slot.is(TMMItems.REVOLVER)) {
-                    slot.setCount(0);
-                }
-            });
 
             if (gamblerPlayerComponent.selectedRole != null) {
+                var oldRole = gameWorldComponent.getRole(player);
+                if (oldRole != null) {
+                    ((ModdedRoleRemoved) ModdedRoleRemoved.EVENT.invoker()).removeModdedRole(player, oldRole);
+                }
                 var role = RoleUtils.getRole(gamblerPlayerComponent.selectedRole);
                 if (role == null) {
                     return false;
                 }
                 gameWorldComponent.addRole(player, role);
-
                 ((ModdedRoleAssigned) ModdedRoleAssigned.EVENT.invoker()).assignModdedRole(player, role);
 
                 PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(player);
@@ -64,6 +66,11 @@ public class GamblerRole extends Role {
                     ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(
                             gameWorldComponent.getRole(player).getIdentifier().toString(), size, 0));
                     teleport(player);
+                }
+                for (int i = 0; i < player.getInventory().items.size(); i++) {
+                    if (player.getInventory().items.get(i).is(TMMItems.REVOLVER)) {
+                        player.getInventory().items.set(i, ItemStack.EMPTY);
+                    }
                 }
                 player.level().players().forEach(
                         p -> {
