@@ -7,12 +7,15 @@ import net.minecraft.world.entity.Entity;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.events.ModdedRoleRemoved;
 import org.agmas.noellesroles.NRSounds;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.screen.GamblerScreen;
-import org.agmas.noellesroles.client.utils.RoleUtils;
+import org.agmas.noellesroles.utils.RoleUtils;
+
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import dev.doctor4t.trainmurdermystery.util.GunShootPayload;
@@ -50,10 +53,6 @@ public class GamblerRole extends Role {
             gamblerPlayerComponent.usedAbility = true;
 
             if (gamblerPlayerComponent.selectedRole != null) {
-                var oldRole = gameWorldComponent.getRole(player);
-                if (oldRole != null) {
-                    ((ModdedRoleRemoved) ModdedRoleRemoved.EVENT.invoker()).removeModdedRole(player, oldRole);
-                }
                 for (int i = 0; i < player.getInventory().items.size(); i++) {
                     if (player.getInventory().items.get(i).is(TMMItems.REVOLVER)) {
                         player.getInventory().items.set(i, ItemStack.EMPTY);
@@ -63,8 +62,7 @@ public class GamblerRole extends Role {
                 if (role == null) {
                     return false;
                 }
-                gameWorldComponent.addRole(player, role);
-                ((ModdedRoleAssigned) ModdedRoleAssigned.EVENT.invoker()).assignModdedRole(player, role);
+                RoleUtils.changeRole(player, role);
 
                 PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(player);
                 playerShopComponent.setBalance(150);
@@ -83,9 +81,7 @@ public class GamblerRole extends Role {
                             p.playNotifySound(SoundEvents.BAT_HURT, SoundSource.PLAYERS, 0.5F, 1.3F);
                         });
             } else {
-                Entity target = player;
-                if (player.level().isClientSide())
-                    ClientPlayNetworking.send(new GunShootPayload(target.getId()));
+                GameFunctions.killPlayer(player, true, null, Noellesroles.id("gamble_self_kill"));
             }
             return false;
         }

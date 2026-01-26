@@ -58,7 +58,7 @@ public class BombItem extends Item {
             }
 
             // Show timer in action bar
-            player.displayClientMessage(Component.literal("Bomb: " + (timer / 20) + "s"), true);
+            // player.displayClientMessage(Component.literal("Bomb: " + (timer / 20) + "s"), true);
         } else {
             // Explode
             explode(player, stack);

@@ -2,9 +2,10 @@ package org.agmas.noellesroles.client.screen;
 
 import net.minecraft.client.gui.components.EditBox;
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.client.utils.RoleUtils;
 import org.agmas.noellesroles.client.widget.ConspiratorRoleWidget;
 import org.agmas.noellesroles.client.widget.GuessPlayerWidget;
+import org.agmas.noellesroles.utils.RoleUtils;
+
 import dev.doctor4t.trainmurdermystery.api.Role;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;

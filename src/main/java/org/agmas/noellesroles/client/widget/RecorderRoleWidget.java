@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.client.widget;
 
 import org.agmas.noellesroles.client.screen.RecorderScreen;
-import org.agmas.noellesroles.client.utils.RoleUtils;
+import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import net.minecraft.client.Minecraft;
