@@ -71,6 +71,9 @@ public class GhostPlayerComponent implements AutoSyncedComponent, ServerTickingC
         if (invisibilityTicks > 0) {
             invisibilityTicks--;
         }
+        if (cooldown % 20 == 0) {
+            sync();
+        }
     }
 
     public void useAbility() {

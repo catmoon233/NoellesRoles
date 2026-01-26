@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.mixin.client;
 
+import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.StoreRenderer;
@@ -7,6 +8,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,23 +28,12 @@ public abstract class StoreRendererMixin {
 
     @Inject(method = "renderHud", at = @At("HEAD"))
     private static void renderCoinsForCustomRoles(Font renderer,LocalPlayer player, GuiGraphics context, float delta, CallbackInfo ci) {
-        if (((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.BARTENDER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.RECALLER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.EXECUTIONER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.JESTER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.NOISEMAKER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.BROADCASTER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.AWESOME_BINGLUS)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.PUPPETEER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.AVENGER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.BOXER)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.SLIPPERY_GHOST)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.CONSPIRATOR)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.DETECTIVE)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.POSTMAN)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.PSYCHOLOGIST)
-        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.ENGINEER))
-//        || ((GameWorldComponent)GameWorldComponent.KEY.get(player.level())).isRole(player.getUUID(), ModRoles.THIEF))
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        Role role = gameWorldComponent.getRole(player);
+        if(role == null){
+            return;
+        }
+        if (ModRoles.SHOW_MONEY_ROLES.contains(role)) // 显示金币
         {
             int balance = ((PlayerShopComponent)PlayerShopComponent.KEY.get(player)).balance;
             if (view.getTarget() != (float)balance) {

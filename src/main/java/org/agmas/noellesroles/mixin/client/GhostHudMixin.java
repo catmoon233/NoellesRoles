@@ -38,9 +38,12 @@ public abstract class GhostHudMixin {
 
         Component text;
         int color;
-
-        if (ghostComponent.cooldown > 0) {
-            int seconds = (ghostComponent.cooldown + 19) / 20;
+        if (ghostComponent.invisibilityTicks > 0) {
+            int seconds = (ghostComponent.invisibilityTicks) / 20;
+            text = Component.translatable("gui.noellesroles.ghost.during", seconds);
+            color = 0x00fff7; // 青蓝色
+        } else if (ghostComponent.cooldown > 0) {
+            int seconds = (ghostComponent.cooldown) / 20;
             text = Component.translatable("gui.noellesroles.ghost.cooldown", seconds);
             color = 0xFF5555; // 红色
         } else {
