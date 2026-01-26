@@ -24,6 +24,7 @@ import org.agmas.noellesroles.NRSounds;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -68,9 +69,11 @@ public class GamblerDeathMixin {
 				gamblerPlayerComponent.sync();
 				
 				// 变成正义阵营（vigilante）
-				victim.addItem(TMMItems.REVOLVER.getDefaultInstance());
-				gameWorldComponent.addRole(victim, TMMRoles.VIGILANTE);
-				ModdedRoleAssigned.EVENT.invoker().assignModdedRole(victim,TMMRoles.VIGILANTE);
+				// victim.addItem(TMMItems.REVOLVER.getDefaultInstance());
+				RoleUtils.changeRole(victim, TMMRoles.VIGILANTE);
+
+				// gameWorldComponent.addRole(victim, TMMRoles.VIGILANTE);
+				// ModdedRoleAssigned.EVENT.invoker().assignModdedRole(victim,TMMRoles.VIGILANTE);
 				ServerPlayNetworking.send((ServerPlayer) victim, new AnnounceWelcomePayload(gameWorldComponent.getRole(victim).getIdentifier().toString(), gameWorldComponent.getAllKillerTeamPlayers().size(), 0));
 
 				teleport(victim);
@@ -90,8 +93,7 @@ public class GamblerDeathMixin {
 				Collections.shuffle(shuffledKillerRoles);
 
 				final var first = shuffledKillerRoles.getFirst();
-				gameWorldComponent.addRole(victim, first);
-				ModdedRoleAssigned.EVENT.invoker().assignModdedRole(victim,TMMRoles.VIGILANTE);
+				RoleUtils.changeRole(victim, first);
 				if (victim instanceof ServerPlayer serverPlayer) {
 				//	final var size = serverPlayer.serverLevel().players().size();
 					ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(first.getIdentifier().toString(), gameWorldComponent.getAllKillerTeamPlayers().size(), 0));

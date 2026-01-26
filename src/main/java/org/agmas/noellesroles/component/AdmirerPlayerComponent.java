@@ -9,6 +9,7 @@ import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -159,11 +160,11 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         this.isAdmirerMarked = true;
 
         // 转换角色
-        gameWorld.addRole(player, selectedRole);
+        // gameWorld.addRole(player, selectedRole);
+        RoleUtils.changeRole(player, selectedRole);
 
         // 触发角色分配事件 - 这会调用 assignModdedRole 来初始化角色
         // 包括给予初始金币、初始物品、重置组件等
-        ModdedRoleAssigned.EVENT.invoker().assignModdedRole(player, selectedRole);
 
         // 为所有杀手阵营角色（canUseKiller = true）给予初始金币
         if (selectedRole.canUseKiller()) {
@@ -174,9 +175,7 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         }
 
         // 原版杀手需要额外给刀（因为 onRoleAssigned 中没有处理原版杀手）
-        if (selectedRole.equals(TMMRoles.KILLER)) {
-            player.addItem(TMMItems.KNIFE.getDefaultInstance());
-        }
+        
         ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(gameWorld.getRole(player).getIdentifier().toString(), gameWorld.getAllKillerTeamPlayers().size(), 0));
         // 发送转化消息
         serverPlayer.displayClientMessage(

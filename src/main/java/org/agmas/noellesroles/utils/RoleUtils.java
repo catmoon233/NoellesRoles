@@ -4,6 +4,7 @@ import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.events.ModdedRoleRemoved;
 import org.agmas.noellesroles.Noellesroles;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -19,9 +20,17 @@ public class RoleUtils {
      * 获取角色的显示名称
      */
     public static void changeRole(Player player, Role role) {
+        changeRole(player, role, true);
+    }
+
+    public static void changeRole(Player player, Role role, boolean record) {
+
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
         // 删除旧职业
         var oldRole = gameWorldComponent.getRole(player);
+        if (record) {
+            TMM.REPLAY_MANAGER.recordPlayerRoleChange(player.getUUID(), oldRole, role);
+        }
         if (oldRole != null) {
             ((ModdedRoleRemoved) ModdedRoleRemoved.EVENT.invoker()).removeModdedRole(player, oldRole);
         }
@@ -32,6 +41,7 @@ public class RoleUtils {
     }
 
     public static Component getRoleName(ResourceLocation roleIdentifier) {
+
         String translationKey = "announcement.role." + roleIdentifier.getPath();
         return Component.translatable(translationKey);
     }

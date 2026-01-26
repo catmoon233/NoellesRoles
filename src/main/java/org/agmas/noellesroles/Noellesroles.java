@@ -61,6 +61,7 @@ import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.repack.HSRSounds;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
@@ -149,7 +150,7 @@ public class Noellesroles implements ModInitializer {
     @Override
     public void onInitialize() {
         HSRConstants.init();
-        
+
         // 初始化模组角色列表
         ModRoles.init();
         // 初始化初始物品映射
@@ -237,6 +238,11 @@ public class Noellesroles implements ModInitializer {
         vigilanteItems.add(() -> TMMItems.REVOLVER.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(TMMRoles.VIGILANTE, vigilanteItems);
 
+        // 原版杀手初始物品
+        List<Supplier<ItemStack>> killerItems = new ArrayList<>();
+        vigilanteItems.add(() -> TMMItems.KNIFE.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(TMMRoles.KILLER, killerItems);
+
         // 医生初始物品
         List<Supplier<ItemStack>> doctorItems = new ArrayList<>();
         doctorItems.add(() -> HSRItems.ANTIDOTE.getDefaultInstance());
@@ -320,7 +326,7 @@ public class Noellesroles implements ModInitializer {
                     player.addItem(itemStack.copy());
                 }
             }
-        } 
+        }
     }
 
     /**
@@ -1259,9 +1265,10 @@ public class Noellesroles implements ModInitializer {
                             PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY
                                     .get(player);
                             final var first = shuffledKillerRoles.getFirst();
-                            gameWorldComponent.addRole(player, first);
-                            ModdedRoleAssigned.EVENT.invoker().assignModdedRole(player,
-                                    first);
+                            // gameWorldComponent.addRole(player, first);
+                            // ModdedRoleAssigned.EVENT.invoker().assignModdedRole(player,
+                            // first);
+                            RoleUtils.changeRole(player, first);
                             playerShopComponent.setBalance(100);
 
                             final var size = gameWorldComponent.getAllKillerTeamPlayers().size();

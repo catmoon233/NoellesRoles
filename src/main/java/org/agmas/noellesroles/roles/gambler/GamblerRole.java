@@ -23,6 +23,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -39,8 +40,9 @@ public class GamblerRole extends Role {
     }
 
     @Override
-    public void onPressAbilityKey(Minecraft client) {
-        client.setScreen(new GamblerScreen(client.player));
+    public void onPressAbilityKey(Object client) {
+        if(client instanceof Minecraft mc)
+        mc.setScreen(new GamblerScreen(mc.player));
     }
 
     @Override
