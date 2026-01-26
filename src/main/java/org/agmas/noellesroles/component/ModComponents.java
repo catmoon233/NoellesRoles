@@ -131,6 +131,12 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         public static final ComponentKey<MonitorPlayerComponent> MONITOR = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "monitor"),
                         MonitorPlayerComponent.class);
+        public static final ComponentKey<DefibrillatorComponent> DEFIBRILLATOR = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "defibrillator"),
+                        DefibrillatorComponent.class);
+        public static final ComponentKey<DeathPenaltyComponent> DEATH_PENALTY = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "death_penalty"),
+                        DeathPenaltyComponent.class);
 
         public ModComponents() {
                 // CCA 需要无参构造函数
@@ -278,6 +284,16 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 registry.beginRegistration(Player.class, MONITOR)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(MonitorPlayerComponent::new);
+
+                // 注册起搏器组件
+                registry.beginRegistration(Player.class, DEFIBRILLATOR)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(DefibrillatorComponent::new);
+
+                // 注册死亡惩罚组件
+                registry.beginRegistration(Player.class, DEATH_PENALTY)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(DeathPenaltyComponent::new);
 
                 // ==================== 示例：注册更多组件 ====================
                 //

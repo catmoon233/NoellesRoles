@@ -229,6 +229,15 @@
   "item.noellesroles.lock.tooltip": "右键锁门，可以阻挡撬锁器",
   "item.noellesroles.delivery_box": "邮件",
   "item.noellesroles.delivery_box.tooltip": "指针对准玩家并右键使用，打开隐秘传递界面",
+  "item.noellesroles.defibrillator": "心脏起搏器",
+  "item.noellesroles.defibrillator.tooltip": "右键对玩家使用，使其在90秒内死亡后可以复活",
+  "item.noellesroles.antidote_reagent": "验毒试剂",
+  "item.noellesroles.antidote_reagent.tooltip": "右键对玩家使用，查看其是否中毒",
+  "message.noellesroles.defibrillator.used": "你对 %s 使用了心脏起搏器！",
+  "message.noellesroles.defibrillator.protected": "你被使用了心脏起搏器！如果在90秒内死亡，你将在30秒后复活。",
+  "message.noellesroles.antidote_reagent.poisoned": "%s 中毒了！",
+  "message.noellesroles.antidote_reagent.safe": "%s 没有中毒。",
+  "message.noellesroles.doctor.penalty": "由于医生存活，你在死后45秒内无法使用杀手直觉且视野受限！",
   "==================== HUD / 提示 ====================": "",
   "tip.noellesroles.ability_cooldown": "技能将在 %s 秒后可用",
   "tip.noellesroles.ability_ready": "按 %s 使用技能！",
@@ -384,6 +393,7 @@
   "message.noellesroles.admirer.transform": "能量已满！你转化为了 %s！",
   "==================== 按键绑定 ====================": "",
   "key.noellesroles.ability": "使用技能",
+  "key.noellesroles.guess_role": "身份猜测记录",
   "==================== 设陷者角色 ====================": "",
   "hud.noellesroles.trapper.charges": "陷阱: %s/%s",
   "hud.noellesroles.trapper.recharge": "恢复中: %s秒",
@@ -551,5 +561,6 @@
   "message.noellesroles.monitor.marked": "你标记了 %s",
   "message.noellesroles.monitor.cooldown": "技能冷却中: %s秒",
   "message.noellesroles.monitor.no_target": "请将准星对准一名玩家！",
-  "message.noellesroles.monitor.target_not_found": "目标无效或已死亡！"
+  "message.noellesroles.monitor.target_not_found": "目标无效或已死亡！",
+  "screen.noellesroles.guess_role.title": "身份猜测记录"
 }
