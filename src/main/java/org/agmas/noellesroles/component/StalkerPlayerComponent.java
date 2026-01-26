@@ -49,7 +49,7 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     public static final int PHASE_3_TIME = 180 * 20;
 
     /** 处决减少时间（60秒 = 1200 tick） */
-    public static final int EXECUTION_REDUCTION = 80 * 20;
+    public static final int EXECUTION_REDUCTION = 60 * 20;
 
     /** 窥视视野角度（度数） */
     public static final double GAZE_ANGLE = 80.0;
@@ -225,7 +225,7 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
      * 获取二阶段进阶所需能量（游戏人数 × 2）
      */
     public int getPhase2EnergyRequired() {
-        return ph1_energy_need;
+        return ph2_energy_need;
     }
 
     /**
@@ -314,13 +314,12 @@ public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickin
     public void regressToPhase2() {
         this.phase = 2;
         this.dashModeActive = false;
-        this.energy = 0;
+        // 保留能量
+        this.phase2Kills = 0; // 不保留击杀数
         this.phase3Timer = 0;
         this.isCharging = false;
         this.chargeTime = 0;
         this.isDashing = false;
-
-        // 保留击杀数，可以重新进入三阶段
 
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.displayClientMessage(
