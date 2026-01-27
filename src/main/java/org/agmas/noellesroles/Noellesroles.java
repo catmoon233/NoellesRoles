@@ -673,11 +673,11 @@ public class Noellesroles implements ModInitializer {
             }
         }));
         ModdedRoleAssigned.EVENT.register((player, role) -> {
-            if(role.identifier().equals(TMMRoles.KILLER.identifier())){
+            if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
                 player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
                 return;
             }
-            if(role.identifier().equals(TMMRoles.VIGILANTE.identifier())){
+            if (role.identifier().equals(TMMRoles.VIGILANTE.identifier())) {
                 player.addItem(TMMItems.REVOLVER.getDefaultInstance().copy());
                 return;
             }
@@ -741,7 +741,7 @@ public class Noellesroles implements ModInitializer {
                 gamblerPlayerComponent.reset();
                 gamblerPlayerComponent.sync();
             }
-            
+
             if (role.equals(ModRoles.NOISEMAKER)) {
                 org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent noiseMakerPlayerComponent = org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent.KEY
                         .get(player);
@@ -897,9 +897,7 @@ public class Noellesroles implements ModInitializer {
 
                 // 检查死亡惩罚过期
                 DeathPenaltyComponent penaltyComponent = ModComponents.DEATH_PENALTY.get(player);
-                if (penaltyComponent.hasPenalty() && player.level().getGameTime() >= penaltyComponent.penaltyExpiry) {
-                    penaltyComponent.reset();
-                }
+                penaltyComponent.check();
             }
         });
 
@@ -1099,14 +1097,34 @@ public class Noellesroles implements ModInitializer {
     private static void handleDeathPenalty(Player victim) {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
         boolean doctorAlive = false;
+        boolean INSANE_alive = false;
+        boolean CONSPIRATOR_alive = false;
+        boolean limitView = false;
         for (Player player : victim.level().players()) {
-            if (gameWorldComponent.isRole(player, ModRoles.DOCTOR) && GameFunctions.isPlayerAliveAndSurvival(player)) {
+            if (!GameFunctions.isPlayerAliveAndSurvival(player)) {
+                continue;
+            }
+            if (gameWorldComponent.isRole(player, ModRoles.DOCTOR)) {
                 doctorAlive = true;
+            } else if (gameWorldComponent.isRole(player, ModRoles.CONSPIRATOR)) {
+                CONSPIRATOR_alive = true;
+            } else if (gameWorldComponent.isRole(player,
+                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                INSANE_alive = true;
+            }
+            if (doctorAlive && INSANE_alive && CONSPIRATOR_alive) {
                 break;
             }
         }
-
-        if (doctorAlive) {
+        if (INSANE_alive && CONSPIRATOR_alive) {
+            limitView = true;
+        }
+        if (limitView) {
+            DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
+            component.setPenalty(-1);
+            victim.displayClientMessage(
+                    Component.translatable("message.noellesroles.penalty.limit.god_job_couple").withStyle(ChatFormatting.RED), true);
+        } else if (doctorAlive) {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
             component.setPenalty(45 * 20);
             victim.displayClientMessage(

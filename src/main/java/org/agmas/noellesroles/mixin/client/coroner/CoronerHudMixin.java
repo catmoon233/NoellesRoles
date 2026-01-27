@@ -23,6 +23,7 @@ import net.minecraft.world.phys.HitResult;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
+import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,6 +54,8 @@ public abstract class CoronerHudMixin {
                 context.pose().translate((float) context.guiWidth() / 2.0F, (float) context.guiHeight() / 2.0F + 6.0F,
                         0.0F);
                 context.pose().scale(0.6F, 0.6F, 1.0F);
+                // 死亡惩罚
+                boolean hasPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player).hasPenalty();
 
                 PlayerMoodComponent moodComponent = (PlayerMoodComponent) PlayerMoodComponent.KEY
                         .get(Minecraft.getInstance().player);
@@ -67,6 +70,10 @@ public abstract class CoronerHudMixin {
                 Component roleInfo = Component.translatable("hud.coroner.role_info").withColor(CommonColors.RED)
                         .append(Component.translatable("announcement.role." + role.identifier().getPath())
                                 .withColor(role.color()));
+                if (hasPenalty) {
+                    roleInfo = Component.translatable("message.noellesroles.penalty.limit")
+                            .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC);
+                }
                 context.drawString(renderer, roleInfo, -renderer.width(roleInfo) / 2, 48, CommonColors.WHITE);
 
                 context.pose().popPose();
@@ -78,7 +85,7 @@ public abstract class CoronerHudMixin {
             if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.CORONER)
                     || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)
                     || TMMClient.isPlayerSpectatingOrCreative()) {
-
+                boolean hasPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player).hasPenalty();
                 context.pose().pushPose();
                 context.pose().translate((float) context.guiWidth() / 2.0F, (float) context.guiHeight() / 2.0F + 6.0F,
                         0.0F);
@@ -93,18 +100,17 @@ public abstract class CoronerHudMixin {
                 }
                 BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
                         .get(NoellesrolesClient.targetBody);
-                // Text name = Text.literal("Died " + NoellesrolesClient.targetBody.age/20 + "s
-                // ago to ").append(Text.translatable("death_reason." +
-                // bodyDeathReasonComponent.deathReason.getNamespace()+ "." +
-                // bodyDeathReasonComponent.deathReason.getPath()));
-
                 Component name = Component
                         .translatable("hud.coroner.death_info", NoellesrolesClient.targetBody.tickCount / 20)
                         .append(Component
                                 .translatable("death_reason." + bodyDeathReasonComponent.deathReason.getNamespace()
                                         + "." + bodyDeathReasonComponent.deathReason.getPath()));
+
                 if (bodyDeathReasonComponent.vultured) {
-                    name = Component.literal("aa aaaaaa aaa aa a aaaaa aaa").withStyle(ChatFormatting.OBFUSCATED);
+                    name = Component.literal("abcdefghijklmnopqrstuvwxyzaa").withStyle(ChatFormatting.OBFUSCATED);
+                }
+                if (hasPenalty) {
+                    // name = Component.translatable("message.noellesroles.penalty.limit.death");
                 }
                 context.drawString(renderer, name, -renderer.width(name) / 2, 32, CommonColors.RED);
                 Role foundRole = TMMRoles.CIVILIAN;
@@ -119,6 +125,9 @@ public abstract class CoronerHudMixin {
                             .append(Component
                                     .translatable("announcement.role." + bodyDeathReasonComponent.playerRole.getPath())
                                     .withColor(foundRole.color()));
+                    if (hasPenalty) {
+                        // roleInfo = Component.translatable("message.noellesroles.penalty.limit.role");
+                    }
                     context.drawString(renderer, roleInfo, -renderer.width(roleInfo) / 2, 48, CommonColors.WHITE);
                 }
                 if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)) {

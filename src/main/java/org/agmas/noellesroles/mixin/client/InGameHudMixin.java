@@ -21,7 +21,7 @@ public class InGameHudMixin {
             if (ModComponents.DEATH_PENALTY.get(client.player).hasPenalty()) {
                 int width = client.getWindow().getGuiScaledWidth();
                 int height = client.getWindow().getGuiScaledHeight();
-
+                
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);

@@ -85,8 +85,8 @@ public class NoiseMakerPlayerComponent implements RoleComponent, ServerTickingCo
                 new MobEffectInstance(MobEffects.LUCK, 120, 0, false, false, false));
 
         cooldown = 1200;
-        Component msg = Component.translatable("gui.noellesroles.noisemaker.ability").withStyle(ChatFormatting.AQUA)
-                .withStyle(ChatFormatting.BOLD);
+        Component msg = Component.translatable("gui.noellesroles.noisemaker.ability").withStyle(ChatFormatting.AQUA,
+                ChatFormatting.BOLD);
         if (player instanceof ServerPlayer serverPlayer) {
             player.level().playSound(null, serverPlayer.blockPosition(), SoundEvents.NOTE_BLOCK_HARP.value(),
                     SoundSource.PLAYERS, 2F, 0F);
