@@ -68,7 +68,8 @@
       "noellesroles:insane_killer",
       "noellesroles:bomber",
       "noellesroles:monitor",
-      "noellesroles:death_penalty"
+      "noellesroles:death_penalty",
+      "noellesroles:noise_maker"
     ]
   },
   "mixins": [

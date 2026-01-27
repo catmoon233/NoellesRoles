@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.mixin.client;
 
-import org.agmas.noellesroles.component.DetectivePlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.utils.RoleUtils;

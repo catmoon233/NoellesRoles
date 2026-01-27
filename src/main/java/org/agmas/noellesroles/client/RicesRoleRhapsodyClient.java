@@ -476,6 +476,12 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             return;
         }
 
+        // 大嗓门：更大的说话
+        if (gameWorld.isRole(client.player, ModRoles.NOISEMAKER)) {
+            ClientPlayNetworking.send(new AbilityC2SPacket());
+            return;
+        }
+
         // if (abilityComponent.cooldown > 0) {
         // return;
         // }

@@ -53,6 +53,7 @@ import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
+import org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
 import org.agmas.noellesroles.repack.HSRConstants;
@@ -232,15 +233,6 @@ public class Noellesroles implements ModInitializer {
     private void initializeInitialItems() {
 
         INITIAL_ITEMS_MAP.clear();
-        // 原版义警初始物品
-        List<Supplier<ItemStack>> vigilanteItems = new ArrayList<>();
-        vigilanteItems.add(() -> TMMItems.REVOLVER.getDefaultInstance());
-        INITIAL_ITEMS_MAP.put(TMMRoles.VIGILANTE, vigilanteItems);
-
-        // 原版杀手初始物品
-        List<Supplier<ItemStack>> killerItems = new ArrayList<>();
-        vigilanteItems.add(() -> TMMItems.KNIFE.getDefaultInstance());
-        INITIAL_ITEMS_MAP.put(TMMRoles.KILLER, killerItems);
 
         // 医生初始物品
         List<Supplier<ItemStack>> doctorItems = new ArrayList<>();
@@ -681,6 +673,14 @@ public class Noellesroles implements ModInitializer {
             }
         }));
         ModdedRoleAssigned.EVENT.register((player, role) -> {
+            if(role.identifier().equals(TMMRoles.KILLER.identifier())){
+                player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
+                return;
+            }
+            if(role.identifier().equals(TMMRoles.VIGILANTE.identifier())){
+                player.addItem(TMMItems.REVOLVER.getDefaultInstance().copy());
+                return;
+            }
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
                     .get(player);
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
@@ -740,6 +740,13 @@ public class Noellesroles implements ModInitializer {
                         .get(player);
                 gamblerPlayerComponent.reset();
                 gamblerPlayerComponent.sync();
+            }
+            
+            if (role.equals(ModRoles.NOISEMAKER)) {
+                org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent noiseMakerPlayerComponent = org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent.KEY
+                        .get(player);
+                noiseMakerPlayerComponent.reset();
+                noiseMakerPlayerComponent.sync();
             }
             if (role.equals(ModRoles.GHOST)) {
                 org.agmas.noellesroles.roles.ghost.GhostPlayerComponent ghostPlayerComponent = org.agmas.noellesroles.roles.ghost.GhostPlayerComponent.KEY
@@ -1391,6 +1398,7 @@ public class Noellesroles implements ModInitializer {
                 });
 
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.ABILITY_PACKET, (payload, context) -> {
+            // 通用技能服务端处理
             AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
                     .get(context.player());
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
@@ -1400,7 +1408,11 @@ public class Noellesroles implements ModInitializer {
                 bomberPlayerComponent.buyBomb();
                 return;
             }
-
+            if (gameWorldComponent.isRole(context.player(), ModRoles.NOISEMAKER)) {
+                NoiseMakerPlayerComponent noiseMakerPlayerComponent = ModComponents.NOISEMAKER.get(context.player());
+                noiseMakerPlayerComponent.useAbility();
+                return;
+            }
             if (gameWorldComponent.isRole(context.player(), ModRoles.GHOST)) {
                 org.agmas.noellesroles.roles.ghost.GhostPlayerComponent ghostPlayerComponent = org.agmas.noellesroles.roles.ghost.GhostPlayerComponent.KEY
                         .get(context.player());

@@ -2,7 +2,6 @@ package org.agmas.noellesroles.packet;
 
 import org.agmas.noellesroles.Noellesroles;
 
-import java.util.UUID;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

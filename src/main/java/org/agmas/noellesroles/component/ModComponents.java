@@ -12,6 +12,7 @@ import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
+import org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
@@ -72,6 +73,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "detective"),
                         DetectivePlayerComponent.class);
 
+        public static final ComponentKey<NoiseMakerPlayerComponent> NOISEMAKER = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "noise_maker"),
+                        NoiseMakerPlayerComponent.class);
         public static final ComponentKey<BoxerPlayerComponent> BOXER = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "boxer"),
                         BoxerPlayerComponent.class);
@@ -263,6 +267,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(RecallerPlayerComponent::new);
                 registry.beginRegistration(Player.class, BroadcasterPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(BroadcasterPlayerComponent::new);
+                                
+                registry.beginRegistration(Player.class, NoiseMakerPlayerComponent.KEY)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(NoiseMakerPlayerComponent::new);
                 registry.beginRegistration(Player.class, GhostPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(GhostPlayerComponent::new);
                 registry.beginRegistration(Player.class, VulturePlayerComponent.KEY)

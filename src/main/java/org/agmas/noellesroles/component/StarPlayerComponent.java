@@ -40,11 +40,11 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
     /** 发光持续时间（2秒 = 40 tick） */
     public static final int GLOW_DURATION = 40;
     
-    /** 主动技能冷却时间（30秒 = 600 tick） */
-    public static final int ABILITY_COOLDOWN = 600;
+    /** 主动技能冷却时间（60秒 = 1200 tick） */
+    public static final int ABILITY_COOLDOWN = 1200;
     
     /** 技能范围（10格） */
-    public static final double ABILITY_RANGE = 10.0;
+    public static final double ABILITY_RANGE = 15.0;
     
     // ==================== 状态变量 ====================
     
