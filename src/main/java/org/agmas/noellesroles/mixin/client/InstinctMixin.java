@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.client;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
@@ -49,7 +50,7 @@ public abstract class InstinctMixin {
         }
 
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
-        if (gameWorldComponent.isRole(player, ModRoles.JESTER)) {
+        if (gameWorldComponent.isRole(player, ModRoles.JESTER) || gameWorldComponent.isRole(player, TMMRoles.LOOSE_END)) {
             if (instinctKeybind.isDown()) {
                 cir.setReturnValue(true);
                 cir.cancel();
@@ -168,7 +169,8 @@ public abstract class InstinctMixin {
                 }
             }
             if (!((Player) target).isSpectator() && TMMClient.isInstinctEnabled()) {
-                if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.JESTER)
+                if ((gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.JESTER)
+                        || gameWorldComponent.isRole(Minecraft.getInstance().player, TMMRoles.LOOSE_END))
                         && TMMClient.isPlayerAliveAndInSurvival()) {
                     cir.setReturnValue(Color.PINK.getRGB());
                     cir.cancel();
