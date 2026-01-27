@@ -19,7 +19,7 @@
   "info.screen.roleid.awesome_binglus": "开局自带便签和拍立得(可以拍照)\n商店可购买相纸和便签\n物品栏中将相纸右键拖入相机装填相纸\n滚轮调整视距,Shift调整闪光灯和曝光度,右键拍摄\n拍好的相片蹲下右键方块可以丢出来\n死亡时掉落相片",
   "info.screen.roleid.bartender": "可以看到喝了饮料的玩家\n可以看到食物或者饮料是否下毒\n可以看到玩家是否中毒\n商店可购买护盾饮料，抵挡所有伤害(掉下去了可不行哦~)\n拥有护盾的玩家会在酒保眼中显示蓝色边框",
   "info.screen.roleid.coroner": "可以看到死者的信息(死亡原因、死亡时间)，可以察觉假扮的尸体，每隔一段时间能够察觉周围的尸体。",
-  "info.screen.roleid.doctor": "使用针可治疗中毒的人，CD三分钟",
+  "info.screen.roleid.doctor": "使用针可治疗中毒的人，CD三分钟\n使用心脏起搏器可以复活一名死亡后不超过45s的玩家，一次性用品，不可购买。",
   "info.screen.roleid.noisemaker": "语音的距离大幅增加,死亡后会发光\n商店可购买鞭炮",
   "info.screen.roleid.recaller": "使用技能可标记一个地点，再次使用可花费100金币回到标记的地点",
   "info.screen.roleid.voodoo": "可绑定一个人，当你被杀死的时候(除了地形伤害以外)，你绑定的人也会一起死亡\n!!!警长击杀巫毒不会触发惩罚",

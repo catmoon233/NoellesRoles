@@ -38,6 +38,17 @@ public abstract class PlayerResetMixin {
         ServerPlayNetworking.send(player, new PlayerResetS2CPacket());
     }
 
+    /**
+     * 在 initializeGame 方法头部注入，清除自定义笔记
+     */
+    @Inject(method = "initializeGame", at = @At("HEAD"))
+    private static void clearAllComponentsOnReset(ServerLevel serverWorld, CallbackInfo ci) {
+        // 清除客户端自定义笔记状态
+        serverWorld.players().forEach((pl) -> {
+            ServerPlayNetworking.send(pl, new PlayerResetS2CPacket());
+        });
+    }
+
     private static void clearAllComponents(ServerPlayer player) {
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();

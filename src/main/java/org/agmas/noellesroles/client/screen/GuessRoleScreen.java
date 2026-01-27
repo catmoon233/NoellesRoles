@@ -9,6 +9,7 @@ import org.agmas.noellesroles.utils.RoleUtils;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,10 +32,13 @@ public class GuessRoleScreen extends Screen {
 
     // 静态存储猜测记录，游戏结束时清除
     public static Map<UUID, String> guessedRoles = new HashMap<>();
+    public static ArrayList<AbstractClientPlayer> allPlayers = new ArrayList<>();
 
     // 清除数据的方法
     public static void clearData() {
         guessedRoles.clear();
+        allPlayers.clear();
+        allPlayers.addAll(Minecraft.getInstance().level.players());
     }
 
     // 当前阶段：0 = 选择玩家，1 = 选择角色
@@ -73,7 +77,16 @@ public class GuessRoleScreen extends Screen {
     private Button nextPageButton;
 
     public GuessRoleScreen() {
+
         super(Component.translatable("screen.noellesroles.guess_role.title"));
+
+        var now_players = new ArrayList<>(Minecraft.getInstance().level.players());
+        now_players.removeIf((a) -> {
+            return allPlayers.contains(a);
+        });
+        allPlayers.addAll(now_players);
+        players = new ArrayList<>(allPlayers);
+
     }
 
     @Override
@@ -125,15 +138,25 @@ public class GuessRoleScreen extends Screen {
             return;
 
         // 获取所有其他玩家
-        players = new ArrayList<>(minecraft.level.players());
-        players.removeIf(p -> p.getUUID().equals(minecraft.player.getUUID()));
+        var now_players = new ArrayList<>(minecraft.level.players());
+        now_players.removeIf((a) -> {
+            return allPlayers.contains(a);
+        });
+        allPlayers.addAll(now_players);
+        players = new ArrayList<>(allPlayers);
+
+        List<AbstractClientPlayer> filteredPlayers = new ArrayList<>();
+
+        players.removeIf(p -> {
+            if (p.getUUID().equals(minecraft.player.getUUID()))
+                return true;
+            return false;
+        });
 
         if (players.isEmpty()) {
             // 如果没有其他玩家，显示提示或保持空
         }
 
-        // 如果有搜索文本，则过滤玩家列表
-        List<AbstractClientPlayer> filteredPlayers = new ArrayList<>();
         if (searchText != null && !searchText.trim().isEmpty()) {
             String lowerCaseSearch = searchText.toLowerCase();
             for (AbstractClientPlayer player : players) {
@@ -151,6 +174,7 @@ public class GuessRoleScreen extends Screen {
         } else {
             filteredPlayers.addAll(players);
         }
+        // 如果有搜索文本，则过滤玩家列表
 
         // 清除现有的widgets
         for (GuessPlayerWidget widget : playerWidgets) {

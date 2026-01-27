@@ -90,7 +90,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                 if (client.player != null) {
                     client.player.sendSystemMessage(Component.translatable("screen.noellesroles.guess_role.reset")
                             .withColor(Color.ORANGE.getRGB()));
-                    GuessRoleScreen.guessedRoles.clear();
+                    GuessRoleScreen.clearData();
                 }
             });
         });
