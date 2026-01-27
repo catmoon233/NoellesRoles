@@ -20,6 +20,7 @@ public class DetectiveInspectScreen extends AbstractContainerScreen<DetectiveIns
     
     // 背景尺寸
     private static final int BACKGROUND_WIDTH = 176;
+    @SuppressWarnings("unused")
     private static final int BACKGROUND_HEIGHT = 166;
     
     public DetectiveInspectScreen(DetectiveInspectScreenHandler handler, Inventory inventory, Component title) {

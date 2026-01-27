@@ -4,8 +4,6 @@ import net.minecraft.client.CameraType;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.ModEntities;
-import org.agmas.noellesroles.Noellesroles;
-
 import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
 import org.agmas.noellesroles.client.renderer.LockEntityRender;
 import org.agmas.noellesroles.client.renderer.ManipulatorBodyEntityRenderer;
@@ -18,12 +16,10 @@ import org.agmas.noellesroles.item.WrittenNoteItem;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 
-import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
@@ -33,8 +29,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
-import org.lwjgl.glfw.GLFW;
-
 import static org.agmas.noellesroles.client.NoellesrolesClient.abilityBind;
 
 /**
@@ -52,6 +46,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     // 技能使用按键（默认 G 键）
 
     // 跟踪者窥视状态
+    @SuppressWarnings("unused")
     private static boolean stalkerGazingLastTick = false;
     // 跟踪者蓄力状态
     private static boolean stalkerChargingLastTick = false;
@@ -152,11 +147,11 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     public static void onAbilityKeyPressed(Minecraft client) {
         if (client.player == null)
             return;
-        boolean flag = false;
         // 获取游戏世界组件
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
 
         // 获取玩家的技能组件
+        @SuppressWarnings("unused")
         AbilityPlayerComponent abilityComponent = AbilityPlayerComponent.KEY.get(client.player);
         if (gameWorld.isRole(client.player, ModRoles.PUPPETEER) ||
                 PuppeteerPlayerComponent.KEY.get(client.player).isActivePuppeteer()) {
@@ -475,10 +470,10 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             }
             return;
         }
-
-        Role player_role = gameWorld.getRole(client.player);
-        if (player_role != null) {
-            player_role.onPressAbilityKey(client);
+        // 赌徒：打开GUI
+        if (gameWorld.isRole(client.player, ModRoles.GAMBLER)) {
+            client.setScreen(new GamblerScreen(client.player));
+            return;
         }
 
         // if (abilityComponent.cooldown > 0) {
@@ -561,6 +556,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     /**
      * 注册物品提示
      */
+    @SuppressWarnings("unused")
     private void registerItemTooltips() {
         // 示例：为自定义物品添加提示
         // ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, tooltipType,

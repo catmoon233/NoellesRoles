@@ -71,6 +71,7 @@ public class LockGameScreen extends Screen {
         {
             return textureWidth;
         }
+        @SuppressWarnings("unused")
         public int getLockPickBodyWidth()
         {
             return bodyWidth;

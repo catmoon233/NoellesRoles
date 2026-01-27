@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class PostmanHandledScreen extends AbstractContainerScreen<PostmanScreenHandler> {
     
     // 使用漏斗界面纹理作为基础
+    @SuppressWarnings("unused")
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/container/hopper.png");
     
     private PostmanPlayerComponent postmanComponent;

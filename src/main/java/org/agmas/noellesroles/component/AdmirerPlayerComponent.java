@@ -2,12 +2,7 @@ package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.jetbrains.annotations.NotNull;
@@ -142,8 +137,6 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
         if (!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
-
         // 获取可用的杀手角色列表
         List<Role> killerRoles = Noellesroles.getEnableKillerRoles();
 
@@ -174,9 +167,10 @@ public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickin
             shopComponent.sync();
         }
 
-        // 原版杀手需要额外给刀（因为 onRoleAssigned 中没有处理原版杀手）
-        
-        ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(gameWorld.getRole(player).getIdentifier().toString(), gameWorld.getAllKillerTeamPlayers().size(), 0));
+        // 原版杀手不需要额外给刀（因为 onRoleAssigned 中已经处理原版杀手）
+
+        RoleUtils.sendWelcomeAnnouncement(serverPlayer);
+
         // 发送转化消息
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.admirer.transform",

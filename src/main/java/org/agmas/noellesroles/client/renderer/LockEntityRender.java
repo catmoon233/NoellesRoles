@@ -2,8 +2,6 @@ package org.agmas.noellesroles.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import dev.doctor4t.trainmurdermystery.entity.FirecrackerEntity;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -46,6 +44,7 @@ public class LockEntityRender extends EntityRenderer<LockEntity> {
             super.render(entity, yaw, tickDelta, poseStack, multiBufferSource, light);
         }
     }
+    @SuppressWarnings("deprecation")
     @Override
     public ResourceLocation getTextureLocation(LockEntity entity)  {
         return TextureAtlas.LOCATION_BLOCKS;

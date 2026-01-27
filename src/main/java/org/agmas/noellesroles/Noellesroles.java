@@ -16,7 +16,6 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
-import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -233,7 +232,7 @@ public class Noellesroles implements ModInitializer {
     private void initializeInitialItems() {
 
         INITIAL_ITEMS_MAP.clear();
-        // 义警初始物品
+        // 原版义警初始物品
         List<Supplier<ItemStack>> vigilanteItems = new ArrayList<>();
         vigilanteItems.add(() -> TMMItems.REVOLVER.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(TMMRoles.VIGILANTE, vigilanteItems);
@@ -1271,10 +1270,7 @@ public class Noellesroles implements ModInitializer {
                             RoleUtils.changeRole(player, first);
                             playerShopComponent.setBalance(100);
 
-                            final var size = gameWorldComponent.getAllKillerTeamPlayers().size();
-
-                            ServerPlayNetworking.send(player, new AnnounceWelcomePayload(
-                                    gameWorldComponent.getRole(player).getIdentifier().toString(), size, 0));
+                            RoleUtils.sendWelcomeAnnouncement(player);
                         }
 
                         bodyDeathReasonComponent.vultured = true;

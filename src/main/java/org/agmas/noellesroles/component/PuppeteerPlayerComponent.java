@@ -1,17 +1,16 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.RoleUtils;
+
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -306,21 +305,14 @@ public class PuppeteerPlayerComponent implements AutoSyncedComponent, ServerTick
         puppetControlTimer = PUPPET_CONTROL_TIME;
         usedPuppetCount++;
 
+        
         // 设置玩家为假人角色（临时更改角色以获得杀手能力）
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
-        gameWorld.addRole(player, puppetRole);
-
-        // 触发角色分配事件 - 初始化角色
-        ModdedRoleAssigned.EVENT.invoker().assignModdedRole(player, puppetRole);
-        ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(gameWorld.getRole(player).getIdentifier().toString(), gameWorld.getAllKillerTeamPlayers().size(), 0));
+        RoleUtils.changeRole(player, puppetRole);
+        RoleUtils.sendWelcomeAnnouncement(serverPlayer);
 
         if (playerShopComponent != null) {
             playerShopComponent.setBalance(money);
             playerShopComponent.sync();
-        }
-        // 如果是原版杀手，给予刀
-        if (puppetRole.equals(TMMRoles.KILLER)) {
-            player.addItem(TMMItems.KNIFE.getDefaultInstance());
         }
 
         // 发送消息（带操控时间）

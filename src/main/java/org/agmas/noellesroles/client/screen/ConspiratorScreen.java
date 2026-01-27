@@ -8,7 +8,6 @@ import org.agmas.noellesroles.packet.ConspiratorC2SPacket;
 import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -339,6 +338,7 @@ public class ConspiratorScreen extends Screen {
     /**
      * 角色被选中时调用
      */
+    @SuppressWarnings("unused")
     public void onRoleSelected(Role role) {
         if (selectedPlayer == null)
             return;

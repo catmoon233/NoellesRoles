@@ -1,8 +1,6 @@
 package org.agmas.noellesroles.client.screen;
 
-import org.agmas.noellesroles.component.TelegrapherPlayerComponent;
 import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
-import org.agmas.noellesroles.packet.TelegrapherC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -29,6 +27,7 @@ public class TelegrapherScreen extends Screen {
     private Button confirmButton;
     
     // 剩余使用次数
+    @SuppressWarnings("unused")
     private int remainingUses = 0;
     
     public TelegrapherScreen(Screen parent) {

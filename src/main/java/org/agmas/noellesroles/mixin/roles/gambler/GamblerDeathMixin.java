@@ -7,7 +7,6 @@ import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
-import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.NRSounds;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
@@ -40,11 +38,15 @@ import static org.agmas.noellesroles.role.ModRoles.EXECUTIONER_ID;
 @Mixin(GameFunctions.class)
 public class GamblerDeathMixin {
 	@Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At("HEAD"), cancellable = true)
-	private static void onGamblerDeath(Player victim, boolean spawnBody, Player killer, ResourceLocation identifier, CallbackInfo ci) {
-		if (identifier.getPath().equals("fell_out_of_train"))return;
-		if (identifier.getPath().equals("disconnected"))return;
+	private static void onGamblerDeath(Player victim, boolean spawnBody, Player killer, ResourceLocation identifier,
+			CallbackInfo ci) {
+		if (identifier.getPath().equals("fell_out_of_train"))
+			return;
+		if (identifier.getPath().equals("disconnected"))
+			return;
 		final var world = victim.level();
-		if (world.isClientSide)return;
+		if (world.isClientSide)
+			return;
 		GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(world);
 		if (gameWorldComponent.isRole(victim, ModRoles.GAMBLER)) {
 			GamblerPlayerComponent gamblerPlayerComponent = GamblerPlayerComponent.KEY.get(victim);
@@ -53,10 +55,10 @@ public class GamblerDeathMixin {
 			if (gamblerPlayerComponent.usedAbility) {
 				return;
 			}
-			
+
 			// 获取随机数决定结果 (0-99)
 			int chance = victim.getRandom().nextInt(100);
-			
+
 			// 33%概率直接死亡 (0-32)
 			if (chance < 33) {
 				// 直接死亡，不取消事件
@@ -67,14 +69,17 @@ public class GamblerDeathMixin {
 				// 标记已使用能力
 				gamblerPlayerComponent.usedAbility = true;
 				gamblerPlayerComponent.sync();
-				
+
 				// 变成正义阵营（vigilante）
 				// victim.addItem(TMMItems.REVOLVER.getDefaultInstance());
 				RoleUtils.changeRole(victim, TMMRoles.VIGILANTE);
 
 				// gameWorldComponent.addRole(victim, TMMRoles.VIGILANTE);
 				// ModdedRoleAssigned.EVENT.invoker().assignModdedRole(victim,TMMRoles.VIGILANTE);
-				ServerPlayNetworking.send((ServerPlayer) victim, new AnnounceWelcomePayload(gameWorldComponent.getRole(victim).getIdentifier().toString(), gameWorldComponent.getAllKillerTeamPlayers().size(), 0));
+				// ServerPlayNetworking.send((ServerPlayer) victim, new
+				// AnnounceWelcomePayload(gameWorldComponent.getRole(victim).getIdentifier().toString(),
+				// gameWorldComponent.getAllKillerTeamPlayers().size(), 0))
+				RoleUtils.sendWelcomeAnnouncement((ServerPlayer) victim);
 
 				teleport(victim);
 				// 取消死亡，玩家会在自己的房间复活
@@ -85,24 +90,26 @@ public class GamblerDeathMixin {
 				// 标记已使用能力
 				gamblerPlayerComponent.usedAbility = true;
 				gamblerPlayerComponent.sync();
-				
+
 				// 变成杀手阵营
 				ArrayList<Role> shuffledKillerRoles = new ArrayList<>(Noellesroles.getEnableKillerRoles());
-				shuffledKillerRoles.removeIf(role ->role.identifier().equals(EXECUTIONER_ID) || Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller() || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()));
-				if (shuffledKillerRoles.isEmpty()) shuffledKillerRoles.add(TMMRoles.KILLER);
+				shuffledKillerRoles.removeIf(role -> role.identifier().equals(EXECUTIONER_ID)
+						|| Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller()
+						|| HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()));
+				if (shuffledKillerRoles.isEmpty())
+					shuffledKillerRoles.add(TMMRoles.KILLER);
 				Collections.shuffle(shuffledKillerRoles);
 
 				final var first = shuffledKillerRoles.getFirst();
 				RoleUtils.changeRole(victim, first);
 				if (victim instanceof ServerPlayer serverPlayer) {
-				//	final var size = serverPlayer.serverLevel().players().size();
-					ServerPlayNetworking.send(serverPlayer, new AnnounceWelcomePayload(first.getIdentifier().toString(), gameWorldComponent.getAllKillerTeamPlayers().size(), 0));
-
+					// final var size = serverPlayer.serverLevel().players().size();
+					RoleUtils.sendWelcomeAnnouncement(serverPlayer);
 				}
 				PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(victim);
 				playerShopComponent.setBalance(150);
 				// 取消死亡，玩家会在自己的房间复活
-				teleport( victim);
+				teleport(victim);
 				ci.cancel();
 			}
 			// 1%保留给用户自定义 (99)
@@ -113,9 +120,9 @@ public class GamblerDeathMixin {
 					players.forEach(
 							player -> {
 								player.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.2F, 1.4F);
-							}
-					);
-					GameRoundEndComponent.KEY.get(serverWorld).setRoundEndData(players, GameFunctions.WinStatus.GAMBLER);
+							});
+					GameRoundEndComponent.KEY.get(serverWorld).setRoundEndData(players,
+							GameFunctions.WinStatus.GAMBLER);
 
 					GameFunctions.stopGame(serverWorld);
 				}
@@ -125,11 +132,11 @@ public class GamblerDeathMixin {
 					player -> {
 						player.playNotifySound(NRSounds.GAMBER_DEATH, SoundSource.PLAYERS, 0.5F, 1.3F);
 						player.playNotifySound(SoundEvents.BAT_HURT, SoundSource.PLAYERS, 0.5F, 1.3F);
-					}
-			);
+					});
 		}
 	}
-	private static void teleport(Player player){
+
+	private static void teleport(Player player) {
 
 		Vec3 pos = getSpawnPos(AreasWorldComponent.KEY.get(player.level()), roomToPlayer.get(player.getUUID()));
 		if (pos != null) {
