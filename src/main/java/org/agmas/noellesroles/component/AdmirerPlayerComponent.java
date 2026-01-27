@@ -7,7 +7,7 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
@@ -32,14 +32,14 @@ import net.minecraft.world.phys.Vec3;
  * 慕恋者组件
  *
  */
-public class AdmirerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class AdmirerPlayerComponent implements RoleComponent, ServerTickingComponent {
 
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<AdmirerPlayerComponent> KEY = ModComponents.ADMIRER;
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     // ==================== 常量定义 ====================
 

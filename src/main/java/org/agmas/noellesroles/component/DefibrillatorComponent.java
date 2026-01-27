@@ -6,11 +6,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 
 import java.util.UUID;
 
-public class DefibrillatorComponent implements AutoSyncedComponent {
+public class DefibrillatorComponent implements RoleComponent {
     private final Player player;
     public long protectionExpiry = 0;
     public boolean isDead = false;
@@ -20,6 +20,11 @@ public class DefibrillatorComponent implements AutoSyncedComponent {
 
     public DefibrillatorComponent(Player player) {
         this.player = player;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     public void setProtection(long durationTicks) {

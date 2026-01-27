@@ -1,12 +1,12 @@
 package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import org.spongepowered.asm.mixin.Mixin;
 @Mixin({PlayerShopComponent.class})
-public abstract class SimpleRolePurchaseMixin implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
+public abstract class SimpleRolePurchaseMixin implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 //    @Shadow
 //    @Final
 //    private PlayerEntity player;

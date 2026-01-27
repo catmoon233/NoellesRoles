@@ -2,7 +2,7 @@ package org.agmas.noellesroles.roles.sheriff;
 
 
 public class SheriffPlayerComponent {
-//        implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
+//        implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 //    public static final ComponentKey<SheriffPlayerComponent> KEY = ComponentRegistry.getOrCreate(
 //            org.agmas.noellesroles.Noellesroles.id("sheriff"),
 //            SheriffPlayerComponent.class

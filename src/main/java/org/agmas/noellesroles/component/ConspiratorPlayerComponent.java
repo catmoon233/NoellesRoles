@@ -7,7 +7,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import net.minecraft.world.entity.player.Player;
  * - 管理死亡倒计时（40秒）
  * - 处理猜测结果
  */
-public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingComponent {
 
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<ConspiratorPlayerComponent> KEY = ModComponents.CONSPIRATOR;
@@ -75,6 +75,11 @@ public class ConspiratorPlayerComponent implements AutoSyncedComponent, ServerTi
 
     public ConspiratorPlayerComponent(Player player) {
         this.player = player;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     /**

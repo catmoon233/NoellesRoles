@@ -17,7 +17,7 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
+public class GamblerPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     public static final ComponentKey<GamblerPlayerComponent> KEY = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "gambler"), GamblerPlayerComponent.class);
     private final Player player;
@@ -39,8 +39,8 @@ public class GamblerPlayerComponent implements AutoSyncedComponent, ServerTickin
     public static final int DRAW_INTERVAL = 30 * 20; // 30秒 //debug
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
 
     public void reset() {

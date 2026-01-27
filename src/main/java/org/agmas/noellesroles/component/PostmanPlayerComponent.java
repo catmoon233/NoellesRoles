@@ -3,7 +3,7 @@ package org.agmas.noellesroles.component;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 
 import java.util.UUID;
 import net.minecraft.core.HolderLookup;
@@ -19,10 +19,10 @@ import net.minecraft.world.item.ItemStack;
  * - 管理双方的物品交换
  * - 同步传递数据到客户端
  */
-public class PostmanPlayerComponent implements AutoSyncedComponent {
+public class PostmanPlayerComponent implements RoleComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<PostmanPlayerComponent> KEY = ModComponents.POSTMAN;

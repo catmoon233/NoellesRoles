@@ -5,7 +5,7 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
@@ -34,10 +34,10 @@ import net.minecraft.world.phys.Vec3;
  * - 二阶段（觉醒猎手）：杀手阵营，有刀和一次免疫
  * - 三阶段（狂暴追击者）：蓄力突进处决
  */
-public class StalkerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class StalkerPlayerComponent implements RoleComponent, ServerTickingComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
 
     /** 组件键 - 用于从玩家获取此组件 */

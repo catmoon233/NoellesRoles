@@ -8,7 +8,7 @@ import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class RecorderPlayerComponent implements RoleComponent, ServerTickingComponent {
 
     public static final ComponentKey<RecorderPlayerComponent> KEY = ModComponents.RECORDER;
 
@@ -314,7 +314,7 @@ public class RecorderPlayerComponent implements AutoSyncedComponent, ServerTicki
     }
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
 }

@@ -5,9 +5,10 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 import net.minecraft.core.HolderLookup;
@@ -15,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
-public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class ConfigWorldComponent implements RoleComponent, ServerTickingComponent {
     public static final ComponentKey<ConfigWorldComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "config"), ConfigWorldComponent.class);
     public boolean insaneSeesMorphs = true;
     public boolean naturalVoodoosAllowed = false;
@@ -29,6 +30,11 @@ public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingC
 
     public ConfigWorldComponent(Level world) {
         this.world = world;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return null;
     }
 
     public void sync() {

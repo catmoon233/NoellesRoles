@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class InsaneKillerPlayerComponent
-        implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
+        implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     public static final ComponentKey<InsaneKillerPlayerComponent> KEY = ModComponents.INSANE_KILLER;
     private final Player player;
 
@@ -38,15 +38,15 @@ public class InsaneKillerPlayerComponent
         this.isActive = false;
     }
 
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
     public void reset() {
         isActive = false;
         cooldown = 200;
     }
-
-    // @Override
-    // public boolean shouldSyncWith(ServerPlayer player) {
-    // return player == this.player;
-    // }
 
     public void toggleAbility() {
         if (isActive) {

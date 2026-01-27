@@ -6,7 +6,7 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import net.minecraft.world.item.ItemStack;
  * - 当目标死亡时激活复仇能力
  * - 激活后可以看到凶手并获得武器
  */
-public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class AvengerPlayerComponent implements RoleComponent, ServerTickingComponent {
 
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<AvengerPlayerComponent> KEY = ModComponents.AVENGER;
@@ -68,8 +68,8 @@ public class AvengerPlayerComponent implements AutoSyncedComponent, ServerTickin
     }
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
 
     /**

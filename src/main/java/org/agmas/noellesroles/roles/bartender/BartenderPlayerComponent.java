@@ -14,11 +14,11 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
-public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTickingComponent, ClientTickingComponent {
+public class BartenderPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     public static final ComponentKey<BartenderPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "bartender"), BartenderPlayerComponent.class);
     private final Player player;
     public int glowTicks = 0;
@@ -31,9 +31,8 @@ public class BartenderPlayerComponent implements AutoSyncedComponent, ServerTick
     }
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        final var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-        return gameWorldComponent.isRole(player, ModRoles.BARTENDER) && GameFunctions.isPlayerAliveAndSurvival( player);
+    public Player getPlayer() {
+        return player;
     }
 
     public BartenderPlayerComponent(Player player) {

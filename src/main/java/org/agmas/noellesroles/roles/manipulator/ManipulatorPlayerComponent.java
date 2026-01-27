@@ -28,7 +28,7 @@ import org.agmas.noellesroles.entity.ManipulatorBodyEntity;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.UUID;
@@ -36,14 +36,14 @@ import java.util.UUID;
 /**
  * 操纵师组件
  */
-public class ManipulatorPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingComponent {
 
     public static final ComponentKey<ManipulatorPlayerComponent> KEY = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator"),
             ManipulatorPlayerComponent.class);
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     public static final int CONTROL_DURATION = 50 * 20;
 

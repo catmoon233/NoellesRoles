@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -27,7 +27,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 自动获得：一把德林加手枪、一个手雷
  * - 不再获得护盾
  */
-public class BetterVigilantePlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class BetterVigilantePlayerComponent implements RoleComponent, ServerTickingComponent {
 
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<BetterVigilantePlayerComponent> KEY = ModComponents.BETTER_VIGILANTE;
@@ -46,8 +46,8 @@ public class BetterVigilantePlayerComponent implements AutoSyncedComponent, Serv
     public static int checkTimer = 0;
 
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
 
     /**

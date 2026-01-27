@@ -9,17 +9,17 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
  * 滑头鬼玩家组件
  * 用于实现被动收入功能：每20秒获取50金币
  */
-public class SlipperyGhostPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class SlipperyGhostPlayerComponent implements RoleComponent, ServerTickingComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     // 被动收入间隔：20秒 = 400 ticks
     private static final int PASSIVE_INCOME_INTERVAL = 400;

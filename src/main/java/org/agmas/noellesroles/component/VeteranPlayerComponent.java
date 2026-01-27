@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 
 /**
  * 退伍军人组件
@@ -19,10 +19,10 @@ import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
  * - 追踪刀是否已使用
  * - 刀使用后（击杀一人）刀消失
  */
-public class VeteranPlayerComponent implements AutoSyncedComponent {
+public class VeteranPlayerComponent implements RoleComponent {
     @Override
-    public boolean shouldSyncWith(ServerPlayer player) {
-        return player == this.player;
+    public Player getPlayer() {
+        return player;
     }
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<VeteranPlayerComponent> KEY = ModComponents.VETERAN;
