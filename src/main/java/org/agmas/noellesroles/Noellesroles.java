@@ -41,6 +41,7 @@ import net.minecraft.world.phys.Vec3;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.harpymodloader.events.ResetPlayerEvent;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
@@ -565,6 +566,9 @@ public class Noellesroles implements ModInitializer {
                 ExecutionerSelectTargetC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BroadcasterC2SPacket.ID, BroadcasterC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(BroadcastMessageS2CPacket.ID, BroadcastMessageS2CPacket.CODEC);
+
+        PayloadTypeRegistry.playC2S().register(PlayerResetS2CPacket.ID, PlayerResetS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(PlayerResetS2CPacket.ID, PlayerResetS2CPacket.CODEC);
 
         PayloadTypeRegistry.playC2S().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);
@@ -1122,13 +1126,20 @@ public class Noellesroles implements ModInitializer {
         if (limitView) {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
             component.setPenalty(-1);
+            victim.sendSystemMessage(
+                    Component.translatable("message.noellesroles.penalty.limit.god_job_couple")
+                            .withStyle(ChatFormatting.RED));
             victim.displayClientMessage(
-                    Component.translatable("message.noellesroles.penalty.limit.god_job_couple").withStyle(ChatFormatting.RED), true);
+                    Component.translatable("message.noellesroles.penalty.limit.god_job_couple")
+                            .withStyle(ChatFormatting.RED),
+                    true);
         } else if (doctorAlive) {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
             component.setPenalty(45 * 20);
             victim.displayClientMessage(
                     Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED), true);
+            victim.sendSystemMessage(
+                    Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED));
         }
     }
 

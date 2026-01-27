@@ -406,7 +406,7 @@
   "message.noellesroles.admirer.transform": "能量已满！你转化为了 %s！",
   "==================== 按键绑定 ====================": "",
   "key.noellesroles.ability": "使用技能",
-  "key.noellesroles.guess_role": "身份猜测记录",
+  "key.noellesroles.guess_role_note": "身份猜测笔记",
   "==================== 设陷者角色 ====================": "",
   "hud.noellesroles.trapper.charges": "陷阱: %s/%s",
   "hud.noellesroles.trapper.recharge": "恢复中: %s秒",
@@ -561,6 +561,7 @@
   "message.noellesroles.cooldown": "无法使用技能：技能冷却中",
   "==================== 补充翻译键 ====================": "",
   "announcement.role.ghost": "小透明",
+  "announcement.role.null": "(不选择)",
   "announcement.role.noellesroles.ghost": "小透明",
   "announcement.goals.ghost": "别人无法看到你的发光",
   "announcement.role.doctor": "医生",
@@ -575,6 +576,8 @@
   "gui.noellesroles.noisemaker.during": "大嗓门激活中（x6声音距离）",
   "announcement.role.discovery_civilian": "游客",
   "gui.noellesroles.noisemaker.ability": "大嗓门发动了技能",
+  "screen.noellesroles.guess_role.title": "身份猜测笔记",
+  "screen.noellesroles.guess_role.reset": "身份猜测笔记已重置！",
   "==================== 监察员角色 ====================": "",
   "announcement.role.monitor": "监察员",
   "info.screen.roleid.monitor": "你可以使用技能键标记一名玩家并透视其位置。",
@@ -585,6 +588,5 @@
   "message.noellesroles.monitor.marked": "你标记了 %s",
   "message.noellesroles.monitor.cooldown": "技能冷却中: %s秒",
   "message.noellesroles.monitor.no_target": "请将准星对准一名玩家！",
-  "message.noellesroles.monitor.target_not_found": "目标无效或已死亡！",
-  "screen.noellesroles.guess_role.title": "身份猜测记录"
+  "message.noellesroles.monitor.target_not_found": "目标无效或已死亡！"
 }

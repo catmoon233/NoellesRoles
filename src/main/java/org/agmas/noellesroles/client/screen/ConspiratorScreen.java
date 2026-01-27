@@ -122,9 +122,9 @@ public class ConspiratorScreen extends Screen {
         if (searchText != null && !searchText.trim().isEmpty()) {
             String lowerCaseSearch = searchText.toLowerCase();
             for (AbstractClientPlayer player : players) {
-                String playerName = player.getName().getString();
                 if (player.isCreative() || player.isSpectator())
                     continue;
+                String playerName = player.getName().getString();
                 if (playerName.toLowerCase().contains(lowerCaseSearch)) {
                     filteredPlayers.add(player);
                 }
@@ -226,7 +226,7 @@ public class ConspiratorScreen extends Screen {
         // 计算布局 - 每页最多12个角色，4列3行
         int columns = Math.min(rolesOnThisPage, 4);
         int rows = (int) Math.ceil(rolesOnThisPage / 4.0);
-        int widgetWidth = 120;
+        int widgetWidth = 90;
         int widgetHeight = 24;
         int spacingX = 10;
         int spacingY = 6;

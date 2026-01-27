@@ -15,6 +15,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.Vec3i;
@@ -26,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.screen.GuessRoleScreen;
 import org.agmas.noellesroles.client.screen.LockGameScreen;
 import org.agmas.noellesroles.client.screen.TelegrapherScreen;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -33,11 +35,13 @@ import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
 import org.agmas.noellesroles.packet.OpenLockGuiC2SPacket;
+import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 
 import org.agmas.noellesroles.role.ModRoles;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.Color;
 import java.util.*;
 
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.*;
@@ -45,6 +49,7 @@ import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.*;
 public class NoellesrolesClient implements ClientModInitializer {
 
     public static int insanityTime = 0;
+    public static KeyMapping roleGuessNoteClientBind;
     public static KeyMapping abilityBind;
     public static Player target;
     public static PlayerBodyEntity targetBody;
@@ -60,7 +65,9 @@ public class NoellesrolesClient implements ClientModInitializer {
         // for (Role role : TMMRoles.ROLES) {
         //
         // }
-
+        roleGuessNoteClientBind = KeyBindingHelper
+                .registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".guess_role_note",
+                        InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_I, "category.trainmurdermystery.keybinds"));
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".ability",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
 
@@ -77,6 +84,17 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+        ClientPlayNetworking.registerGlobalReceiver(PlayerResetS2CPacket.ID, (payload, context) -> {
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null) {
+                    client.player.sendSystemMessage(Component.translatable("screen.noellesroles.guess_role.reset")
+                            .withColor(Color.ORANGE.getRGB()));
+                    GuessRoleScreen.guessedRoles.clear();
+                }
+            });
+        });
+
         ClientPlayNetworking.registerGlobalReceiver(OpenLockGuiC2SPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
@@ -92,6 +110,11 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         Listen.registerEvents();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (roleGuessNoteClientBind.consumeClick()) {
+                client.execute(() -> {
+                    client.setScreen(new GuessRoleScreen());
+                });
+            }
             if (!isPlayerInAdventureMode(client.player))
                 return;
             insanityTime++;

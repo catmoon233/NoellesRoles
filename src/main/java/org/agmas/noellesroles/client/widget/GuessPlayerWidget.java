@@ -55,7 +55,6 @@ public class GuessPlayerWidget extends Button {
         int textWidth = font.width(roleText);
         int textX = getX() + (size - textWidth) / 2;
         int textY = getY() + size + 4;
-
         context.drawString(font, roleText, textX, textY, 0xFFFFFF, true);
 
         // 高亮效果
@@ -65,7 +64,7 @@ public class GuessPlayerWidget extends Button {
             // 绘制玩家名称提示
             int nameWidth = font.width(player.getName());
             context.renderTooltip(font, player.getName(),
-                    getX() + size / 2 - nameWidth / 2, getY() - 12);
+                    getX() - 12 + (size - nameWidth) / 2, getY() - 2);
         }
     }
 

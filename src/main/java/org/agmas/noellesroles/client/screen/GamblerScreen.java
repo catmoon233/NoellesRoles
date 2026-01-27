@@ -105,7 +105,7 @@ public class GamblerScreen extends Screen {
         // 计算布局 - 每页最多12个角色，4列3行
         int columns = Math.min(rolesOnThisPage, 4);
         int rows = (int) Math.ceil(rolesOnThisPage / 4.0);
-        int widgetWidth = 120;
+        int widgetWidth = 90;
         int widgetHeight = 24;
         int spacingX = 10;
         int spacingY = 6;

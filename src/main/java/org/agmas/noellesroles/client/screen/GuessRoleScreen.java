@@ -7,6 +7,7 @@ import org.agmas.noellesroles.client.widget.GuessPlayerWidget;
 import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -40,7 +41,7 @@ public class GuessRoleScreen extends Screen {
     private int phase = 0;
 
     // 玩家列表分页
-    private static final int PLAYERS_PER_PAGE = 9;
+    private static final int PLAYERS_PER_PAGE = 10;
     private int currentPlayerPage = 0;
     private int totalPlayerPages = 0;
 
@@ -136,11 +137,15 @@ public class GuessRoleScreen extends Screen {
         if (searchText != null && !searchText.trim().isEmpty()) {
             String lowerCaseSearch = searchText.toLowerCase();
             for (AbstractClientPlayer player : players) {
-                String playerName = player.getName().getString();
-                if (player.isCreative() || player.isSpectator())
-                    continue;
-                if (playerName.toLowerCase().contains(lowerCaseSearch)) {
+                String playerName = player.getName().getString().toLowerCase();
+                if (playerName.contains(lowerCaseSearch)) {
                     filteredPlayers.add(player);
+                } else {
+                    String role = guessedRoles.get(player.getUUID());
+                    if (role != null && !role.trim().isEmpty())
+                        if (role.toLowerCase().contains(lowerCaseSearch)) {
+                            filteredPlayers.add(player);
+                        }
                 }
             }
         } else {
@@ -173,12 +178,12 @@ public class GuessRoleScreen extends Screen {
         int endIndex = Math.min(startIndex + PLAYERS_PER_PAGE, filteredPlayers.size());
 
         // 计算布局 - 3x3 网格
-        int columns = 3;
-        int rows = 3;
-        int widgetSize = 48; // 头像大小
-        int spacing = 20;
+        int columns = 5;
+        int rows = 2;
+        int widgetSize = 36; // 头像大小
+        int spacing = 16;
         int totalWidth = columns * (widgetSize + spacing) - spacing;
-        int totalHeight = rows * (widgetSize + 20 + spacing) - spacing; // +20 for text
+        int totalHeight = rows * (widgetSize + 12 + spacing) - spacing; // +20 for text
         int startX = (width - totalWidth) / 2;
         int startY = (height - totalHeight) / 2 + 10;
 
@@ -202,10 +207,10 @@ public class GuessRoleScreen extends Screen {
         // 创建当前页的玩家widgets
         for (int i = startIndex; i < endIndex; i++) {
             int indexOnPage = i - startIndex;
-            int col = indexOnPage % 3;
-            int row = indexOnPage / 3;
+            int col = indexOnPage % columns;
+            int row = indexOnPage / columns;
             int x = startX + col * (widgetSize + spacing);
-            int y = startY + row * (widgetSize + 20 + spacing);
+            int y = startY + row * (widgetSize + 12 + spacing);
 
             AbstractClientPlayer player = filteredPlayers.get(i);
             String role = guessedRoles.get(player.getUUID());
@@ -259,7 +264,7 @@ public class GuessRoleScreen extends Screen {
     private void initRoleSelection() {
         // 获取所有注册的角色
         roles = Noellesroles.getEnableRoles();
-
+        roles.add(0, null);
         if (roles.isEmpty()) {
             // 如果没有角色，返回上一级
             phase = 0;
@@ -270,7 +275,9 @@ public class GuessRoleScreen extends Screen {
         // 计算分页
         int filteredCount = 0;
         for (Role role : roles) {
-            String roleName = RoleUtils.getRoleName(role).getString();
+            String roleName = "";
+            if (role != null)
+                roleName = RoleUtils.getRoleName(role).getString();
             if (searchContent == null || roleName.contains(searchContent)) {
                 filteredCount++;
             }
@@ -291,7 +298,7 @@ public class GuessRoleScreen extends Screen {
         // 计算布局 - 每页最多12个角色，4列3行
         int columns = 4;
         int rows = 3;
-        int widgetWidth = 120;
+        int widgetWidth = 90;
         int widgetHeight = 24;
         int spacingX = 10;
         int spacingY = 6;
@@ -307,8 +314,7 @@ public class GuessRoleScreen extends Screen {
 
         for (int i = 0; i < roles.size(); i++) {
             var role = roles.get(i);
-            String roleName = RoleUtils.getRoleName(role).getString();
-            if (searchContent == null || roleName.contains(searchContent)) {
+            if (role == null && (searchContent == null || searchContent == "")) {
                 if (count >= startIndex && count < endIndex) {
                     int indexOnPage = count - startIndex;
                     int col = indexOnPage % 4;
@@ -319,16 +325,43 @@ public class GuessRoleScreen extends Screen {
                     // 复用 ConspiratorRoleWidget，因为它已经实现了角色显示和点击逻辑
                     // 我们需要重写 onRoleSelected 方法来适配我们的逻辑
                     ConspiratorRoleWidget widget = new ConspiratorRoleWidget(
-                            null, x, y, widgetWidth, widgetHeight, roles.get(i), i) {
+                            null, x, y, widgetWidth, widgetHeight, null, i) {
                         @Override
                         public void onPress() {
-                            onRoleSelected(role);
+                            onRoleSelected(null);
                         }
                     };
                     roleWidgets.add(widget);
                     addRenderableWidget(widget);
                 }
                 count++;
+            } else {
+                if (role == null)
+                    continue;
+                String roleName = RoleUtils.getRoleName(role).getString();
+                if (searchContent == null || roleName.contains(searchContent)) {
+                    if (count >= startIndex && count < endIndex) {
+                        int indexOnPage = count - startIndex;
+                        int col = indexOnPage % 4;
+                        int row = indexOnPage / 4;
+                        int x = startX + col * (widgetWidth + spacingX);
+                        int y = startY + row * (widgetHeight + spacingY);
+
+                        // 复用 ConspiratorRoleWidget，因为它已经实现了角色显示和点击逻辑
+                        // 我们需要重写 onRoleSelected 方法来适配我们的逻辑
+                        ConspiratorRoleWidget widget = new ConspiratorRoleWidget(
+                                null, x, y, widgetWidth, widgetHeight, roles.get(i), i) {
+                            @Override
+                            public void onPress() {
+                                onRoleSelected(role);
+                            }
+                        };
+                        roleWidgets.add(widget);
+                        addRenderableWidget(widget);
+                    }
+                    count++;
+                }
+
             }
         }
 
@@ -397,6 +430,7 @@ public class GuessRoleScreen extends Screen {
         this.phase = 1;
         this.currentRolePage = 0; // 重置页码
         this.searchWidget = null;
+        this.searchContent = null;
         // 重新初始化，显示角色选择
         clearWidgets();
         init();
@@ -410,14 +444,23 @@ public class GuessRoleScreen extends Screen {
             return;
 
         // 更新猜测记录
-        String roleName = RoleUtils.getRoleName(role).getString();
-        guessedRoles.put(selectedPlayer, roleName);
+        if (role != null) {
+
+            String roleName = RoleUtils.getRoleName(role).getString();
+            guessedRoles.put(selectedPlayer, roleName);
+        } else {
+            guessedRoles.remove(selectedPlayer);
+        }
 
         // 返回玩家选择阶段
+        this.currentPlayerPage = 0;
         this.phase = 0;
         this.selectedPlayer = null;
         this.selectedPlayerName = "";
         this.searchWidget = null;
+        this.searchContent = null;
+        this.currentRolePage = 0; // 重置页码
+
         clearWidgets();
         init();
     }

@@ -1,8 +1,11 @@
 package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
+
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
+import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -10,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -30,6 +35,7 @@ public abstract class PlayerResetMixin {
     private static void clearAllComponentsOnReset(ServerPlayer player, CallbackInfo ci) {
         // 清除跟踪者组件状态
         clearAllComponents(player);
+        ServerPlayNetworking.send(player, new PlayerResetS2CPacket());
     }
 
     private static void clearAllComponents(ServerPlayer player) {

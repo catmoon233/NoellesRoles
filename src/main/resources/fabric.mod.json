@@ -69,7 +69,8 @@
       "noellesroles:bomber",
       "noellesroles:monitor",
       "noellesroles:death_penalty",
-      "noellesroles:noise_maker"
+      "noellesroles:noise_maker",
+      "noellesroles:player_reset"
     ]
   },
   "mixins": [

@@ -2,6 +2,7 @@ package org.agmas.noellesroles.component;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.player.Player;
 
@@ -20,6 +21,7 @@ public class DeathPenaltyComponent implements RoleComponent {
             return;
         } else {
             if (this.penaltyExpiry < 0) {
+
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
                 boolean INSANE_alive = false;
                 boolean CONSPIRATOR_alive = false;
@@ -33,16 +35,33 @@ public class DeathPenaltyComponent implements RoleComponent {
                         INSANE_alive = true;
                     }
                     if (INSANE_alive && CONSPIRATOR_alive) {
+                        if (this.penaltyExpiry == -2) {
+                            this.penaltyExpiry = -1;
+                            player.sendSystemMessage(
+                                    Component.translatable("message.noellesroles.penalty.limit.god_job_couple")
+                                            .withStyle(ChatFormatting.RED));
+                            player.displayClientMessage(
+                                    Component.translatable("message.noellesroles.penalty.limit.god_job_couple")
+                                            .withStyle(ChatFormatting.RED),
+                                    true);
+                        }
                         return;
                     }
                 }
-                player.displayClientMessage(Component.translatable("message.noellesroles.penalty.unlimit"), true);
+                player.displayClientMessage(
+                        Component.translatable("message.noellesroles.penalty.unlimit").withStyle(ChatFormatting.GREEN),
+                        true);
+                player.sendSystemMessage(
+                        Component.translatable("message.noellesroles.penalty.unlimit").withStyle(ChatFormatting.GREEN));
                 this.reset();
                 return;
                 // 亡语杀手限制
             } else {
                 if (player.level().getGameTime() >= this.penaltyExpiry) {
-                    player.displayClientMessage(Component.translatable("message.noellesroles.penalty.unlimit"), true);
+                    player.displayClientMessage(Component.translatable("message.noellesroles.penalty.unlimit")
+                            .withStyle(ChatFormatting.GREEN), true);
+                    player.sendSystemMessage(Component.translatable("message.noellesroles.penalty.unlimit")
+                            .withStyle(ChatFormatting.GREEN));
                     this.reset();
                     return;
                 }
@@ -70,10 +89,15 @@ public class DeathPenaltyComponent implements RoleComponent {
     }
 
     public boolean hasPenalty() {
+        if (this.penaltyExpiry == 0)
+            return false;
         if (this.penaltyExpiry < 0) {
             return true;
         }
-        return player.level().getGameTime() < this.penaltyExpiry;
+        if (player.level().getGameTime() >= this.penaltyExpiry) {
+            this.penaltyExpiry = -2;
+        }
+        return true;
     }
 
     public void reset() {
