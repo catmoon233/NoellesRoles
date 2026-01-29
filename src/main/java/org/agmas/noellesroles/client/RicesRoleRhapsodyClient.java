@@ -207,16 +207,6 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             return;
         }
 
-        // // ==================== 电报员：打开消息编辑界面 ====================
-        // if (gameWorld.isRole(client.player, ModRoles.TELEGRAPHER)) {
-        // // 检查是否还有剩余次数
-        // TelegrapherPlayerComponent telegrapherComponent =
-        // TelegrapherPlayerComponent.KEY.get(client.player);
-        // if (telegrapherComponent.hasUsesRemaining()) {
-        // client.setScreen(new TelegrapherScreen());
-        // }
-        // return;
-        // }
 
         // ==================== 拳击手：激活钢筋铁骨技能 ====================
         if (gameWorld.isRole(client.player, ModRoles.BOXER)) {

@@ -41,7 +41,6 @@ public class BetterVigilantePlayerComponent implements RoleComponent, ServerTick
 
     /** 是否是活跃的红海军 */
 
-
     /** 检查间隔计时器（每20tick检查一次，减少性能消耗） */
     public static int checkTimer = 0;
 
@@ -64,7 +63,6 @@ public class BetterVigilantePlayerComponent implements RoleComponent, ServerTick
     public void reset() {
         this.lastStandActivated = false;
 
-
         this.sync();
     }
 
@@ -74,7 +72,6 @@ public class BetterVigilantePlayerComponent implements RoleComponent, ServerTick
     public void clearAll() {
         this.lastStandActivated = false;
 
-
         this.sync();
     }
 
@@ -82,7 +79,6 @@ public class BetterVigilantePlayerComponent implements RoleComponent, ServerTick
      * 检查是否是活跃的红海军
      */
     public boolean isActiveBetterVigilante() {
-
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         return gameWorld.isRole(player, ModRoles.BETTER_VIGILANTE);
@@ -143,9 +139,10 @@ public class BetterVigilantePlayerComponent implements RoleComponent, ServerTick
                 SoundSource.MASTER, 2.0F, 0.8F);
 
         // 发送激活消息
-        serverPlayer.sendSystemMessage(
+        serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.better_vigilante.last_stand_activated")
-                        .withStyle(style -> style.withColor(0xFF0000).withBold(true)));
+                        .withStyle(style -> style.withColor(0xFF0000).withBold(true)),
+                true);
 
         this.sync();
     }
@@ -173,7 +170,7 @@ public class BetterVigilantePlayerComponent implements RoleComponent, ServerTick
 
         // 每秒检查一次（20 tick）
         ++checkTimer;
-        if (checkTimer % 20 ==0) {
+        if (checkTimer % 20 == 0) {
 
             int aliveCount = countAliveCiviliansAndVigilantes();
             if (aliveCount <= 2) {
@@ -181,7 +178,6 @@ public class BetterVigilantePlayerComponent implements RoleComponent, ServerTick
             }
         }
         // 检查场上平民+义警数量
-
 
         // 当存活的平民+义警数量 <= 2 时激活
 

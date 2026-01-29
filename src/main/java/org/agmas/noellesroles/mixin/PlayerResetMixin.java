@@ -1,8 +1,6 @@
 package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
-
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
@@ -72,8 +70,8 @@ public abstract class PlayerResetMixin {
         SlipperyGhostPlayerComponent slipperyGhostComp = ModComponents.SLIPPERY_GHOST.get(player);
         slipperyGhostComp.reset();
 
-        TelegrapherPlayerComponent telegrapherComp = ModComponents.TELEGRAPHER.get(player);
-        telegrapherComp.reset();
+        BroadcasterPlayerComponent broadcasterComp = ModComponents.BROADCASTER.get(player);
+        broadcasterComp.reset();
 
         PostmanPlayerComponent postmanComp = ModComponents.POSTMAN.get(player);
         postmanComp.reset();

@@ -158,6 +158,8 @@ public class ConspiratorScreen extends Screen {
         if (searchWidget == null) {
             searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
                     Component.nullToEmpty(""));
+            searchWidget.setHint(Component.translatable("screen.noellesroles.search.placeholder")
+                    .withStyle(ChatFormatting.GRAY));
             searchWidget.setEditable(true);
             searchWidget.setResponder((text) -> {
                 onPlayerSearch(text);
@@ -293,6 +295,8 @@ public class ConspiratorScreen extends Screen {
         // 避免重复创建组件
         if (searchWidget == null) {
             searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20, Component.nullToEmpty(""));
+            searchWidget.setHint(Component.translatable("screen.noellesroles.search.placeholder")
+                    .withStyle(ChatFormatting.GRAY));
             searchWidget.setEditable(true);
             searchWidget.setResponder((text) -> {
                 onRoleSearch(text);

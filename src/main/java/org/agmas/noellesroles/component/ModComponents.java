@@ -6,7 +6,6 @@ import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.ConfigWorldComponent;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
-import org.agmas.noellesroles.roles.broadcaster.BroadcasterPlayerComponent;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
@@ -61,9 +60,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "slippery_ghost"),
                         SlipperyGhostPlayerComponent.class);
 
-        public static final ComponentKey<TelegrapherPlayerComponent> TELEGRAPHER = ComponentRegistry.getOrCreate(
-                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "telegrapher"),
-                        TelegrapherPlayerComponent.class);
+        public static final ComponentKey<BroadcasterPlayerComponent> BROADCASTER = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "broadcaster"),
+                        BroadcasterPlayerComponent.class);
 
         public static final ComponentKey<PostmanPlayerComponent> POSTMAN = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "postman"),
@@ -176,9 +175,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                                 .end(SlipperyGhostPlayerComponent::new);
 
                 // 注册电报员组件 - 存储使用次数
-                registry.beginRegistration(Player.class, TELEGRAPHER)
+                registry.beginRegistration(Player.class, BROADCASTER)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
-                                .end(TelegrapherPlayerComponent::new);
+                                .end(BroadcasterPlayerComponent::new);
 
                 // 注册邮差组件 - 存储传递状态和物品
                 registry.beginRegistration(Player.class, POSTMAN)
@@ -265,8 +264,6 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(ExecutionerPlayerComponent::new);
                 registry.beginRegistration(Player.class, RecallerPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(RecallerPlayerComponent::new);
-                registry.beginRegistration(Player.class, BroadcasterPlayerComponent.KEY)
-                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(BroadcasterPlayerComponent::new);
                                 
                 registry.beginRegistration(Player.class, NoiseMakerPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(NoiseMakerPlayerComponent::new);

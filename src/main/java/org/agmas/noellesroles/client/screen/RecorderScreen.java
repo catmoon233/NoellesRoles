@@ -172,6 +172,8 @@ public class RecorderScreen extends Screen {
         if (searchWidget == null) {
             searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
                     Component.nullToEmpty(""));
+            searchWidget.setHint(Component.translatable("screen.noellesroles.search.placeholder")
+                    .withStyle(ChatFormatting.GRAY));
             searchWidget.setEditable(true);
             searchWidget.setResponder((text) -> {
                 onPlayerSearch(text);
@@ -361,6 +363,8 @@ public class RecorderScreen extends Screen {
         if (searchWidget == null) {
             searchWidget = new EditBox(font, startX, startY - 40, totalWidth, 20,
                     Component.nullToEmpty(""));
+            searchWidget.setHint(Component.translatable("screen.noellesroles.search.placeholder")
+                    .withStyle(ChatFormatting.GRAY));
             searchWidget.setEditable(true);
             searchWidget.setResponder((text) -> {
                 onRoleSearch(text);

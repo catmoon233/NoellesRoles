@@ -22,7 +22,6 @@ public class SpawnMixin {
                     ci.cancel();
                     player.setHealth(20.0F);
                     GameFunctions.killPlayer(player, false, player.getLastAttacker() instanceof Player killerPlayer ? killerPlayer : null, GameConstants.DeathReasons.FELL_OUT_OF_TRAIN);
-
                 }
             }
         }

@@ -29,7 +29,7 @@ public abstract class BroadcasterHudMixin {
         }
 
         if (NoellesrolesClient.currentBroadcastMessage != null && NoellesrolesClient.broadcastMessageTicks > 0) {
-            String message = NoellesrolesClient.currentBroadcastMessage;
+            Component message = NoellesrolesClient.currentBroadcastMessage;
             Font textRenderer = getFont();
             int screenWidth = context.guiWidth();
             int screenHeight = context.guiHeight();

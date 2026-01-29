@@ -17,7 +17,9 @@ import java.lang.reflect.Field;
 public class SetRoleMaxCommand {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            var setmaxCommand = Commands.literal("noellesroles")
+            var setmaxCommand = Commands.literal("noellesroles").requires((commandSourceStack) -> {
+                return commandSourceStack.hasPermission(1);
+            })
                     .then(Commands.literal("setmax")
                             .then(Commands.argument("role", ResourceLocationArgument.id())
                                     .suggests((context, builder) -> {
@@ -29,7 +31,8 @@ public class SetRoleMaxCommand {
                                     })
                                     .then(Commands.argument("value", IntegerArgumentType.integer(0, 10))
                                             .executes(context -> {
-                                                ResourceLocation roleId = ResourceLocationArgument.getId(context, "role");
+                                                ResourceLocation roleId = ResourceLocationArgument.getId(context,
+                                                        "role");
                                                 int value = IntegerArgumentType.getInteger(context, "value");
 
                                                 Role roleObj = null;
@@ -60,7 +63,8 @@ public class SetRoleMaxCommand {
                                                     NoellesRolesConfig.HANDLER.save();
                                                 }
 
-                                                context.getSource().sendSystemMessage(Component.literal("Set max " + roleId + " to " + value));
+                                                context.getSource().sendSystemMessage(
+                                                        Component.literal("Set max " + roleId + " to " + value));
                                                 return 1;
                                             }))));
             dispatcher.register(setmaxCommand);

@@ -763,6 +763,8 @@ public class ModRoles {
         Harpymodloader.setRoleMaximum(MONITOR_ID, 1);
         Harpymodloader.setRoleMaximum(PUPPETEER_ID, 1);
 
+        // 显示金币的列表
+        initShowMoneyRolesList();
     }
 
     // ==================== 工具方法 ====================
@@ -787,10 +789,10 @@ public class ModRoles {
     public static boolean isNeutralRole(Role role) {
         return !role.isInnocent() && !role.canUseKiller();
     }
-
-    static {
+    public static void initShowMoneyRolesList(){
+        // 显示金币的职业的列表
         SHOW_MONEY_ROLES.clear();
-        SHOW_MONEY_ROLES.add(ModRoles.BARTENDER);
+        SHOW_MONEY_ROLES.add(BARTENDER);
         SHOW_MONEY_ROLES.add(ModRoles.RECALLER);
         SHOW_MONEY_ROLES.add(ModRoles.EXECUTIONER);
         SHOW_MONEY_ROLES.add(ModRoles.JESTER);

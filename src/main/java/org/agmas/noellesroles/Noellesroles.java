@@ -41,11 +41,11 @@ import net.minecraft.world.phys.Vec3;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
-import org.agmas.harpymodloader.events.ResetPlayerEvent;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
+import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.agmas.noellesroles.commands.ConfigCommand;
 import org.agmas.noellesroles.commands.SetRoleMaxCommand;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -175,6 +175,7 @@ public class Noellesroles implements ModInitializer {
         registerEvents();
 
         // 注册命令
+        BroadcastCommand.register();
         SetRoleMaxCommand.register();
         ConfigCommand.register();
 
@@ -1393,10 +1394,19 @@ public class Noellesroles implements ModInitializer {
                     PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
 
                     if (gameWorldComponent.isRole(context.player(), ModRoles.BROADCASTER)) {
-                        if (playerShopComponent.balance < 75) {
+
+                        BroadcasterPlayerComponent comp = BroadcasterPlayerComponent.KEY.get(context.player());
+                        String message = payload.message();
+                        boolean onlySave = payload.onlySave();
+                        if (onlySave) {
+                            comp.setStoredStr(message);
+                            return;
+                        }
+                        if (playerShopComponent.balance < 100) {
                             context.player().displayClientMessage(
                                     Component.translatable("message.noellesroles.insufficient_funds"),
                                     true);
+                            comp.setStoredStr(message);
                             if (context.player() instanceof ServerPlayer) {
                                 ServerPlayer player = (ServerPlayer) context.player();
                                 player.connection.send(new ClientboundSoundPacket(
@@ -1406,19 +1416,21 @@ public class Noellesroles implements ModInitializer {
                             }
                             return;
                         }
-                        String message = payload.message();
                         if (message.length() > 256) {
                             message = message.substring(0, 256);
+                        }
+                        if (comp != null) {
+                            comp.setStoredStr("");
                         }
                         playerShopComponent.balance -= 100;
                         playerShopComponent.sync();
 
                         for (ServerPlayer player : Objects.requireNonNull(context.player().getServer())
                                 .getPlayerList().getPlayers()) {
-                            // Text broadcastText = Text.translatable("message.broadcaster.broadcast",
-                            // context.player().getName(), Text.literal(message));
                             org.agmas.noellesroles.packet.BroadcastMessageS2CPacket packet = new org.agmas.noellesroles.packet.BroadcastMessageS2CPacket(
-                                    Component.literal(message));
+                                    Component.translatable("message.noellesroles.broadcaster.general",
+                                            Component.literal(message).withStyle(ChatFormatting.WHITE))
+                                            .withStyle(ChatFormatting.GREEN));
                             net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, packet);
                         }
                         abilityPlayerComponent.cooldown = 0;

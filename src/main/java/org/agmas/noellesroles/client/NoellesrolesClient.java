@@ -29,7 +29,7 @@ import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.screen.GuessRoleScreen;
 import org.agmas.noellesroles.client.screen.LockGameScreen;
-import org.agmas.noellesroles.client.screen.TelegrapherScreen;
+import org.agmas.noellesroles.client.screen.BroadcasterScreen;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
@@ -56,7 +56,7 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static Player targetFakeBody;
 
     public static Map<UUID, UUID> SHUFFLED_PLAYER_ENTRIES_CACHE = Maps.newHashMap();
-    public static String currentBroadcastMessage = null;
+    public static Component currentBroadcastMessage = null;
     public static int broadcastMessageTicks = 0;
 
     @Override
@@ -75,10 +75,9 @@ public class NoellesrolesClient implements ClientModInitializer {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
-                    if (!isPlayerInAdventureMode(client.player))
-                        return;
-
-                    currentBroadcastMessage = payload.message();
+                    // if (!isPlayerInAdventureMode(client.player))
+                    //     return;
+                    currentBroadcastMessage = payload.content();
                     broadcastMessageTicks = GameConstants.getInTicks(0,
                             NoellesRolesConfig.HANDLER.instance().broadcasterMessageDuration);
                 }
@@ -115,15 +114,17 @@ public class NoellesrolesClient implements ClientModInitializer {
                     client.setScreen(new GuessRoleScreen());
                 });
             }
-            if (!isPlayerInAdventureMode(client.player))
-                return;
-            insanityTime++;
+            
             if (broadcastMessageTicks > 0) {
                 broadcastMessageTicks--;
                 if (broadcastMessageTicks <= 0) {
                     currentBroadcastMessage = null;
                 }
             }
+            
+            if (!isPlayerInAdventureMode(client.player))
+                return;
+            insanityTime++;
             if (insanityTime >= 20 * 6) {
                 insanityTime = 0;
                 List<UUID> keys = new ArrayList<UUID>(TMMClient.PLAYER_ENTRIES_CACHE.keySet());
@@ -168,7 +169,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                     } else if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BROADCASTER)) {
                         if (!isPlayerInAdventureMode(client.player))
                             return;
-                        client.setScreen(new TelegrapherScreen(client.screen));
+                        client.setScreen(new BroadcasterScreen());
                         return;
                     }
                     ClientPlayNetworking.send(new AbilityC2SPacket());
