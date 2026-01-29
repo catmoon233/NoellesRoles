@@ -14,11 +14,12 @@ import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
 
 public class BomberPlayerComponent implements RoleComponent {
     public static final int BOMB_COST = 100;
     private final Player player;
-
+    public static final ComponentKey<BomberPlayerComponent> KEY = ModComponents.BOMBER;
     public BomberPlayerComponent(Player player) {
         this.player = player;
     }
