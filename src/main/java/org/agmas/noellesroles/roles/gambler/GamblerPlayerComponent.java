@@ -3,6 +3,9 @@ package org.agmas.noellesroles.roles.gambler;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.critereon.UsedTotemTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -11,6 +14,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.gameevent.GameEvent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
@@ -95,8 +100,22 @@ public class GamblerPlayerComponent implements RoleComponent, ServerTickingCompo
         if (!validRoles.isEmpty()) {
             Collections.shuffle(validRoles);
             Role drawnRole = validRoles.getFirst();
-            availableRoles.add(drawnRole.identifier());
+            if (player instanceof ServerPlayer serverPlayer) {
 
+
+                if (drawnRole.canUseKiller()) {
+                    CriteriaTriggers.USED_TOTEM.trigger(serverPlayer, TMMItems.KNIFE.getDefaultInstance());
+                } else if (drawnRole.isInnocent()){
+                    CriteriaTriggers.USED_TOTEM.trigger(serverPlayer, TMMItems.KEY.getDefaultInstance());
+                }else if (drawnRole.isVigilanteTeam()) {
+                    CriteriaTriggers.USED_TOTEM.trigger(serverPlayer, TMMItems.REVOLVER.getDefaultInstance());
+                }else if (!drawnRole.isInnocent()) {
+                    CriteriaTriggers.USED_TOTEM.trigger(serverPlayer, TMMItems.POISON_VIAL.getDefaultInstance());
+                }
+                serverPlayer.gameEvent(GameEvent.ITEM_INTERACT_FINISH);
+
+            }
+            availableRoles.add(drawnRole.identifier());
             // 如果还没有选择角色，默认选择第一个抽到的
             if (selectedRole == null) {
                 selectedRole = drawnRole.identifier();

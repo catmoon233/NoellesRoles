@@ -84,10 +84,16 @@ public class BoxerPlayerComponent implements RoleComponent, ServerTickingCompone
         this.isInvulnerable = false;
         this.sync();
     }
-    
+
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return this.player == player;
+    }
+
     /**
      * 检查技能是否可用
      */
+
     public boolean canUseAbility() {
         return cooldown <= 0 && !isInvulnerable;
     }

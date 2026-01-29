@@ -83,6 +83,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+
         ClientPlayNetworking.registerGlobalReceiver(PlayerResetS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {

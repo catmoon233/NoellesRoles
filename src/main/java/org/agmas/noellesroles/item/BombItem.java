@@ -1,5 +1,7 @@
 package org.agmas.noellesroles.item;
 
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -21,6 +23,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.role.ModRoles;
 
 public class BombItem extends Item {
     public static final String TIMER_KEY = "bomb_timer";
@@ -71,6 +74,15 @@ public class BombItem extends Item {
         ((ServerLevel) player.level()).sendParticles(ParticleTypes.EXPLOSION, player.getX(), player.getY(),
                 player.getZ(), 1, 0, 0, 0, 0);
         GameFunctions.killPlayer(player, true, null, Noellesroles.id("bomb_death"));
+        ServerLevel serverLevel = player.serverLevel();
+        serverLevel.players().forEach(
+                target -> {
+                    if (GameWorldComponent.KEY.get(serverLevel).isRole(target, ModRoles.BOMBER)){
+                        PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(target);
+                        playerShopComponent.setBalance(100 + playerShopComponent.balance);
+                    }
+                }
+        );
     }
 
     @Override

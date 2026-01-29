@@ -556,6 +556,8 @@
   "==================== 炸弹客角色 ====================": "",
   "announcement.role.bomber": "炸弹客",
   "death_reason.noellesroles.gamble_self_kill": "赌徒用枪自杀",
+  "gambler.select_role": "预择职业",
+  "\"screen.noellesroles.gambler.click_to_select": "选择该职业",
   "death_reason.trainmurdermystery.gamble_self_kill": "赌徒用枪自杀",
   "announcement.goals.bomber": "购买炸弹并传递给其他玩家。炸弹倒计时20秒，前10秒隐形。每次传递增加1.5秒。",
   "announcement.win.bomber": "杀手胜利！",

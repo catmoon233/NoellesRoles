@@ -93,4 +93,8 @@ public class RoleUtils {
     public static Role getRole(ResourceLocation role) {
         return TMMRoles.ROLES.get(role);
     }
+
+    public static Component getRoleDescription(Role selectedRole) {
+        return Component.translatable("info.screen.roleid."+selectedRole.getIdentifier().getPath());
+    }
 }
