@@ -17,7 +17,6 @@ public class DecServerJoinPlayer {
     @Inject(method = "placeNewPlayer", at = @At("TAIL"))
     public void placeNewPlayer(Connection connection, ServerPlayer serverPlayer, CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
         ConfigWorldComponent.KEY.get(serverPlayer.level()).sync();
-        BodyDeathReasonComponent.KEY.get(serverPlayer.level()).sync();
         WorldModifierComponent.KEY.get(serverPlayer.level()).sync();
     }
 }

@@ -87,8 +87,8 @@ public class NoellesrolesClient implements ClientModInitializer {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
-                    client.player.sendSystemMessage(Component.translatable("screen.noellesroles.guess_role.reset")
-                            .withColor(Color.ORANGE.getRGB()));
+//                    client.player.sendSystemMessage(Component.translatable("screen.noellesroles.guess_role.reset")
+//                            .withColor(Color.ORANGE.getRGB()));
                     GuessRoleScreen.clearData();
                 }
             });
