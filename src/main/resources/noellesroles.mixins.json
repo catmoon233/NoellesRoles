@@ -78,7 +78,6 @@
     "client.StalkerInstinctMixin",
     "client.StalkerRoleNameMixin",
     "client.StarHudMixin",
-    "client.StoreRendererMixin",
     "client.admirer.AdmirerHudMixin",
     "client.bartender.DefenseVialHandMixin",
     "client.broadcaster.BroadcasterHudMixin",

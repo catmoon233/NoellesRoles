@@ -50,6 +50,10 @@ public abstract class PlayerResetMixin {
     private static void clearAllComponents(ServerPlayer player) {
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
+        
+        // 清除惩罚组件状态
+        DeathPenaltyComponent deathPenalty = ModComponents.DEATH_PENALTY.get(player);
+        deathPenalty.clearAll();
 
         // 清除慕恋者组件状态
         AdmirerPlayerComponent admirerComp = ModComponents.ADMIRER.get(player);
