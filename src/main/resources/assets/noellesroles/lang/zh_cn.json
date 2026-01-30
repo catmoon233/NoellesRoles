@@ -611,5 +611,10 @@
   "message.noellesroles.monitor.no_target": "请将准星对准一名玩家！",
   "message.noellesroles.doctor.antidote_inherited": "你从 %s 那里继承了针管！",
   "message.noellesroles.monitor.target_not_found": "目标无效或已死亡！",
-  "message.noellesroles.swapper.swapped": "你被交换者交换了位置！"
+  "message.noellesroles.swapper.swapped": "你被交换者交换了位置！",
+  "==================== 巡警角色 ====================": "",
+  "announcement.role.patroller": "巡警",
+  "info.screen.roleid.patroller": "当你的视野30格内有人死亡时，你获得一把左轮手枪和一把乘务员钥匙。",
+  "announcement.goals.patroller": "当你亲眼目睹了一场死亡时，你获得一把左轮手枪和一把乘务员钥匙。",
+  "announcement.win.patroller": "乘客胜利！"
 }

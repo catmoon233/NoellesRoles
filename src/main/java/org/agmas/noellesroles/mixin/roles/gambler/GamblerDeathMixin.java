@@ -71,14 +71,23 @@ public class GamblerDeathMixin {
 				gamblerPlayerComponent.sync();
 
 				// 变成正义阵营（vigilante）
-				// victim.addItem(TMMItems.REVOLVER.getDefaultInstance());
-				RoleUtils.changeRole(victim, TMMRoles.VIGILANTE);
+				// 随机选择一个警长阵营角色
+				ArrayList<Role> vigilanteRoles = new ArrayList<>();
+				for (Role role : TMMRoles.ROLES.values()) {
+					if (role.isVigilanteTeam() && !HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath())) {
+						vigilanteRoles.add(role);
+					}
+				}
+				
+				if (vigilanteRoles.isEmpty()) {
+					vigilanteRoles.add(TMMRoles.VIGILANTE);
+				}
+				
+				Collections.shuffle(vigilanteRoles);
+				Role selectedRole = vigilanteRoles.get(0);
 
-				// gameWorldComponent.addRole(victim, TMMRoles.VIGILANTE);
-				// ModdedRoleAssigned.EVENT.invoker().assignModdedRole(victim,TMMRoles.VIGILANTE);
-				// ServerPlayNetworking.send((ServerPlayer) victim, new
-				// AnnounceWelcomePayload(gameWorldComponent.getRole(victim).getIdentifier().toString(),
-				// gameWorldComponent.getAllKillerTeamPlayers().size(), 0))
+				RoleUtils.changeRole(victim, selectedRole);
+
 				RoleUtils.sendWelcomeAnnouncement((ServerPlayer) victim);
 
 				teleport(victim);

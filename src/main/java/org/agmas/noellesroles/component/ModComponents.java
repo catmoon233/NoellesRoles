@@ -143,6 +143,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         public static final ComponentKey<SwapperPlayerComponent> SWAPPER = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "swapper"),
                         SwapperPlayerComponent.class);
+        public static final ComponentKey<PatrollerPlayerComponent> PATROLLER = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "patroller"),
+                        PatrollerPlayerComponent.class);
 
         public ModComponents() {
                 // CCA 需要无参构造函数

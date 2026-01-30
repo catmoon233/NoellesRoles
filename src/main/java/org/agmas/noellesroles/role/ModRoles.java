@@ -81,6 +81,7 @@ public class ModRoles {
     public static ResourceLocation ATTENDANT_ID = Noellesroles.id("attendant");
     public static ResourceLocation SHERIFF_ID = Noellesroles.id("sheriff");
     public static ResourceLocation CORONER_ID = Noellesroles.id("coroner");
+    public static ResourceLocation PATROLLER_ID = Noellesroles.id("patroller");
 
     // 杀手阵营角色 ID
     public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
@@ -167,6 +168,10 @@ public class ModRoles {
     public static Role ATTENDANT = TMMRoles
             .registerRole(new NoramlRole(ATTENDANT_ID, (new Color(198, 185, 36)).getRGB(),
                     true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+    public static Role PATROLLER = TMMRoles
+            .registerRole(new NoramlRole(PATROLLER_ID, 0x1B8AE5, true, false, Role.MoodType.REAL,
+                    dev.doctor4t.trainmurdermystery.game.GameConstants.getInTicks(0, 10), false)
+                    .setVigilanteTeam(true).setComponentKey(PatrollerPlayerComponent.KEY));
 
     // 杀手阵营角色
     public static Role MORPHLING = TMMRoles
