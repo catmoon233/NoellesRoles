@@ -164,6 +164,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 registry.beginRegistration(Player.class, ABILITY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(AbilityPlayerComponent::new);
+                registry.beginRegistration(Player.class, PATROLLER)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(PatrollerPlayerComponent::new);
 
                 // 注册复仇者组件 - 存储绑定目标和激活状态
                 registry.beginRegistration(Player.class, AVENGER)
