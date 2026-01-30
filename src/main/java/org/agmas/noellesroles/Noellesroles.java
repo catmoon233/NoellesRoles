@@ -1333,32 +1333,16 @@ public class Noellesroles implements ModInitializer {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                     .get(context.player().level());
             if (gameWorldComponent.isRole(context.player(), ModRoles.SWAPPER)) {
-                if (payload.player() != null) {
-                    if (context.player().level().getPlayerByUUID(payload.player()) != null) {
-                        if (payload.player2() != null) {
-                            if (context.player().level().getPlayerByUUID(payload.player2()) != null) {
-                                Player player1 = context.player().level().getPlayerByUUID(payload.player2());
-                                Player player2 = context.player().level().getPlayerByUUID(payload.player());
-                                Vec3 swapperPos = context.player().level().getPlayerByUUID(payload.player2())
-                                        .position();
-                                Vec3 swappedPos = context.player().level().getPlayerByUUID(payload.player())
-                                        .position();
-                                if (!context.player().level().noCollision(player1))
-                                    return;
-                                if (!context.player().level().noCollision(player2))
-                                    return;
-                                context.player().level().getPlayerByUUID(payload.player2())
-                                        .moveTo(swappedPos.x, swappedPos.y, swappedPos.z);
-                                context.player().level().getPlayerByUUID(payload.player())
-                                        .moveTo(swapperPos.x, swapperPos.y, swapperPos.z);
-                            }
+                if (payload.player() != null && payload.player2() != null) {
+                    if (context.player().level().getPlayerByUUID(payload.player()) != null &&
+                            context.player().level().getPlayerByUUID(payload.player2()) != null) {
+                        
+                        SwapperPlayerComponent swapperComponent = ModComponents.SWAPPER.get(context.player());
+                        if (!swapperComponent.isSwapping) {
+                            swapperComponent.startSwap(payload.player(), payload.player2());
                         }
                     }
                 }
-                AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
-                        .get(context.player());
-                abilityPlayerComponent.cooldown = GameConstants.getInTicks(1, 0);
-                abilityPlayerComponent.sync();
             }
         });
 

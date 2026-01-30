@@ -113,7 +113,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<InventoryM
         }
 
         return client.level.players().stream()
-                .filter(a->a.getUUID() !=player.getUUID()&& isPlayerInAdventureMode( a) && a.getUUID()!=client.player.getUUID())
+                .filter(a-> isPlayerInAdventureMode( a))
                 .collect(Collectors.toList());
     }
 
