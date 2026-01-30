@@ -1,4 +1,4 @@
-package org.agmas.noellesroles.mixin;
+package org.agmas.noellesroles.mixin.client.swapper;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -18,9 +18,8 @@ public abstract class KeyBindingMixin {
 
     @Unique
     private boolean shouldSuppressKey() {
-        if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRunning() && TMMClient.isPlayerAliveAndInSurvival() && TMMClient.gameComponent.isRole(Minecraft.getInstance().player, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
-            final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(Minecraft.getInstance().player);
-            if (insaneKillerPlayerComponent.isActive) {
+        if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRunning() && TMMClient.isPlayerAliveAndInSurvival() && TMMClient.gameComponent.isRole(Minecraft.getInstance().player, ModRoles.SWAPPER)) {
+            if (Minecraft.getInstance().screen !=null) {
                 return this.same(Minecraft.getInstance().options.keySwapOffhand) ||
                         this.same(Minecraft.getInstance().options.keyJump) ||
                         this.same(Minecraft.getInstance().options.keyTogglePerspective) ||
