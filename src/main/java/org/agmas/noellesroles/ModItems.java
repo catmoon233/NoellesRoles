@@ -41,6 +41,10 @@ public class ModItems {
                         new DefibrillatorItem(new Item.Properties().stacksTo(1)),
                         "defibrillator");
 
+        public static final Item BOXING_GLOVE = register(
+                        new BoxingGloveItem(new Item.Properties().stacksTo(1)),
+                        "boxing_glove");
+
         public static final Item ANTIDOTE_REAGENT = register(
                         new AntidoteReagentItem(new Item.Properties().stacksTo(16)),
                         "antidote_reagent");
