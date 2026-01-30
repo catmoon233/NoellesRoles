@@ -1,10 +1,13 @@
 package org.agmas.noellesroles.role;
 
+import com.mojang.serialization.Codec;
 import dev.doctor4t.trainmurdermystery.api.NoramlRole;
 import dev.doctor4t.trainmurdermystery.api.NormalRole;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.component.*;
@@ -59,11 +62,13 @@ import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
  * | 邪恶乘客 | true | true | 乘客阵营但有杀手能力（特殊） |
  */
 public class ModRoles {
-
+    public static final AttachmentType<String> ENTITY_NOTE_MAKER =
+            AttachmentRegistry.<String>builder()
+                    .persistent(Codec.STRING)
+                    .buildAndRegister(Noellesroles.id( "entity_note_maker"));
     // ==================== 角色 ID 定义 ====================
     // 建议格式：MOD_ID:role_name
-
-    public static ArrayList<Role> SHOW_MONEY_ROLES = new ArrayList<>();
+    
     // 乘客阵营角色 ID
     public static ResourceLocation JESTER_ID = Noellesroles.id("jester");
     public static ResourceLocation CONDUCTOR_ID = Noellesroles.id("conductor");
@@ -75,32 +80,12 @@ public class ModRoles {
     public static ResourceLocation BETTER_VIGILANTE_ID = Noellesroles.id("better_vigilante");
     public static ResourceLocation BROADCASTER_ID = Noellesroles.id("broadcaster");
     public static ResourceLocation GHOST_ID = Noellesroles.id("ghost");
-    // public static ResourceLocation PHOTOGRAPHER_ID =
-    // Noellesroles.id("photographer");
     public static ResourceLocation DOCTOR_ID = Noellesroles.id("doctor");
     public static ResourceLocation ATTENDANT_ID = Noellesroles.id("attendant");
     public static ResourceLocation SHERIFF_ID = Noellesroles.id("sheriff");
     public static ResourceLocation CORONER_ID = Noellesroles.id("coroner");
     public static ResourceLocation PATROLLER_ID = Noellesroles.id("patroller");
-
-    // 杀手阵营角色 ID
-    public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
-    public static ResourceLocation PHANTOM_ID = Noellesroles.id("phantom");
-    public static ResourceLocation SWAPPER_ID = Noellesroles.id("swapper");
-    public static ResourceLocation EXECUTIONER_ID = Noellesroles.id("executioner");
-    public static ResourceLocation GAMBLER_ID = Noellesroles.id("gambler");
-    // public static ResourceLocation THIEF_ID = Noellesroles.id("thief");
-    public static ResourceLocation POISONER_ID = Noellesroles.id("poisoner");
-
-    public static ResourceLocation THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Noellesroles
-            .id("the_insane_damned_paranoid_killer");
-
-    // 中立阵营角色 ID
-    public static ResourceLocation VULTURE_ID = Noellesroles.id("vulture");
-
-    // 自定义模组角色 ID - 乘客阵营
     public static final ResourceLocation AVENGER_ID = Noellesroles.id("avenger");
-
     public static final ResourceLocation SLIPPERY_GHOST_ID = Noellesroles.id("slippery_ghost");
     public static final ResourceLocation ENGINEER_ID = Noellesroles.id("engineer");
     public static final ResourceLocation BOXER_ID = Noellesroles.id("boxer");
@@ -112,20 +97,29 @@ public class ModRoles {
     public static final ResourceLocation SINGER_ID = Noellesroles.id("singer");
     public static final ResourceLocation PSYCHOLOGIST_ID = Noellesroles.id("psychologist");
 
-    // 自定义模组角色 ID - 杀手阵营
+
+    // 杀手阵营角色 ID
+    public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
+    public static ResourceLocation PHANTOM_ID = Noellesroles.id("phantom");
+    public static ResourceLocation SWAPPER_ID = Noellesroles.id("swapper");
+    public static ResourceLocation EXECUTIONER_ID = Noellesroles.id("executioner");
+    public static ResourceLocation GAMBLER_ID = Noellesroles.id("gambler");
+    public static ResourceLocation POISONER_ID = Noellesroles.id("poisoner");
+    public static ResourceLocation THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Noellesroles
+            .id("the_insane_damned_paranoid_killer");
     public static final ResourceLocation CONSPIRATOR_ID = Noellesroles.id("conspirator");
     public static final ResourceLocation TRAPPER_ID = Noellesroles.id("trapper");
     public static final ResourceLocation BOMBER_ID = Noellesroles.id("bomber");
     public static final ResourceLocation MANIPULATOR_ID = Noellesroles.id("manipulator");
 
-    // 自定义模组角色 ID - 中立阵营
+
+    //  中立阵营
     public static final ResourceLocation STALKER_ID = Noellesroles.id("stalker");
     public static final ResourceLocation ADMIRER_ID = Noellesroles.id("admirer");
     public static final ResourceLocation PUPPETEER_ID = Noellesroles.id("puppeteer");
     public static final ResourceLocation MONITOR_ID = Noellesroles.id("monitor");
-
     public static final ResourceLocation RECORDER_ID = Noellesroles.id("recorder");
-
+    public static ResourceLocation VULTURE_ID = Noellesroles.id("vulture");
     // ==================== 已注册角色定义 ====================
     // 乘客阵营角色
     public static Role JESTER = TMMRoles
@@ -158,10 +152,6 @@ public class ModRoles {
     public static Role GHOST = TMMRoles
             .registerRole(new NoramlRole(GHOST_ID, new Color(200, 200, 200).getRGB(), true, false,
                     Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
-    // public static Role PHOTOGRAPHER = TMMRoles.registerRole(new
-    // Role(PHOTOGRAPHER_ID, (new Color(0, 128, 255)).getRGB(),
-    // true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(),
-    // false));
     public static Role DOCTOR = TMMRoles
             .registerRole(new NoramlRole(DOCTOR_ID, new Color(30, 144, 255).getRGB(), true,
                     false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
@@ -185,7 +175,7 @@ public class ModRoles {
                     true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
     public static Role SWAPPER = TMMRoles
             .registerRole(new NoramlRole(SWAPPER_ID, new Color(255, 0, 255).getRGB(), false,
-                    true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
+                    true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)).setComponentKey(ModComponents.SWAPPER);
     public static Role EXECUTIONER = TMMRoles
             .registerRole(new NoramlRole(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),
                     false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true).setComponentKey(ExecutionerPlayerComponent.KEY));
@@ -193,10 +183,6 @@ public class ModRoles {
             .registerRole(new GamblerRole(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
                     false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true))
             .setCanPickUpRevolver(true).setComponentKey(GamblerPlayerComponent.KEY);
-    // public static Role THIEF = TMMRoles
-    // .registerRole(new NoramlRole(THIEF_ID, new Color(139, 69, 19).getRGB(),
-    // false, false,
-    // Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
     public static Role POISONER = TMMRoles
             .registerRole(new NoramlRole(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false,
                     true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
@@ -216,7 +202,7 @@ public class ModRoles {
                     false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
 
     // ==================== 自定义角色对象定义 ====================
-
+    // 乘客阵营角色
     /**
      * 复仇者角色
      * - 属于乘客阵营 (isInnocent = true)
@@ -226,62 +212,6 @@ public class ModRoles {
      * - 绑定方式：默认随机，可配置为瞄准绑定
      */
     public static Role AVENGER;
-
-    /**
-     * 阴谋家角色
-     * - 属于杀手阵营 (isInnocent = false, canUseKiller = false)
-     * - 可以在商店购买"书页"物品（250金币）
-     * - 右键使用书页打开GUI：选择玩家头像，再选择角色
-     * - 如果猜测正确，目标玩家40秒后死亡
-     * - 猜测错误无惩罚，但书页消耗
-     */
-    /**
-     * 炸弹客角色
-     * - 属于杀手阵营 (isInnocent = false, canUseKiller = true)
-     * - 可以在商店购买炸弹
-     * - 炸弹倒计时10秒，前5秒隐形
-     * - 右键传递炸弹
-     */
-    public static Role BOMBER;
-    public static Role CONSPIRATOR;
-
-    /**
-     * 示例乘客角色
-     * - 属于乘客阵营 (isInnocent = true)
-     * - 不能使用杀手能力 (canUseKiller = false)
-     * - 真实心情系统
-     * - 标准冲刺时间
-     * - 在计分板上显示
-     */
-    public static Role EXAMPLE_CREW;
-
-    /**
-     * 示例杀手角色
-     * - 属于杀手阵营 (isInnocent = false)
-     * - 可以使用杀手能力 (canUseKiller = true)
-     * - 假心情系统
-     * - 无限冲刺
-     * - 在计分板上隐藏
-     */
-    public static Role EXAMPLE_KILLER;
-
-    /**
-     * 示例中立角色
-     * - 不属于乘客阵营 (isInnocent = false)
-     * - 不能使用杀手能力 (canUseKiller = false)
-     * - 假心情系统
-     * - 标准冲刺时间
-     * - 在计分板上隐藏
-     */
-    /**
-     * 记录员角色
-     * - 中立阵营 (isInnocent = false, canUseKiller = false)
-     * - 假心情系统
-     * - 标准冲刺时间
-     * - 在计分板上隐藏
-     * - 目标：使用笔记选择人和对应职业，如果正确人数达到2/5,获得独立胜利
-     */
-    public static Role RECORDER;
 
     /**
      * 滑头鬼角色
@@ -295,17 +225,6 @@ public class ModRoles {
      * - 胜利条件：与杀手同胜
      */
     public static Role SLIPPERY_GHOST;
-
-    /**
-     * 电报员角色
-     * - 属于乘客阵营 (isInnocent = true)
-     * - 不能使用杀手能力 (canUseKiller = false)
-     * - 真实心情系统
-     * - 标准冲刺时间
-     * - 在计分板上显示
-     * - 特殊能力：可以打开GUI编辑匿名消息并发送给所有玩家
-     * - 使用限制：3次
-     */
 
     /**
      * 工程师角色
@@ -369,19 +288,6 @@ public class ModRoles {
     public static Role DETECTIVE;
 
     /**
-     * 跟踪者角色
-     * - 初始为中立阵营 (isInnocent = false, canUseKiller = false)
-     * - 假心情系统
-     * - 无限冲刺（一阶段）
-     * - 在计分板上隐藏
-     * - 三阶段进化机制：
-     * - 一阶段（潜伏者）：群体窥视积累能量，满150能量进阶
-     * - 二阶段（觉醒猎手）：转为杀手阵营，获得刀和一次免疫，杀2人+30能量进阶
-     * - 三阶段（狂暴追击者）：蓄力突进处决，180秒倒计时
-     */
-    public static Role STALKER;
-
-    /**
      * 运动员角色
      * - 属于乘客阵营 (isInnocent = true)
      * - 不能使用杀手能力 (canUseKiller = false)
@@ -393,35 +299,6 @@ public class ModRoles {
      * - 使用后冷却120秒（2分钟）
      */
     public static Role ATHLETE;
-
-    /**
-     * 慕恋者角色
-     * - 中立阵营 (isInnocent = false, canUseKiller = false)
-     * - 假心情系统
-     * - 标准冲刺时间
-     * - 在计分板上隐藏
-     * - 技能"群体窥视"：
-     * - 按住技能键观察视野内的玩家
-     * - 每名被观察玩家每秒 +1 能量
-     * - 满300能量后变为随机杀手角色
-     */
-    public static Role ADMIRER;
-
-    /**
-     * 设陷者角色
-     * - 属于杀手阵营 (isInnocent = false, canUseKiller = true)
-     * - 假心情系统
-     * - 标准冲刺时间
-     * - 在计分板上隐藏
-     * - 技能"灾厄印记"：
-     * - 使用技能对准地面设置隐形陷阱
-     * - 隐形的灾厄印记，其他玩家踩中会触发
-     * - 触发效果：发出巨响暴露位置并发光，施加"标记"
-     * - 被标记的玩家被囚禁在原地3秒
-     * - 触发两次后囚禁延长到10秒
-     * - 触发三次后囚禁延长到25秒
-     */
-    public static Role TRAPPER;
 
     /**
      * 明星角色
@@ -477,6 +354,69 @@ public class ModRoles {
      */
     public static Role PSYCHOLOGIST;
 
+    // 杀手阵营角色
+    /**
+     * 阴谋家角色
+     * - 属于杀手阵营 (isInnocent = false, canUseKiller = true)
+     * - 可以在商店购买"书页"物品（250金币）
+     * - 右键使用书页打开GUI：选择玩家头像，再选择角色
+     * - 如果猜测正确，目标玩家40秒后死亡
+     * - 猜测错误无惩罚，但书页消耗
+     */
+    public static Role CONSPIRATOR;
+
+    /**
+     * 设陷者角色
+     * - 属于杀手阵营 (isInnocent = false, canUseKiller = true)
+     * - 假心情系统
+     * - 标准冲刺时间
+     * - 在计分板上隐藏
+     * - 技能"灾厄印记"：
+     * - 使用技能对准地面设置隐形陷阱
+     * - 隐形的灾厄印记，其他玩家踩中会触发
+     * - 触发效果：发出巨响暴露位置并发光，施加"标记"
+     * - 被标记的玩家被囚禁在原地3秒
+     * - 触发两次后囚禁延长到10秒
+     * - 触发三次后囚禁延长到25秒
+     */
+    public static Role TRAPPER;
+
+    /**
+     * 炸弹客角色
+     * - 属于杀手阵营 (isInnocent = false, canUseKiller = true)
+     * - 可以在商店购买炸弹
+     * - 炸弹倒计时10秒，前5秒隐形
+     * - 右键传递炸弹
+     */
+    public static Role BOMBER;
+
+    // 中立阵营角色
+    /**
+     * 跟踪者角色
+     * - 初始为中立阵营 (isInnocent = false, canUseKiller = false)
+     * - 假心情系统
+     * - 无限冲刺（一阶段）
+     * - 在计分板上隐藏
+     * - 三阶段进化机制：
+     * - 一阶段（潜伏者）：群体窥视积累能量，满150能量进阶
+     * - 二阶段（觉醒猎手）：转为杀手阵营，获得刀和一次免疫，杀2人+30能量进阶
+     * - 三阶段（狂暴追击者）：蓄力突进处决，180秒倒计时
+     */
+    public static Role STALKER;
+
+    /**
+     * 慕恋者角色
+     * - 中立阵营 (isInnocent = false, canUseKiller = false)
+     * - 假心情系统
+     * - 标准冲刺时间
+     * - 在计分板上隐藏
+     * - 技能"群体窥视"：
+     * - 按住技能键观察视野内的玩家
+     * - 每名被观察玩家每秒 +1 能量
+     * - 满300能量后变为随机杀手角色
+     */
+    public static Role ADMIRER;
+
     /**
      * 傀儡师角色
      * - 初始为中立阵营 (isInnocent = false, canUseKiller = false)
@@ -495,14 +435,27 @@ public class ModRoles {
      * - 操控限时1分钟，技能冷却3分钟
      * - 本体状态无法购买商店
      */
+    public static Role PUPPETEER;
+
     /**
      * 监察员角色
      * - 属于好人阵营 (isInnocent = true)
      * - 技能：标记一名玩家并透视其位置，冷却60秒
      */
     public static Role MONITOR;
-    public static Role PUPPETEER;
 
+    /**
+     * 记录员角色
+     * - 中立阵营 (isInnocent = false, canUseKiller = false)
+     * - 假心情系统
+     * - 标准冲刺时间
+     * - 在计分板上隐藏
+     * - 目标：使用笔记选择人和对应职业，如果正确人数达到2/5,获得独立胜利
+     */
+    public static Role RECORDER;
+
+    // ==================== 其他变量定义 ====================
+    public static ArrayList<Role> SHOW_MONEY_ROLES = new ArrayList<>();
     public static HashMap<Role, RoleAnnouncementTexts.RoleAnnouncementText> roleRoleAnnouncementTextHashMap = new HashMap<>();
 
     /**
@@ -510,9 +463,7 @@ public class ModRoles {
      * 在模组初始化时调用
      */
     public static void init() {
-
         // ==================== 注册乘客阵营角色 ====================
-
         // 复仇者角色 - 乘客阵营
         AVENGER = TMMRoles.registerRole(new NoramlRole(
                 AVENGER_ID, // 角色 ID
@@ -635,7 +586,6 @@ public class ModRoles {
         ).setComponentKey(PsychologistPlayerComponent.KEY));
 
         // ==================== 注册杀手阵营角色 ====================
-
         // 阴谋家角色 - 杀手阵营
         CONSPIRATOR = TMMRoles.registerRole(new NoramlRole(
                 CONSPIRATOR_ID, // 角色 ID
@@ -670,7 +620,6 @@ public class ModRoles {
         ).setComponentKey(BomberPlayerComponent.KEY));
 
         // ==================== 注册中立阵营角色 ====================
-
         // 跟踪者角色 - 杀手阵营（一开始就是杀手，通过阶段控制能力）
         STALKER = TMMRoles.registerRole(new NoramlRole(
                 STALKER_ID, // 角色 ID
@@ -709,6 +658,8 @@ public class ModRoles {
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
                 true // 隐藏计分板
         )).setComponentKey(RecorderPlayerComponent.KEY);
+        
+        // 监察员角色 - 好人阵营
         MONITOR = TMMRoles.registerRole(new NoramlRole(
                 MONITOR_ID, // 角色 ID
                 new Color(0, 255, 255).getRGB(), // 青色
@@ -718,14 +669,11 @@ public class ModRoles {
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
                 false // 不隐藏计分板
         ).setComponentKey(MonitorPlayerComponent.KEY).setCanSeeCoin(true));
+
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
-
         // 复仇者每局只能有 1 个
         Harpymodloader.setRoleMaximum(AVENGER_ID, 1);
-
-        // 阴谋家每局只能有 1 个
-        Harpymodloader.setRoleMaximum(CONSPIRATOR_ID, 1);
 
         // 滑头鬼每局只能有 1 个
         Harpymodloader.setRoleMaximum(SLIPPERY_GHOST_ID, 1);
@@ -742,19 +690,8 @@ public class ModRoles {
         // 私家侦探每局只能有 1 个
         Harpymodloader.setRoleMaximum(DETECTIVE_ID, 1);
 
-        // 跟踪者每局只能有 1 个
-        Harpymodloader.setRoleMaximum(STALKER_ID, 1);
-
         // 运动员每局只能有 1 个
         Harpymodloader.setRoleMaximum(ATHLETE_ID, 1);
-
-        // 慕恋者每局只能有 1 个
-        Harpymodloader.setRoleMaximum(ADMIRER_ID, 1);
-
-        // 设陷者每局只能有 1 个
-        // 炸弹客每局只能有 1 个
-        Harpymodloader.setRoleMaximum(BOMBER_ID, 1);
-        Harpymodloader.setRoleMaximum(TRAPPER_ID, 1);
 
         // 明星每局只能有 1 个
         Harpymodloader.setRoleMaximum(STAR_ID, 1);
@@ -768,17 +705,29 @@ public class ModRoles {
         // 心理学家每局只能有 1 个
         Harpymodloader.setRoleMaximum(PSYCHOLOGIST_ID, 1);
 
+        // 阴谋家每局只能有 1 个
+//        Harpymodloader.setRoleMaximum(CONSPIRATOR_ID, 1);
+
+        // 设陷者每局只能有 1 个
+//        Harpymodloader.setRoleMaximum(TRAPPER_ID, 1);
+
+        // 炸弹客每局只能有 1 个
+        Harpymodloader.setRoleMaximum(BOMBER_ID, 1);
+
+        // 跟踪者每局只能有 1 个
+        Harpymodloader.setRoleMaximum(STALKER_ID, 1);
+
+        // 慕恋者每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ADMIRER_ID, 1);
+
         // 傀儡师每局只能有 1 个
+        Harpymodloader.setRoleMaximum(PUPPETEER_ID, 1);
+
         // 记录员每局只能有 1 个
         Harpymodloader.setRoleMaximum(RECORDER_ID, 1);
-        // 监察员角色 - 好人阵营
 
         // 监察员每局只能有 1 个
         Harpymodloader.setRoleMaximum(MONITOR_ID, 1);
-        Harpymodloader.setRoleMaximum(PUPPETEER_ID, 1);
-
-        // 显示金币的列表
-        // initShowMoneyRolesList();
     }
 
     // ==================== 工具方法 ====================
@@ -803,6 +752,7 @@ public class ModRoles {
     public static boolean isNeutralRole(Role role) {
         return !role.isInnocent() && !role.canUseKiller();
     }
+
     public static void initShowMoneyRolesList(){
         // 显示金币的职业的列表
         SHOW_MONEY_ROLES.clear();

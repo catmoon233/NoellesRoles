@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.component;
 
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +16,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.UUID;
 
-public class SwapperPlayerComponent implements AutoSyncedComponent, ServerTickingComponent {
+public class SwapperPlayerComponent implements RoleComponent, ServerTickingComponent {
     private final Player player;
     public boolean isSwapping = false;
     public int swapTimer = 0;
@@ -29,20 +30,6 @@ public class SwapperPlayerComponent implements AutoSyncedComponent, ServerTickin
     @Override
     public void serverTick() {
         if (isSwapping) {
-            // 冻结移动
-            if (player instanceof ServerPlayer serverPlayer) {
-                // 通过不断传送回当前位置来模拟冻结，或者设置速度为0
-                // 这里简单地设置速度为0，但可能不够强力。
-                // 参考 InsaneKillerPlayerComponent，可能需要更强的控制。
-                // 但考虑到只有1秒，简单的速度限制可能足够，或者直接在客户端禁止输入（需要额外的数据包）。
-                // 服务端强制传送回上一刻的位置是比较通用的做法。
-                // 但为了平滑，我们只在最后执行交换。
-                
-                // 简单的减速效果
-                player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
-                player.hurtMarked = true; 
-            }
-
             swapTimer--;
             if (swapTimer <= 0) {
                 performSwap();
@@ -105,5 +92,18 @@ public class SwapperPlayerComponent implements AutoSyncedComponent, ServerTickin
         tag.putInt("swapTimer", swapTimer);
         if (target1 != null) tag.putUUID("target1", target1);
         if (target2 != null) tag.putUUID("target2", target2);
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
+    @Override
+    public void reset() {
+        isSwapping = false;
+        swapTimer = 0;
+        target1 = null;
+        target2 = null;
     }
 }

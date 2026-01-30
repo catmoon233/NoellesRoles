@@ -13,6 +13,8 @@
     "SpawnMixin",
     "accessor.PlayerPoisonComponentAccessor",
     "roles.avengerKill.AvengerKillMixin",
+    "roles.awesome_binglus.NoteEntityMixin",
+    "roles.awesome_binglus.NoteMixin",
     "roles.bartender.BartenderReseterMixin",
     "roles.bartender.CocktailItemMixin",
     "roles.bartender.DefenseVialApplyMixin",

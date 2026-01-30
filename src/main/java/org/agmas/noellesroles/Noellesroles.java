@@ -666,10 +666,10 @@ public class Noellesroles implements ModInitializer {
                 }
             }
             BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(playerEntity);
-            if (bartenderPlayerComponent.armor > 0) {
+            if (bartenderPlayerComponent.getArmor() > 0) {
                 playerEntity.level().playSound(playerEntity, playerEntity.blockPosition(),
                         TMMSounds.ITEM_PSYCHO_ARMOUR, SoundSource.MASTER, 5.0F, 1.0F);
-                bartenderPlayerComponent.armor--;
+                bartenderPlayerComponent.removeArmor();
                 return false;
             }
             if (gameWorldComponent.isRole(playerEntity,

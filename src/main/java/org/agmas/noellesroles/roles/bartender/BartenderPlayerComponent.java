@@ -22,7 +22,21 @@ public class BartenderPlayerComponent implements RoleComponent, ServerTickingCom
     public static final ComponentKey<BartenderPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "bartender"), BartenderPlayerComponent.class);
     private final Player player;
     public int glowTicks = 0;
-    public int armor = 0;
+
+    public int getArmor() {
+        return armor;
+    }
+
+    private int armor = 0;
+
+    public void removeArmor() {
+        --this.armor ;
+        this.sync();
+    }
+    public void removeArmor(int  amount) {
+        this.armor -= amount;
+        this.sync();
+    }
 
     public void reset() {
         this.glowTicks = 0;
