@@ -1,9 +1,11 @@
 package org.agmas.noellesroles.roles.ghost;
 
+import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -29,6 +31,10 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
     public boolean isActive = true;
     public int cooldown = 0;
     public int invisibilityTicks = 0;
+    public boolean abilityUnlocked = false;
+    public boolean unlockNotified = false;
+    /** 解锁所需的游戏剩余时间（3分钟 = 180秒 = 3600 tick） */
+    public static final int UNLOCK_REMAINING_TICKS = 180 * 20;
 
     @Override
     public Player getPlayer() {
@@ -39,6 +45,8 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
         this.isActive = true;
         this.cooldown = 0;
         this.invisibilityTicks = 0;
+        this.abilityUnlocked = false;
+        this.unlockNotified = false;
         this.sync();
     }
 
@@ -65,6 +73,31 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
             return;
         }
 
+        // 检查技能解锁（当游戏剩余3分钟时解锁）
+        if (!abilityUnlocked) {
+            // 获取游戏剩余时间
+            GameTimeComponent gameTime = GameTimeComponent.KEY.get(player.level());
+            if (gameTime != null) {
+                long remainingTicks = gameTime.getTime();
+                // 当剩余时间 <= 3分钟时解锁
+                if (remainingTicks <= UNLOCK_REMAINING_TICKS) {
+                    abilityUnlocked = true;
+                    sync();
+                }
+            }
+        }
+
+        // 发送解锁提示
+        if (abilityUnlocked && !unlockNotified) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.displayClientMessage(
+                        Component.translatable("message.noellesroles.ghost.ability_unlocked")
+                                .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
+                        true);
+                unlockNotified = true;
+            }
+        }
+
         if (cooldown > 0) {
             cooldown--;
         }
@@ -77,6 +110,13 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
     }
 
     public void useAbility() {
+        if (!abilityUnlocked) {
+            player.displayClientMessage(
+                    Component.translatable("message.noellesroles.ghost.not_unlocked")
+                            .withStyle(ChatFormatting.RED), true);
+            return;
+        }
+
         if (cooldown > 0) {
             player.displayClientMessage(
                     Component.translatable("message.noellesroles.ability_cooldown", (cooldown + 19) / 20), true);
@@ -112,11 +152,15 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
         tag.putBoolean("isActive", this.isActive);
         tag.putInt("cooldown", this.cooldown);
         tag.putInt("invisibilityTicks", this.invisibilityTicks);
+        tag.putBoolean("abilityUnlocked", this.abilityUnlocked);
+        tag.putBoolean("unlockNotified", this.unlockNotified);
     }
 
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.isActive = !tag.contains("isActive") || tag.getBoolean("isActive");
         this.cooldown = tag.getInt("cooldown");
         this.invisibilityTicks = tag.getInt("invisibilityTicks");
+        this.abilityUnlocked = tag.getBoolean("abilityUnlocked");
+        this.unlockNotified = tag.getBoolean("unlockNotified");
     }
 }

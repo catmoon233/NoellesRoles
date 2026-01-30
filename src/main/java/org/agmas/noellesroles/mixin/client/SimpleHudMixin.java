@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.mixin.client;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.client.Minecraft;
@@ -9,8 +10,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 
 import org.agmas.noellesroles.role.ModRoles;
@@ -45,7 +44,28 @@ public abstract class SimpleHudMixin {
         int color = 0xffffff;
         if (gameWorld.isRole(client.player, ModRoles.GHOST)) {
             GhostPlayerComponent ghostComponent = GhostPlayerComponent.KEY.get(client.player);
-            if (ghostComponent.invisibilityTicks > 0) {
+            if (!ghostComponent.abilityUnlocked) {
+                // 计算解锁剩余时间
+                GameTimeComponent gameTime = GameTimeComponent.KEY.get(client.level);
+                if (gameTime != null) {
+                    long remainingTicks = gameTime.getTime();
+                    if (remainingTicks > GhostPlayerComponent.UNLOCK_REMAINING_TICKS) {
+                        // 剩余时间 > 3分钟，显示还需要多少时间到解锁
+                        long ticksUntilUnlock = remainingTicks - GhostPlayerComponent.UNLOCK_REMAINING_TICKS;
+                        int secondsUntilUnlock = ((int)ticksUntilUnlock + 19) / 20;
+                        text = Component.translatable("gui.noellesroles.ghost.not_unlocked", secondsUntilUnlock);
+                        color = 0xFFFF00; // 黄色
+                    } else {
+                        // 已到解锁时间但还没解锁，显示准备解锁
+                        text = Component.translatable("gui.noellesroles.ghost.unlocking");
+                        color = 0xFFAA00; // 橙色
+                    }
+                } else {
+                    // 如果无法获取游戏时间，显示等待状态
+                    text = Component.translatable("gui.noellesroles.ghost.waiting");
+                    color = 0xFFAA00; // 橙色
+                }
+            } else if (ghostComponent.invisibilityTicks > 0) {
                 int seconds = (ghostComponent.invisibilityTicks) / 20;
                 text = Component.translatable("gui.noellesroles.ghost.during", seconds);
                 color = 0x00fff7; // 青蓝色

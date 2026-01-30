@@ -238,9 +238,8 @@ public class Noellesroles implements ModInitializer {
 
         INITIAL_ITEMS_MAP.clear();
 
-        // 医生初始物品
+        // 医生初始物品（不再有针管和解药）
         List<Supplier<ItemStack>> doctorItems = new ArrayList<>();
-        doctorItems.add(() -> HSRItems.ANTIDOTE.getDefaultInstance());
         doctorItems.add(() -> ModItems.DEFIBRILLATOR.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.DOCTOR, doctorItems);
 
@@ -252,21 +251,31 @@ public class Noellesroles implements ModInitializer {
 
         // 随从初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
-        attendantItems.add(() -> ModItems.MASTER_KEY_P.getDefaultInstance());
-        // 使用延迟加载方式添加 handheldmoon 模组的物品（如果可用）
-        attendantItems.add(() -> {
-            final var moonlightLampItem = BuiltInRegistries.ITEM
-                    .get(ResourceLocation.tryParse("handheldmoon:moonlight_lamp"));
-            if (moonlightLampItem != Items.AIR) {
-                return moonlightLampItem.getDefaultInstance();
-            }
-            return null; // 如果物品不存在，返回null
-        });
+        // 乘务员开局不再有初始物品
         INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
+        {
+            List<ShopEntry> entries = new ArrayList<>();
+            // 乘务员商店：手电筒 150金币
+            if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("handheldmoon:moonlight_lamp"))) {
+                var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("handheldmoon:moonlight_lamp"));
+                if (item != null) {
+                    final var defaultInstance = item.getDefaultInstance();
+                    entries.add(new ShopEntry(defaultInstance, 150, ShopEntry.Type.TOOL) {
+                        @Override
+                        public boolean onBuy(@NotNull Player player) {
+                            player.addItem(defaultInstance.copy());
+                            return true;
+                        }
+                    });
+                }
 
-        // 心理学家初始物品
+            }
+            ShopContent.customEntries.put(
+                    ModRoles.ATTENDANT_ID, entries);
+        }
+
+        // 心理学家初始物品（不再有薄荷糖）
         List<Supplier<ItemStack>> psychologistItems = new ArrayList<>();
-        psychologistItems.add(() -> ModItems.MINT_CANDIES.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.PSYCHOLOGIST, psychologistItems);
 
         // 记录员初始物品
@@ -292,16 +301,6 @@ public class Noellesroles implements ModInitializer {
         for (int i = 0; i < 4; i++) {
             awesomeBinglusItems.add(() -> TMMItems.NOTE.getDefaultInstance());
         }
-
-        // 添加相机和相册（使用延迟加载）
-        awesomeBinglusItems.add(() -> {
-            final var cameraItem = BuiltInRegistries.ITEM
-                    .get(ResourceLocation.tryParse("exposure_polaroid:instant_camera"));
-            if (cameraItem != Items.AIR) {
-                return cameraItem.getDefaultInstance();
-            }
-            return null; // 如果物品不存在，返回null
-        });
         INITIAL_ITEMS_MAP.put(ModRoles.AWESOME_BINGLUS, awesomeBinglusItems);
     }
 
@@ -450,6 +449,11 @@ public class Noellesroles implements ModInitializer {
                 ModItems.ANTIDOTE_REAGENT.getDefaultInstance(),
                 50,
                 ShopEntry.Type.TOOL));
+        // 针管 - 75金币
+        DOCTOR_SHOP.add(new ShopEntry(
+                HSRItems.ANTIDOTE.getDefaultInstance(),
+                75,
+                ShopEntry.Type.TOOL));
     }
 
     private void shopRegister() {
@@ -493,12 +497,7 @@ public class Noellesroles implements ModInitializer {
                     ModRoles.BARTENDER_ID, entries);
         }
         {
-            List<ShopEntry> entries = new ArrayList<>();
-            entries.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), 75, ShopEntry.Type.TOOL));
-
-            ShopContent.customEntries.put(
-                    ModRoles.NOISEMAKER_ID, entries);
-
+            // 大嗓门商店已删除
         }
 
         // {
@@ -512,6 +511,21 @@ public class Noellesroles implements ModInitializer {
         // }
         {
             List<ShopEntry> entries = new ArrayList<>();
+            // 立拍得相机 - 75金币
+            if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("exposure_polaroid:instant_camera"))) {
+                var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("exposure_polaroid:instant_camera"));
+                if (item != null) {
+                    final var defaultInstance = item.getDefaultInstance();
+                    entries.add(new ShopEntry(defaultInstance, 75, ShopEntry.Type.TOOL) {
+                        @Override
+                        public boolean onBuy(@NotNull Player player) {
+                            player.addItem(defaultInstance.copy());
+                            return true;
+                        }
+                    });
+                }
+            }
+            // 立拍得相纸 - 25金币
             if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("exposure_polaroid:instant_color_slide"))) {
                 var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("exposure_polaroid:instant_color_slide"));
                 if (item != null) {
@@ -524,7 +538,6 @@ public class Noellesroles implements ModInitializer {
                         }
                     });
                 }
-
             }
             entries.add(new ShopEntry(TMMItems.NOTE.getDefaultInstance(), 10, ShopEntry.Type.TOOL));
             ShopContent.customEntries.put(
@@ -879,6 +892,9 @@ public class Noellesroles implements ModInitializer {
                 // 允许死亡，但已标记复活
             }
 
+            // 检查医生死亡 - 传递针管
+            handleDoctorDeath(victim);
+
             // 检查死亡惩罚
             handleDeathPenalty(victim);
 
@@ -1153,6 +1169,59 @@ public class Noellesroles implements ModInitializer {
                     Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED), true);
             victim.sendSystemMessage(
                     Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED));
+        }
+    }
+
+    /**
+     * 处理医生死亡 - 将针管传递给另一名存活的平民
+     */
+    private static void handleDoctorDeath(Player victim) {
+        if (victim == null || victim.level().isClientSide())
+            return;
+
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(victim.level());
+        if (!gameWorld.isRole(victim, ModRoles.DOCTOR))
+            return;
+
+        // 查找医生背包中的针管
+        ItemStack antidote = null;
+        for (int i = 0; i < victim.getInventory().getContainerSize(); i++) {
+            ItemStack stack = victim.getInventory().getItem(i);
+            if (stack.getItem() == org.agmas.noellesroles.repack.HSRItems.ANTIDOTE) {
+                antidote = stack.copy();
+                victim.getInventory().setItem(i, ItemStack.EMPTY);
+                break;
+            }
+        }
+
+        if (antidote == null || antidote.isEmpty())
+            return;
+
+        // 查找另一名存活的平民
+        Player targetPlayer = null;
+        for (Player player : victim.level().players()) {
+            if (player == victim)
+                continue;
+            if (!GameFunctions.isPlayerAliveAndSurvival(player))
+                continue;
+
+            Role role = gameWorld.getRole(player);
+            if (role != null && role.isInnocent()) {
+                targetPlayer = player;
+                break;
+            }
+        }
+
+        // 如果找到存活的平民，传递针管
+        if (targetPlayer != null) {
+            targetPlayer.addItem(antidote);
+            if (targetPlayer instanceof ServerPlayer serverTarget) {
+                serverTarget.displayClientMessage(
+                        Component.translatable("message.noellesroles.doctor.antidote_inherited",
+                                victim.getName().getString())
+                                .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
+                        true);
+            }
         }
     }
 

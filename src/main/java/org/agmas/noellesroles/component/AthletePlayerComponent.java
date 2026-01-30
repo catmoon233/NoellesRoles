@@ -66,7 +66,7 @@ public class AthletePlayerComponent implements RoleComponent, ServerTickingCompo
      * 在游戏开始时或角色分配时调用
      */
     public void reset() {
-        this.cooldown = 0; // 开局无冷却
+        this.cooldown = 1200; // 开局60秒冷却
         this.speedTicks = 0;
         this.isSprinting = false;
         this.sync();

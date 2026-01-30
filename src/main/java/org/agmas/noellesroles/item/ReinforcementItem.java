@@ -165,10 +165,12 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                 
                 // 加固门
                 setDoorReinforced(doorEntity, true);
-                
-                if (!world.isClientSide) {
+
+                // 只在客户端播放声音
+                if (world.isClientSide) {
                     world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
                         SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.5f, 1.5f);
+                } else {
                     player.displayClientMessage(Component.translatable("message.noellesroles.engineer.reinforced")
                         .withStyle(ChatFormatting.GREEN), true);
                 }
