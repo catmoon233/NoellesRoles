@@ -892,7 +892,7 @@ public class Noellesroles implements ModInitializer {
                 DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(player);
                 if (component.isDead && player.level().getGameTime() >= component.resurrectionTime) {
                     // 复活逻辑
-                    player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+                    player.setGameMode(net.minecraft.world.level.GameType.ADVENTURE);
                     if (component.deathPos != null) {
                         player.teleportTo(component.deathPos.x, component.deathPos.y, component.deathPos.z);
                     }
