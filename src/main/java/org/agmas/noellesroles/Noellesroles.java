@@ -1116,11 +1116,6 @@ public class Noellesroles implements ModInitializer {
     private static boolean handleDefibrillator(Player victim) {
         DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(victim);
         if (component.hasProtection()) {
-            // 查找尸体ID比较复杂，这里我们假设尸体会在稍后生成
-            // 实际上，AllowPlayerDeath 返回 true 后，TMM 会生成尸体
-            // 我们需要在尸体生成后获取其ID。但这比较困难。
-            // 替代方案：在复活时，搜索附近的尸体并移除。
-
             component.triggerDeath(30 * 20, null, victim.position());
             return true;
         }
