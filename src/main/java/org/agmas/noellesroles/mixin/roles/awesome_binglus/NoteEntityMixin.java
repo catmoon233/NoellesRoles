@@ -34,9 +34,10 @@ public abstract class NoteEntityMixin extends Entity {
                         Player player = first.get();
                         // 计算玩家背后的偏移位置
                         double yawRadians = Math.toRadians(player.getYRot());
-                        double offsetX = -Math.sin(yawRadians) * 2.0; // 从玩家位置向后偏移2格
-                        double offsetZ = Math.cos(yawRadians) * 2.0;
-                        
+                        double offsetX = -Math.sin(yawRadians) * -0.4; // 从玩家位置向后偏移2格
+                        double offsetZ = Math.cos(yawRadians) * -0.4;
+                        note.setXRot(player.getXRot());
+                        note.setYRot(player.getYRot());
                         // 设置NoteEntity在玩家背后
                         note.moveTo(player.getX() + offsetX, player.getY() + 1.25, player.getZ() + offsetZ,
                             note.getYRot(), note.getXRot());

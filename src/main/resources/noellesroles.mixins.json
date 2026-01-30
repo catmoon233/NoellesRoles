@@ -40,6 +40,7 @@
     "roles.manipulator.ManipulatorControlMixin",
     "roles.morphling.MorphlingReseterMixin",
     "roles.noisemaker.NoisemakerKillMixin",
+    "roles.patroller.PatrollerKillMixin",
     "roles.puppeteer.PuppeteerBodyGunPayloadMixin",
     "roles.puppeteer.PuppeteerBodyKnifePayloadMixin",
     "roles.stalker.StalkerKillCountMixin",

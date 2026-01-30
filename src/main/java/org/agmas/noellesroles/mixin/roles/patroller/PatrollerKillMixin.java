@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameFunctions.class)
 public class PatrollerKillMixin {
 
-    @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At("HEAD"))
+    @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setGameMode(Lnet/minecraft/world/level/GameType;)Z",shift = At.Shift.AFTER))
     private static void onKillPlayer(Player victim, boolean spawnBody, Player killer, ResourceLocation deathReason, CallbackInfo ci) {
         if (victim == null || victim.level().isClientSide()) return;
 
@@ -34,14 +34,8 @@ public class PatrollerKillMixin {
             if (!gameWorld.isRole(player, ModRoles.PATROLLER)) continue;
 
             // 检查距离（30格内）
-            if (player.distanceToSqr(victim) > 30 * 30) continue;
+            if (player.distanceToSqr(victim) > 30 ) continue;
 
-            // 检查视野（参考恋慕者，这里简单检查是否有视线阻挡，或者直接用距离）
-            // 题目要求"视野30格内"，通常意味着距离+视线。
-            // 但考虑到Minecraft的视线检测比较复杂（raycast），且"参考恋慕者"可能指Admirer的机制。
-            // AdmirerPlayerComponent中有isBoundTargetVisible()方法使用了raycast。
-            // 这里我们简单使用canSee()方法，或者如果需要严格按照Admirer的逻辑，可以使用类似的raycast。
-            // 为了简化且高效，先使用canSee检查。
             if (player.hasLineOfSight(victim)) {
                 PatrollerPlayerComponent patrollerComponent = ModComponents.PATROLLER.get(player);
                 patrollerComponent.onNearbyDeath();

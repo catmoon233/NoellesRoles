@@ -60,7 +60,7 @@ public abstract class NoteMixin extends Item {
                                 return InteractionResult.PASS;
                             } else {
                                 NoteEntity note = (NoteEntity) TMMEntities.NOTE.create(world);
-                                note.setAttached(ModRoles.ENTITY_NOTE_MAKER, serverPlayer.getUUID().toString());
+                                note.setAttached(ModRoles.ENTITY_NOTE_MAKER, livingEntity.getUUID().toString());
                                 if (note == null) {
                                     return InteractionResult.PASS;
                                 } else {
