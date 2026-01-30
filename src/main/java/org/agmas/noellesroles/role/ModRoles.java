@@ -712,7 +712,7 @@ public class ModRoles {
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
                 false // 不隐藏计分板
-        ).setComponentKey(MonitorPlayerComponent.KEY).setCanSeeCoin( true));
+        ).setComponentKey(MonitorPlayerComponent.KEY).setCanSeeCoin(true));
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
 
@@ -773,7 +773,7 @@ public class ModRoles {
         Harpymodloader.setRoleMaximum(PUPPETEER_ID, 1);
 
         // 显示金币的列表
-        initShowMoneyRolesList();
+        // initShowMoneyRolesList();
     }
 
     // ==================== 工具方法 ====================

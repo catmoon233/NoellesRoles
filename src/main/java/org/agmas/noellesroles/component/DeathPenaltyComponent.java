@@ -15,7 +15,9 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 public class DeathPenaltyComponent implements RoleComponent {
     private final Player player;
     public long penaltyExpiry = 0;
-
+    public void clearAll(){
+        this.reset();
+    }
     public void check() {
         if (!this.hasPenalty()) {
             return;

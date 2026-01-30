@@ -12,6 +12,7 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -66,7 +67,7 @@ public class RoleUtils {
         ((ModdedRoleAssigned) ModdedRoleAssigned.EVENT.invoker()).assignModdedRole(player, role);
     }
 
-    public static Component getRoleName(ResourceLocation roleIdentifier) {
+    public static MutableComponent getRoleName(ResourceLocation roleIdentifier) {
 
         String translationKey = "announcement.role." + roleIdentifier.getPath();
         return Component.translatable(translationKey);
@@ -75,7 +76,7 @@ public class RoleUtils {
     /**
      * 获取角色的显示名称
      */
-    public static Component getRoleName(Role role) {
+    public static MutableComponent getRoleName(Role role) {
         // 尝试获取翻译后的角色名称
         return getRoleName(role.identifier());
     }
@@ -94,7 +95,7 @@ public class RoleUtils {
         return TMMRoles.ROLES.get(role);
     }
 
-    public static Component getRoleDescription(Role selectedRole) {
+    public static MutableComponent getRoleDescription(Role selectedRole) {
         return Component.translatable("info.screen.roleid."+selectedRole.getIdentifier().getPath());
     }
 }
