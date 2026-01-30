@@ -108,6 +108,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> SLIPPERY_GHOST_SHOP = new ArrayList<>();
     // ==================== 工程师商店 ====================
     public static ArrayList<ShopEntry> ENGINEER_SHOP = new ArrayList<>();
+    // ==================== 拳击手商店 ====================
+    public static ArrayList<ShopEntry> BOXER_SHOP = new ArrayList<>();
     // ==================== 邮差商店 ====================
     public static ArrayList<ShopEntry> POSTMAN_SHOP = new ArrayList<>();
     // ==================== 心理学家商店 ====================
@@ -410,6 +412,12 @@ public class Noellesroles implements ModInitializer {
                 175,
                 ShopEntry.Type.TOOL));
 
+        // 拳击手商店
+        BOXER_SHOP.add(new ShopEntry(
+                ModItems.BOXING_GLOVE.getDefaultInstance(),
+                150,
+                ShopEntry.Type.WEAPON));
+
         // 邮差商店
         // 传递盒 - 250金币
         POSTMAN_SHOP.add(new ShopEntry(
@@ -534,6 +542,10 @@ public class Noellesroles implements ModInitializer {
         {
             ShopContent.customEntries.put(
                     ModRoles.ENGINEER_ID, ENGINEER_SHOP);
+        }
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.BOXER_ID, BOXER_SHOP);
         }
         {
             ShopContent.customEntries.put(
