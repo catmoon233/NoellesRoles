@@ -32,7 +32,7 @@
   "info.screen.roleid.ghost": "Invisible to Killer Instinct (But visible to some Neutrals).\nCan see remaining game time.\nUse skill to turn invisible. Still has collision.",
   "info.screen.roleid.gambler": "Draw a role every 30s. Use skill to select.\nCan pick up Revolver.\nCrouch+Shoot self to become selected role.\nDeath by others: 33% Killer, 33% Sheriff, 33% Death, 1% Solo Win.",
   "info.screen.roleid.attendant": "Has Attendant Key (5 uses, opens dorms).\nHas Flashlight (Good for Lights Out).",
-  "info.screen.roleid.swapper": "Open inventory to select players and swap their positions.",
+  "info.screen.roleid.swapper": "Open inventory to select players and swap their positions.\nThere is a 1s delay when swapping, during which you cannot move.\nSwapped players will be notified.",
   "info.screen.roleid.conductor": "Start with Master Key and Spyglass.\nDrops on death.",
   "info.screen.roleid.the_insane_damned_paranoid_killer": "Can hear the dead.\nCan disguise as corpse.\nFake corpse detected by Coroner. Not invincible while disguised.",
   "info.screen.roleid.broadcaster": "Start with 200 coins. Spend 100 to Broadcast.\nEdit message anytime. Saved until sent.\nIf you die with saved message, it auto-sends.\nEveryone learns of your death.\nCan see remaining game time.",
@@ -606,5 +606,6 @@
   "message.noellesroles.monitor.marked": "You marked %s",
   "message.noellesroles.monitor.cooldown": "Skill cooldown: %s seconds",
   "message.noellesroles.monitor.no_target": "Please aim at a player!",
-  "message.noellesroles.monitor.target_not_found": "Target invalid or dead!"
+  "message.noellesroles.monitor.target_not_found": "Target invalid or dead!",
+  "message.noellesroles.swapper.swapped": "You have been swapped by the Swapper!"
 }

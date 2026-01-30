@@ -32,7 +32,7 @@
   "info.screen.roleid.ghost": "無法被殺手直覺查看到（但能被部分中立角色透視）\n你可以查看剩餘遊戲時間。\n使用技能鍵後隱身，隱身時你仍然擁有碰撞體積。",
   "info.screen.roleid.gambler": "每30s抽取一個職業，使用技能鍵進行選擇。\n可以拾取手槍。\n可使用手槍蹲下自殺變為選擇的職業。\n被別人殺死後有33%概率變成殺手,\n33%概率變成警長,\n33%概率死亡,\n1%概率獨立獲勝",
   "info.screen.roleid.attendant": "擁有一個可以使用五次的乘務員鑰匙(可開啟宿舍門)\n擁有一個手電筒(關燈時有奇效)",
-  "info.screen.roleid.swapper": "打開背包可以選擇玩家然後交換兩個人的位置。",
+  "info.screen.roleid.swapper": "打開背包可以選擇玩家然後交換兩個人的位置。\n發動技能時會有1s延遲，期間交換者無法移動。\n被交換的玩家會收到提示。",
   "info.screen.roleid.conductor": "初始獲得一把萬能鑰匙和一個望遠鏡。\n死亡時都會掉落。",
   "info.screen.roleid.the_insane_damned_paranoid_killer": "你能聽見死者的聲音。\n你可以假扮成屍體。\n假扮的屍體會被驗屍官察覺，且假扮屍體期間不無敵",
   "info.screen.roleid.broadcaster": "你開局擁有200金幣，可以花費100進行一次全服廣播。\n你可以隨時編輯廣播消息，廣播消息將會被留存，直到被成功發送。\n當你死亡的時候，如果有留存的消息，它將被自動發出。\n所有玩家會得知你的死訊。\n你可以查看剩餘遊戲時間。",
@@ -508,7 +508,7 @@
   "message.noellesroles.puppeteer.no_puppets": "沒有可用的傀儡！",
   "message.noellesroles.puppeteer.ability_cooldown": "傀儡技能冷卻中，還需 %s 秒",
   "message.noellesroles.puppeteer.returned_to_body": "已返回本體。",
-  "message.noellesroles.puppeteer.collect_more": "還需要收集更多屍體！（%d/%d）",
+  "message.noellesroles.puppeteer.collect_more": "還需要收集更多尸體！（%d/%d）",
   "==================== 操縱師角色 ====================": "",
   "announcement.role.manipulator": "操縱師",
   "announcement.goals.manipulator": "選擇一名玩家作為目標進行操控。你將在原地留下本體，同時獲得目標的外觀、物品欄和角色能力！持續50秒，本體死亡時你也會死亡！",
@@ -605,5 +605,6 @@
   "message.noellesroles.monitor.marked": "你標記了 %s",
   "message.noellesroles.monitor.cooldown": "技能冷卻中: %s秒",
   "message.noellesroles.monitor.no_target": "請將準星對準一名玩家！",
-  "message.noellesroles.monitor.target_not_found": "目標無效或已死亡！"
+  "message.noellesroles.monitor.target_not_found": "目標無效或已死亡！",
+  "message.noellesroles.swapper.swapped": "你被交換者交換了位置！"
 }
