@@ -11,6 +11,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.effect.MobEffectInstance;
 
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
