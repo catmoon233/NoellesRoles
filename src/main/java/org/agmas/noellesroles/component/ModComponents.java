@@ -147,6 +147,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "patroller"),
                         PatrollerPlayerComponent.class);
 
+        public static final ComponentKey<GlitchRobotPlayerComponent> GLITCH_ROBOT = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "glitch_robot"),
+                        GlitchRobotPlayerComponent.class);
+
         public ModComponents() {
                 // CCA 需要无参构造函数
         }
@@ -310,6 +314,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 registry.beginRegistration(Player.class, DEATH_PENALTY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(DeathPenaltyComponent::new);
+
+                registry.beginRegistration(Player.class, GLITCH_ROBOT)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(GlitchRobotPlayerComponent::new);
 
                 // ==================== 示例：注册更多组件 ====================
                 //

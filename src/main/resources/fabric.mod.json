@@ -72,7 +72,8 @@
       "noellesroles:monitor",
       "noellesroles:death_penalty",
       "noellesroles:noise_maker",
-      "noellesroles:player_reset"
+      "noellesroles:player_reset",
+      "noellesroles:glitch_robot"
     ]
   },
   "mixins": [

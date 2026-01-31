@@ -85,6 +85,7 @@ public class ModRoles {
     public static ResourceLocation SHERIFF_ID = Noellesroles.id("sheriff");
     public static ResourceLocation CORONER_ID = Noellesroles.id("coroner");
     public static ResourceLocation PATROLLER_ID = Noellesroles.id("patroller");
+    public static final ResourceLocation GLITCH_ROBOT_ID = Noellesroles.id("glitch_robot");
     public static final ResourceLocation AVENGER_ID = Noellesroles.id("avenger");
     public static final ResourceLocation SLIPPERY_GHOST_ID = Noellesroles.id("slippery_ghost");
     public static final ResourceLocation ENGINEER_ID = Noellesroles.id("engineer");
@@ -454,6 +455,19 @@ public class ModRoles {
      */
     public static Role RECORDER;
 
+    /**
+     * 故障机器人角色
+     * - 乘客阵营 (isInnocent = true)
+     * - 不能使用杀手能力 (canUseKiller = false)
+     * - 小丑心情 (假心情)
+     * - 双倍体力上限
+     * - 每局只能有 1 个
+     * - 专属商店：夜视仪(150金币)、萤石粉(50金币)
+     * - 每1分钟自动获得缓慢10 2秒
+     * - 被击倒时生成半径4的缓慢2效果云，持续5秒
+     */
+    public static Role GLITCH_ROBOT;
+
     // ==================== 其他变量定义 ====================
     public static ArrayList<Role> SHOW_MONEY_ROLES = new ArrayList<>();
     public static HashMap<Role, RoleAnnouncementTexts.RoleAnnouncementText> roleRoleAnnouncementTextHashMap = new HashMap<>();
@@ -658,6 +672,17 @@ public class ModRoles {
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
                 true // 隐藏计分板
         )).setComponentKey(RecorderPlayerComponent.KEY);
+
+        // 故障机器人角色 - 乘客阵营
+        GLITCH_ROBOT = TMMRoles.registerRole(new NoramlRole(
+                GLITCH_ROBOT_ID, // 角色 ID
+                new Color(128, 128, 128).getRGB(), // 灰色 - 代表机器人
+                true, // isInnocent = 乘客阵营
+                false, // canUseKiller = 无杀手能力
+                Role.MoodType.FAKE, // 小丑心情（假心情）
+                TMMRoles.CIVILIAN.getMaxSprintTime() * 2, // 双倍体力上限
+                false // 不隐藏计分板
+        )).setComponentKey(GlitchRobotPlayerComponent.KEY).setCanSeeCoin(true);
         
         // 监察员角色 - 好人阵营
         MONITOR = TMMRoles.registerRole(new NoramlRole(
@@ -728,6 +753,9 @@ public class ModRoles {
 
         // 监察员每局只能有 1 个
         Harpymodloader.setRoleMaximum(MONITOR_ID, 1);
+
+        // 故障机器人每局只能有 1 个
+        Harpymodloader.setRoleMaximum(GLITCH_ROBOT_ID, 1);
     }
 
     // ==================== 工具方法 ====================
@@ -774,5 +802,6 @@ public class ModRoles {
         SHOW_MONEY_ROLES.add(ModRoles.ENGINEER);
         SHOW_MONEY_ROLES.add(ModRoles.GHOST);
         SHOW_MONEY_ROLES.add(ModRoles.PATROLLER);
+        SHOW_MONEY_ROLES.add(ModRoles.GLITCH_ROBOT);
     }
 }
