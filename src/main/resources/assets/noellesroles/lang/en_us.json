@@ -620,19 +620,5 @@
   "message.noellesroles.monitor.cooldown": "Skill cooldown: %s seconds",
   "message.noellesroles.monitor.no_target": "Please aim at a player!",
   "message.noellesroles.monitor.target_not_found": "Target invalid or dead!",
-  "message.noellesroles.doctor.antidote_inherited": "You inherited the syringe from %s!",
-  "message.noellesroles.swapper.swapped": "You have been swapped by the Swapper!",
-  "==================== 巡警角色 ====================": "",
-  "announcement.role.patroller": "Patroller",
-  "info.screen.roleid.patroller": "When someone dies within 30 blocks of your view, you gain a Revolver and an Attendant Key.",
-  "announcement.goals.patroller": "When you witness a murder, you will uphold the final justice of this journey.",
-  "announcement.win.patroller": "Passengers win!",
-  "==================== 故障机器人角色 ====================": "",
-  "announcement.role.glitch_robot": "Glitch Robot",
-  "info.screen.roleid.glitch_robot": "You have no emotions.\nDouble max health.\nImmune to poison.\nMalfunctions once every minute (Rooted for 2s).\nLeaves a glitch current upon death (Players in current get Slowness II).\nShop sells Glowstone Dust.\nWhen wearing Night Vision Goggles, buying Glowstone Dust recharges them.",
-  "announcement.goals.glitch_robot": "You were once abandoned here, find a way out with the Innocents!",
-  "info.glitch_robot.noglasses_on_head": "Your Night Vision Goggles are not on your head, cannot take them off.",
-  "info.glitch_robot.take_off_glasses.success": "Your Night Vision Goggles have been taken off.",
-  "info.glitch_robot.take_off_glasses.tip": "Press %s to take off Night Vision Goggles!",
-  "announcement.win.glitch_robot": "Passengers win!"
+  "message.noellesroles.swapper.swapped": "You have been swapped by the Swapper!"
 }
