@@ -1187,8 +1187,8 @@ public class Noellesroles implements ModInitializer {
         if (!gameWorldComponent.isRole(victim, ModRoles.GLITCH_ROBOT))
             return;
 
-        GlitchRobotPlayerComponent glitchRobotComp = ModComponents.GLITCH_ROBOT.get(victim);
-        glitchRobotComp.onKnockOut();
+        GlitchRobotPlayerComponent.onKnockOut(victim);
+        // TODO: BUG：药水效果云生成会导致玩家被踢
     }
 
     private static void handleDeathPenalty(Player victim) {
