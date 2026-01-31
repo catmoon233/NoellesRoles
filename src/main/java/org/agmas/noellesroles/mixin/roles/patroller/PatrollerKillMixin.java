@@ -4,13 +4,22 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PatrollerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_ANGLE;
+import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_DISTANCE;
 
 @Mixin(GameFunctions.class)
 public class PatrollerKillMixin {
@@ -34,7 +43,7 @@ public class PatrollerKillMixin {
             if (!gameWorld.isRole(player, ModRoles.PATROLLER)) continue;
 
             // 检查距离（30格内）
-            if (player.distanceToSqr(victim) > 30 ) continue;
+            if (player.distanceToSqr(victim) > 30 || !isBoundTargetVisible(victim, player)) continue;
 
             if (player.hasLineOfSight(victim)) {
                 PatrollerPlayerComponent patrollerComponent = ModComponents.PATROLLER.get(player);
@@ -42,4 +51,39 @@ public class PatrollerKillMixin {
             }
         }
     }
+
+    @Unique
+    private static boolean isBoundTargetVisible(Player boundTarget, Player player) {
+
+        if (boundTarget == null)
+            return false;
+        if (!GameFunctions.isPlayerAliveAndSurvival(boundTarget))
+            return false;
+
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookDir = player.getViewVector(1.0f);
+        Vec3 targetPos = boundTarget.getEyePosition();
+
+        double distance = eyePos.distanceTo(targetPos);
+        if (distance > GAZE_DISTANCE)
+            return false;
+
+        // 视野角度检查（90度扇形，半角45度）
+        Vec3 toTarget = targetPos.subtract(eyePos).normalize();
+        double dot = lookDir.dot(toTarget);
+        if (dot < Math.cos(Math.toRadians(GAZE_ANGLE)))
+            return false;
+
+        // 射线检测
+        Level world = player.level();
+        ClipContext context = new ClipContext(
+                eyePos, targetPos,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                player);
+        BlockHitResult hit = world.clip(context);
+        return hit.getType() == HitResult.Type.MISS ||
+                hit.getLocation().distanceTo(targetPos) < 1.0;
+    }
+
 }
