@@ -14,7 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public class AbilityPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
-    public static final ComponentKey<AbilityPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "ability_no"), AbilityPlayerComponent.class);
+    public static final ComponentKey<AbilityPlayerComponent> KEY = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "ability_no"), AbilityPlayerComponent.class);
     private final Player player;
     public int cooldown = 0;
 
@@ -22,10 +23,12 @@ public class AbilityPlayerComponent implements RoleComponent, ServerTickingCompo
         this.cooldown = 0;
         this.sync();
     }
+
     @Override
     public Player getPlayer() {
         return player;
     }
+
     public AbilityPlayerComponent(Player player) {
         this.player = player;
     }
@@ -37,15 +40,13 @@ public class AbilityPlayerComponent implements RoleComponent, ServerTickingCompo
     public void clientTick() {
     }
 
-    public static int tickR = 0;
-
     public void serverTick() {
         if (this.cooldown > 0) {
             --this.cooldown;
-            if (++tickR % 20 == 0) {
+            if (this.cooldown % 20 == 0) {
                 this.sync();
             }
-            }
+        }
     }
 
     public void setCooldown(int ticks) {

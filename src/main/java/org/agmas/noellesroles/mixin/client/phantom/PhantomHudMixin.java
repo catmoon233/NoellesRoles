@@ -8,6 +8,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
+import net.minecraft.world.effect.MobEffects;
+
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.role.ModRoles;
@@ -19,23 +21,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
 public abstract class PhantomHudMixin {
-    @Shadow public abstract Font getFont();
+    @Shadow
+    public abstract Font getFont();
 
     @Inject(method = "render", at = @At("TAIL"))
     public void phantomHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(Minecraft.getInstance().player.level());
-        AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                .get(Minecraft.getInstance().player.level());
+        AbilityPlayerComponent abilityPlayerComponent = (AbilityPlayerComponent) AbilityPlayerComponent.KEY
+                .get(Minecraft.getInstance().player);
         if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.PHANTOM)) {
             int drawY = context.guiHeight();
 
-            Component line = Component.translatable("tip.phantom", NoellesrolesClient.abilityBind.getTranslatedKeyMessage());
+            Component line = Component.translatable("tip.phantom",
+                    NoellesrolesClient.abilityBind.getTranslatedKeyMessage());
 
             if (abilityPlayerComponent.cooldown > 0) {
-                line = Component.translatable("tip.noellesroles.cooldown", abilityPlayerComponent.cooldown/20);
+                line = Component.translatable("tip.noellesroles.cooldown", abilityPlayerComponent.cooldown / 20);
+            }
+            var inve = Minecraft.getInstance().player.getEffect(MobEffects.INVISIBILITY);
+            if (inve != null) {
+                int time = inve.getDuration();
+                if (time > 0) {
+                    line = Component.translatable("tip.phantom.activing", time / 20);
+                }
             }
 
             drawY -= getFont().wordWrapHeight(line, 999999);
-            context.drawString(getFont(), line, context.guiWidth() - getFont().width(line), drawY, CommonColors.RED);
+            context.drawString(getFont(), line, context.guiWidth() - getFont().width(line) - 12, drawY - 12,
+                    CommonColors.RED);
         }
     }
 }

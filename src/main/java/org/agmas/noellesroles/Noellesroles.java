@@ -447,7 +447,7 @@ public class Noellesroles implements ModInitializer {
                             .withStyle(ChatFormatting.AQUA));
             var lores = new ArrayList<Component>();
             lores.add(Component.translatable("item.noellesroles.shop.singer.lore",
-                    Component.translatable("item.noellesroles.shop.singer.effect." + i).withStyle(ChatFormatting.GOLD))
+                    Component.translatable("item.noellesroles.shop.singer.effect." + i).withStyle(ChatFormatting.YELLOW))
                     .withStyle(ChatFormatting.GRAY));
             singer_shop_item.set(DataComponents.LORE, new ItemLore(lores));
             final int idx = i;

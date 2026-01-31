@@ -20,7 +20,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 
 public class MorphlingPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
-    public static final ComponentKey<MorphlingPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "morphling"), MorphlingPlayerComponent.class);
+    public static final ComponentKey<MorphlingPlayerComponent> KEY = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "morphling"), MorphlingPlayerComponent.class);
     private final Player player;
     public UUID disguise;
     public int morphTicks = 0;
@@ -53,7 +54,8 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
             if (this.morphTicks > 0) {
                 if (disguise != null) {
                     if (player.level().getPlayerByUUID(disguise) != null) {
-                        if (((ServerPlayer)player.level().getPlayerByUUID(disguise)).gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
+                        if (((ServerPlayer) player.level().getPlayerByUUID(disguise)).gameMode
+                                .getGameModeForPlayer() == GameType.SPECTATOR) {
                             stopMorph();
                             return;
                         }
@@ -90,8 +92,7 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
                     final var morphlingPlayerComponent = KEY.get(player);
                     morphlingPlayerComponent.disguise = disguise;
                     KEY.sync(player);
-                }
-        );
+                });
 
         return true;
     }
@@ -103,7 +104,7 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
                     final var morphlingPlayerComponent = KEY.get(player);
                     morphlingPlayerComponent.disguise = disguise;
                     KEY.sync(player);
-                }        );
+                });
 
     }
 
@@ -118,7 +119,8 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
 
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("morphTicks", this.morphTicks);
-        if (disguise == null) disguise = player.getUUID();
+        if (disguise == null)
+            disguise = player.getUUID();
         tag.putUUID("disguise", this.disguise);
     }
 
