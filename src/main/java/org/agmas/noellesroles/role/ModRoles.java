@@ -773,5 +773,6 @@ public class ModRoles {
         SHOW_MONEY_ROLES.add(ModRoles.PSYCHOLOGIST);
         SHOW_MONEY_ROLES.add(ModRoles.ENGINEER);
         SHOW_MONEY_ROLES.add(ModRoles.GHOST);
+        SHOW_MONEY_ROLES.add(ModRoles.PATROLLER);
     }
 }
