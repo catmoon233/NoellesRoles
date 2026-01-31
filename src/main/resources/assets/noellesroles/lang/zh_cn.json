@@ -616,5 +616,10 @@
   "announcement.role.patroller": "巡警",
   "info.screen.roleid.patroller": "当你的视野30格内有人死亡时，你获得一把左轮手枪和一把乘务员钥匙。",
   "announcement.goals.patroller": "当你亲眼目睹了一场凶杀案时，你将维护这趟旅程中最后的正义。",
-  "announcement.win.patroller": "乘客胜利！"
+  "announcement.win.patroller": "乘客胜利！",
+  "==================== 故障机器人角色 ====================": "",
+  "announcement.role.glitch_robot": "故障机器人",
+  "info.screen.roleid.glitch_robot": "你没有心情。\n拥有两倍体力上限\n免疫中毒\n每分钟会发生一次故障（定身2秒）\n死亡后会留下一片故障电流(电流中的玩家会有缓慢2的效果)\n商店可购买夜视仪和荧石粉\n荧石粉可以为夜视仪充能",
+  "announcement.goals.glitch_robot": "你曾被废弃于此，与好人一起寻得出路！",
+  "announcement.win.glitch_robot": "乘客胜利！"
 }
