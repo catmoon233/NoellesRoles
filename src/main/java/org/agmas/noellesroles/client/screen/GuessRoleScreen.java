@@ -80,12 +80,12 @@ public class GuessRoleScreen extends Screen {
 
         super(Component.translatable("screen.noellesroles.guess_role.title"));
 
-        var now_players = new ArrayList<>(Minecraft.getInstance().level.players());
-        now_players.removeIf((a) -> {
-            return allPlayers.contains(a);
-        });
-        allPlayers.addAll(now_players);
-        players = new ArrayList<>(allPlayers);
+        // var now_players = new ArrayList<>(Minecraft.getInstance().level.players());
+        // now_players.removeIf((a) -> {
+        //     return allPlayers.contains(a);
+        // });
+        // allPlayers.addAll(now_players);
+        // players = new ArrayList<>(allPlayers);
 
     }
 
