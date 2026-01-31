@@ -608,6 +608,20 @@
   "message.noellesroles.monitor.marked": "你標記了 %s",
   "message.noellesroles.monitor.cooldown": "技能冷卻中: %s秒",
   "message.noellesroles.monitor.no_target": "請將準星對準一名玩家！",
+  "message.noellesroles.doctor.antidote_inherited": "你從 %s 那裡繼承了針管！",
   "message.noellesroles.monitor.target_not_found": "目標無效或已死亡！",
-  "message.noellesroles.swapper.swapped": "你被交換者交換了位置！"
+  "message.noellesroles.swapper.swapped": "你被交換者交換了位置！",
+  "==================== 巡警角色 ====================": "",
+  "announcement.role.patroller": "巡警",
+  "info.screen.roleid.patroller": "當你的視野30格內有人死亡時，你獲得一把左輪手槍和一把乘務員鑰匙。",
+  "announcement.goals.patroller": "當你親眼目睹了一場兇殺案時，你將維護這趟旅程中最後的正義。",
+  "announcement.win.patroller": "乘客勝利！",
+  "==================== 故障機器人角色 ====================": "",
+  "announcement.role.glitch_robot": "故障機器人",
+  "info.screen.roleid.glitch_robot": "你沒有心情。\n擁有兩倍體力上限\n免疫中毒\n每分鐘會發生一次故障（定身2秒）\n死亡後會留下一片故障電流(電流中的玩家會有緩慢2的效果)\n商店可購買螢石粉\n戴上夜視鏡時，購買螢石粉可以為夜視儀充能",
+  "announcement.goals.glitch_robot": "你曾被廢棄於此，與好人一起尋得出路！",
+  "info.glitch_robot.noglasses_on_head": "你的夜視鏡並沒有被戴上，無法取下。",
+  "info.glitch_robot.take_off_glasses.success": "你的夜視鏡已被取下。",
+  "info.glitch_robot.take_off_glasses.tip": "按下 %s 取下夜視鏡！",
+  "announcement.win.glitch_robot": "乘客勝利！"
 }
