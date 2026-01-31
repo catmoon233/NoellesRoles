@@ -608,20 +608,15 @@ public class Noellesroles implements ModInitializer {
         {
             List<ShopEntry> glitchRobotShop = new ArrayList<>();
             // 夜视仪 - 150金币
-            if (BuiltInRegistries.ITEM
-                    .containsKey(ResourceLocation.parse("calypsos_nightvision_goggles:nightvision_goggles"))) {
-                var nightVisionItem = BuiltInRegistries.ITEM
-                        .get(ResourceLocation.parse("calypsos_nightvision_goggles:nightvision_goggles"));
-                if (nightVisionItem != null) {
-                    final var nightVisionDefaultInstance = nightVisionItem.getDefaultInstance();
-                    glitchRobotShop.add(new ShopEntry(nightVisionDefaultInstance, 150, ShopEntry.Type.TOOL) {
-                        @Override
-                        public boolean onBuy(@NotNull Player player) {
-                            player.addItem(nightVisionDefaultInstance.copy());
-                            return true;
-                        }
-                    });
-                }
+            if (ModItems.NIGHT_VISION_GLASSES != null) {
+                final var nightVisionDefaultInstance = ModItems.NIGHT_VISION_GLASSES.getDefaultInstance();
+                glitchRobotShop.add(new ShopEntry(nightVisionDefaultInstance, 150, ShopEntry.Type.TOOL) {
+                    @Override
+                    public boolean onBuy(@NotNull Player player) {
+                        player.addItem(nightVisionDefaultInstance.copy());
+                        return true;
+                    }
+                });
             }
             // 萤石粉 - 50金币
             glitchRobotShop.add(new ShopEntry(Items.GLOWSTONE_DUST.getDefaultInstance(), 50, ShopEntry.Type.TOOL) {
