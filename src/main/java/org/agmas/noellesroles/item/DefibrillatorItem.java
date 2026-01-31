@@ -11,9 +11,10 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.ModComponents;
+import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 
 public class DefibrillatorItem extends Item {
-    public DefibrillatorItem(Properties properties) {
+    public DefibrillatorItem(Item.Properties properties) {
         super(properties);
     }
 
@@ -28,30 +29,57 @@ public class DefibrillatorItem extends Item {
     public void releaseUsing(ItemStack stack, Level level, LivingEntity user, int timeCharged) {
         if (!level.isClientSide && user instanceof Player player) {
             if (this.getUseDuration(stack, user) - timeCharged >= 10) {
-                // 查找目标
-                // 这里简化处理，假设玩家对着目标使用。实际上可能需要射线检测。
-                // 参考 AntidoteItem 的 getAntidoteTarget
-                net.minecraft.world.phys.HitResult hitResult = org.agmas.noellesroles.repack.items.AntidoteItem
-                        .getAntidoteTarget(player);
+                net.minecraft.world.phys.HitResult hitResult = getDefibrillatorTarget(player);
 
                 if (hitResult instanceof net.minecraft.world.phys.EntityHitResult entityHitResult) {
-                    if (entityHitResult.getEntity() instanceof Player target) {
-                        DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(target);
-                        component.setProtection(90 * 20); // 90秒
+                    if (entityHitResult.getEntity() instanceof PlayerBodyEntity) {
+                        PlayerBodyEntity body = (PlayerBodyEntity) entityHitResult.getEntity();
+                        if (body.tickCount > 90 * 20) {
+                            player.displayClientMessage(
+                                    Component.translatable("message.noellesroles.defibrillator.too_late"),
+                                    true);
+                            return;
+                        }
 
-                        player.displayClientMessage(
-                                Component.translatable("message.noellesroles.defibrillator.used", target.getName()),
-                                true);
-                        target.displayClientMessage(
-                                Component.translatable("message.noellesroles.defibrillator.protected"), true);
+                        String playerName = body.getName().getString();
+                        net.minecraft.server.level.ServerPlayer target = player.getServer().getPlayerList()
+                                .getPlayerByName(playerName);
 
-                        if (!player.isCreative()) {
-                            stack.shrink(1);
+                        if (target != null) {
+                            target.teleportTo(body.getX(), body.getY(), body.getZ());
+                            target.setGameMode(net.minecraft.world.level.GameType.ADVENTURE);
+                            target.setHealth(target.getMaxHealth());
+                            target.removeAllEffects();
+                            
+                            DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(target);
+                            component.reset();
+
+                            body.discard();
+
+                            player.displayClientMessage(
+                                    Component.translatable("message.noellesroles.defibrillator.revived", target.getName()),
+                                    true);
+                            target.displayClientMessage(
+                                    Component.translatable("message.noellesroles.defibrillator.you_revived"), true);
+
+                            if (!player.isCreative()) {
+                                stack.shrink(1);
+                            }
+                        } else {
+                            player.displayClientMessage(
+                                    Component.translatable("message.noellesroles.defibrillator.player_not_found"),
+                                    true);
                         }
                     }
                 }
             }
         }
+    }
+
+    public static net.minecraft.world.phys.HitResult getDefibrillatorTarget(Player user) {
+        return net.minecraft.world.entity.projectile.ProjectileUtil.getHitResultOnViewVector(user, (entity) -> {
+            return entity instanceof dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+        }, 3.0F);
     }
 
     @Override
