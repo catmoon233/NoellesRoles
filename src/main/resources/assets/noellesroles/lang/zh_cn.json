@@ -30,7 +30,7 @@
   "info.screen.roleid.morphling": "使用技能可改变皮肤--持续时间35秒-CD20秒。\n可购买迷幻瓶,制造出一阵迷雾，使周围人失明并强制改变视角。手持时不可见。",
   "info.screen.roleid.phantom": "使用技能可隐身，不会隐藏手上的物品，隐身时你仍然拥有碰撞体积",
   "info.screen.roleid.ghost": "无法被杀手直觉查看到（但能被部分中立角色透视）\n你可以查看剩余游戏时间。\n在游戏剩余3分钟时解锁技能，使用技能键后隐身，隐身时你仍然拥有碰撞体积。",
-  "info.screen.roleid.gambler": "每30s抽取一个职业，使用技能键进行选择。\n可以拾取手槍。\n可使用手枪蹲下自杀变为选择的职业。\n被别人杀死后有33%概率变成杀手,\n33%概率变成警长,\n33%概率死亡,\n1%概率独立获胜",
+  "info.screen.roleid.gambler": "每30s抽取一个职业，使用技能键进行选择。\n可以拾取手枪。\n可使用手枪蹲下自杀变为选择的职业。\n被别人杀死后有33%概率变成杀手阵营职业,\n33%概率变成警长阵营职业,\n33%概率死亡,\n1%概率独立获胜",
   "info.screen.roleid.attendant": "拥有一个可以使用五次的乘务员钥匙(可开启宿舍门)\n商店可购买手电筒(关灯时有奇效)",
   "info.screen.roleid.swapper": "打开背包可以选择玩家然后交换两个人的位置。\n发动技能时会有1s延迟，期间交换者无法移动。\n被交换的玩家会收到提示。",
   "info.screen.roleid.conductor": "初始获得一把万能钥匙和一个望远镜。\n死亡时都会掉落。",
@@ -615,6 +615,6 @@
   "==================== 巡警角色 ====================": "",
   "announcement.role.patroller": "巡警",
   "info.screen.roleid.patroller": "当你的视野30格内有人死亡时，你获得一把左轮手枪和一把乘务员钥匙。",
-  "announcement.goals.patroller": "当你亲眼目睹了一场死亡时，你获得一把左轮手枪和一把乘务员钥匙。",
+  "announcement.goals.patroller": "当你亲眼目睹了一场凶杀案时，你将维护这趟旅程中最后的正义。",
   "announcement.win.patroller": "乘客胜利！"
 }
