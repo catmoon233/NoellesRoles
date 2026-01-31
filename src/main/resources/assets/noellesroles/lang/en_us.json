@@ -628,5 +628,10 @@
   "message.noellesroles.monitor.cooldown": "Skill cooldown: %s seconds",
   "message.noellesroles.monitor.no_target": "Please aim at a player!",
   "message.noellesroles.monitor.target_not_found": "Target invalid or dead!",
-  "message.noellesroles.swapper.swapped": "You have been swapped by the Swapper!"
+  "message.noellesroles.swapper.swapped": "You have been swapped by the Swapper!",
+  "==================== 故障机器人角色 ====================": "",
+  "announcement.role.glitch_robot": "Glitch Robot",
+  "info.screen.roleid.glitch_robot": "You have no mood.\nDouble stamina limit\nImmune to poison\nEvery minute, a glitch occurs (rooted for 2 seconds)\nUpon death, leaves a glitch current (players inside get Slowness II)\nShop sells Night Vision Goggles and Glowstone Dust\nWhen wearing Night Vision Goggles, buying Glowstone Dust can recharge the goggles",
+  "announcement.goals.glitch_robot": "You were abandoned here, find a way out with the good guys!",
+  "announcement.win.glitch_robot": "Passengers win!"
 }
