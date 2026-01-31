@@ -13,6 +13,8 @@
     "SpawnMixin",
     "accessor.PlayerPoisonComponentAccessor",
     "roles.avengerKill.AvengerKillMixin",
+    "roles.awesome_binglus.NoteEntityMixin",
+    "roles.awesome_binglus.NoteMixin",
     "roles.bartender.BartenderReseterMixin",
     "roles.bartender.CocktailItemMixin",
     "roles.bartender.DefenseVialApplyMixin",
@@ -38,6 +40,7 @@
     "roles.manipulator.ManipulatorControlMixin",
     "roles.morphling.MorphlingReseterMixin",
     "roles.noisemaker.NoisemakerKillMixin",
+    "roles.patroller.PatrollerKillMixin",
     "roles.puppeteer.PuppeteerBodyGunPayloadMixin",
     "roles.puppeteer.PuppeteerBodyKnifePayloadMixin",
     "roles.stalker.StalkerKillCountMixin",
@@ -52,7 +55,6 @@
     "defaultRequire": 1
   },
   "client": [
-    "KeyBindingMixin",
     "client.AvengerHudMixin",
     "client.BomberHudMixin",
     "client.BoxerHudMixin",
@@ -99,12 +101,14 @@
     "client.puppeteer.PuppeteerBodyGunTargetMixin",
     "client.puppeteer.PuppeteerBodyKnifeTargetMixin",
     "client.recaller.RecallerHudMixin",
+    "client.swapper.KeyBindingMixin",
     "client.swapper.SwapperScreenMixin",
     "client.thief.ThiefHudMixin",
     "client.trapper.TrapperHudMixin",
     "client.voodoo.VoodooScreenMixin",
     "client.vulture.VultureEatenBodyMixin",
-    "client.vulture.VultureHudMixin"
+    "client.vulture.VultureHudMixin",
+    "roles.insanekiller.KeyBindingMixin"
   ],
   "overwrites": {
     "requireAnnotations": true

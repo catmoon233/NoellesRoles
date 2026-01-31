@@ -94,7 +94,7 @@ public abstract class InstinctMixin {
                     cir.setReturnValue(Color.GREEN.getRGB());
                 }
                 if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BARTENDER)
-                        && bartenderPlayerComponent.armor > 0) {
+                        && bartenderPlayerComponent.getArmor() > 0) {
                     cir.setReturnValue(Color.BLUE.getRGB());
                     cir.cancel();
                 }

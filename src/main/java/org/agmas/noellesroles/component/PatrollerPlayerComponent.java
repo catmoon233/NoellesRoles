@@ -32,6 +32,11 @@ public class PatrollerPlayerComponent implements RoleComponent, ServerTickingCom
         // 巡警的逻辑主要在死亡事件中触发，这里暂时不需要每tick运行
     }
 
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return player == this.player || GameFunctions.isPlayerAliveAndSurvival(player);
+    }
+
     public void reset() {
         this.hasTriggered = false;
         sync();
