@@ -251,7 +251,8 @@ public class Noellesroles implements ModInitializer {
 
         // 随从初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
-        // 乘务员开局不再有初始物品
+        // 乘务员开局获得乘务员钥匙
+        attendantItems.add(() -> ModItems.MASTER_KEY.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
         {
             List<ShopEntry> entries = new ArrayList<>();
