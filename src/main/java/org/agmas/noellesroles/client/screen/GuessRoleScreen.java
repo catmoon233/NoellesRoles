@@ -1,13 +1,13 @@
 package org.agmas.noellesroles.client.screen;
 
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.widget.ConspiratorRoleWidget;
 import org.agmas.noellesroles.client.widget.GuessPlayerWidget;
 import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,13 +32,13 @@ public class GuessRoleScreen extends Screen {
 
     // 静态存储猜测记录，游戏结束时清除
     public static Map<UUID, String> guessedRoles = new HashMap<>();
-    public static ArrayList<AbstractClientPlayer> allPlayers = new ArrayList<>();
+    public static ArrayList<PlayerInfo> allPlayers = new ArrayList<net.minecraft.client.multiplayer.PlayerInfo>();
 
     // 清除数据的方法
     public static void clearData() {
         guessedRoles.clear();
         allPlayers.clear();
-        allPlayers.addAll(Minecraft.getInstance().level.players());
+        allPlayers.addAll(  Minecraft.getInstance().getConnection().getListedOnlinePlayers());
     }
 
     // 当前阶段：0 = 选择玩家，1 = 选择角色
@@ -63,7 +63,7 @@ public class GuessRoleScreen extends Screen {
     String searchContent = null;
 
     // 玩家列表
-    private List<AbstractClientPlayer> players = new ArrayList<>();
+    private List<PlayerInfo> players = new ArrayList<>();
 
     // 角色列表
     private List<Role> roles = new ArrayList<>();
@@ -80,7 +80,7 @@ public class GuessRoleScreen extends Screen {
 
         super(Component.translatable("screen.noellesroles.guess_role.title"));
 
-        var now_players = new ArrayList<>(Minecraft.getInstance().level.players());
+        ArrayList<net.minecraft.client.multiplayer.PlayerInfo> now_players = new ArrayList<net.minecraft.client.multiplayer.PlayerInfo>((minecraft.getConnection().getListedOnlinePlayers()));
         now_players.removeIf((a) -> {
             return allPlayers.contains(a);
         });
@@ -138,17 +138,17 @@ public class GuessRoleScreen extends Screen {
             return;
 
         // 获取所有其他玩家
-        var now_players = new ArrayList<>(minecraft.level.players());
+        var now_players = new ArrayList<>(minecraft.getConnection().getListedOnlinePlayers());
         now_players.removeIf((a) -> {
             return allPlayers.contains(a);
         });
         allPlayers.addAll(now_players);
         players = new ArrayList<>(allPlayers);
 
-        List<AbstractClientPlayer> filteredPlayers = new ArrayList<>();
+        List<PlayerInfo> filteredPlayers = new ArrayList<>();
 
         players.removeIf(p -> {
-            if (p.getUUID().equals(minecraft.player.getUUID()))
+            if (p.getProfile().getId().equals(minecraft.player.getUUID()))
                 return true;
             return false;
         });
@@ -159,12 +159,12 @@ public class GuessRoleScreen extends Screen {
 
         if (searchText != null && !searchText.trim().isEmpty()) {
             String lowerCaseSearch = searchText.toLowerCase();
-            for (AbstractClientPlayer player : players) {
-                String playerName = player.getName().getString().toLowerCase();
+            for (var player : players) {
+                String playerName = player.getProfile().getName().toLowerCase();
                 if (playerName.contains(lowerCaseSearch)) {
                     filteredPlayers.add(player);
                 } else {
-                    String role = guessedRoles.get(player.getUUID());
+                    String role = guessedRoles.get(player.getProfile().getId());
                     if (role != null && !role.trim().isEmpty())
                         if (role.toLowerCase().contains(lowerCaseSearch)) {
                             filteredPlayers.add(player);
@@ -238,8 +238,8 @@ public class GuessRoleScreen extends Screen {
             int x = startX + col * (widgetSize + spacing);
             int y = startY + row * (widgetSize + 12 + spacing);
 
-            AbstractClientPlayer player = filteredPlayers.get(i);
-            String role = guessedRoles.get(player.getUUID());
+            var player = filteredPlayers.get(i);
+            String role = guessedRoles.get(player.getProfile().getId());
 
             GuessPlayerWidget widget = new GuessPlayerWidget(
                     this, x, y, widgetSize, player, role);

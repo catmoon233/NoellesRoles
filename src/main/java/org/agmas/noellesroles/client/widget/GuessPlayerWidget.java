@@ -1,8 +1,9 @@
 package org.agmas.noellesroles.client.widget;
 
+
 import org.agmas.noellesroles.client.screen.GuessRoleScreen;
 import org.jetbrains.annotations.NotNull;
-
+import net.minecraft.client.multiplayer.PlayerInfo;
 import java.awt.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,14 +22,14 @@ import net.minecraft.network.chat.Component;
 public class GuessPlayerWidget extends Button {
 
     public final GuessRoleScreen screen;
-    public final AbstractClientPlayer player;
+    public final PlayerInfo player;
     private final int size;
     private final String guessedRole;
 
     public GuessPlayerWidget(GuessRoleScreen screen, int x, int y, int size,
-            @NotNull AbstractClientPlayer player, String guessedRole) {
-        super(x, y, size, size + 15, player.getName(), // 高度增加以容纳文字
-                (button) -> screen.onPlayerSelected(player.getUUID(), player.getName().getString()),
+                             @NotNull PlayerInfo player, String guessedRole) {
+        super(x, y, size, size + 15, Component.nullToEmpty(player.getProfile().getName()), // 高度增加以容纳文字
+                (button) -> screen.onPlayerSelected(player.getProfile().getId(), player.getProfile().getName()),
                 DEFAULT_NARRATION);
         this.screen = screen;
         this.player = player;
@@ -47,7 +48,7 @@ public class GuessPlayerWidget extends Button {
         context.renderOutline(getX() - 2, getY() - 2, size + 4, size + 17, borderColor);
 
         // 绘制玩家皮肤头像
-        PlayerFaceRenderer.draw(context, player.getSkin().texture(), getX(), getY(), size);
+        PlayerFaceRenderer.draw(context, player.getSkin(), getX(), getY(), size);
 
         // 绘制猜测的职业名称
         Font font = Minecraft.getInstance().font;
@@ -62,8 +63,8 @@ public class GuessPlayerWidget extends Button {
             drawShopSlotHighlight(context, getX(), getY(), 0);
 
             // 绘制玩家名称提示
-            int nameWidth = font.width(player.getName());
-            context.renderTooltip(font, player.getName(),
+            int nameWidth = font.width(player.getProfile().getName());
+            context.renderTooltip(font, Component.nullToEmpty(player.getProfile().getName()),
                     getX() - 12 + (size - nameWidth) / 2, getY() - 2);
         }
     }

@@ -8,8 +8,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.network.chat.Component;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.packet.MorphC2SPacket;
 import org.jetbrains.annotations.NotNull;
@@ -18,10 +20,10 @@ import java.awt.*;
 
 public class MorphlingPlayerWidget extends Button{
     public final LimitedInventoryScreen screen;
-    public final AbstractClientPlayer disguiseTarget;
+    public final PlayerInfo disguiseTarget;
 
-    public MorphlingPlayerWidget(LimitedInventoryScreen screen, int x, int y, @NotNull AbstractClientPlayer disguiseTarget, int index) {
-        super(x, y, 16, 16, disguiseTarget.getName(), (a) -> {if ((MorphlingPlayerComponent.KEY.get(Minecraft.getInstance().player)).getMorphTicks() == 0) {ClientPlayNetworking.send(new MorphC2SPacket(disguiseTarget.getUUID()));}}, DEFAULT_NARRATION);
+    public MorphlingPlayerWidget(LimitedInventoryScreen screen, int x, int y, @NotNull PlayerInfo disguiseTarget, int index) {
+        super(x, y, 16, 16, Component.nullToEmpty(disguiseTarget.getProfile().getName()), (a) -> {if ((MorphlingPlayerComponent.KEY.get(Minecraft.getInstance().player)).getMorphTicks() == 0) {ClientPlayNetworking.send(new MorphC2SPacket(disguiseTarget.getProfile().getId()));}}, DEFAULT_NARRATION);
         this.screen = screen;
         this.disguiseTarget = disguiseTarget;
     }
@@ -33,7 +35,7 @@ public class MorphlingPlayerWidget extends Button{
             PlayerFaceRenderer.draw(context, disguiseTarget.getSkin().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.renderTooltip(Minecraft.getInstance().font, disguiseTarget.getName(), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getName()) / 2, this.getY() - 9);
+                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(disguiseTarget.getProfile().getName()), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getProfile().getName()) / 2, this.getY() - 9);
             }
 
         }
@@ -45,7 +47,7 @@ public class MorphlingPlayerWidget extends Button{
             PlayerFaceRenderer.draw(context, disguiseTarget.getSkin().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.renderTooltip(Minecraft.getInstance().font, disguiseTarget.getName(), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getName()) / 2, this.getY() - 9);
+                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(disguiseTarget.getProfile().getName()), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getProfile().getName()) / 2, this.getY() - 9);
             }
 
 
