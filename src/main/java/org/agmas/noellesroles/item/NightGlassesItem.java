@@ -1,10 +1,15 @@
 package org.agmas.noellesroles.item;
 
+import java.util.Date;
+
 import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
@@ -12,7 +17,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class NightGlassesItem extends ArmorItem {
-    public int tick = 0;
+    private int tick = 0;
+
+    @Override
+    public Holder<SoundEvent> getEquipSound() {
+        return SoundEvents.ARMOR_EQUIP_WOLF;
+    }
 
     public NightGlassesItem(Holder<ArmorMaterial> holder, Type type, Properties properties) {
         super(holder, type, properties);
@@ -23,15 +33,23 @@ public class NightGlassesItem extends ArmorItem {
         if (entity instanceof Player pl) {
             ItemStack headItem = pl.getSlot(103).get();
             if (headItem.equals(itemStack)) {
-                tick++;
-                if (tick % 20 == 0) {
-                    itemStack.consume(1, pl);
+                this.tick++;
+                if (this.tick >= 20) {
+                    this.tick = 0;
+                    if (!pl.isCreative() && !pl.isSpectator()) {
+                        itemStack.setDamageValue(itemStack.getDamageValue() + 1);
+                    }
+                    if (itemStack.getDamageValue() <= 0) {
+                        // itemStack.consume(1, pl);
+                        pl.removeEffect(MobEffects.NIGHT_VISION);
+                        return;
+                    }
                     pl.addEffect(new MobEffectInstance(
                             MobEffects.NIGHT_VISION, // ID
-                            30, // 持续时间（tick）
+                            240, // 持续时间（tick）
                             0, // 等级（0 = 速度 I）
                             false, // ambient（环境效果，如信标）
-                            true, // showParticles（显示粒子）
+                            false, // showParticles（显示粒子）
                             false // showIcon（显示图标）
                     ));
                 }

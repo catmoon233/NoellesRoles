@@ -241,6 +241,10 @@ public class Noellesroles implements ModInitializer {
     private void initializeInitialItems() {
 
         INITIAL_ITEMS_MAP.clear();
+        // 医生初始物品（不再有针管和解药）
+        List<Supplier<ItemStack>> glitchRobotItems = new ArrayList<>();
+        glitchRobotItems.add(() -> ModItems.NIGHT_VISION_GLASSES.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.GLITCH_ROBOT, glitchRobotItems);
 
         // 医生初始物品（不再有针管和解药）
         List<Supplier<ItemStack>> doctorItems = new ArrayList<>();
@@ -607,22 +611,17 @@ public class Noellesroles implements ModInitializer {
         // 故障机器人商店
         {
             List<ShopEntry> glitchRobotShop = new ArrayList<>();
-            // 夜视仪 - 150金币
-            if (ModItems.NIGHT_VISION_GLASSES != null) {
-                final var nightVisionDefaultInstance = ModItems.NIGHT_VISION_GLASSES.getDefaultInstance();
-                glitchRobotShop.add(new ShopEntry(nightVisionDefaultInstance, 150, ShopEntry.Type.TOOL) {
-                    @Override
-                    public boolean onBuy(@NotNull Player player) {
-                        player.addItem(nightVisionDefaultInstance.copy());
-                        return true;
-                    }
-                });
-            }
             // 萤石粉 - 50金币
             glitchRobotShop.add(new ShopEntry(Items.GLOWSTONE_DUST.getDefaultInstance(), 50, ShopEntry.Type.TOOL) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
-                    player.addItem(Items.GLOWSTONE_DUST.getDefaultInstance().copy());
+                    var head = player.getSlot(103).get();
+                    if (head.is(ModItems.NIGHT_VISION_GLASSES)) {
+                        int damage = head.getDamageValue();
+                        if (damage >= 30) {
+                            head.setDamageValue(damage - 30);
+                        }
+                    }
                     return true;
                 }
             });
@@ -1569,6 +1568,25 @@ public class Noellesroles implements ModInitializer {
                     .get(context.player());
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                     .get(context.player().level());
+            if (gameWorldComponent.isRole(context.player(), ModRoles.GLITCH_ROBOT)) {
+
+                if (!RoleUtils.isPlayerHasFreeSlot(context.player())) {
+                    context.player().displayClientMessage(
+                            Component.translatable("message.hotbar.full").withStyle(ChatFormatting.RED), true);
+                    return;
+                }
+                if (!context.player().getSlot(103).get().is(ModItems.NIGHT_VISION_GLASSES)) {
+                    context.player().displayClientMessage(
+                            Component.translatable("info.glitch_robot.noglasses_on_head").withStyle(ChatFormatting.RED),
+                            true);
+                }
+                RoleUtils.insertStackInFreeSlot(context.player(), context.player().getSlot(103).get().copy());
+                RoleUtils.removeStackItem(context.player(), 103);
+                context.player().displayClientMessage(
+                            Component.translatable("info.glitch_robot.take_off_glasses.success").withStyle(ChatFormatting.GREEN),
+                            true);
+                return;
+            }
             if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
                 BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(context.player());
                 bomberPlayerComponent.buyBomb();

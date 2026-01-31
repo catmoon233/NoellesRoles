@@ -19,13 +19,13 @@ import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import java.awt.*;
 import java.util.UUID;
 
-public class VoodooPlayerWidget extends Button{
+public class VoodooPlayerWidget extends Button {
     public final LimitedInventoryScreen screen;
     public final UUID targetUUID;
     public final PlayerInfo targetPlayerEntry;
 
-
-    public VoodooPlayerWidget(LimitedInventoryScreen screen, int x, int y, UUID targetUUID, PlayerInfo targetPlayerEntry, Level world, int index) {
+    public VoodooPlayerWidget(LimitedInventoryScreen screen, int x, int y, UUID targetUUID,
+            PlayerInfo targetPlayerEntry, Level world, int index) {
         super(x, y, 16, 16, Component.literal(""), (a) -> {
             ClientPlayNetworking.send(new MorphC2SPacket(targetUUID));
         }, DEFAULT_NARRATION);
@@ -37,42 +37,50 @@ public class VoodooPlayerWidget extends Button{
     protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
         final var player = Minecraft.getInstance().player;
-        if (player==null)return;
-        if (targetPlayerEntry==null)return;
+        if (player == null)
+            return;
+        if (targetPlayerEntry == null)
+            return;
 
         VoodooPlayerComponent voodooPlayerComponent = (VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(player);
 
         final var abilityPlayerComponent = AbilityPlayerComponent.KEY.get(player);
-        if (abilityPlayerComponent==null)return;
+        if (abilityPlayerComponent == null)
+            return;
         final var target = voodooPlayerComponent.target;
-        if (target==null)return;
-        
+        if (target == null)
+            return;
+
         // 检查皮肤纹理是否存在，避免空指针异常
         var skinTextures = targetPlayerEntry.getSkin();
-        if (skinTextures == null || skinTextures.texture() == null) return;
+        if (skinTextures == null || skinTextures.texture() == null)
+            return;
 
         final var textRenderer = Minecraft.getInstance().font;
-        if (textRenderer == null) return;
+        if (textRenderer == null)
+            return;
         if (abilityPlayerComponent.cooldown == 0) {
             context.blitSprite(ShopEntry.Type.TOOL.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
             PlayerFaceRenderer.draw(context, skinTextures.texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
                 final var displayName = targetPlayerEntry.getProfile().getName();
-                if (displayName!=null){
-                context.renderTooltip(textRenderer, Component.nullToEmpty(displayName), this.getX() - 4 - 10, this.getY() - 9);
-}
+                if (displayName != null) {
+                    context.renderTooltip(textRenderer, Component.nullToEmpty(displayName), this.getX() - 4 - 10,
+                            this.getY() - 9);
+                }
             }
 
             if (target.equals(targetUUID)) {
 
-                context.renderTooltip(textRenderer, Component.literal("选择"), this.getX() - 4 - textRenderer.width("选择") / 2, this.getY() - 9);
+                context.renderTooltip(textRenderer, Component.literal("选择"),
+                        this.getX() - 4 - textRenderer.width("选择") / 2, this.getY() - 9);
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
             }
         }
 
         if (abilityPlayerComponent.cooldown > 0) {
-            context.setColor(0.25f,0.25f,0.25f,0.5f);
+            context.setColor(0.25f, 0.25f, 0.25f, 0.5f);
             context.blitSprite(ShopEntry.Type.TOOL.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
             PlayerFaceRenderer.draw(context, skinTextures.texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
@@ -80,11 +88,13 @@ public class VoodooPlayerWidget extends Button{
             }
 
             if (target.equals(targetUUID)) {
-                context.renderTooltip(textRenderer, Component.literal("Selected"), this.getX() - 4 - textRenderer.width("Selected") / 2, this.getY() - 9);
+                context.renderTooltip(textRenderer, Component.literal("Selected"),
+                        this.getX() - 4 - textRenderer.width("Selected") / 2, this.getY() - 9);
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
             }
-            context.setColor(1f,1f,1f,1f);
-            context.drawString(textRenderer, abilityPlayerComponent.cooldown/20+"",this.getX(),this.getY(), Color.RED.getRGB(),true);
+            context.setColor(1f, 1f, 1f, 1f);
+            context.drawString(textRenderer, abilityPlayerComponent.cooldown / 20 + "", this.getX(), this.getY(),
+                    Color.RED.getRGB(), true);
 
         }
 

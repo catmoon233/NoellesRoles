@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 
+import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
 import org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent;
@@ -53,7 +54,7 @@ public abstract class SimpleHudMixin {
                     if (remainingTicks > GhostPlayerComponent.UNLOCK_REMAINING_TICKS) {
                         // 剩余时间 > 3分钟，显示还需要多少时间到解锁
                         long ticksUntilUnlock = remainingTicks - GhostPlayerComponent.UNLOCK_REMAINING_TICKS;
-                        int secondsUntilUnlock = ((int)ticksUntilUnlock + 19) / 20;
+                        int secondsUntilUnlock = ((int) ticksUntilUnlock + 19) / 20;
                         text = Component.translatable("gui.noellesroles.ghost.not_unlocked", secondsUntilUnlock);
                         color = 0xFFFF00; // 黄色
                     } else {
@@ -93,7 +94,13 @@ public abstract class SimpleHudMixin {
                 text = Component.translatable("gui.noellesroles.noisemaker.ready");
                 color = 0x55FF55; // 绿色
             }
+        } else if (gameWorld.isRole(client.player, ModRoles.GLITCH_ROBOT)) {
+            if (!client.player.getSlot(103).get().is(ModItems.NIGHT_VISION_GLASSES))
+                return;
+            text = Component.translatable("info.glitch_robot.take_off_glasses.tip",
+                    Component.keybind("key.noellesroles.ability"));
         }
+
         if (text == null) {
             return;
             // text = Component.translatable("gui.noellesroles." +

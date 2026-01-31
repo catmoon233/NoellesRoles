@@ -3,6 +3,7 @@ package org.agmas.noellesroles.utils;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.events.ModdedRoleRemoved;
 import org.agmas.noellesroles.Noellesroles;
+import org.jetbrains.annotations.NotNull;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -16,11 +17,37 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * 角色相关工具
  */
 public class RoleUtils {
+    public static boolean isPlayerHasFreeSlot(@NotNull Player player) {
+        for (int i = 0; i < 9; ++i) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean insertStackInFreeSlot(@NotNull Player player, ItemStack stackToInsert) {
+        for (int i = 0; i < 9; ++i) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.isEmpty()) {
+                player.getInventory().setItem(i, stackToInsert);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void removeStackItem(ServerPlayer player, int slot) {
+        player.getInventory().setItem(slot, ItemStack.EMPTY);
+    }
 
     public static void clearAllKnives(ServerPlayer player) {
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
@@ -96,6 +123,6 @@ public class RoleUtils {
     }
 
     public static MutableComponent getRoleDescription(Role selectedRole) {
-        return Component.translatable("info.screen.roleid."+selectedRole.getIdentifier().getPath());
+        return Component.translatable("info.screen.roleid." + selectedRole.getIdentifier().getPath());
     }
 }

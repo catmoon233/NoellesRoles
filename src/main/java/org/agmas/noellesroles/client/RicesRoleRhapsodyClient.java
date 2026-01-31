@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.client;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.CameraType;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.ModItems;
@@ -25,10 +26,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
+import org.agmas.noellesroles.utils.RoleUtils;
+
 import static org.agmas.noellesroles.client.NoellesrolesClient.abilityBind;
 
 /**
@@ -207,7 +211,6 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             return;
         }
 
-
         // ==================== 拳击手：激活钢筋铁骨技能 ====================
         if (gameWorld.isRole(client.player, ModRoles.BOXER)) {
             // 检查玩家是否存活
@@ -226,6 +229,26 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                 String.format("%.1f", boxerComponent.getCooldownSeconds())),
                         true);
             }
+            return;
+        }
+
+        // ==================== 失控机器人：眼镜 ====================
+        if (gameWorld.isRole(client.player, ModRoles.GLITCH_ROBOT)) {
+            // 检查玩家是否存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
+                return;
+            if (!client.player.getSlot(103).get().is(ModItems.NIGHT_VISION_GLASSES)) {
+                client.player.displayClientMessage(
+                        Component.translatable("info.glitch_robot.noglasses_on_head").withStyle(ChatFormatting.RED),
+                        true);
+            }
+            if (!RoleUtils.isPlayerHasFreeSlot(client.player)) {
+                client.player.displayClientMessage(
+                        Component.translatable("message.hotbar.full").withStyle(ChatFormatting.RED), true);
+            }
+            // 发送网络包到服务端激活技能
+            ClientPlayNetworking.send(new AbilityC2SPacket());
+
             return;
         }
 
@@ -336,23 +359,24 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
 
         // // ==================== 歌手：播放音乐技能 已变为物品栏购买 ====================
         // if (gameWorld.isRole(client.player, ModRoles.SINGER)) {
-        //     // 检查玩家是否存活
-        //     if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-        //         return;
+        // // 检查玩家是否存活
+        // if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
+        // return;
 
-        //     SingerPlayerComponent singerComponent = SingerPlayerComponent.KEY.get(client.player);
-        //     // 检查技能是否可用
-        //     if (singerComponent.canUseAbility()) {
-        //         // 发送网络包到服务端激活技能
-        //         ClientPlayNetworking.send(new SingerAbilityC2SPacket());
-        //     } else if (singerComponent.abilityCooldown > 0) {
-        //         // 显示冷却提示
-        //         client.player.displayClientMessage(
-        //                 net.minecraft.network.chat.Component.translatable("message.noellesroles.singer.on_cooldown",
-        //                         String.format("%.0f", singerComponent.getCooldownSeconds())),
-        //                 true);
-        //     }
-        //     return;
+        // SingerPlayerComponent singerComponent =
+        // SingerPlayerComponent.KEY.get(client.player);
+        // // 检查技能是否可用
+        // if (singerComponent.canUseAbility()) {
+        // // 发送网络包到服务端激活技能
+        // ClientPlayNetworking.send(new SingerAbilityC2SPacket());
+        // } else if (singerComponent.abilityCooldown > 0) {
+        // // 显示冷却提示
+        // client.player.displayClientMessage(
+        // net.minecraft.network.chat.Component.translatable("message.noellesroles.singer.on_cooldown",
+        // String.format("%.0f", singerComponent.getCooldownSeconds())),
+        // true);
+        // }
+        // return;
         // }
 
         // ==================== 傀儡师：使用假人技能 ====================
