@@ -21,7 +21,7 @@ public class ModItems {
                         "singer_music_disc");
         public static final Item NIGHT_VISION_GLASSES = register(
                         new NightGlassesItem(ArmorMaterials.TURTLE, net.minecraft.world.item.ArmorItem.Type.HELMET,
-                                        (new Item.Properties()).durability(120)),
+                                        (new Item.Properties()).durability(60)),
                         "night_vision_glasses");
                         
         public static final Item FAKE_KNIFE = register(

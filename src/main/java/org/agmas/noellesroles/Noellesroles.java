@@ -618,8 +618,8 @@ public class Noellesroles implements ModInitializer {
                     var head = player.getSlot(103).get();
                     if (head.is(ModItems.NIGHT_VISION_GLASSES)) {
                         int damage = head.getDamageValue();
-                        if (damage >= 30) {
-                            head.setDamageValue(damage - 30);
+                        if (damage >= 25) {
+                            head.setDamageValue(damage - 25);
                         } else {
                             return false;
                         }
