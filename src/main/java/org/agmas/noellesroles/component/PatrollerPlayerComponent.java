@@ -16,6 +16,7 @@ public class PatrollerPlayerComponent implements RoleComponent, ServerTickingCom
 
     public static final ComponentKey<PatrollerPlayerComponent> KEY = ModComponents.PATROLLER;
     private final Player player;
+    private boolean hasTriggered = false;
 
     public PatrollerPlayerComponent(Player player) {
         this.player = player;
@@ -32,7 +33,8 @@ public class PatrollerPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     public void reset() {
-        // 重置逻辑
+        this.hasTriggered = false;
+        sync();
     }
 
     public void sync() {
@@ -40,19 +42,24 @@ public class PatrollerPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     public void onNearbyDeath() {
+        if (this.hasTriggered) return;
         if (player instanceof ServerPlayer serverPlayer) {
             // 给予左轮手枪
             serverPlayer.addItem(new ItemStack(TMMItems.REVOLVER));
             // 给予乘务员钥匙 (master_key_p)
             serverPlayer.addItem(new ItemStack(ModItems.MASTER_KEY_P));
+            this.hasTriggered = true;
+            sync();
         }
     }
 
     @Override
     public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+        this.hasTriggered = tag.getBoolean("hasTriggered");
     }
 
     @Override
     public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+        tag.putBoolean("hasTriggered", this.hasTriggered);
     }
 }
