@@ -241,10 +241,8 @@ public class Noellesroles implements ModInitializer {
     private void initializeInitialItems() {
 
         INITIAL_ITEMS_MAP.clear();
-        // 医生初始物品（不再有针管和解药）
-        List<Supplier<ItemStack>> glitchRobotItems = new ArrayList<>();
-        glitchRobotItems.add(() -> ModItems.NIGHT_VISION_GLASSES.getDefaultInstance());
-        INITIAL_ITEMS_MAP.put(ModRoles.GLITCH_ROBOT, glitchRobotItems);
+        // 故障机器人初始物品（无开局物品）
+        INITIAL_ITEMS_MAP.put(ModRoles.GLITCH_ROBOT, new ArrayList<>());
 
         // 医生初始物品（不再有针管和解药）
         List<Supplier<ItemStack>> doctorItems = new ArrayList<>();
@@ -611,7 +609,9 @@ public class Noellesroles implements ModInitializer {
         // 故障机器人商店
         {
             List<ShopEntry> glitchRobotShop = new ArrayList<>();
-            // 萤石粉 - 50金币
+            // 夜视仪 - 150金币
+            glitchRobotShop.add(new ShopEntry(ModItems.NIGHT_VISION_GLASSES.getDefaultInstance(), 150, ShopEntry.Type.TOOL));
+            // 萤石粉 - 50金币（修复夜视仪）
             glitchRobotShop.add(new ShopEntry(Items.GLOWSTONE_DUST.getDefaultInstance(), 50, ShopEntry.Type.TOOL) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
