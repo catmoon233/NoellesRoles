@@ -444,10 +444,10 @@ public class Noellesroles implements ModInitializer {
                     Component.translatable("item.noellesroles.shop.singer.display_name.root",
                             Component.translatable("item.noellesroles.shop.singer.display_name." + i)
                                     .withStyle(ChatFormatting.GOLD))
-                            .withStyle(ChatFormatting.WHITE));
+                            .withStyle(ChatFormatting.AQUA));
             var lores = new ArrayList<Component>();
             lores.add(Component.translatable("item.noellesroles.shop.singer.lore",
-                    Component.translatable("item.noellesroles.shop.singer.effect." + i).withStyle(ChatFormatting.AQUA))
+                    Component.translatable("item.noellesroles.shop.singer.effect." + i).withStyle(ChatFormatting.GOLD))
                     .withStyle(ChatFormatting.GRAY));
             singer_shop_item.set(DataComponents.LORE, new ItemLore(lores));
             final int idx = i;
