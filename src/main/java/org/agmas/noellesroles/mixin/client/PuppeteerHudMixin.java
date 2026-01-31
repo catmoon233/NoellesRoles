@@ -77,7 +77,7 @@ public abstract class PuppeteerHudMixin {
         // ==================== 阶段一：收集者模式 ====================
         if (puppeteerComp.phase == 1) {
             // 计算阈值（总人数/6）
-            int totalPlayers = client.level.players().size();
+            int totalPlayers = client.getConnection().getListedOnlinePlayers().size();
             int threshold = Math.max(1, totalPlayers / 6);
 
             // 显示收集进度

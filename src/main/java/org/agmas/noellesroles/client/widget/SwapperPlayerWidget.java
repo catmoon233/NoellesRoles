@@ -8,8 +8,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.network.chat.Component;
 import org.agmas.noellesroles.AbilityPlayerComponent;
 import org.agmas.noellesroles.packet.SwapperC2SPacket;
 import org.jetbrains.annotations.NotNull;
@@ -19,19 +21,19 @@ import java.util.UUID;
 
 public class SwapperPlayerWidget extends Button{
     public final LimitedInventoryScreen screen;
-    public final AbstractClientPlayer disguiseTarget;
+    public final PlayerInfo disguiseTarget;
 
     public static UUID playerChoiceOne = null;
 
-    public SwapperPlayerWidget(LimitedInventoryScreen screen, int x, int y, @NotNull AbstractClientPlayer disguiseTarget, int index) {
-        super(x, y, 16, 16, disguiseTarget.getName(), (a) -> {
+    public SwapperPlayerWidget(LimitedInventoryScreen screen, int x, int y, @NotNull PlayerInfo disguiseTarget, int index) {
+        super(x, y, 16, 16, Component.nullToEmpty(disguiseTarget.getProfile().getName()), (a) -> {
             if ((AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player)).cooldown == 0) {
-                if (Minecraft.getInstance().player.level().getPlayerByUUID(disguiseTarget.getUUID()) == null) return;
-                if (Minecraft.getInstance().player.level().getPlayerByUUID(disguiseTarget.getUUID()).isPassenger()) return;
+                if (Minecraft.getInstance().player.level().getPlayerByUUID(disguiseTarget.getProfile().getId()) == null) return;
+                if (Minecraft.getInstance().player.level().getPlayerByUUID(disguiseTarget.getProfile().getId()).isPassenger()) return;
                 if (playerChoiceOne != null) {
-                    ClientPlayNetworking.send(new SwapperC2SPacket(playerChoiceOne, disguiseTarget.getUUID()));
+                    ClientPlayNetworking.send(new SwapperC2SPacket(playerChoiceOne, disguiseTarget.getProfile().getId()));
                 } else {
-                    playerChoiceOne = disguiseTarget.getUUID();
+                    playerChoiceOne = disguiseTarget.getProfile().getId();
                 }
             }
         }, DEFAULT_NARRATION);
@@ -46,7 +48,7 @@ public class SwapperPlayerWidget extends Button{
             PlayerFaceRenderer.draw(context, disguiseTarget.getSkin().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.renderTooltip(Minecraft.getInstance().font, disguiseTarget.getName(), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getName()) / 2, this.getY() - 9);
+                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(disguiseTarget.getProfile().getName()), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getProfile().getName()) / 2, this.getY() - 9);
             }
 
         }
@@ -57,7 +59,7 @@ public class SwapperPlayerWidget extends Button{
             PlayerFaceRenderer.draw(context, disguiseTarget.getSkin().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.renderTooltip(Minecraft.getInstance().font, disguiseTarget.getName(), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getName()) / 2, this.getY() - 9);
+                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(disguiseTarget.getProfile().getName()), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getProfile().getName()) / 2, this.getY() - 9);
             }
 
 

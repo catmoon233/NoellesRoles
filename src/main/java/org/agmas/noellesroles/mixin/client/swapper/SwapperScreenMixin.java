@@ -53,7 +53,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<InventoryM
     public LocalPlayer player;
 
     @Unique
-    private RoleScreenHelper<AbstractClientPlayer> roleScreenHelper;
+    private RoleScreenHelper<PlayerInfo> roleScreenHelper;
 
     public SwapperScreenMixin(InventoryMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
@@ -62,7 +62,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<InventoryM
 
 
     @Unique
-    private RoleScreenHelper<AbstractClientPlayer> getRoleScreenHelper() {
+    private RoleScreenHelper<PlayerInfo> getRoleScreenHelper() {
         if (roleScreenHelper == null) {
             roleScreenHelper = new RoleScreenHelper<>(
                     player,
@@ -77,7 +77,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<InventoryM
     }
 
     @Unique
-    private SwapperPlayerWidget createSwapperWidget(int x, int y, AbstractClientPlayer playerEntity, int index) {
+    private SwapperPlayerWidget createSwapperWidget(int x, int y, PlayerInfo playerEntity, int index) {
         SwapperPlayerWidget widget = new SwapperPlayerWidget(
                 (LimitedInventoryScreen) (Object) this,
                 x, y, playerEntity, index
@@ -106,17 +106,16 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<InventoryM
     }
 
     @Unique
-    private List<AbstractClientPlayer> getEligiblePlayers() {
+    private List<PlayerInfo> getEligiblePlayers() {
         Minecraft client = Minecraft.getInstance();
         if (client.level == null || client.player == null) {
             return List.of();
         }
 
-        return client.level.players().stream()
-                .filter(a-> isPlayerInAdventureMode( a))
+        return client.getConnection().getListedOnlinePlayers().stream()
+                .filter(a -> a.getProfile().getId() != player.getUUID() && a.getGameMode() == GameType.ADVENTURE)
                 .collect(Collectors.toList());
     }
-
     @Unique
     private boolean isPlayerInAdventureMode(AbstractClientPlayer targetPlayer) {
         Minecraft client = Minecraft.getInstance();

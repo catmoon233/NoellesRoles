@@ -2,6 +2,8 @@ package org.agmas.noellesroles.mixin.client.morphling;
 
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedHandledScreen;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.client.PlayerPaginationHelper;
 import org.agmas.noellesroles.client.RoleScreenHelper;
 import org.agmas.noellesroles.client.widget.MorphlingPlayerWidget;
@@ -52,7 +54,7 @@ public abstract class MorphlingScreenMixin extends LimitedHandledScreen<Inventor
     public LocalPlayer player;
 
     @Unique
-    private RoleScreenHelper<AbstractClientPlayer> roleScreenHelper;
+    private RoleScreenHelper<PlayerInfo> roleScreenHelper;
 
     public MorphlingScreenMixin(InventoryMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
@@ -60,9 +62,9 @@ public abstract class MorphlingScreenMixin extends LimitedHandledScreen<Inventor
 
 
     @Unique
-    private RoleScreenHelper<AbstractClientPlayer> getRoleScreenHelper() {
+    private RoleScreenHelper<PlayerInfo> getRoleScreenHelper() {
         if (roleScreenHelper == null) {
-            roleScreenHelper = new RoleScreenHelper<>(
+            roleScreenHelper = new RoleScreenHelper<PlayerInfo>(
                     player,
                     ModRoles.MORPHLING,
                     this::createMorphlingWidget,
@@ -74,7 +76,7 @@ public abstract class MorphlingScreenMixin extends LimitedHandledScreen<Inventor
         return roleScreenHelper;
     }
     @Unique
-    private MorphlingPlayerWidget createMorphlingWidget(int x, int y, AbstractClientPlayer playerEntity, int index) {
+    private MorphlingPlayerWidget createMorphlingWidget(int x, int y, PlayerInfo playerEntity, int index) {
         MorphlingPlayerWidget widget = new MorphlingPlayerWidget(
                 (LimitedInventoryScreen) (Object) this,
                 x, y, playerEntity, index
@@ -95,14 +97,14 @@ public abstract class MorphlingScreenMixin extends LimitedHandledScreen<Inventor
     }
 
     @Unique
-    private List<AbstractClientPlayer> getEligiblePlayers() {
+    private List<PlayerInfo> getEligiblePlayers() {
         Minecraft client = Minecraft.getInstance();
         if (client.level == null || client.player == null) {
             return List.of();
         }
 
-        return client.level.players().stream()
-                .filter(a -> a.getUUID() != player.getUUID() && isPlayerInAdventureMode(a))
+        return client.getConnection().getListedOnlinePlayers().stream()
+                .filter(a -> a.getProfile().getId() != player.getUUID() && a.getGameMode() == GameType.ADVENTURE)
                 .collect(Collectors.toList());
     }
 
