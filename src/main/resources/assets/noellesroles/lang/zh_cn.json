@@ -620,6 +620,6 @@
   "==================== 故障机器人角色 ====================": "",
   "announcement.role.glitch_robot": "故障机器人",
   "info.screen.roleid.glitch_robot": "你没有心情。\n拥有两倍体力上限\n免疫中毒\n每分钟会发生一次故障（定身2秒）\n死亡后会留下一片故障电流(电流中的玩家会有缓慢2的效果)\n商店可购买夜视仪和荧石粉\n荧石粉可以为夜视仪充能",
-  "announcement.goals.glitch_robot": "利用你的高机动性完成任务，但要小心故障！",
+  "announcement.goals.glitch_robot": "你曾被废弃于此，与好人一起寻得出路！",
   "announcement.win.glitch_robot": "乘客胜利！"
 }
