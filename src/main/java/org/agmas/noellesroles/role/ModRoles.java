@@ -683,7 +683,7 @@ public class ModRoles {
                 // 故障机器人角色 - 乘客阵营
                 GLITCH_ROBOT = TMMRoles.registerRole(new NoramlRole(
                                 GLITCH_ROBOT_ID, // 角色 ID
-                                new Color(33, 33, 33).getRGB(), // 灰色 - 代表机器人
+                                new Color(211, 196, 250).getRGB(), // 灰色 - 代表机器人
                                 true, // isInnocent = 乘客阵营
                                 false, // canUseKiller = 无杀手能力
                                 Role.MoodType.FAKE, // 小丑心情（假心情）
