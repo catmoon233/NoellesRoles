@@ -453,7 +453,7 @@
   "announcement.goals.singer": "你是一名歌手！按技能鍵隨機播放一首唱片音樂，讓周圍的人都能聽到你的歌聲！",
   "announcement.win.singer": "乘客勝利！",
   "hud.noellesroles.singer.title": "歌手",
-  "hud.noellesroles.singer.cooldown": "唱歌冷卻：%s秒",
+  "hud.noellesroles.singer.cooldown": "唱歌冷卻",
   "hud.noellesroles.singer.ready": "唱歌就緒 - 按G演唱",
   "message.noellesroles.singer.music_played": "♪ 你播放了《%s》！",
   "message.noellesroles.singer.music_heard": "♪ 你聽到了 %s 的歌聲！",

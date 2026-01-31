@@ -1,22 +1,28 @@
 package org.agmas.noellesroles.component;
 
+import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
+
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
-import java.util.Random;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -30,15 +36,33 @@ import net.minecraft.world.entity.player.Player;
  * 歌手为好人阵营（乘客阵营）
  */
 public class SingerPlayerComponent implements RoleComponent, ServerTickingComponent {
+    private static Holder.Reference<SoundEvent> registerForHolder(ResourceLocation resourceLocation) {
+        return registerForHolder(resourceLocation, resourceLocation);
+    }
+
+    private static Holder.Reference<SoundEvent> registerForHolder(ResourceLocation resourceLocation,
+            ResourceLocation resourceLocation2) {
+        return Registry.registerForHolder(BuiltInRegistries.SOUND_EVENT, resourceLocation,
+                SoundEvent.createVariableRangeEvent(resourceLocation2));
+    }
+
     @Override
     public Player getPlayer() {
         return player;
     }
+
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<SingerPlayerComponent> KEY = ModComponents.SINGER;
 
     // ==================== 常量定义 ====================
-
+    public static final Holder.Reference<SoundEvent> MUSIC_DISC_LAVA_CHICKEN_CUT = registerForHolder(
+            ResourceLocation.withDefaultNamespace("music_disc.lava_chicken_cut"));
+    public static final Holder.Reference<SoundEvent> MUSIC_DISC_CREATOR_CUT = registerForHolder(
+            ResourceLocation.withDefaultNamespace("music_disc.creator_cut"));
+    public static final Holder.Reference<SoundEvent> MUSIC_DISC_BROKEN_MOON = registerForHolder(
+            ResourceLocation.withDefaultNamespace("music_disc.broken_moon"));
+    public static final Holder.Reference<SoundEvent> MUSIC_DISC_PIGSTEP_CUT = registerForHolder(
+            ResourceLocation.withDefaultNamespace("music_disc.pigstep_cut"));
     /** 主动技能冷却时间（4800 tick） */
     public static final int ABILITY_COOLDOWN = 4800;
 
@@ -46,35 +70,22 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
     public static final double MUSIC_RANGE = 24.0;
 
     /** 音乐持续时间（唱片最短约60秒，设为65秒 = 1300 tick） */
-    public static final int MUSIC_DURATION = 1300;
+    public static final int MUSIC_DURATION = 1200;
 
     /** 速度效果范围（格） */
     public static final double SPEED_EFFECT_RANGE = 16.0;
 
-    // ==================== 原版唱片音乐列表 ====================
+    // ==================== 唱片音乐列表 ====================
     private static final SoundEvent[] MUSIC_DISCS = {
-            SoundEvents.MUSIC_DISC_CREATOR.value(),
-            SoundEvents.MUSIC_DISC_CREATOR_MUSIC_BOX.value(),
-            SoundEvents.MUSIC_DISC_BLOCKS.value(),
-            SoundEvents.MUSIC_DISC_CHIRP.value(),
-            SoundEvents.MUSIC_DISC_FAR.value(),
-            SoundEvents.MUSIC_DISC_MALL.value(),
-            SoundEvents.MUSIC_DISC_MELLOHI.value(),
-            SoundEvents.MUSIC_DISC_STAL.value(),
-            SoundEvents.MUSIC_DISC_STRAD.value(),
-            SoundEvents.MUSIC_DISC_WARD.value(),
-            SoundEvents.MUSIC_DISC_11.value(),
-            SoundEvents.MUSIC_DISC_WAIT.value(),
-            SoundEvents.MUSIC_DISC_PIGSTEP.value(),
-            SoundEvents.MUSIC_DISC_OTHERSIDE.value(),
-            SoundEvents.MUSIC_DISC_5.value(),
-            SoundEvents.MUSIC_DISC_RELIC.value()
+            MUSIC_DISC_PIGSTEP_CUT.value(),
+            MUSIC_DISC_LAVA_CHICKEN_CUT.value(),
+            MUSIC_DISC_CREATOR_CUT.value(),
+            MUSIC_DISC_BROKEN_MOON.value()
     };
 
     // ==================== 状态变量 ====================
 
     private final Player player;
-    private final Random random = new Random();
 
     /** 主动技能冷却时间（tick） */
     public int abilityCooldown = 0;
@@ -87,6 +98,8 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
 
     /** 音乐剩余时间（tick） - 用于追踪音乐播放状态和给予速度效果 */
     public int musicRemainingTicks = 0;
+    /** 音乐类型 - 用于追踪音乐播放状态和给予效果 */
+    public int musicType = -1;
 
     /**
      * 构造函数
@@ -154,9 +167,8 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
         ServerLevel world = serverPlayer.serverLevel();
 
         // 随机选择一首音乐
-        int musicIndex = random.nextInt(MUSIC_DISCS.length);
+        int musicIndex = this.musicType - 1;
         SoundEvent music = MUSIC_DISCS[musicIndex];
-        this.currentMusicIndex = musicIndex;
 
         // 播放音乐（给所有在范围内的玩家听到）
         world.playSound(
@@ -168,37 +180,20 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
                 1.0F // 音调
         );
 
-        // 获取音乐名称用于显示
-        String musicName = getMusicName(musicIndex);
-
         // 设置冷却
-        this.abilityCooldown = ABILITY_COOLDOWN;
+        // this.abilityCooldown = ABILITY_COOLDOWN;
 
         // 设置音乐持续时间（用于持续给予速度效果）
         this.musicRemainingTicks = MUSIC_DURATION;
 
         // 发送消息给歌手玩家
         serverPlayer.displayClientMessage(
-                Component.translatable("message.noellesroles.singer.music_played", musicName)
+                Component.translatable("message.noellesroles.singer.music_played")
                         .withStyle(ChatFormatting.LIGHT_PURPLE),
                 true);
 
         this.sync();
         return true;
-    }
-
-    /**
-     * 获取音乐名称
-     */
-    private String getMusicName(int index) {
-        String[] musicNames = {
-                "Creator", "Creator (Music BOX ver.)", "Blocks", "Chirp", "Far", "Mall", "Mellohi", "Stal",
-                "Strad", "Ward", "11", "Wait", "Pigstep", "Otherside", "5", "Relic"
-        };
-        if (index >= 0 && index < musicNames.length) {
-            return musicNames[index];
-        }
-        return "Unknown";
     }
 
     /**
@@ -240,6 +235,7 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
             // 每秒给一次速度效果（持续2秒，确保连续覆盖）
             if (this.musicRemainingTicks % 20 == 0) {
                 applySpeedEffectToNearbyPlayers();
+                this.sync();
             }
 
             // 音乐结束时重置状态
@@ -266,24 +262,85 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
             double distance = target.distanceToSqr(player);
             if (distance > SPEED_EFFECT_RANGE * SPEED_EFFECT_RANGE)
                 continue;
-
+            if (target.getUUID() != this.player.getUUID())
+                target.displayClientMessage(
+                        Component.translatable("message.noellesroles.singer.music_heard")
+                                .withStyle(ChatFormatting.LIGHT_PURPLE),
+                        false);
             // 给予速度 I 效果（持续2.5秒 = 50 tick，确保连续覆盖）
-            target.addEffect(new MobEffectInstance(
-                    MobEffects.MOVEMENT_SPEED,
-                    50, // 持续时间（tick）
-                    0, // 等级（0 = 速度 I）
-                    false, // ambient（环境效果，如信标）
-                    true, // showParticles（显示粒子）
-                    true // showIcon（显示图标）
-            ));
+            switch (musicType) {
+                case 1:
+                    target.addEffect(new MobEffectInstance(
+                            MobEffects.MOVEMENT_SPEED,
+                            50, // 持续时间（tick）
+                            0, // 等级（0 = 速度 I）
+                            false, // ambient（环境效果，如信标）
+                            true, // showParticles（显示粒子）
+                            true // showIcon（显示图标）
+                    ));
+                    break;
+                case 2:
+                    var pmd = PlayerMoodComponent.KEY.get(target);
+                    if (pmd != null) {
+                        float nmd = pmd.getMood();
+                        nmd += 0.01; // 60 * 0.01 = 0.6
+                        if (nmd >= 1F) {
+                            nmd = 1F;
+                        }
+                        pmd.setMood(nmd);
+                    }
+                    break;
+                case 3:
+                    target.addEffect(new MobEffectInstance(
+                            MobEffects.MOVEMENT_SLOWDOWN,
+                            50, // 持续时间（tick）
+                            0, // 等级（0 = 速度 I）
+                            false, // ambient（环境效果，如信标）
+                            true, // showParticles（显示粒子）
+                            true // showIcon（显示图标）
+                    ));
+                    break;
+                case 4:
+                    target.addEffect(new MobEffectInstance(
+                            MobEffects.DIG_SLOWDOWN,
+                            50, // 持续时间（tick）
+                            4, // 等级（0 = 速度 I）
+                            false, // ambient（环境效果，如信标）
+                            true, // showParticles（显示粒子）
+                            true // showIcon（显示图标）
+                    ));
+                    break;
+                default:
+            }
+
         }
     }
 
     /**
      * 检查是否正在播放音乐
      */
+
     public boolean isPlayingMusic() {
         return musicRemainingTicks > 0;
+    }
+
+    public static boolean buyDisc(@NotNull Player player, int discId) {
+        player.getCooldowns().addCooldown(ModItems.SINGER_MUSIC_DISC,
+                60 * 20);
+        SingerPlayerComponent spc = SingerPlayerComponent.KEY.get(player);
+        if (spc == null) {
+            return false;
+        }
+        if (!spc.isActiveSinger())
+            return false;
+        if (spc.musicRemainingTicks > 0)
+            return false;
+        spc.musicRemainingTicks = 60 * 20;// 60s
+        spc.musicType = discId;
+        spc.useAbility();
+        TMM.REPLAY_MANAGER.recordSkillUsed(player.getUUID(), BuiltInRegistries.ITEM.getKey(ModItems.SINGER_MUSIC_DISC));
+
+        return true;
     }
 
     // ==================== NBT 序列化 ====================
@@ -294,11 +351,13 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
         tag.putBoolean("isActive", this.isActive);
         tag.putInt("currentMusicIndex", this.currentMusicIndex);
         tag.putInt("musicRemainingTicks", this.musicRemainingTicks);
+        tag.putInt("musicType", this.musicType);
     }
 
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.abilityCooldown = tag.contains("abilityCooldown") ? tag.getInt("abilityCooldown") : 0;
+        this.musicType = tag.contains("musicType") ? tag.getInt("musicType") : -1;
         this.isActive = tag.contains("isActive") && tag.getBoolean("isActive");
         this.currentMusicIndex = tag.contains("currentMusicIndex") ? tag.getInt("currentMusicIndex") : -1;
         this.musicRemainingTicks = tag.contains("musicRemainingTicks") ? tag.getInt("musicRemainingTicks") : 0;

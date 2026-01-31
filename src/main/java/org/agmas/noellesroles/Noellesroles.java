@@ -22,6 +22,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -36,8 +37,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraft.world.phys.Vec3;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
@@ -76,6 +77,7 @@ import java.util.function.Supplier;
 import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
 
 public class Noellesroles implements ModInitializer {
+    // public static Style RESETSTYLE = Style.EMPTY;
 
     public static String MOD_ID = "noellesroles";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -102,7 +104,7 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> FRAMING_ROLES_SHOP = new ArrayList<>();
     // ==================== 阴谋家商店 ====================
     public static ArrayList<ShopEntry> CONSPIRATOR_SHOP = new ArrayList<>();
-
+    // ==================== 柜子区商店 ====================
     public static ArrayList<ShopEntry> 柜子区的商店 = new ArrayList<>();
     // ==================== 滑头鬼商店 ====================
     public static ArrayList<ShopEntry> SLIPPERY_GHOST_SHOP = new ArrayList<>();
@@ -118,6 +120,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> BOMBER_SHOP = new ArrayList<>();
     // ==================== 医生商店 ====================
     public static ArrayList<ShopEntry> DOCTOR_SHOP = new ArrayList<>();
+    // ==================== 歌手商店 ====================
+    public static ArrayList<ShopEntry> SINGER_SHOP = new ArrayList<>();
 
     private static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
@@ -249,31 +253,20 @@ public class Noellesroles implements ModInitializer {
         // banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
         // // INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
 
-        // 随从初始物品
+        // 乘务员初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
-        // 乘务员开局获得乘务员钥匙
-        attendantItems.add(() -> ModItems.MASTER_KEY.getDefaultInstance());
-        INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
-        {
-            List<ShopEntry> entries = new ArrayList<>();
-            // 乘务员商店：手电筒 150金币
-            if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("handheldmoon:moonlight_lamp"))) {
-                var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("handheldmoon:moonlight_lamp"));
-                if (item != null) {
-                    final var defaultInstance = item.getDefaultInstance();
-                    entries.add(new ShopEntry(defaultInstance, 150, ShopEntry.Type.TOOL) {
-                        @Override
-                        public boolean onBuy(@NotNull Player player) {
-                            player.addItem(defaultInstance.copy());
-                            return true;
-                        }
-                    });
-                }
-
+        // 乘务员钥匙
+        attendantItems.add(() -> ModItems.MASTER_KEY_P.getDefaultInstance());
+        // 使用延迟加载方式添加 handheldmoon 模组的物品（如果可用）
+        attendantItems.add(() -> {
+            final var moonlightLampItem = BuiltInRegistries.ITEM
+                    .get(ResourceLocation.tryParse("handheldmoon:moonlight_lamp"));
+            if (moonlightLampItem != Items.AIR) {
+                return moonlightLampItem.getDefaultInstance();
             }
-            ShopContent.customEntries.put(
-                    ModRoles.ATTENDANT_ID, entries);
-        }
+            return null; // 如果物品不存在，返回null
+        });
+        INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
 
         // 心理学家初始物品（不再有薄荷糖）
         List<Supplier<ItemStack>> psychologistItems = new ArrayList<>();
@@ -444,6 +437,26 @@ public class Noellesroles implements ModInitializer {
                 TMMItems.LOCKPICK.getDefaultInstance(),
                 80,
                 ShopEntry.Type.TOOL));
+        // 歌手商店
+        for (int i = 1; i <= 4; i++) {
+            ItemStack singer_shop_item = ModItems.SINGER_MUSIC_DISC.getDefaultInstance();
+            singer_shop_item.set(DataComponents.ITEM_NAME,
+                    Component.translatable("item.noellesroles.shop.singer.display_name.root",
+                            Component.translatable("item.noellesroles.shop.singer.display_name." + i)
+                                    .withStyle(ChatFormatting.GOLD))
+                            .withStyle(ChatFormatting.WHITE));
+            var lores = new ArrayList<Component>();
+            lores.add(Component.translatable("item.noellesroles.shop.singer.lore",
+                    Component.translatable("item.noellesroles.shop.singer.effect." + i).withStyle(ChatFormatting.AQUA))
+                    .withStyle(ChatFormatting.GRAY));
+            singer_shop_item.set(DataComponents.LORE, new ItemLore(lores));
+            final int idx = i;
+            SINGER_SHOP.add(new ShopEntry(singer_shop_item, 100, ShopEntry.Type.TOOL) {
+                public boolean onBuy(@NotNull Player player) {
+                    return SingerPlayerComponent.buyDisc(player, idx);
+                }
+            });
+        }
 
         // 医生商店
         DOCTOR_SHOP.add(new ShopEntry(
@@ -585,6 +598,11 @@ public class Noellesroles implements ModInitializer {
         {
             ShopContent.customEntries.put(
                     ModRoles.DOCTOR_ID, DOCTOR_SHOP);
+        }
+
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.SINGER_ID, SINGER_SHOP);
         }
     }
 
@@ -1408,7 +1426,7 @@ public class Noellesroles implements ModInitializer {
                 if (payload.player() != null && payload.player2() != null) {
                     if (context.player().level().getPlayerByUUID(payload.player()) != null &&
                             context.player().level().getPlayerByUUID(payload.player2()) != null) {
-                        
+
                         SwapperPlayerComponent swapperComponent = ModComponents.SWAPPER.get(context.player());
                         if (!swapperComponent.isSwapping) {
                             swapperComponent.startSwap(payload.player(), payload.player2());

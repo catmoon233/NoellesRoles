@@ -472,7 +472,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(AvengerPlayerComponent.KEY));
 
         // 滑头鬼角色 - 中立阵营（使用专属商店）
@@ -494,7 +494,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ));
 
         // 拳击手角色 - 乘客阵营
@@ -505,7 +505,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(BoxerPlayerComponent.KEY));
 
         // 邮差角色 - 乘客阵营
@@ -516,7 +516,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(PostmanPlayerComponent.KEY));
 
         // 私家侦探角色 - 乘客阵营
@@ -527,7 +527,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(DetectivePlayerComponent.KEY));
 
         // 运动员角色 - 乘客阵营
@@ -538,7 +538,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 Integer.MAX_VALUE, // 无限冲刺
-                false // 不隐藏计分板
+                false // 不显示计分板
         ));
 
         // 明星角色 - 乘客阵营
@@ -549,7 +549,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(StarPlayerComponent.KEY));
 
         // 退伍军人角色 - 好人阵营
@@ -560,7 +560,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(VeteranPlayerComponent.KEY));
 
         // 歌手角色 - 好人阵营
@@ -571,7 +571,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(SingerPlayerComponent.KEY));
 
         // 心理学家角色 - 好人阵营
@@ -582,7 +582,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(PsychologistPlayerComponent.KEY));
 
         // ==================== 注册杀手阵营角色 ====================
@@ -667,7 +667,7 @@ public class ModRoles {
                 false, // canUseKiller = 无杀手能力
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-                false // 不隐藏计分板
+                false // 不显示计分板
         ).setComponentKey(MonitorPlayerComponent.KEY).setCanSeeCoin(true));
 
         // ==================== 设置角色数量限制 ====================

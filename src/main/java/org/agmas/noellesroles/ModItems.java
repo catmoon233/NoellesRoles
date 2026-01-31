@@ -4,6 +4,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+
 import org.agmas.noellesroles.item.*;
 
 public class ModItems {
@@ -12,6 +14,9 @@ public class ModItems {
                 // GameConstants.getInTicks(0,8));
         }
 
+        public static final Item SINGER_MUSIC_DISC = register(
+                        new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)),
+                        "singer_music_disc");
         public static final Item FAKE_KNIFE = register(
                         new FakeKnifeItem(new Item.Properties().stacksTo(1)),
                         "fake_knife");
