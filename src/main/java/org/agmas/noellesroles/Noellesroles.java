@@ -586,6 +586,34 @@ public class Noellesroles implements ModInitializer {
             ShopContent.customEntries.put(
                     ModRoles.DOCTOR_ID, DOCTOR_SHOP);
         }
+
+        // 故障机器人商店
+        {
+            List<ShopEntry> glitchRobotShop = new ArrayList<>();
+            // 夜视仪 - 150金币
+            if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("calypsos_nightvision_goggles:nightvision_goggles"))) {
+                var nightVisionItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse("calypsos_nightvision_goggles:nightvision_goggles"));
+                if (nightVisionItem != null) {
+                    final var nightVisionDefaultInstance = nightVisionItem.getDefaultInstance();
+                    glitchRobotShop.add(new ShopEntry(nightVisionDefaultInstance, 150, ShopEntry.Type.TOOL) {
+                        @Override
+                        public boolean onBuy(@NotNull Player player) {
+                            player.addItem(nightVisionDefaultInstance.copy());
+                            return true;
+                        }
+                    });
+                }
+            }
+            // 萤石粉 - 50金币
+            glitchRobotShop.add(new ShopEntry(Items.GLOWSTONE_DUST.getDefaultInstance(), 50, ShopEntry.Type.TOOL) {
+                @Override
+                public boolean onBuy(@NotNull Player player) {
+                    player.addItem(Items.GLOWSTONE_DUST.getDefaultInstance().copy());
+                    return true;
+                }
+            });
+            ShopContent.customEntries.put(ModRoles.GLITCH_ROBOT_ID, glitchRobotShop);
+        }
     }
 
     public static void registerPackets1() {
@@ -906,6 +934,9 @@ public class Noellesroles implements ModInitializer {
             // 检查死亡惩罚
             handleDeathPenalty(victim);
 
+            // 检查故障机器人 - 死亡时生成缓慢效果云
+            handleGlitchRobotDeath(victim);
+
             // onPlayerDeath(victim, deathReason);
             return true; // 允许死亡
         });
@@ -1128,6 +1159,18 @@ public class Noellesroles implements ModInitializer {
             return true;
         }
         return false;
+    }
+
+    private static void handleGlitchRobotDeath(Player victim) {
+        if (victim == null || victim.level().isClientSide())
+            return;
+
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
+        if (!gameWorldComponent.isRole(victim, ModRoles.GLITCH_ROBOT))
+            return;
+
+        GlitchRobotPlayerComponent glitchRobotComp = ModComponents.GLITCH_ROBOT.get(victim);
+        glitchRobotComp.onKnockOut();
     }
 
     private static void handleDeathPenalty(Player victim) {
