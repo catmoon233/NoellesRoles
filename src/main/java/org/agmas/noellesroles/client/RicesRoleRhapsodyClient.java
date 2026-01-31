@@ -334,26 +334,26 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             return;
         }
 
-        // ==================== 歌手：播放音乐技能 ====================
-        if (gameWorld.isRole(client.player, ModRoles.SINGER)) {
-            // 检查玩家是否存活
-            if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+        // // ==================== 歌手：播放音乐技能 已变为物品栏购买 ====================
+        // if (gameWorld.isRole(client.player, ModRoles.SINGER)) {
+        //     // 检查玩家是否存活
+        //     if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
+        //         return;
 
-            SingerPlayerComponent singerComponent = SingerPlayerComponent.KEY.get(client.player);
-            // 检查技能是否可用
-            if (singerComponent.canUseAbility()) {
-                // 发送网络包到服务端激活技能
-                ClientPlayNetworking.send(new SingerAbilityC2SPacket());
-            } else if (singerComponent.abilityCooldown > 0) {
-                // 显示冷却提示
-                client.player.displayClientMessage(
-                        net.minecraft.network.chat.Component.translatable("message.noellesroles.singer.on_cooldown",
-                                String.format("%.0f", singerComponent.getCooldownSeconds())),
-                        true);
-            }
-            return;
-        }
+        //     SingerPlayerComponent singerComponent = SingerPlayerComponent.KEY.get(client.player);
+        //     // 检查技能是否可用
+        //     if (singerComponent.canUseAbility()) {
+        //         // 发送网络包到服务端激活技能
+        //         ClientPlayNetworking.send(new SingerAbilityC2SPacket());
+        //     } else if (singerComponent.abilityCooldown > 0) {
+        //         // 显示冷却提示
+        //         client.player.displayClientMessage(
+        //                 net.minecraft.network.chat.Component.translatable("message.noellesroles.singer.on_cooldown",
+        //                         String.format("%.0f", singerComponent.getCooldownSeconds())),
+        //                 true);
+        //     }
+        //     return;
+        // }
 
         // ==================== 傀儡师：使用假人技能 ====================
         // 注意：操控假人时的返回本体逻辑已在方法开头优先处理
