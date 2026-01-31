@@ -46,7 +46,7 @@ public class RoleUtils {
     }
 
     public static void removeStackItem(ServerPlayer player, int slot) {
-        player.getInventory().setItem(slot, ItemStack.EMPTY);
+        player.getInventory().setItem(slot, net.minecraft.world.item.ItemStack.EMPTY);
     }
 
     public static void clearAllKnives(ServerPlayer player) {

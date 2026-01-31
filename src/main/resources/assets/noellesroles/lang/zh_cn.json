@@ -636,7 +636,7 @@
   "announcement.win.patroller": "乘客胜利！",
   "==================== 故障机器人角色 ====================": "",
   "announcement.role.glitch_robot": "故障机器人",
-  "info.screen.roleid.glitch_robot": "你没有心情。\n拥有两倍体力上限\n免疫中毒\n每分钟会发生一次故障（定身2秒）\n死亡后会留下一片故障电流(电流中的玩家会有缓慢2的效果)\n商店可购买夜视仪和荧石粉\n荧石粉可以为夜视仪充能",
+  "info.screen.roleid.glitch_robot": "你没有心情。\n拥有两倍体力上限\n免疫中毒\n每分钟会发生一次故障（定身2秒）\n死亡后会留下一片故障电流(电流中的玩家会有缓慢2的效果)\n商店可购买荧石粉\n戴上夜视镜时，购买荧石粉可以为夜视仪充能",
   "announcement.goals.glitch_robot": "你曾被废弃于此，与好人一起寻得出路！",
   "info.glitch_robot.noglasses_on_head": "你的夜视镜并没有被戴上，无法取下。",
   "info.glitch_robot.take_off_glasses.success": "你的夜视镜已被取下。",

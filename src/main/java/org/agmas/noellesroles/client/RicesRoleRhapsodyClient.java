@@ -28,6 +28,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
@@ -241,14 +242,20 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                 client.player.displayClientMessage(
                         Component.translatable("info.glitch_robot.noglasses_on_head").withStyle(ChatFormatting.RED),
                         true);
+                return;
+
             }
             if (!RoleUtils.isPlayerHasFreeSlot(client.player)) {
                 client.player.displayClientMessage(
                         Component.translatable("message.hotbar.full").withStyle(ChatFormatting.RED), true);
+                return;
+
             }
             // 发送网络包到服务端激活技能
             ClientPlayNetworking.send(new AbilityC2SPacket());
-
+            if (!client.player.getSlot(103).get().is(ModItems.NIGHT_VISION_GLASSES)) {
+                client.player.removeEffect(MobEffects.NIGHT_VISION);
+            }
             return;
         }
 

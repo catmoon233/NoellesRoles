@@ -620,7 +620,11 @@ public class Noellesroles implements ModInitializer {
                         int damage = head.getDamageValue();
                         if (damage >= 30) {
                             head.setDamageValue(damage - 30);
+                        } else {
+                            return false;
                         }
+                    } else {
+                        return false;
                     }
                     return true;
                 }
@@ -1579,12 +1583,16 @@ public class Noellesroles implements ModInitializer {
                     context.player().displayClientMessage(
                             Component.translatable("info.glitch_robot.noglasses_on_head").withStyle(ChatFormatting.RED),
                             true);
+                    return;
                 }
                 RoleUtils.insertStackInFreeSlot(context.player(), context.player().getSlot(103).get().copy());
-                RoleUtils.removeStackItem(context.player(), 103);
+                // RoleUtils.removeStackItem(context.player(), 103);
+                context.player().getInventory().armor.set(3, ItemStack.EMPTY);
                 context.player().displayClientMessage(
-                            Component.translatable("info.glitch_robot.take_off_glasses.success").withStyle(ChatFormatting.GREEN),
-                            true);
+                        Component.translatable("info.glitch_robot.take_off_glasses.success")
+                                .withStyle(ChatFormatting.GREEN),
+                        true);
+                context.player().removeEffect(MobEffects.NIGHT_VISION);
                 return;
             }
             if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {

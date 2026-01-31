@@ -39,7 +39,7 @@ public class NightGlassesItem extends ArmorItem {
                     if (!pl.isCreative() && !pl.isSpectator()) {
                         itemStack.setDamageValue(itemStack.getDamageValue() + 1);
                     }
-                    if (itemStack.getDamageValue() <= 0) {
+                    if (itemStack.getDamageValue() >= itemStack.getMaxDamage()) {
                         // itemStack.consume(1, pl);
                         pl.removeEffect(MobEffects.NIGHT_VISION);
                         return;

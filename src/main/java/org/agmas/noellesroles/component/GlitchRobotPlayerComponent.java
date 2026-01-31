@@ -9,16 +9,20 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.player.Player;
+
+import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
-public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingComponent {
+public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 
-    public static final ComponentKey<GlitchRobotPlayerComponent> KEY = ComponentRegistry.getOrCreate(Noellesroles.id("glitch_robot"), GlitchRobotPlayerComponent.class);
+    public static final ComponentKey<GlitchRobotPlayerComponent> KEY = ComponentRegistry
+            .getOrCreate(Noellesroles.id("glitch_robot"), GlitchRobotPlayerComponent.class);
 
     private final Player player;
     public int glitchTimer = 0;
@@ -79,13 +83,19 @@ public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingC
     public boolean shouldSyncWith(ServerPlayer player) {
         return this.player == player;
     }
-    
+
     public void sync() {
         ModComponents.GLITCH_ROBOT.sync(this.player);
     }
-    
+
     @Override
     public Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public void clientTick() {
+        if (!player.getSlot(103).get().is(ModItems.NIGHT_VISION_GLASSES))
+            player.removeEffect(MobEffects.NIGHT_VISION);
     }
 }
