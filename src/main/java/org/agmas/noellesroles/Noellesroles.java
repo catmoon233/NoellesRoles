@@ -1466,6 +1466,10 @@ public class Noellesroles implements ModInitializer {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                     .get(context.player().level());
             if (gameWorldComponent.isRole(context.player(), ModRoles.SWAPPER)) {
+                AbilityPlayerComponent abilityPlayerComponent = AbilityPlayerComponent.KEY.get(context.player());
+                if (abilityPlayerComponent.cooldown > 0)
+                    return;
+                
                 if (payload.player() != null && payload.player2() != null) {
                     if (context.player().level().getPlayerByUUID(payload.player()) != null &&
                             context.player().level().getPlayerByUUID(payload.player2()) != null) {
