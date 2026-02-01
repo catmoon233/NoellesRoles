@@ -109,7 +109,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
             return;
         if (!(player instanceof ServerPlayer serverPlayer))
             return;
-
+        stopControl(false);
         Player targetPlayer = player.level().getPlayerByUUID(targetUuid);
         if (targetPlayer == null || !(targetPlayer instanceof ServerPlayer serverTarget))
             return;
@@ -133,8 +133,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
      * @param timeout
      */
     public void stopControl(boolean timeout) {
-        if (!isControlling)
-            return;
+
         if (!(player instanceof ServerPlayer serverPlayer))
             return;
 
