@@ -580,9 +580,13 @@ public class Noellesroles implements ModInitializer {
                     });
                 }
             }
-            entries.add(new ShopEntry(TMMItems.NOTE.getDefaultInstance(), 10, ShopEntry.Type.TOOL));
+
             ShopContent.customEntries.put(
-                    ModRoles.AWESOME_BINGLUS_ID, entries);
+                    ModRoles.PHOTOGRAPHER_ID, entries);
+        }
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.AWESOME_BINGLUS_ID, List.of(new ShopEntry(TMMItems.NOTE.getDefaultInstance(), 10, ShopEntry.Type.TOOL)));
         }
 
         {
