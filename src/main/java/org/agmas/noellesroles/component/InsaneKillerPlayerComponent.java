@@ -1,5 +1,7 @@
 package org.agmas.noellesroles.component;
 
+import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -21,10 +23,12 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class InsaneKillerPlayerComponent
         implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     public static final ComponentKey<InsaneKillerPlayerComponent> KEY = ModComponents.INSANE_KILLER;
+    public static boolean skipPD =false;
     private final Player player;
 
     public boolean isActive = false;
@@ -56,12 +60,14 @@ public class InsaneKillerPlayerComponent
             player.displayClientMessage(net.minecraft.network.chat.Component
                     .translatable("message.noellesroles.insane_killer.ability_deactivated")
                     .withStyle(net.minecraft.ChatFormatting.RED), true);
+
             // 播放取消激活的音效
             // player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
             // SoundEvents.ALLAY_DEATH, net.minecraft.sounds.SoundSource.PLAYERS, 0.5F,
             // 0.8F);
         } else {
             isActive = true;
+
             // 发送激活的消息提示
             player.displayClientMessage(net.minecraft.network.chat.Component.literal("§a能力已激活！"), true);
             // 播放激活的音效
@@ -113,9 +119,21 @@ public class InsaneKillerPlayerComponent
         // target = tag.contains("target") ? tag.getUUID("target") : null;
     }
 
+    private long lastClientTickTime = 0;
+    private static final long CLIENT_TICK_INTERVAL_MS = 50; // 1000ms / 20 ticks per second = 50ms per tick
+
     @Override
     public void clientTick() {
-
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastClientTickTime >= CLIENT_TICK_INTERVAL_MS) {
+            lastClientTickTime = currentTime;
+            playerBodyEntities.forEach(
+                    (uuid, playerBodyEntity) -> {
+                        if (playerBodyEntity.getPlayerUuid().equals(uuid))
+                            ++playerBodyEntity.tickCount;
+                    }
+            );
+        }
     }
 
     // @Override

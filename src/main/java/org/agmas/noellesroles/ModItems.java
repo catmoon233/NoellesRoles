@@ -3,19 +3,20 @@ package org.agmas.noellesroles;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 
 import org.agmas.noellesroles.item.*;
 
+
 public class ModItems {
         public static void init() {
-                // GameConstants.ITEM_COOLDOWNS.put(FAKE_REVOLVER,
-                // GameConstants.getInTicks(0,8));
+
         }
 
+        public static final Item PATROLLER_REVOLVER = register(
+                        new PatrollerRevolverItem((new Item.Properties()).stacksTo(1)), "patroller_revolver");
         public static final Item SINGER_MUSIC_DISC = register(
                         new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)),
                         "singer_music_disc");
@@ -23,7 +24,7 @@ public class ModItems {
                         new NightGlassesItem(ArmorMaterials.TURTLE, net.minecraft.world.item.ArmorItem.Type.HELMET,
                                         (new Item.Properties()).durability(60)),
                         "night_vision_glasses");
-                        
+
         public static final Item FAKE_KNIFE = register(
                         new FakeKnifeItem(new Item.Properties().stacksTo(1)),
                         "fake_knife");
@@ -196,5 +197,5 @@ public class ModItems {
                 // Return the registered item!
                 return registeredItem;
         }
-        
+
 }

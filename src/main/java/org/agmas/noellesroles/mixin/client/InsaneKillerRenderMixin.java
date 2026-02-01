@@ -38,12 +38,7 @@ public abstract class InsaneKillerRenderMixin
 
         InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(abstractClientPlayer);
         if (component.isActive) {
-            playerBodyEntities.forEach(
-                    (uuid, playerBodyEntity) -> {
-                        if (playerBodyEntity.getPlayerUuid().equals(uuid))
-                        ++playerBodyEntity.tickCount;
-                    }
-            );
+
             ci.cancel();
             isPlayerBodyEntity.put(abstractClientPlayer.getUUID(), true);
             if (!playerBodyEntities.containsKey(abstractClientPlayer.getUUID())){
@@ -56,7 +51,9 @@ public abstract class InsaneKillerRenderMixin
             }
             final var playerBodyEntity = playerBodyEntities.get(abstractClientPlayer.getUUID());
 
-            playerBodyEntity.setPos(abstractClientPlayer.getX(), abstractClientPlayer.getY(), abstractClientPlayer.getZ());
+            playerBodyEntity.teleportTo(abstractClientPlayer.getX(), abstractClientPlayer.getY(), abstractClientPlayer.getZ());
+            playerBodyEntity.setYRot(0);
+            playerBodyEntity.setXRot(0);
             Minecraft.getInstance().getEntityRenderDispatcher().render(playerBodyEntity, 0.0D, 0.0D, 0, f, g, poseStack, multiBufferSource, i);
             // 模拟尸体渲染：绕 Z 轴旋转 90 度，并下移到地面
 //            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));

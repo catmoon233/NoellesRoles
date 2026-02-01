@@ -79,14 +79,16 @@ public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingC
             AreaEffectCloud cloud = new AreaEffectCloud(sp.level(), sp.getX(), sp.getY(),
             sp.getZ());
 
-            sp.level().addFreshEntity(cloud);
-            cloud.setRadius(4.0F);
+
+            cloud.setRadius(6.0F);
             cloud.setDuration(100); // 5秒
             cloud.setRadiusOnUse(0.0F);
             cloud.setRadiusPerTick(0.0F);
             cloud.setWaitTime(0);
-            cloud.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1,
+            cloud.setParticle(ParticleTypes.EFFECT);
+            cloud.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2,
             false, false, true));
+            sp.level().addFreshEntity(cloud);
         }
     }
 

@@ -47,8 +47,8 @@ public abstract class NoteMixin extends Item {
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(serverPlayer.level());
             if (gameWorld.isRole(player, ModRoles.AWESOME_BINGLUS)) {
                 final var playerShopComponent = PlayerShopComponent.KEY.get(serverPlayer);
-                if (playerShopComponent.balance >= 50){
-                    playerShopComponent.setBalance(playerShopComponent.balance - 50);
+                if (playerShopComponent.balance >= 75){
+                    playerShopComponent.setBalance(playerShopComponent.balance - 75);
                     if (player != null && !player.isShiftKeyDown()) {
                         PlayerNoteComponent component = (PlayerNoteComponent)PlayerNoteComponent.KEY.get(player);
                         if (!component.written) {
@@ -69,6 +69,7 @@ public abstract class NoteMixin extends Item {
 
                                     note.setDirection(Direction.EAST);
                                     note.setLines(component.text);
+                                    player.displayClientMessage(Component.literal("你花费75\uE781将一张便签贴到了"+livingEntity.getName().getString()+"的背上").withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)), true);
 
                                     world.addFreshEntity(note);
                                     if (!player.isCreative()) {
@@ -85,7 +86,7 @@ public abstract class NoteMixin extends Item {
                         }
                     }
                 }else {
-                    player.displayClientMessage(Component.literal("你没有足够的钱 - 需要50\uE781来将便签放到人身上").withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)), true);
+                    player.displayClientMessage(Component.literal("你没有足够的钱 - 需要75\uE781来将便签放到人身上").withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)), true);
                 }
             }
         }
