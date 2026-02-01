@@ -99,6 +99,7 @@
     "client.executioner.ExecutionerShopScreenMixin",
     "client.manipulator.ManipulatorScreenMixin",
     "client.morphling.MorphilingHudMixin",
+    "client.morphling.MorphlingCapeRendererMixin",
     "client.morphling.MorphlingRendererMixin",
     "client.morphling.MorphlingRoleNameRendererMixin",
     "client.morphling.MorphlingScreenMixin",
@@ -115,7 +116,8 @@
     "client.voodoo.VoodooScreenMixin",
     "client.vulture.VultureEatenBodyMixin",
     "client.vulture.VultureHudMixin",
-    "roles.insanekiller.KeyBindingMixin"
+    "roles.insanekiller.KeyBindingMixin",
+    "roles.photographer.BlindnessEffectMixin"
   ],
   "overwrites": {
     "requireAnnotations": true

@@ -1,13 +1,90 @@
 package org.agmas.noellesroles.mixin.roles.photographer;
 
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import io.github.mortuusars.exposure.world.camera.frame.Frame;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import io.github.mortuusars.exposure_polaroid.world.item.InstantCameraItem;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Inventory.class)
+import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_ANGLE;
+import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_DISTANCE;
+
+@Mixin(InstantCameraItem.class)
 public class PhotographerMixin {
-    public boolean canPlaceItem(int slot, ItemStack stack) {
-        return true;
+    @Inject(
+            method = "printPhotograph",
+            at = @At("HEAD")
+    )
+    public void printPhotograph(CameraHolder holder, ItemStack stack, Frame frame, CallbackInfo ci) {
+        final var holderEntity = holder.asHolderEntity();
+        if (holderEntity instanceof ServerPlayer serverPlayer){
+            serverPlayer.serverLevel().players().forEach(
+                    serverPlayer1 -> {
+                        if (serverPlayer1!=serverPlayer){
+                            if (GameFunctions.isPlayerAliveAndSurvival(serverPlayer1)){
+                                if (isBoundTargetVisible(serverPlayer1, serverPlayer)){
+                                    serverPlayer1.sendSystemMessage(
+                                            Component.translatable("message.noellesroles.photographer.blindness"),
+                                            true);
+                                }
+                                if (serverPlayer1.hasEffect(MobEffects.INVISIBILITY)){
+                                    serverPlayer1.addEffect(new MobEffectInstance(MobEffects.GLOWING, 20 *3, 0, true, false, true));
+
+                                }
+                                serverPlayer1.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 20 *4, 0, true, false, true));
+                            }
+                        }
+                    }
+            );
+        }
+    }
+
+    private boolean isBoundTargetVisible(Player boundTarget , Player player) {
+
+        if (boundTarget == null)
+            return false;
+        if (!GameFunctions.isPlayerAliveAndSurvival(boundTarget))
+            return false;
+
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookDir = player.getViewVector(1.0f);
+        Vec3 targetPos = boundTarget.getEyePosition();
+
+        double distance = eyePos.distanceTo(targetPos);
+        if (distance > 20)
+            return false;
+
+        // 视野角度检查（90度扇形，半角45度）
+        Vec3 toTarget = targetPos.subtract(eyePos).normalize();
+        double dot = lookDir.dot(toTarget);
+        if (dot < Math.cos(Math.toRadians(90)))
+            return false;
+
+        // 射线检测
+        Level world = player.level();
+        ClipContext context = new ClipContext(
+                eyePos, targetPos,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                player);
+        BlockHitResult hit = world.clip(context);
+        return hit.getType() == HitResult.Type.MISS ;
     }
 
 }

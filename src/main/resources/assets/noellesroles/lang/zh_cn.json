@@ -152,6 +152,7 @@
   "tip.recaller.place": "按 %s 保存当前位置！",
   "tip.recaller.teleport": "按 %s 传送！",
   "tip.vulture": "已吃掉 %s/%s 具尸体。",
+  "message.noellesroles.photographer.blindness": "\u00a76你被致盲",
   "announcement.goals.thief": "从其他玩家那里偷取金币。",
   "announcement.role.thief": "小偷",
   "announcement.role.bandit": "绑匪",
