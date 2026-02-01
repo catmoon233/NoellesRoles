@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.component;
 
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -145,6 +146,8 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
                 newTarget.guessCorrect = true;
                 newTarget.deathCountdown = DEATH_COUNTDOWN;
             }
+            final var playerShopComponent = PlayerShopComponent.KEY.get(player);
+            playerShopComponent.setBalance(100+playerShopComponent.balance);
 
             serverPlayer.displayClientMessage(
                     Component.translatable("message.noellesroles.conspirator.correct", targetName)
