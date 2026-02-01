@@ -79,7 +79,7 @@ public class BoxingGloveItem extends Item {
                     target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 9));
                     target.knockback(
                             (float) Math.sin(player.getYRot() * ((float) Math.PI / 180F))
-                            ,1
+                            ,0
                             ,
                             (float) (-Math.cos(player.getYRot() * ((float) Math.PI / 180F)))
                     );
