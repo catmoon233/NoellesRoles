@@ -4,6 +4,7 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
+import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -50,7 +51,8 @@ public abstract class PlayerResetMixin {
     private static void clearAllComponents(ServerPlayer player) {
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
-        
+        InControlCCA inControlCCA = ModComponents.INCONTROLCCA.get(player);
+        inControlCCA.reset();
         // 清除惩罚组件状态
         DeathPenaltyComponent deathPenalty = ModComponents.DEATH_PENALTY.get(player);
         deathPenalty.clearAll();
