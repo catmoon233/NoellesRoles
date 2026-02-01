@@ -83,6 +83,7 @@ public class BoxingGloveItem extends Item {
                             ,
                             (float) (-Math.cos(player.getYRot() * ((float) Math.PI / 180F)))
                     );
+                    target.hurt(player.damageSources().playerAttack(player), 1.0F);
                     
                     // 使身上所有没有冷却的物品进入1.5s冷却
                     ItemCooldowns cooldowns = target.getCooldowns();
