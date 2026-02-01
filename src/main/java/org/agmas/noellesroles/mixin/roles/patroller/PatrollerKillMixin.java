@@ -24,7 +24,7 @@ import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_DISTA
 @Mixin(GameFunctions.class)
 public class PatrollerKillMixin {
 
-    @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setGameMode(Lnet/minecraft/world/level/GameType;)Z",shift = At.Shift.AFTER))
+    @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At("HEAD"))
     private static void onKillPlayer(Player victim, boolean spawnBody, Player killer, ResourceLocation deathReason, CallbackInfo ci) {
         if (victim == null || victim.level().isClientSide()) return;
 
@@ -43,7 +43,7 @@ public class PatrollerKillMixin {
             if (!gameWorld.isRole(player, ModRoles.PATROLLER)) continue;
 
             // 检查距离（30格内）
-            if (player.distanceToSqr(victim) > 30 || !isBoundTargetVisible(victim, player)) continue;
+            if (player.distanceToSqr(victim) > 30 * 30 || !isBoundTargetVisible(victim, player)) continue;
 
             if (player.hasLineOfSight(victim)) {
                 PatrollerPlayerComponent patrollerComponent = ModComponents.PATROLLER.get(player);
