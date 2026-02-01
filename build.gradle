@@ -75,6 +75,7 @@ dependencies {
     modApi files("libs/harpymodloader-1.2.4-h1.3.jar")
     modApi files("libs/uilib-1.0.1-1.21.1-fabric.jar")
     modApi files("libs/HandheldMoon-fabric-1.21.1-1.0.0.jar")
+    modApi files("libs/modernfix-fabric-5.25.1+mc1.21.1.jar")
     modApi files("libs/fabric-carpet-1.21-1.4.147+v240613.jar")
     modApi files("libs/ratatouille-1.4.3-1.21.1.jar")
     modApi files("libs/midnightlib-fabric-1.9.2+1.21.1.jar")

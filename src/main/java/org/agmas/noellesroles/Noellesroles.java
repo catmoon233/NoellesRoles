@@ -733,6 +733,8 @@ public class Noellesroles implements ModInitializer {
                 return true;
             if (identifier.getPath().equals("failed_ignite"))
                 return true;
+            if (identifier.getPath().equals("heart_attack"))
+                return true;
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.level());
             if (gameWorldComponent.isRole(playerEntity, ModRoles.JESTER)) {
                 PlayerPsychoComponent component = PlayerPsychoComponent.KEY.get(playerEntity);
@@ -742,6 +744,7 @@ public class Noellesroles implements ModInitializer {
             }
             BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(playerEntity);
             if (bartenderPlayerComponent.getArmor() > 0) {
+
                 playerEntity.level().playSound(playerEntity, playerEntity.blockPosition(),
                         TMMSounds.ITEM_PSYCHO_ARMOUR, SoundSource.MASTER, 5.0F, 1.0F);
                 bartenderPlayerComponent.removeArmor();
