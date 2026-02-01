@@ -5,6 +5,7 @@ import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.roles.manipulator.InControlCCA;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -43,7 +44,9 @@ public abstract class PlayerResetMixin {
     @Inject(method = "initializeGame", at = @At("HEAD"))
     private static void clearAllComponentsOnReset(ServerLevel serverWorld, CallbackInfo ci) {
         // 清除客户端自定义笔记状态
+
         serverWorld.players().forEach((pl) -> {
+            clearAllComponents(pl);
             ServerPlayNetworking.send(pl, new PlayerResetS2CPacket());
         });
     }
@@ -51,8 +54,11 @@ public abstract class PlayerResetMixin {
     private static void clearAllComponents(ServerPlayer player) {
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
-        InControlCCA inControlCCA = ModComponents.INCONTROLCCA.get(player);
+        InControlCCA inControlCCA =InControlCCA.KEY.get(player);
         inControlCCA.reset();
+
+        ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(player);
+        manipulatorComp.reset();
         // 清除惩罚组件状态
         DeathPenaltyComponent deathPenalty = ModComponents.DEATH_PENALTY.get(player);
         deathPenalty.clearAll();
