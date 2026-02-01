@@ -130,7 +130,7 @@ public class ManipulatorBodyEntity extends LivingEntity {
             Player owner = getOwner();
             if (owner != null) {
                 ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(owner);
-                manipulatorComp.onBodyDeath();
+//                manipulatorComp.onBodyDeath();
             }
         }
 
@@ -144,7 +144,7 @@ public class ManipulatorBodyEntity extends LivingEntity {
         Player owner = getOwner();
         if (owner != null) {
             ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(owner);
-            manipulatorComp.onBodyDeath();
+//            manipulatorComp.onBodyDeath();
         }
     }
 

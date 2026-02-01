@@ -10,6 +10,7 @@ import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
+import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
@@ -118,6 +119,8 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         public static final ComponentKey<ManipulatorPlayerComponent> MANIPULATOR = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator"),
                         ManipulatorPlayerComponent.class);
+
+        public static final ComponentKey<InControlCCA> INCONTROLCCA = InControlCCA.KEY;
         public static final ComponentKey<InsaneKillerPlayerComponent> INSANE_KILLER = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "insane_killer"),
                         InsaneKillerPlayerComponent.class);
@@ -259,6 +262,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 registry.beginRegistration(Player.class, MANIPULATOR)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(ManipulatorPlayerComponent::new);
+
+                registry.beginRegistration(Player.class, INCONTROLCCA)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(InControlCCA::new);
                 registry.beginRegistration(Player.class, INSANE_KILLER)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(InsaneKillerPlayerComponent::new);

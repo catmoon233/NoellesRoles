@@ -1,4 +1,4 @@
-package org.agmas.noellesroles.mixin.client;
+package org.agmas.noellesroles.mixin.client.insane;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;

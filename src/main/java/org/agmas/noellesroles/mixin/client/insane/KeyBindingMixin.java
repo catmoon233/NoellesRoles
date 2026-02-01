@@ -1,4 +1,4 @@
-package org.agmas.noellesroles.mixin.roles.insanekiller;
+package org.agmas.noellesroles.mixin.client.insane;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;

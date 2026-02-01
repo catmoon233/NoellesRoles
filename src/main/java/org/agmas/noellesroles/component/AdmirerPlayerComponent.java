@@ -1,10 +1,9 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.utils.RoleUtils;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
@@ -127,7 +126,7 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
     }
 
     /**
-     * 转化为随机杀手角色
+     * 转化为操纵师角色
      */
     private void transform() {
         if (hasTransformed)
@@ -137,23 +136,13 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
         if (!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        // 获取可用的杀手角色列表
-        List<Role> killerRoles = Noellesroles.getEnableKillerRoles();
-
-        if (killerRoles.isEmpty()) {
-            // 如果没有可用的杀手角色，使用原版杀手
-            killerRoles.add(TMMRoles.KILLER);
-        }
-
-        // 随机选择一个杀手角色
-        Random random = new Random();
-        Role selectedRole = killerRoles.get(random.nextInt(killerRoles.size()));
+        // 获取操纵师角色
+        Role selectedRole = ModRoles.MANIPULATOR;
 
         // 清除慕恋者标记
         this.isAdmirerMarked = true;
 
         // 转换角色
-        // gameWorld.addRole(player, selectedRole);
         RoleUtils.changeRole(player, selectedRole);
 
         // 触发角色分配事件 - 这会调用 assignModdedRole 来初始化角色
@@ -183,24 +172,6 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
                 SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 1.0F, 1.5F);
 
         this.sync();
-    }
-
-    /**
-     * 获取可用的杀手角色列表
-     * 动态获取所有注册的杀手阵营角色（canUseKiller = true）
-     */
-    private List<Role> getAvailableKillerRoles() {
-        List<Role> killerRoles = new ArrayList<>();
-
-        // 遍历所有注册的角色，筛选出杀手阵营角色
-        for (Role role : TMMRoles.ROLES.values()) {
-            // 杀手阵营：canUseKiller = true
-            if (role.canUseKiller()) {
-                killerRoles.add(role);
-            }
-        }
-
-        return killerRoles;
     }
 
     public void bindRandomTarget() {

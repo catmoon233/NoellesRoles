@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.mixin.client;
 
+import net.minecraft.client.multiplayer.PlayerInfo;
 import org.agmas.noellesroles.component.AvengerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -55,10 +56,11 @@ public abstract class AvengerHudMixin {
             context.drawString(renderer, statusText, xOffset, yOffset, CommonColors.RED);
             
             // 如果知道凶手，显示凶手头像
+            final var playerInfo = client.player.connection.getPlayerInfo(avengerComponent.killerUuid);
             if (avengerComponent.killerUuid != null &&
-                client.player.connection.getPlayerInfo(avengerComponent.killerUuid) != null) {
+                playerInfo != null) {
                 PlayerFaceRenderer.draw(context,
-                    client.player.connection.getPlayerInfo(avengerComponent.killerUuid).getSkin().texture(),
+                    playerInfo.getSkin().texture(),
                     xOffset, yOffset - 14, 12);
                 
                 Component killerName = Component.literal(avengerComponent.getKillerName()).withStyle(ChatFormatting.RED);

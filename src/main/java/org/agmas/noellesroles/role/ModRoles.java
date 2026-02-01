@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorRole;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
@@ -173,7 +174,7 @@ public class ModRoles {
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
                                         .setComponentKey(MorphlingPlayerComponent.KEY));
         public static Role MANIPULATOR = TMMRoles
-                        .registerRole(new NoramlRole(MANIPULATOR_ID, new Color(90, 20, 61).getRGB(), false,
+                        .registerRole(new ManipulatorRole(MANIPULATOR_ID, new Color(90, 20, 61).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
                                         .setComponentKey(ManipulatorPlayerComponent.KEY));
         public static Role PHANTOM = TMMRoles

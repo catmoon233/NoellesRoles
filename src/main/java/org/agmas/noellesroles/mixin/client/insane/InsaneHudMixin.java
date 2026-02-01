@@ -1,4 +1,4 @@
-package org.agmas.noellesroles.mixin.client;
+package org.agmas.noellesroles.mixin.client.insane;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import net.minecraft.client.DeltaTracker;
