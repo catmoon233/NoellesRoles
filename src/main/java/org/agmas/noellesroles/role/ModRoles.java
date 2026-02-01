@@ -176,7 +176,7 @@ public class ModRoles {
         public static Role MANIPULATOR = TMMRoles
                         .registerRole(new ManipulatorRole(MANIPULATOR_ID, new Color(90, 20, 61).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
-                                        .setComponentKey(ManipulatorPlayerComponent.KEY));
+                                        .setComponentKey(ManipulatorPlayerComponent.KEY)).setComponentKey(ModComponents.MANIPULATOR);
         public static Role PHANTOM = TMMRoles
                         .registerRole(new NoramlRole(PHANTOM_ID, new Color(80, 5, 5, 192).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));

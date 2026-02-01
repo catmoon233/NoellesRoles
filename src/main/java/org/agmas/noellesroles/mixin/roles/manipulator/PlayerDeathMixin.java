@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,21 +20,27 @@ public class PlayerDeathMixin {
        final var level = victim.level();
        final var gameWorldComponent = GameWorldComponent.KEY.get(level);
        if (gameWorldComponent != null && gameWorldComponent.isRunning() ) {
-            final var manipulatorPlayerComponent = ManipulatorPlayerComponent.KEY.get(victim);
-            if (manipulatorPlayerComponent.isControlling) {
-                level.players().forEach(
-                        player -> {
-                            if (GameFunctions.isPlayerAliveAndSurvival(player) && gameWorldComponent.isRole(player, ModRoles.MANIPULATOR)) {
-                                if (ManipulatorPlayerComponent.KEY.get(player).target.equals(manipulatorPlayerComponent.target)) {
-                                    final var manipulatorPlayerComponent2 = ManipulatorPlayerComponent.KEY.get(player);
-                                    if (manipulatorPlayerComponent2.isControlling) {
-                                        manipulatorPlayerComponent2.stopControl(false);
-                                    }
-                                }
-                            }
-                        }
-                );
-            }
+           final var inControlCCA = InControlCCA.KEY.get(victim);
+           if (inControlCCA != null) {
+               inControlCCA.isControlling = false;
+               inControlCCA.sync();
+           }
+           final var manipulatorPlayerComponent = ManipulatorPlayerComponent.KEY.get(victim);
+           if (manipulatorPlayerComponent.isControlling) {
+               level.players().forEach(
+                       player -> {
+                           if (GameFunctions.isPlayerAliveAndSurvival(player) && gameWorldComponent.isRole(player, ModRoles.MANIPULATOR)) {
+                               if (ManipulatorPlayerComponent.KEY.get(player).target.equals(manipulatorPlayerComponent.target)) {
+                                   final var manipulatorPlayerComponent2 = ManipulatorPlayerComponent.KEY.get(player);
+                                   if (manipulatorPlayerComponent2.isControlling) {
+                                       manipulatorPlayerComponent2.stopControl(false);
+                                   }
+                               }
+                           }
+                       }
+               );
+
+           }
         }
     }
 }

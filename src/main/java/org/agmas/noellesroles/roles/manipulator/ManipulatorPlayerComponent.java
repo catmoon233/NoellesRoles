@@ -45,7 +45,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     public Player getPlayer() {
         return player;
     }
-    public static final int CONTROL_DURATION = 50 * 20;
+    public static final int CONTROL_DURATION = 30 * 20;
 
     public static final int CONTROL_COOLDOWN = 60 * 20;
 
@@ -119,7 +119,8 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
 
         if (!GameFunctions.isPlayerAliveAndSurvival(targetPlayer))
             return;
-
+        isControlling = true;
+        controlTimer = CONTROL_DURATION;
         this.target = targetUuid;
         InControlCCA.KEY.get(targetPlayer).isControlling = true;
         this.sync();
@@ -193,7 +194,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
 
         if (cooldown > 0) {
             cooldown--;
-            if (cooldown % 20 == 0 || cooldown == 0) {
+            if (cooldown % 20 == 0 ) {
                 sync();
             }
         }

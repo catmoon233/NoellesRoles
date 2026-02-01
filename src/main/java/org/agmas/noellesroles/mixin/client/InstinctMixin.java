@@ -116,6 +116,16 @@ public abstract class InstinctMixin {
                     }
                 }
             }
+            if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.MANIPULATOR)) {
+                ManipulatorPlayerComponent manipulatorPlayerComponent = (ManipulatorPlayerComponent) ManipulatorPlayerComponent.KEY
+                        .get((Player) Minecraft.getInstance().player);
+                if (manipulatorPlayerComponent != null && manipulatorPlayerComponent.target != null) {
+                    if (manipulatorPlayerComponent.target.equals(target.getUUID())) {
+                        cir.setReturnValue(Color.orange.getRGB());
+                        cir.cancel();
+                    }
+                }
+            }
             if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.ADMIRER)) {
                 AdmirerPlayerComponent admirerPlayerComponent = (AdmirerPlayerComponent) AdmirerPlayerComponent.KEY
                         .get((Player) Minecraft.getInstance().player);
