@@ -43,7 +43,7 @@ public class PatrollerKillMixin {
             if (!gameWorld.isRole(player, ModRoles.PATROLLER)) continue;
 
             // 检查距离（30格内）
-            if (player.distanceToSqr(victim) > 30 || !isBoundTargetVisible(victim, player)) continue;
+            if (player.distanceToSqr(victim) > 30 * 30 || !isBoundTargetVisible(victim, player)) continue;
 
             if (player.hasLineOfSight(victim)) {
                 PatrollerPlayerComponent patrollerComponent = ModComponents.PATROLLER.get(player);
