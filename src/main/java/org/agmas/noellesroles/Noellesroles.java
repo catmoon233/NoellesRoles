@@ -229,6 +229,8 @@ public class Noellesroles implements ModInitializer {
         TMM.canCollideEntity.add(entity->{
             return entity instanceof PuppeteerBodyEntity;
         });
+
+        //同时出现
         Harpymodloader.Occupations_Roles.put(ModRoles.POISONER, ModRoles.DOCTOR);
     }
 

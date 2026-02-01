@@ -753,6 +753,10 @@ public class ModRoles {
                 // 慕恋者每局只能有 1 个
                 Harpymodloader.setRoleMaximum(ADMIRER_ID, 1);
 
+                Harpymodloader.setRoleMaximum(POISONER, 1);
+
+                Harpymodloader.setRoleMaximum(ADMIRER_ID, 1);
+
                 // 傀儡师每局只能有 1 个
                 Harpymodloader.setRoleMaximum(PUPPETEER_ID, 1);
 
