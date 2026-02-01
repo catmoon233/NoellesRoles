@@ -552,7 +552,7 @@ public class Noellesroles implements ModInitializer {
         // }
         {
             List<ShopEntry> entries = new ArrayList<>();
-            // 立拍得相机 - 75金币
+            // 拍立得相机 - 75金币
             if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("exposure_polaroid:instant_camera"))) {
                 var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("exposure_polaroid:instant_camera"));
                 if (item != null) {
