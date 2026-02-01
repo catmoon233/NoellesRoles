@@ -50,7 +50,7 @@ public class PatrollerPlayerComponent implements RoleComponent, ServerTickingCom
         if (this.hasTriggered) return;
         if (player instanceof ServerPlayer serverPlayer) {
             // 给予左轮手枪
-            serverPlayer.addItem(new ItemStack(TMMItems.REVOLVER));
+            serverPlayer.addItem(new ItemStack(ModItems.PATROLLER_REVOLVER));
             // 给予乘务员钥匙 (master_key_p)
             serverPlayer.addItem(new ItemStack(ModItems.MASTER_KEY_P));
             this.hasTriggered = true;
