@@ -77,6 +77,12 @@ public class BoxingGloveItem extends Item {
                     
                     // 被命中的玩家会被给予1.5s缓慢10效果 (等级9)
                     target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 9));
+                    target.knockback(
+                            (float) Math.sin(player.getYRot() * ((float) Math.PI / 180F))
+                            ,1
+                            ,
+                            (float) (-Math.cos(player.getYRot() * ((float) Math.PI / 180F)))
+                    );
                     
                     // 使身上所有没有冷却的物品进入1.5s冷却
                     ItemCooldowns cooldowns = target.getCooldowns();

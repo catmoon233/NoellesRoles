@@ -29,11 +29,15 @@
     "roles.framing.DoNotApplyFakePoisonMixin",
     "roles.framing.FramingPassiveIncomeMixin",
     "roles.gambler.GamblerDeathMixin",
+    "roles.ghost.EntitySelectorMixin",
     "roles.ghost.GhostSoundMixin",
+    "roles.glitch_robot.GlitchRobotNoPoisonMixin",
     "roles.host.MasterKeyDropMixin",
     "roles.host.MasterKeySmallDoorMixin",
     "roles.host.MasterKeyTrainDoorMixin",
     "roles.host.MoneyIncreaseMixin",
+    "roles.insanekiller.PlayerNoBoxMixin",
+    "roles.insanekiller.ProjectileUtilMixin",
     "roles.jester.FakeRevolverMixin",
     "roles.jester.JesterItemEntityMixin",
     "roles.jester.JesterJestMixin",
@@ -49,8 +53,7 @@
     "roles.thief.ThiefsHonorMixin",
     "roles.veteran.VeteranKnifeLeftClickMixin",
     "roles.veteran.VeteranKnifeMixin",
-    "roles.voodoo.VoodooVooMixin",
-    "roles.glitch_robot.GlitchRobotNoPoisonMixin"
+    "roles.voodoo.VoodooVooMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -102,6 +105,7 @@
     "client.puppeteer.PuppeteerBodyGunTargetMixin",
     "client.puppeteer.PuppeteerBodyKnifeTargetMixin",
     "client.recaller.RecallerHudMixin",
+    "client.roles.glitch_robot.GlitchRobotMoodMixin",
     "client.swapper.KeyBindingMixin",
     "client.swapper.SwapperScreenMixin",
     "client.thief.ThiefHudMixin",

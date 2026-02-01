@@ -1,5 +1,10 @@
 package org.agmas.noellesroles.client.renderer;
 
+import net.fabricmc.fabric.api.entity.FakePlayer;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,11 +29,11 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class PuppeteerBodyEntityRenderer extends EntityRenderer<PuppeteerBodyEntity> {
     
-    private final HumanoidModel<PuppeteerBodyEntity> model;
+
     
     public PuppeteerBodyEntityRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
-        this.model = new HumanoidModel<>(ctx.bakeLayer(ModelLayers.PLAYER));
+
     }
     
     @Override
@@ -41,21 +46,23 @@ public class PuppeteerBodyEntityRenderer extends EntityRenderer<PuppeteerBodyEnt
         //matrices.translate(0.0, 0.0, 0.0);
         
         // 获取玩家皮肤纹理
-        ResourceLocation texture = getTextureLocation(entity);
-        
-        // 获取渲染层
-        RenderType renderLayer = RenderType.entityTranslucent(texture);
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-        
-        // 设置模型姿势（站立姿势）
-        model.setupAnim(entity, 0, 0, entity.tickCount + tickDelta, 0, 0);
-        
-        // 渲染模型
-        model.renderToBuffer(matrices, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+//        ResourceLocation texture = getTextureLocation(entity);
+        final var instance = Minecraft.getInstance();
+        UUID ownerUuid = entity.getOwnerUuid().orElse(null);
+        PlayerInfo entry = instance.getConnection().getPlayerInfo(ownerUuid);
+        if (entry != null) {
+            AbstractClientPlayer fakePlayer = new RemotePlayer(instance.level, new GameProfile(ownerUuid, entry.getProfile().getName()));
+            Minecraft.getInstance().getEntityRenderDispatcher().render(fakePlayer, 0.0D, 0.0D, 0, 0, tickDelta, matrices, vertexConsumers, light);
+
+        }else {
+            AbstractClientPlayer fakePlayer = new RemotePlayer(instance.level, new GameProfile(UUID.randomUUID(), "pupu"));
+            Minecraft.getInstance().getEntityRenderDispatcher().render(fakePlayer, 0.0D, 0.0D, 0, 0, tickDelta, matrices, vertexConsumers, light);
+
+        }
         
         //matrices.popPose();
         
-        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
+//        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }
 
 

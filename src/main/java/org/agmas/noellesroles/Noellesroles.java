@@ -43,6 +43,7 @@ import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.component.*;
+import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
@@ -207,6 +208,28 @@ public class Noellesroles implements ModInitializer {
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
         TMM.canUseOtherPerson.add((role -> role.getIdentifier()
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
+        TMM.canCollide.add(a->{
+            final var gameWorldComponent = GameWorldComponent.KEY.get(a.level());
+            if (gameWorldComponent.isRole(a, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)){
+                if (InsaneKillerPlayerComponent.KEY.get( a).isActive){
+                    return true;
+                }
+            }
+            return false;
+        });
+        TMM.canCollide.add(a->{
+            final var gameWorldComponent = GameWorldComponent.KEY.get(a.level());
+            if (gameWorldComponent.isRole(a, ModRoles.GHOST)){
+                if (a.hasEffect(MobEffects.INVISIBILITY)){
+                    return true;
+                }
+            }
+            return false;
+        });
+        TMM.canCollideEntity.add(entity->{
+            return entity instanceof PuppeteerBodyEntity;
+        });
+        Harpymodloader.Occupations_Roles.put(ModRoles.POISONER, ModRoles.DOCTOR);
     }
 
     /**
@@ -298,6 +321,7 @@ public class Noellesroles implements ModInitializer {
             awesomeBinglusItems.add(() -> TMMItems.NOTE.getDefaultInstance());
         }
         INITIAL_ITEMS_MAP.put(ModRoles.AWESOME_BINGLUS, awesomeBinglusItems);
+
     }
 
     /**
