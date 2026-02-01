@@ -363,6 +363,21 @@ public class ModRoles {
          */
         public static Role PSYCHOLOGIST;
 
+        /**
+         * 摄影师角色
+         * - 属于好人阵营 (isInnocent = true)
+         * - 不能使用杀手能力 (canUseKiller = false)
+         * - 真实心情系统
+         * - 标准冲刺时间
+         * - 在计分板上显示
+         * - 特殊能力：
+         * - 可在商店购买拍立得相机
+         * - 闪光灯致盲前方玩家并使隐身玩家发光3秒
+         * - 可以拍摄照片记录犯罪现场
+         * - 死亡时掉落照片
+         */
+        public static Role PHOTOGRAPHER;
+
         // 杀手阵营角色
         /**
          * 阴谋家角色
@@ -607,6 +622,17 @@ public class ModRoles {
                                 false // 不显示计分板
                 ).setComponentKey(PsychologistPlayerComponent.KEY));
 
+                // 摄影师角色 - 好人阵营
+                PHOTOGRAPHER = TMMRoles.registerRole(new NoramlRole(
+                                PHOTOGRAPHER_ID, // 角色 ID
+                                new Color(72, 209, 204).getRGB(), // 青石色 - 代表相机镜头
+                                true, // isInnocent = 好人阵营
+                                false, // canUseKiller = 无杀手能力
+                                Role.MoodType.REAL, // 真实心情
+                                TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+                                false // 不显示计分板
+                ));
+
                 // ==================== 注册杀手阵营角色 ====================
                 // 阴谋家角色 - 杀手阵营
                 CONSPIRATOR = TMMRoles.registerRole(new NoramlRole(
@@ -738,6 +764,9 @@ public class ModRoles {
                 // 心理学家每局只能有 1 个
                 Harpymodloader.setRoleMaximum(PSYCHOLOGIST_ID, 1);
 
+                // 摄影师每局只能有 1 个
+                Harpymodloader.setRoleMaximum(PHOTOGRAPHER_ID, 1);
+
                 // 阴谋家每局只能有 1 个
                 // Harpymodloader.setRoleMaximum(CONSPIRATOR_ID, 1);
 
@@ -811,6 +840,7 @@ public class ModRoles {
                 SHOW_MONEY_ROLES.add(ModRoles.DETECTIVE);
                 SHOW_MONEY_ROLES.add(ModRoles.POSTMAN);
                 SHOW_MONEY_ROLES.add(ModRoles.PSYCHOLOGIST);
+                SHOW_MONEY_ROLES.add(ModRoles.PHOTOGRAPHER);
                 SHOW_MONEY_ROLES.add(ModRoles.ENGINEER);
                 SHOW_MONEY_ROLES.add(ModRoles.GHOST);
                 SHOW_MONEY_ROLES.add(ModRoles.PATROLLER);

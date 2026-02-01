@@ -36,7 +36,7 @@
   "info.screen.roleid.conductor": "Start with Master Key and Spyglass.\nDrops on death.",
   "info.screen.roleid.the_insane_damned_paranoid_killer": "Can hear the dead.\nCan disguise as corpse.\nFake corpse detected by Coroner. Not invincible while disguised.",
   "info.screen.roleid.broadcaster": "Start with 200 coins. Spend 100 to Broadcast.\nEdit message anytime. Saved until sent.\nIf you die with saved message, it auto-sends.\nEveryone learns of your death.\nCan see remaining game time.",
-  "info.screen.roleid.manipulator": "Control target player for seconds.\nBody stays behind while controlling.\nCan be killed during control.\nGain target's appearance, inventory, and abilities.",
+  "info.screen.roleid.manipulator": "You can control the target player for several seconds.\nThe controlled player cannot control themselves and will move in a random direction.",
   "info.screen.roleid.poisoner": "See poisoned players. Buy Toxin. Cheaper Poison/Scorpions.\nToxin is ranged (30 blocks). Hit player dies after 10s. One use.\nCan buy Catalyst: Right-click to kill all poisoned players immediately (Includes Jester's Fake Poison).",
   "info.screen.roleid.thief": "Use skill to steal coins from target.",
   "info.screen.roleid.amnesiac": "See nearby corpses.\nDo tasks to maintain Sanity before stealing role.\nRight-click corpse to steal role.\nWin condition becomes same as stolen role.",
