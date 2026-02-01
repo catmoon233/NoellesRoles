@@ -3,6 +3,7 @@ package org.agmas.noellesroles.mixin.roles.avengerKill;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
@@ -44,18 +45,22 @@ public abstract class AvengerKillMixin {
             if (avengerComponent.targetPlayer != null &&
                 avengerComponent.targetPlayer.equals(victim.getUUID()) &&
                 !avengerComponent.activated) {
-                
+
                 // 激活复仇者能力，传入凶手信息
                 if (killer != null) {
                     avengerComponent.activate(killer.getUUID());
+                    avengerComponent.targetName = killer.getName().getString();
                 } else {
                     avengerComponent.activate(null);
                 }
-                
-                Noellesroles.LOGGER.info("复仇者 {} 绑定的目标 {} 被 {} 杀死，激活复仇者能力",
-                    player.getName().getString(), 
-                    victim.getName().getString(),
-                    killer != null ? killer.getName().getString() : "未知");
+
+
+                String playerName = player.getName().getString();
+                String victimName = victim.getName().getString();
+                String killerName = killer != null ? killer.getName().getString() : "未知";
+
+                player.displayClientMessage(Component.literal("你绑定的目标 " + victimName + " 被 " + killerName + " 杀死了"), true);
+                Noellesroles.LOGGER.info("复仇者 {} 绑定的目标 {} 被 {} 杀死，激活复仇者能力", playerName, victimName, killerName);
             }
         }
     }

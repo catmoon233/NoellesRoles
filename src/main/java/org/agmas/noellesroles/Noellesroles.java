@@ -91,6 +91,7 @@ public class Noellesroles implements ModInitializer {
     public static final CustomPacketPayload.Type<MorphC2SPacket> MORPH_PACKET = MorphC2SPacket.ID;
     public static final CustomPacketPayload.Type<SwapperC2SPacket> SWAP_PACKET = SwapperC2SPacket.ID;
     public static final CustomPacketPayload.Type<AbilityC2SPacket> ABILITY_PACKET = AbilityC2SPacket.ID;
+    public static final CustomPacketPayload.Type<OpenIntroPayload> OPEN_INTRO_PACKET = OpenIntroPayload.ID;
     public static final CustomPacketPayload.Type<VultureEatC2SPacket> VULTURE_PACKET = VultureEatC2SPacket.ID;
     public static final CustomPacketPayload.Type<ThiefStealC2SPacket> THIEF_PACKET = ThiefStealC2SPacket.ID;
     public static final CustomPacketPayload.Type<ManipulatorC2SPacket> MANIPULATOR_PACKET = ManipulatorC2SPacket.ID;
@@ -208,6 +209,8 @@ public class Noellesroles implements ModInitializer {
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
         TMM.canUseOtherPerson.add((role -> role.getIdentifier()
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
+        TMM.canUseOtherPerson.add((role -> role.getIdentifier()
+                .equals(ModRoles.MANIPULATOR_ID)));
         TMM.canCollide.add(a->{
             final var gameWorldComponent = GameWorldComponent.KEY.get(a.level());
             if (gameWorldComponent.isRole(a, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)){
@@ -676,6 +679,8 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);
 
         PayloadTypeRegistry.playC2S().register(MorphC2SPacket.ID, MorphC2SPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenIntroPayload.ID, OpenIntroPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(OpenIntroPayload.ID, OpenIntroPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(AbilityC2SPacket.ID, AbilityC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(VultureEatC2SPacket.ID, VultureEatC2SPacket.CODEC);
@@ -969,10 +974,7 @@ public class Noellesroles implements ModInitializer {
                 return false; // 阻止死亡（假人死亡）
             }
 
-            // 检查操纵师死亡判定
-            if (handleManipulatorDeath(victim, deathReason)) {
-                return false; // 阻止死亡（被操控玩家死亡）
-            }
+
 
             // 检查起搏器
             if (handleDefibrillator(victim)) {
@@ -1158,50 +1160,7 @@ public class Noellesroles implements ModInitializer {
         return true; // 阻止真正死亡
     }
 
-    /**
-     * 处理操纵师死亡判定
-     *
-     * @param victim
-     * @param deathReason
-     * @return
-     */
-    private static boolean handleManipulatorDeath(Player victim, ResourceLocation deathReason) {
-        if (victim == null || victim.level().isClientSide())
-            return false;
 
-        ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(victim);
-
-        if (!manipulatorComp.isControlling)
-            return false;
-
-        if (!manipulatorComp.isBodyAlive()) {
-            return false;
-        }
-
-        if (!(victim instanceof ServerPlayer serverPlayer))
-            return false;
-
-        Player targetPlayer = victim.level().getPlayerByUUID(manipulatorComp.target);
-        if (targetPlayer == null) {
-            return false;
-        }
-
-        if (targetPlayer instanceof ServerPlayer serverTarget) {
-            GameFunctions.killPlayer(serverTarget, true, serverPlayer, deathReason);
-
-            serverPlayer.displayClientMessage(
-                    Component.translatable("message.noellesroles.manipulator.target_died",
-                            targetPlayer.getName().getString())
-                            .withStyle(ChatFormatting.YELLOW),
-                    false);
-        }
-
-        manipulatorComp.stopControl(false);
-
-        serverPlayer.setHealth(serverPlayer.getMaxHealth());
-
-        return true;
-    }
 
     private static boolean handleDefibrillator(Player victim) {
         DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(victim);
