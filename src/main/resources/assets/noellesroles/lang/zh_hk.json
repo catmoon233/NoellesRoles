@@ -589,6 +589,7 @@
   "hud.noellesroles.bomber.count": "炸彈數量: %s",
   "hud.noellesroles.bomber.cost": "購買消耗: 100 金幣",
   "message.noellesroles.cooldown": "無法使用技能：技能冷卻中",
+  "message.noellesroles.admin.free_cam_hint": "管理員可使用 /nr_free_cam 脫離屍體視角",
   "==================== 錯誤消息 ====================": "",
   "message.error.executioner.invalid_target": "無效的目標！",
   "message.error.executioner.target_not_found": "未找到目標！",

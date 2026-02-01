@@ -47,6 +47,7 @@ import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
+import org.agmas.noellesroles.commands.AdminFreeCamCommand;
 import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.agmas.noellesroles.commands.ConfigCommand;
 import org.agmas.noellesroles.commands.SetRoleMaxCommand;

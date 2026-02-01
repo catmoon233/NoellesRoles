@@ -61,12 +61,30 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     // ==================== 客户端状态 ====================
     // 当前选中的目标玩家（用于需要选择目标的技能）
     public static Player targetPlayer;
+    // 管理员自由视角开关
+    public static boolean freeCamEnabled = false;
 
     @Override
     public void onInitializeClient() {
 
         // 1. 注册按键绑定
 
+        // 2. 注册客户端事件
+        registerClientEvents();
+
+        // 注册客户端指令
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            dispatcher.register(ClientCommandManager.literal("nr_free_cam")
+                    .executes(context -> {
+                        if (context.getSource().getPlayer().hasPermissions(2)) {
+                            freeCamEnabled = !freeCamEnabled;
+                            context.getSource().sendFeedback(
+                                    Component.literal("自由视角: " + (freeCamEnabled ? "开启" : "关闭")));
+                            return 1;
+                        }
+                        return 0;
+                    }));
+        });
     }
 
     /**
@@ -98,6 +116,35 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null || client.level == null)
                 return;
+
+            // 管理员脱离医生控制逻辑
+            if (!GameFunctions.isPlayerAliveAndSurvival(client.player)) {
+                // 检查是否有医生
+                boolean hasDoctor = false;
+                GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
+                for (Player p : client.level.players()) {
+                    if (gameWorld.isRole(p, ModRoles.DOCTOR)) {
+                        hasDoctor = true;
+                        break;
+                    }
+                }
+
+                if (hasDoctor && client.player.hasPermissions(2)) {
+                    if (!freeCamEnabled) {
+                        client.player.displayClientMessage(
+                                Component.translatable("message.noellesroles.admin.free_cam_hint"), true);
+                    } else {
+                        // 强制脱离控制
+                        if (client.getCameraEntity() != client.player) {
+                            client.setCameraEntity(client.player);
+                        }
+                    }
+                }
+            } else {
+                // 复活后重置
+                if (freeCamEnabled)
+                    freeCamEnabled = false;
+            }
 
             // 检查是否是阴谋家
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);

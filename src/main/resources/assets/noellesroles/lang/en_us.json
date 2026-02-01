@@ -577,6 +577,7 @@
   "hud.noellesroles.bomber.count": "Bombs: %s",
   "hud.noellesroles.bomber.cost": "Cost: 100 Coins",
   "message.noellesroles.cooldown": "Cannot use skill: Cooldown",
+  "message.noellesroles.admin.free_cam_hint": "Admins can use /nr_free_cam to escape corpse view",
   "==================== 错误消息 ====================": "",
   "message.error.executioner.invalid_target": "Invalid target!",
   "message.error.executioner.target_not_found": "Target not found!",
