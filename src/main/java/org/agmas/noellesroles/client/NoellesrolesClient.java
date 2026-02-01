@@ -29,11 +29,13 @@ import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.screen.GuessRoleScreen;
 import org.agmas.noellesroles.client.screen.LockGameScreen;
+import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
 import org.agmas.noellesroles.client.screen.BroadcasterScreen;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
+import org.agmas.noellesroles.packet.OpenIntroPayload;
 import org.agmas.noellesroles.packet.OpenLockGuiC2SPacket;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
@@ -51,6 +53,7 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static int insanityTime = 0;
     public static KeyMapping roleGuessNoteClientBind;
     public static KeyMapping abilityBind;
+    public static KeyMapping roleIntroClientBind;
     public static Player target;
     public static PlayerBodyEntity targetBody;
     public static Player targetFakeBody;
@@ -65,6 +68,9 @@ public class NoellesrolesClient implements ClientModInitializer {
         // for (Role role : TMMRoles.ROLES) {
         //
         // }
+        roleIntroClientBind = KeyBindingHelper
+                .registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".role_intro",
+                        InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.trainmurdermystery.keybinds"));
         roleGuessNoteClientBind = KeyBindingHelper
                 .registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".guess_role_note",
                         InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_I, "category.trainmurdermystery.keybinds"));
@@ -76,20 +82,27 @@ public class NoellesrolesClient implements ClientModInitializer {
             client.execute(() -> {
                 if (client.player != null) {
                     // if (!isPlayerInAdventureMode(client.player))
-                    //     return;
+                    // return;
                     currentBroadcastMessage = payload.content();
                     broadcastMessageTicks = GameConstants.getInTicks(0,
                             NoellesRolesConfig.HANDLER.instance().broadcasterMessageDuration);
                 }
             });
         });
-
+        ClientPlayNetworking.registerGlobalReceiver(OpenIntroPayload.ID, (payload, context) -> {
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null) {
+                    client.setScreen(new RoleIntroduceScreen(client.player));
+                }
+            });
+        });
         ClientPlayNetworking.registerGlobalReceiver(PlayerResetS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
-//                    client.player.sendSystemMessage(Component.translatable("screen.noellesroles.guess_role.reset")
-//                            .withColor(Color.ORANGE.getRGB()));
+                    // client.player.sendSystemMessage(Component.translatable("screen.noellesroles.guess_role.reset")
+                    // .withColor(Color.ORANGE.getRGB()));
                     GuessRoleScreen.clearData();
                 }
             });
@@ -115,14 +128,19 @@ public class NoellesrolesClient implements ClientModInitializer {
                     client.setScreen(new GuessRoleScreen());
                 });
             }
-            
+            if (roleIntroClientBind.consumeClick()) {
+                client.execute(() -> {
+                    client.setScreen(new RoleIntroduceScreen(client.player));
+                });
+            }
+
             if (broadcastMessageTicks > 0) {
                 broadcastMessageTicks--;
                 if (broadcastMessageTicks <= 0) {
                     currentBroadcastMessage = null;
                 }
             }
-            
+
             if (!isPlayerInAdventureMode(client.player))
                 return;
             insanityTime++;
