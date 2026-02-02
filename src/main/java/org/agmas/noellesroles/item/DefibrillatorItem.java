@@ -41,9 +41,9 @@ public class DefibrillatorItem extends Item {
                             return;
                         }
 
-                        String playerName = body.getName().getString();
-                        net.minecraft.server.level.ServerPlayer target = player.getServer().getPlayerList()
-                                .getPlayerByName(playerName);
+                        // 通过UUID查找玩家，而不是通过名字
+                        java.util.UUID playerUuid = body.getPlayerUuid();
+                        net.minecraft.server.level.ServerPlayer target = player.getServer().getPlayerList().getPlayer(playerUuid);
 
                         if (target != null) {
                             target.teleportTo(body.getX(), body.getY(), body.getZ());
