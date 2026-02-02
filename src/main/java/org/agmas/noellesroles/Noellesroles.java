@@ -16,6 +16,7 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
+import dev.doctor4t.trainmurdermystery.item.KnifeItem;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -242,6 +243,18 @@ public class Noellesroles implements ModInitializer {
 
         // 同时出现
         Harpymodloader.Occupations_Roles.put(ModRoles.POISONER, ModRoles.DOCTOR);
+        // 设置刀击中效果
+        KnifeItem.PlayerKilledPlayer = (victim, killer) -> {
+            // killer.displayClientMessage(Component.literal("DEBUG: 你杀了人！"), true);
+            killer.addEffect(new MobEffectInstance(
+                    MobEffects.MOVEMENT_SPEED, // ID
+                    1, // 持续时间（tick）
+                    0, // 等级（0 = 速度 I）
+                    false, // ambient（环境效果，如信标）
+                    false, // showParticles（显示粒子）
+                    false // showIcon（显示图标）
+            ));
+        };
     }
 
     /**
@@ -1464,7 +1477,8 @@ public class Noellesroles implements ModInitializer {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                     .get(context.player().level());
             if (gameWorldComponent.isRole(context.player(), ModRoles.SWAPPER)) {
-                NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY.get(context.player());
+                NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY
+                        .get(context.player());
                 if (!abilityPlayerComponent.canUseAbility())
                     return;
 
@@ -1520,7 +1534,8 @@ public class Noellesroles implements ModInitializer {
         });
         ServerPlayNetworking.registerGlobalReceiver(org.agmas.noellesroles.packet.BroadcasterC2SPacket.ID,
                 (payload, context) -> {
-                    NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY.get(context.player());
+                    NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY
+                            .get(context.player());
                     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(context.player().level());
                     PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
 
