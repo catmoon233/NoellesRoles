@@ -23,7 +23,7 @@ public class AdminFreeCamCommand {
         try {
             ServerPlayer player = context.getSource().getPlayerOrException();
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(player);
-            component.setPenalty(0);
+            component.reset();
             context.getSource().sendSuccess(() -> Component.translatable("message.noellesroles.penalty.unlimit"), true);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
