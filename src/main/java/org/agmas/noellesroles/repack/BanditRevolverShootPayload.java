@@ -1,8 +1,6 @@
 package org.agmas.noellesroles.repack;
 
-import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -26,24 +24,26 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 
-public  record BanditRevolverShootPayload(int target) implements CustomPacketPayload {
+public record BanditRevolverShootPayload(int target) implements CustomPacketPayload {
     public static final Type<BanditRevolverShootPayload> ID = new Type<>(Noellesroles.id("banditgunshoot"));;
     public static final StreamCodec<FriendlyByteBuf, BanditRevolverShootPayload> CODEC;
+
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
     static {
-        CODEC = StreamCodec.composite(ByteBufCodecs.INT, BanditRevolverShootPayload::target, BanditRevolverShootPayload::new);
+        CODEC = StreamCodec.composite(ByteBufCodecs.INT, BanditRevolverShootPayload::target,
+                BanditRevolverShootPayload::new);
     }
 
     public static class Receiver implements ServerPlayNetworking.PlayPayloadHandler<BanditRevolverShootPayload> {
         @Override
-        public void receive(@NotNull BanditRevolverShootPayload payload, ServerPlayNetworking.@NotNull Context context) {
+        public void receive(@NotNull BanditRevolverShootPayload payload,
+                ServerPlayNetworking.@NotNull Context context) {
             final var player = context.player();
             extracted(player, player.serverLevel().getEntity(payload.target()));
         }
@@ -54,69 +54,47 @@ public  record BanditRevolverShootPayload(int target) implements CustomPacketPay
         ItemStack mainHandStack = player.getMainHandItem();
         if (mainHandStack.is(TMMItemTags.GUNS)) {
             if (!player.getCooldowns().isOnCooldown(mainHandStack.getItem())) {
-                player.level().playSound((Player)null, player.getX(), player.getEyeY(), player.getZ(), TMMSounds.ITEM_REVOLVER_CLICK, SoundSource.PLAYERS, 0.5F, 1.0F + player.getRandom().nextFloat() * 0.1F - 0.05F);
+                player.level().playSound((Player) null, player.getX(), player.getEyeY(), player.getZ(),
+                        TMMSounds.ITEM_REVOLVER_CLICK, SoundSource.PLAYERS, 0.5F,
+                        1.0F + player.getRandom().nextFloat() * 0.1F - 0.05F);
 
                 if (var6 instanceof Player) {
-                    Player target = (Player)var6;
-                    if ((double)target.distanceTo(player) < (double)65.0F) {
-                        GameWorldComponent game = (GameWorldComponent)GameWorldComponent.KEY.get(player.level());
+                    Player target = (Player) var6;
+                    if ((double) target.distanceTo(player) < (double) 65.0F) {
+                        GameWorldComponent game = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
                         Item banditrevolver = HSRItems.BANDIT_REVOLVER;
                         boolean backfire = false;
                         if (game.isInnocent(target) && !player.isCreative() && mainHandStack.is(banditrevolver)) {
-//                            GameFunctions.killPlayer(player, true, player, GameConstants.DeathReasons.GUN);
-//                            if (game.isInnocent(player) && player.getRandom().nextFloat() <= game.getBackfireChance()) {
-//                                backfire = true;
-//
-//                            } else
-                                //if (game.isRole(player, ModRoles.BANDIT) || game.isRole(target, ModRoles.EXECUTIONER)) {
-                                if (true) {
-                                if (player.getRandom().nextFloat() <= 0.2F) {
-                                    Scheduler.schedule(() -> {
-                                        if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
-                                            player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1, player.getInventory());
-                                            ItemEntity item = player.drop(TMMItems.REVOLVER.getDefaultInstance(), false, false);
-                                            if (item != null) {
-                                                item.setPickUpDelay(10);
-                                                item.setThrower(player);
-                                            }
+                            //
 
-                                            ServerPlayNetworking.send(player, new GunDropPayload());
-                                        }
-                                    }, 4);
-                                }
-//                                else {
-//                                    Scheduler.schedule(() -> {
-//                                        if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
-//                                            player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1, player.getInventory());
-//                                        }
-//                                    }, 4);
-//                                }
-                            } else {
+                            if (player.getRandom().nextFloat() <= 0.2F) {
                                 Scheduler.schedule(() -> {
                                     if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
-                                        player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1, player.getInventory());
-                                        ItemEntity item = player.drop(TMMItems.REVOLVER.getDefaultInstance(), false, false);
+                                        player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1,
+                                                player.getInventory());
+                                        ItemEntity item = player.drop(TMMItems.REVOLVER.getDefaultInstance(), false,
+                                                false);
                                         if (item != null) {
                                             item.setPickUpDelay(10);
                                             item.setThrower(player);
                                         }
 
                                         ServerPlayNetworking.send(player, new GunDropPayload());
-                                        ((PlayerMoodComponent)PlayerMoodComponent.KEY.get(player)).setMood(0.0F);
                                     }
                                 }, 4);
                             }
                         }
-
                         if (!backfire) {
-                            GameFunctions.killPlayer(target, true, player, GameConstants.DeathReasons.GUN);
+                            GameFunctions.killPlayer(target, true, player, GameConstants.DeathReasons.REVOLVER);
                         }
                     }
                 }
 
-                player.level().playSound((Player)null, player.getX(), player.getEyeY(), player.getZ(), TMMSounds.ITEM_REVOLVER_SHOOT, SoundSource.PLAYERS, 5.0F, 1.0F + player.getRandom().nextFloat() * 0.1F - 0.05F);
+                player.level().playSound((Player) null, player.getX(), player.getEyeY(), player.getZ(),
+                        TMMSounds.ITEM_REVOLVER_SHOOT, SoundSource.PLAYERS, 5.0F,
+                        1.0F + player.getRandom().nextFloat() * 0.1F - 0.05F);
 
-                for(ServerPlayer tracking : PlayerLookup.tracking(player)) {
+                for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
                     ServerPlayNetworking.send(tracking, new ShootMuzzleS2CPayload(player.getId()));
                 }
 
