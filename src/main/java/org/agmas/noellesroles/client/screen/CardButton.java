@@ -178,7 +178,7 @@ public class CardButton extends AbstractButton {
         int width = getWidth();
         int height = getHeight();
 
-        int glowColor = 0x40FFFFFF; // 半透明白色发光
+        // int glowColor = 0x40FFFFFF; // 半透明白色发光
 
         // 简单的发光效果
         for (int i = 1; i <= 3; i++) {

@@ -19,7 +19,6 @@ import org.agmas.noellesroles.client.widget.SelectedRoleIntroTextWidget;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.utils.RoleUtils;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
