@@ -578,7 +578,7 @@ public class Noellesroles implements ModInitializer {
                     });
                 }
             }
-            // 立拍得相纸 - 25金币
+            // 拍立得相纸 - 25金币
             if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("exposure_polaroid:instant_color_slide"))) {
                 var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("exposure_polaroid:instant_color_slide"));
                 if (item != null) {

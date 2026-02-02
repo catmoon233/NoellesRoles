@@ -2,6 +2,7 @@
 package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -22,6 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+
+import org.agmas.noellesroles.ModItems;
 import org.jetbrains.annotations.NotNull;
 
 public class PatrollerRevolverItem extends Item {
@@ -62,6 +65,7 @@ public class PatrollerRevolverItem extends Item {
                 return InteractionResultHolder.fail(stack);
             }
             user.getCooldowns().addCooldown(TMMItems.REVOLVER, 5 * 20);
+            user.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, TMMConfig.revolverCooldown * 20);
         }
 
         return InteractionResultHolder.consume(stack);

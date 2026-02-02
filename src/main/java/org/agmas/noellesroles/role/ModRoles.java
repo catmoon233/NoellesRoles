@@ -191,7 +191,7 @@ public class ModRoles {
         public static Role GAMBLER = TMMRoles
                         .registerRole(new GamblerRole(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
                                         false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true))
-                        .setCanPickUpRevolver(true).setComponentKey(GamblerPlayerComponent.KEY);
+                        .setCanPickUpRevolver(true).setComponentKey(GamblerPlayerComponent.KEY).setNeutrals(true);
         public static Role POISONER = TMMRoles
                         .registerRole(new NoramlRole(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false,
                                         true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
