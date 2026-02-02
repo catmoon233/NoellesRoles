@@ -632,6 +632,7 @@
   "message.noellesroles.swapper.swapped": "你被交换者交换了位置！",
   "==================== 巡警角色 ====================": "",
   "announcement.role.patroller": "巡警",
+  "announcement.role.noellesroles.patroller": "巡警",
   "info.screen.roleid.patroller": "当你的视野30格内有人死亡时，你获得一把左轮手枪和一把乘务员钥匙。",
   "announcement.goals.patroller": "当你亲眼目睹了一场凶杀案时，你将维护这趟旅程中最后的正义。",
   "announcement.win.patroller": "乘客胜利！",
