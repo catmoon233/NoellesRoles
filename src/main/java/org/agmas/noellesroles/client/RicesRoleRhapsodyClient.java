@@ -2,7 +2,7 @@ package org.agmas.noellesroles.client;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.CameraType;
-import org.agmas.noellesroles.AbilityPlayerComponent;
+import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
@@ -159,7 +159,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
 
         // 获取玩家的技能组件
         @SuppressWarnings("unused")
-        AbilityPlayerComponent abilityComponent = AbilityPlayerComponent.KEY.get(client.player);
+        NoellesRolesAbilityPlayerComponent abilityComponent = NoellesRolesAbilityPlayerComponent.KEY.get(client.player);
         if (gameWorld.isRole(client.player, ModRoles.PUPPETEER) ||
                 PuppeteerPlayerComponent.KEY.get(client.player).isActivePuppeteer()) {
             // 检查玩家是否存活

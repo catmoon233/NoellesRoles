@@ -2,7 +2,6 @@ package org.agmas.noellesroles.component;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -21,14 +20,14 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 技能使用次数限制
  * - 自动同步到客户端（用于 HUD 显示）
  */
-public class AbilityPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
+public class NoellesRolesAbilityPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 
     @Override
     public Player getPlayer() {
         return player;
     }
     /** 组件键 - 用于从玩家获取此组件 */
-    public static final ComponentKey<AbilityPlayerComponent> KEY = ModComponents.ABILITY;
+    public static final ComponentKey<NoellesRolesAbilityPlayerComponent> KEY = ModComponents.ABILITY;
     
     // 持有该组件的玩家
     private final Player player;
@@ -45,7 +44,7 @@ public class AbilityPlayerComponent implements RoleComponent, ServerTickingCompo
     /**
      * 构造函数
      */
-    public AbilityPlayerComponent(Player player) {
+    public NoellesRolesAbilityPlayerComponent(Player player) {
         this.player = player;
     }
     

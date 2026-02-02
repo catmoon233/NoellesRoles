@@ -10,7 +10,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
-import org.agmas.noellesroles.AbilityPlayerComponent;
+import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.packet.ManipulatorC2SPacket;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ public class ManipulatorPlayerWidget extends Button {
         super(x, y, 16, 16, targetPlayer.getName(), (button) -> {
             ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY
                     .get(Minecraft.getInstance().player);
-            AbilityPlayerComponent abilityComp = AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
+            NoellesRolesAbilityPlayerComponent abilityComp = NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
 
             if (abilityComp.cooldown <= 0 && !manipulatorComp.isControlling) {
                 ClientPlayNetworking.send(new ManipulatorC2SPacket(targetPlayer.getUUID()));
@@ -39,7 +39,7 @@ public class ManipulatorPlayerWidget extends Button {
     @Override
     protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
         ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(Minecraft.getInstance().player);
-        AbilityPlayerComponent abilityComp = AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
+        NoellesRolesAbilityPlayerComponent abilityComp = NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
 
         boolean canControl = abilityComp.cooldown <= 0 && !manipulatorComp.isControlling;
 

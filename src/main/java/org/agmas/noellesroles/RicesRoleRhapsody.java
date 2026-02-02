@@ -18,7 +18,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.component.*;
-import org.agmas.noellesroles.component.AbilityPlayerComponent;
+import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.screen.DetectiveInspectScreenHandler;
@@ -808,7 +808,7 @@ public class RicesRoleRhapsody implements ModInitializer {
      */
     public static void onRoleAssigned(Player player, Role role) {
         // 重置玩家的技能冷却
-        AbilityPlayerComponent abilityComponent = ModComponents.ABILITY.get(player);
+        NoellesRolesAbilityPlayerComponent abilityComponent = ModComponents.ABILITY.get(player);
         abilityComponent.reset();
 
         // ==================== 清除其他角色的组件状态 ====================

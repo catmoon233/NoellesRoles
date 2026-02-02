@@ -369,6 +369,7 @@
   "hud.noellesroles.boxer.cooldown": "钢筋铁骨冷却：%s秒",
   "hud.noellesroles.boxer.ready": "钢筋铁骨就绪 - 按G激活",
   "hud.noellesroles.boxer.active": "钢筋铁骨激活中！%s秒",
+  "message.noellesroles.boxer.on_cooldown":"钢筋铁骨冷却中，剩余 %s 秒",
   "==================== 运动员角色 ====================": "",
   "announcement.role.athlete": "运动员",
   "announcement.goals.athlete": "利用你的无限体力和疾跑技能，帮助乘客完成任务！",

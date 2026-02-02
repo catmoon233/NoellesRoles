@@ -68,7 +68,7 @@ public abstract class PlayerResetMixin {
         admirerComp.clearAll();
 
         // 清除其他自定义组件状态
-        AbilityPlayerComponent abilityComp = ModComponents.ABILITY.get(player);
+        NoellesRolesAbilityPlayerComponent abilityComp = ModComponents.ABILITY.get(player);
         abilityComp.reset();
 
         AvengerPlayerComponent avengerComp = ModComponents.AVENGER.get(player);

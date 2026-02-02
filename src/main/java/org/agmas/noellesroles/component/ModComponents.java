@@ -45,9 +45,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         // ==================== 组件键定义 ====================
         // 所有 ComponentKey 集中在这里定义，确保在 CCA 初始化时正确注册
 
-        public static final ComponentKey<AbilityPlayerComponent> ABILITY = ComponentRegistry.getOrCreate(
+        public static final ComponentKey<NoellesRolesAbilityPlayerComponent> ABILITY = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "ability"),
-                        AbilityPlayerComponent.class);
+                        NoellesRolesAbilityPlayerComponent.class);
 
         public static final ComponentKey<AvengerPlayerComponent> AVENGER = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "avenger"),
@@ -170,7 +170,7 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 // RespawnCopyStrategy.NEVER_COPY 表示玩家重生时不保留数据（游戏开始时会重新初始化）
                 registry.beginRegistration(Player.class, ABILITY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
-                                .end(AbilityPlayerComponent::new);
+                                .end(NoellesRolesAbilityPlayerComponent::new);
                 registry.beginRegistration(Player.class, PATROLLER)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(PatrollerPlayerComponent::new);
@@ -280,9 +280,6 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(VoodooPlayerComponent::new);
                 registry.beginRegistration(PlayerBodyEntity.class, BodyDeathReasonComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(BodyDeathReasonComponent::new);
-                registry.beginRegistration(Player.class, org.agmas.noellesroles.AbilityPlayerComponent.KEY)
-                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
-                                .end(org.agmas.noellesroles.AbilityPlayerComponent::new);
                 registry.beginRegistration(Player.class, ExecutionerPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(ExecutionerPlayerComponent::new);
                 registry.beginRegistration(Player.class, RecallerPlayerComponent.KEY)

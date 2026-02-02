@@ -9,10 +9,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import org.agmas.noellesroles.AbilityPlayerComponent;
+import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.packet.SwapperC2SPacket;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,11 +26,12 @@ public class SwapperPlayerWidget extends Button{
 
     public SwapperPlayerWidget(LimitedInventoryScreen screen, int x, int y, @NotNull PlayerInfo disguiseTarget, int index) {
         super(x, y, 16, 16, Component.nullToEmpty(disguiseTarget.getProfile().getName()), (a) -> {
-            if ((AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player)).cooldown == 0) {
+            if ((NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player)).cooldown == 0) {
                 if (Minecraft.getInstance().player.level().getPlayerByUUID(disguiseTarget.getProfile().getId()) == null) return;
                 if (Minecraft.getInstance().player.level().getPlayerByUUID(disguiseTarget.getProfile().getId()).isPassenger()) return;
                 if (playerChoiceOne != null) {
                     ClientPlayNetworking.send(new SwapperC2SPacket(playerChoiceOne, disguiseTarget.getProfile().getId()));
+                    playerChoiceOne = null;
                 } else {
                     playerChoiceOne = disguiseTarget.getProfile().getId();
                 }
@@ -43,7 +43,7 @@ public class SwapperPlayerWidget extends Button{
 
     protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
-        if ((AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player)).cooldown == 0) {
+        if ((NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player)).cooldown == 0) {
             context.blitSprite(ShopEntry.Type.POISON.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
             PlayerFaceRenderer.draw(context, disguiseTarget.getSkin().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
@@ -53,7 +53,7 @@ public class SwapperPlayerWidget extends Button{
 
         }
 
-        if ((AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player)).cooldown > 0) {
+        if ((NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player)).cooldown > 0) {
             context.setColor(0.25f,0.25f,0.25f,0.5f);
             context.blitSprite(ShopEntry.Type.POISON.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
             PlayerFaceRenderer.draw(context, disguiseTarget.getSkin().texture(), this.getX(), this.getY(), 16);
@@ -64,7 +64,7 @@ public class SwapperPlayerWidget extends Button{
 
 
             context.setColor(1f,1f,1f,1f);
-            context.drawString(Minecraft.getInstance().font, AbilityPlayerComponent.KEY.get(Minecraft.getInstance().player).cooldown/20+"",this.getX(),this.getY(), Color.RED.getRGB(),true);
+            context.drawString(Minecraft.getInstance().font, NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player).cooldown/20+"",this.getX(),this.getY(), Color.RED.getRGB(),true);
 
         }
 

@@ -5,13 +5,9 @@ import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
-import org.agmas.noellesroles.role.ModRoles;
-import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.UUID;
@@ -46,12 +42,20 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
         this.target2 = t2;
         this.isSwapping = true;
         this.swapTimer = 20; // 1秒 = 20 ticks
+        NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY.get(this.player);
+        if (abilityPlayerComponent != null) {
+            if (!abilityPlayerComponent.canUseAbility()) {
+                return;
+            }
+            abilityPlayerComponent.setCooldown(20 * 20);
+        }
         ModComponents.SWAPPER.sync(player);
     }
 
     private void performSwap() {
-        if (player.level().isClientSide) return;
-        
+        if (player.level().isClientSide)
+            return;
+
         Player player1 = player.level().getPlayerByUUID(target1);
         Player player2 = player.level().getPlayerByUUID(target2);
 
@@ -70,10 +74,11 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
             // 发送提示
             player1.displayClientMessage(Component.translatable("message.noellesroles.swapper.swapped"), true);
             player2.displayClientMessage(Component.translatable("message.noellesroles.swapper.swapped"), true);
-            
+
             // 设置冷却
-            AbilityPlayerComponent abilityPlayerComponent = AbilityPlayerComponent.KEY.get(player);
-            abilityPlayerComponent.cooldown = GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().swapperSwapCooldown);
+            NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+            abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
+                    NoellesRolesConfig.HANDLER.instance().swapperSwapCooldown);
             abilityPlayerComponent.sync();
         }
     }
@@ -82,16 +87,20 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
     public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
         isSwapping = tag.getBoolean("isSwapping");
         swapTimer = tag.getInt("swapTimer");
-        if (tag.hasUUID("target1")) target1 = tag.getUUID("target1");
-        if (tag.hasUUID("target2")) target2 = tag.getUUID("target2");
+        if (tag.hasUUID("target1"))
+            target1 = tag.getUUID("target1");
+        if (tag.hasUUID("target2"))
+            target2 = tag.getUUID("target2");
     }
 
     @Override
     public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putBoolean("isSwapping", isSwapping);
         tag.putInt("swapTimer", swapTimer);
-        if (target1 != null) tag.putUUID("target1", target1);
-        if (target2 != null) tag.putUUID("target2", target2);
+        if (target1 != null)
+            tag.putUUID("target1", target1);
+        if (target2 != null)
+            tag.putUUID("target2", target2);
     }
 
     @Override
