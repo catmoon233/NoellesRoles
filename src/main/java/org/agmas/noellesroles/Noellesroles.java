@@ -160,7 +160,6 @@ public class Noellesroles implements ModInitializer {
     @Override
     public void onInitialize() {
         HSRConstants.init();
-
         // 初始化模组角色列表
         ModRoles.init();
         // 初始化初始物品映射
@@ -185,6 +184,7 @@ public class Noellesroles implements ModInitializer {
 
         // 注册命令
         BroadcastCommand.register();
+        AdminFreeCamCommand.register();
         SetRoleMaxCommand.register();
         ConfigCommand.register();
 
@@ -212,29 +212,35 @@ public class Noellesroles implements ModInitializer {
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
         TMM.canUseOtherPerson.add((role -> role.getIdentifier()
                 .equals(ModRoles.MANIPULATOR_ID)));
-        TMM.canCollide.add(a->{
+        TMM.canCollide.add(a -> {
             final var gameWorldComponent = GameWorldComponent.KEY.get(a.level());
-            if (gameWorldComponent.isRole(a, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)){
-                if (InsaneKillerPlayerComponent.KEY.get( a).isActive){
+            if (gameWorldComponent.isRole(a,
+                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                if (InsaneKillerPlayerComponent.KEY.get(a).isActive) {
                     return true;
                 }
             }
             return false;
         });
-        TMM.canCollide.add(a->{
+        TMM.canCollide.add(a -> {
             final var gameWorldComponent = GameWorldComponent.KEY.get(a.level());
-            if (gameWorldComponent.isRole(a, ModRoles.GHOST)){
-                if (a.hasEffect(MobEffects.INVISIBILITY)){
+            if (gameWorldComponent.isRole(a, ModRoles.GHOST)) {
+                if (a.hasEffect(MobEffects.INVISIBILITY)) {
                     return true;
                 }
             }
             return false;
         });
-        TMM.canCollideEntity.add(entity->{
+        TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
         });
+        TMM.canDropItem.addAll(List.of(
+                "exposure:stacked_photographs",
+                "exposure:album",
+                "exposure:photograph",
+                "noellesroles:mint_candies"));
 
-        //同时出现
+        // 同时出现
         Harpymodloader.Occupations_Roles.put(ModRoles.POISONER, ModRoles.DOCTOR);
     }
 
@@ -592,7 +598,8 @@ public class Noellesroles implements ModInitializer {
         }
         {
             ShopContent.customEntries.put(
-                    ModRoles.AWESOME_BINGLUS_ID, List.of(new ShopEntry(TMMItems.NOTE.getDefaultInstance(), 10, ShopEntry.Type.TOOL)));
+                    ModRoles.AWESOME_BINGLUS_ID,
+                    List.of(new ShopEntry(TMMItems.NOTE.getDefaultInstance(), 10, ShopEntry.Type.TOOL)));
         }
 
         {
@@ -644,7 +651,8 @@ public class Noellesroles implements ModInitializer {
         {
             List<ShopEntry> glitchRobotShop = new ArrayList<>();
             // 夜视仪 - 150金币
-            glitchRobotShop.add(new ShopEntry(ModItems.NIGHT_VISION_GLASSES.getDefaultInstance(), 150, ShopEntry.Type.TOOL));
+            glitchRobotShop
+                    .add(new ShopEntry(ModItems.NIGHT_VISION_GLASSES.getDefaultInstance(), 150, ShopEntry.Type.TOOL));
             // 萤石粉 - 50金币（修复夜视仪）
             glitchRobotShop.add(new ShopEntry(Items.GLOWSTONE_DUST.getDefaultInstance(), 50, ShopEntry.Type.TOOL) {
                 @Override
@@ -725,7 +733,8 @@ public class Noellesroles implements ModInitializer {
     public void registerEvents() {
         ShouldDropOnDeath.EVENT.register(((itemStack) -> {
             final var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
-            if ("exposure:album".equals(key) || "exposure:photograph".equals(key)) {
+            if ("exposure:album".equals(key) || "exposure:photograph".equals(key)
+                    || "exposure:stacked_photographs".equals(key)) {
                 return true;
             }
 
@@ -975,8 +984,6 @@ public class Noellesroles implements ModInitializer {
                 return false; // 阻止死亡（假人死亡）
             }
 
-
-
             // 检查起搏器
             if (handleDefibrillator(victim)) {
                 // 允许死亡，但已标记复活
@@ -1160,8 +1167,6 @@ public class Noellesroles implements ModInitializer {
 
         return true; // 阻止真正死亡
     }
-
-
 
     private static boolean handleDefibrillator(Player victim) {
         DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(victim);
@@ -1462,7 +1467,7 @@ public class Noellesroles implements ModInitializer {
                 AbilityPlayerComponent abilityPlayerComponent = AbilityPlayerComponent.KEY.get(context.player());
                 if (abilityPlayerComponent.cooldown > 0)
                     return;
-                
+
                 if (payload.player() != null && payload.player2() != null) {
                     if (context.player().level().getPlayerByUUID(payload.player()) != null &&
                             context.player().level().getPlayerByUUID(payload.player2()) != null) {
