@@ -55,10 +55,10 @@ public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingC
 
         // 故障计时器
         glitchTimer++;
-        if (glitchTimer >= 1200) { // 1分钟
+        if (glitchTimer >= 600) { // 30秒
             glitchTimer = 0;
-            // 缓慢 10 (Amplifier 9), 2秒 (40 ticks)
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 9, false, false, true));
+            // 缓慢 10 (Amplifier 9), 3.5秒 (70 ticks)
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 70, 9, false, false, true));
         }
     }
 

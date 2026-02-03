@@ -634,7 +634,7 @@
   "announcement.win.patroller": "Passengers win!",
   "==================== Glitch Robot Role ====================": "",
   "announcement.role.glitch_robot": "Glitch Robot",
-  "info.screen.roleid.glitch_robot": "Civilians Team\nYou have no mood.\nDouble stamina limit\nImmune to poison\nEvery minute, a glitch occurs (rooted for 2 seconds)\nUpon death, leaves a glitch current (players inside get Slowness II)\nShop sells Night Vision Goggles and Glowstone Dust\nWhen wearing Night Vision Goggles, buying Glowstone Dust can recharge the goggles",
+  "info.screen.roleid.glitch_robot": "Civilians Team\nYou have no mood.\nDouble stamina limit\nImmune to poison\nEvery 30 seconds, a glitch occurs (rooted for 3.5 seconds)\nUpon death, leaves a glitch current (players inside get Slowness II)\nShop sells Night Vision Goggles and Glowstone Dust\nWhen wearing Night Vision Goggles, buying Glowstone Dust can recharge the goggles",
   "announcement.goals.glitch_robot": "You were abandoned here, find a way out with the good guys!",
   "info.glitch_robot.noglasses_on_head": "Your Night Vision Goggles are not being worn, cannot take them off.",
   "info.glitch_robot.take_off_glasses.success": "Your Night Vision Goggles have been taken off.",
