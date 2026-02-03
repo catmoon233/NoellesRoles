@@ -20,7 +20,6 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -53,7 +52,6 @@ import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.blood.BloodMain;
-import org.agmas.noellesroles.blood.particle.BloodParticle;
 import org.agmas.noellesroles.commands.AdminFreeCamCommand;
 import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.agmas.noellesroles.commands.ConfigCommand;
@@ -706,8 +704,8 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(VultureEatC2SPacket.ID, VultureEatC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(ManipulatorC2SPacket.ID, ManipulatorC2SPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(OpenLockGuiC2SPacket.ID, OpenLockGuiC2SPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(OpenLockGuiC2SPacket.ID, OpenLockGuiC2SPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(OpenLockGuiS2CPacket.ID, OpenLockGuiS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenLockGuiS2CPacket.ID, OpenLockGuiS2CPacket.CODEC);
 
         PayloadTypeRegistry.playS2C().register(BloodConfigS2CPacket.ID, BloodConfigS2CPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BloodConfigS2CPacket.ID, BloodConfigS2CPacket.CODEC);

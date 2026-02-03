@@ -33,10 +33,11 @@ import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
 import org.agmas.noellesroles.client.screen.BroadcasterScreen;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
+import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
 import org.agmas.noellesroles.packet.OpenIntroPayload;
-import org.agmas.noellesroles.packet.OpenLockGuiC2SPacket;
+import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
@@ -113,7 +114,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             LoggerFactory.getLogger(this.getClass())
                     .info("Blood Particle status: " + (bloodMain.enabled ? "Enabled" : "Disabled"));
         });
-        ClientPlayNetworking.registerGlobalReceiver(OpenLockGuiC2SPacket.ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(OpenLockGuiS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
@@ -121,8 +122,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                         return;
                     final var pos = payload.pos();
                     Minecraft.getInstance()
-                            .setScreen(new LockGameScreen(new Vec3i((int) pos.x, (int) pos.y, (int) pos.z),
-                                    (LockEntity) context.player().level().getEntity(payload.lockId())));
+                            .setScreen(new LockGameScreen(pos, LockEntityManager.getInstance().getLockEntity(pos)));
                 }
             });
         });

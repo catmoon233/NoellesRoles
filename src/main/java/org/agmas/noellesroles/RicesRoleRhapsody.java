@@ -769,6 +769,21 @@ public class RicesRoleRhapsody implements ModInitializer {
                 }
             }
         });
+
+        // 处理锁游戏包
+        ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
+            ServerPlayer player = context.player();
+            ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
+            if(payload.result())
+            {
+                LockEntityManager.getInstance().removeLockEntity(payload.pos(), payload.entityId());
+            }
+            else if(lockPick.getItem() == TMMItems.LOCKPICK)
+            {
+                // TODO : 应该给撬锁器添加损坏动画和音效，但是它本来就没有耐久，如果要做可能要引入多个包，暂不处理
+                lockPick.shrink(1);
+            }
+        });
     }
 
     /**
