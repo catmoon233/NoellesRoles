@@ -751,8 +751,7 @@ public class Noellesroles implements ModInitializer {
             if (GameFunctions.isPlayerAliveAndSurvival(killer)) {
                 if (isInnocent) {
                     if (NoellesRolesConfig.HANDLER.instance().accidentalKillPunishment) {
-                        if (deathReason.getPath().equals("derringer_shot")
-                                || deathReason.getPath().equals("revolver_shot")
+                        if (deathReason.getPath().equals("revolver_shot")
                                 || deathReason.getPath().equals("bat_hit")
                                 || deathReason.getPath().equals("gun_shot")
                                 || deathReason.getPath().equals("knife_stab")) {
