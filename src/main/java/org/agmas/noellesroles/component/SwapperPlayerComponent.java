@@ -41,7 +41,7 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
         this.target1 = t1;
         this.target2 = t2;
         this.isSwapping = true;
-        this.swapTimer = 20; // 1秒 = 20 ticks
+        this.swapTimer = 50; // 2.5秒 = 50 ticks
         NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY.get(this.player);
         if (abilityPlayerComponent != null) {
             if (!abilityPlayerComponent.canUseAbility()) {
