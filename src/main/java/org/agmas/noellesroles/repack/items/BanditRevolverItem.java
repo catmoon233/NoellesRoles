@@ -1,13 +1,9 @@
 package org.agmas.noellesroles.repack.items;
 
-import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
-import dev.doctor4t.trainmurdermystery.client.particle.HandParticle;
-import dev.doctor4t.trainmurdermystery.client.render.TMMRenderLayers;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
-import dev.doctor4t.trainmurdermystery.util.GunShootPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -20,7 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
-import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +52,6 @@ public class BanditRevolverItem extends Item {
                 this.dropChance += 0.3;
                 ClientPlayNetworking.send(new BanditRevolverShootPayload(target.getId()));
             } else {
-
                 ClientPlayNetworking.send(new BanditRevolverShootPayload(-1));
             }
         } else {

@@ -7,7 +7,6 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -161,7 +160,7 @@ public abstract class CoronerHudMixin {
     @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Ldev/doctor4t/trainmurdermystery/game/GameFunctions;isPlayerSpectatingOrCreative(Lnet/minecraft/world/entity/player/Player;)Z"))
     private static void customRaycast(Font renderer, LocalPlayer player, GuiGraphics context, DeltaTracker tickCounter,
             CallbackInfo ci) {
-        float range = GameFunctions.isPlayerSpectatingOrCreative(player) ? 8.0F : 2.0F;
+        float range = RoleNameRenderer.getPlayerRange(player);
         HitResult line = ProjectileUtil.getHitResultOnViewVector(player,
                 (entity) -> entity instanceof PlayerBodyEntity || entity instanceof Player, (double) range);
         NoellesrolesClient.targetBody = null;
