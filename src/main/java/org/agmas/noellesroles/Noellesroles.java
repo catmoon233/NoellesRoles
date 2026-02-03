@@ -130,6 +130,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> DOCTOR_SHOP = new ArrayList<>();
     // ==================== 歌手商店 ====================
     public static ArrayList<ShopEntry> SINGER_SHOP = new ArrayList<>();
+    // ==================== 乘务员商店 ====================
+    public static ArrayList<ShopEntry> ATTENDANT_SHOP = new ArrayList<>();
 
     private static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
@@ -304,15 +306,6 @@ public class Noellesroles implements ModInitializer {
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
         // 乘务员钥匙
         attendantItems.add(() -> ModItems.MASTER_KEY_P.getDefaultInstance());
-        // 使用延迟加载方式添加 handheldmoon 模组的物品（如果可用）
-        attendantItems.add(() -> {
-            final var moonlightLampItem = BuiltInRegistries.ITEM
-                    .get(ResourceLocation.tryParse("handheldmoon:moonlight_lamp"));
-            if (moonlightLampItem != Items.AIR) {
-                return moonlightLampItem.getDefaultInstance();
-            }
-            return null; // 如果物品不存在，返回null
-        });
         INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
 
         // 心理学家初始物品（不再有薄荷糖）
@@ -517,6 +510,22 @@ public class Noellesroles implements ModInitializer {
                 HSRItems.ANTIDOTE.getDefaultInstance(),
                 75,
                 ShopEntry.Type.TOOL));
+
+        // 乘务员商店
+        // 手电筒（moonlight_lamp） - 150金币
+        if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("handheldmoon:moonlight_lamp"))) {
+            final var moonlightLampItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse("handheldmoon:moonlight_lamp"));
+            if (moonlightLampItem != null) {
+                final var defaultInstance = moonlightLampItem.getDefaultInstance();
+                ATTENDANT_SHOP.add(new ShopEntry(defaultInstance, 150, ShopEntry.Type.TOOL) {
+                    @Override
+                    public boolean onBuy(@NotNull Player player) {
+                        player.addItem(defaultInstance.copy());
+                        return true;
+                    }
+                });
+            }
+        }
     }
 
     private void shopRegister() {
@@ -641,6 +650,12 @@ public class Noellesroles implements ModInitializer {
         {
             ShopContent.customEntries.put(
                     ModRoles.PSYCHOLOGIST_ID, PSYCHOLOGIST_SHOP);
+        }
+
+        // 乘务员商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.ATTENDANT_ID, ATTENDANT_SHOP);
         }
 
         // 操纵师商店
