@@ -15,9 +15,11 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 public class DeathPenaltyComponent implements RoleComponent {
     private final Player player;
     public long penaltyExpiry = 0;
-    public void clearAll(){
+
+    public void clearAll() {
         this.reset();
     }
+
     public void check() {
         if (!this.hasPenalty()) {
             return;
@@ -46,6 +48,11 @@ public class DeathPenaltyComponent implements RoleComponent {
                                     Component.translatable("message.noellesroles.penalty.limit.god_job_couple")
                                             .withStyle(ChatFormatting.RED),
                                     true);
+                            if (player.hasPermissions(2)) {
+                                player.sendSystemMessage(
+                                        Component.translatable("message.noellesroles.admin.free_cam_hint")
+                                                .withStyle(ChatFormatting.YELLOW));
+                            }
                         }
                         return;
                     }

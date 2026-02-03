@@ -45,7 +45,6 @@
   "info.screen.roleid.initiate": "\nBrief\nDo tasks, earn money, buy knife, kill the other Initiate.\nKill other Initiate to become Killer.\nIf other Initiate dies otherwise, become Amnesiac.\n\nDetails\nTwo Initiates per game, only appears in games with 12+ players. If only one, become Amnesiac after 30s.\nCan see other Initiate.\nBuy Knife (200 coins) - Only for other Initiate.\nKilling others kills you (Failed test).\nInnocent team. Cannot pick up gun. No penalty if killed by Innocent.\nSuccess becomes random Killer.\nIf other dies otherwise, become Amnesiac.\nIf you die, become Amnesiac (Coroner sees Amnesiac).\nIf Innocents win and both alive, both win.\nAfter kill, win condition is Killer.\nIf other dies (not by you), win condition is new role.",
   "info.screen.roleid.necromancer": "Can resurrect dead.\nIf Killer count < Initial, can resurrect (CD: 3 min).\nResurrected becomes normal Killer.\nCannot buy items, but has Killer Instinct.\nResurrection plays sound and broadcasts.",
   "info.screen.roleid.recorder": "Enabled in games with 10+ players.\nStart with Notebook to guess roles.\nRecords existing roles and player info.\nRecord role-changing Neutrals ASAP.\nWin by guessing 40% of players.\n10 wrong guesses kills you.",
-
   "==================== 正文 ====================": "",
   "announcement.goals.awesome_binglus": "You have notes and can stick them on players. Mark players as much as possible.",
   "announcement.goals.bartender": "See drinking players through walls and protect civilians with Defense Vials!",
@@ -642,6 +641,8 @@
   "screen.roleintroduce.hint": "Press ESC to return or cancel",
   "gui.roleintroduce.details.tip": "Role【%s】\n\n%s",
   "gui.roleintroduce.details.close": "Close",
+  "hud.lobby.hint.line4": "DLC: 开拓星穹谋杀案",
+  "hud.lobby.hint.line3": "Creator: 残月团队",
   "hud.lobby.hint.line1": "Press %s key to view role info",
   "hud.lobby.hint.line2": "Press i key in-game to record player identities",
   "==================== Letters ====================": "",
@@ -651,5 +652,5 @@
   "tip.n.letter.tooltip1": "Your cabin is for your %s journey",
   "tip.n.letter.date": "%d/%d/%d",
   "tip.n.letter.tooltip2": "Star Rail Crew wishes you a pleasant and safe journey",
-  "tip.n.letter.map_name":"Star Rail Train"
+  "tip.n.letter.map_name": "Star Rail Train"
 }

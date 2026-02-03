@@ -253,7 +253,7 @@ public class Noellesroles implements ModInitializer {
 
         // 注册血液粒子工厂
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, Noellesroles.id("deathblood"),
-            BloodMain.BLOOD_PARTICLE);        
+                BloodMain.BLOOD_PARTICLE);
     }
 
     /**
@@ -751,10 +751,14 @@ public class Noellesroles implements ModInitializer {
             if (GameFunctions.isPlayerAliveAndSurvival(killer)) {
                 if (isInnocent) {
                     if (NoellesRolesConfig.HANDLER.instance().accidentalKillPunishment) {
-                        if (deathReason.getPath().equals("bat_hit") || deathReason.getPath().equals("grenade")
+                        if (deathReason.getPath().equals("derringer_shot")
+                                || deathReason.getPath().equals("revolver_shot")
+                                || deathReason.getPath().equals("bat_hit")
                                 || deathReason.getPath().equals("gun_shot")
                                 || deathReason.getPath().equals("knife_stab")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
+                        } else {
+                            LoggerFactory.getLogger(MOD_ID).warn(deathReason.toString());
                         }
                     }
                 }
@@ -775,7 +779,8 @@ public class Noellesroles implements ModInitializer {
         ShouldDropOnDeath.EVENT.register(((itemStack) -> {
             final var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
             if ("exposure:album".equals(key) || "exposure:photograph".equals(key)
-                    || "exposure:stacked_photographs".equals(key)) {
+                    || "exposure:stacked_photographs".equals(key) || itemStack.is(ModItems.PATROLLER_REVOLVER)
+                    || itemStack.is(TMMItems.DERRINGER)) {
                 return true;
             }
 
@@ -1230,7 +1235,7 @@ public class Noellesroles implements ModInitializer {
             return;
 
         GlitchRobotPlayerComponent.onKnockOut(victim);
-        // TODO: BUG：药水效果云生成会导致玩家被踢
+
     }
 
     private static void handleDeathPenalty(Player victim) {
@@ -1268,13 +1273,23 @@ public class Noellesroles implements ModInitializer {
                     Component.translatable("message.noellesroles.penalty.limit.god_job_couple")
                             .withStyle(ChatFormatting.RED),
                     true);
+
+            if (victim.hasPermissions(2)) {
+                victim.sendSystemMessage(Component.translatable("message.noellesroles.admin.free_cam_hint")
+                        .withStyle(ChatFormatting.YELLOW));
+            }
         } else if (doctorAlive) {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
             component.setPenalty(45 * 20);
             victim.displayClientMessage(
                     Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED), true);
+
             victim.sendSystemMessage(
                     Component.translatable("message.noellesroles.doctor.penalty").withStyle(ChatFormatting.RED));
+            if (victim.hasPermissions(2)) {
+                victim.sendSystemMessage(Component.translatable("message.noellesroles.admin.free_cam_hint")
+                        .withStyle(ChatFormatting.YELLOW));
+            }
         }
     }
 

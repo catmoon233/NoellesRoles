@@ -14,15 +14,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
-import org.agmas.noellesroles.Noellesroles;
 
 /**
  * 血液效果主控制器
@@ -87,9 +84,9 @@ public class BloodMain {
                     if (!var3.hasNext()) {
                         // 记录当前tick的手榴弹状态
                         if (this.grenadeThisTick) {
-                            this.hasGrenade.add(Boolean.TRUE);
+                            this.hasGrenade.add(true);
                         } else {
-                            this.hasGrenade.add(Boolean.FALSE);
+                            this.hasGrenade.add(false);
                         }
 
                         // 限制历史记录大小为2（只保留最近两个tick的状态）
@@ -154,7 +151,7 @@ public class BloodMain {
      */
     private void OnBloodSpawn(ClientLevel world, PlayerBodyEntity victim, Player killer, Item weapon) {
         // 计算血液生成的基础位置（尸体眼睛位置）
-        Vec3 pos = new Vec3(victim.getX(), victim.getEyeY(), victim.getZ());
+        Vec3 pos = victim.getEyePosition();
         Vec3 rot = victim.getLookAngle(); // 尸体的视线方向
 
         // 调整血液生成位置，稍微偏移以避开尸体模型

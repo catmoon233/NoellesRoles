@@ -654,8 +654,10 @@
   "screen.roleintroduce.hint": "按 ESC 返回或取消",
   "gui.roleintroduce.details.tip": "職業【%s】\n\n%s",
   "gui.roleintroduce.details.close": "關閉",
+  "hud.lobby.hint.line4": "DLC：开拓星穹谋杀案",
+  "hud.lobby.hint.line3": "制作组：残月团队",
   "hud.lobby.hint.line1": "按下 %s 鍵可查看職業介紹",
-  "hud.lobby.hint.line2": "遊戲內按下 i 鍵可記錄玩家身份",
+  "hud.lobby.hint.line2": "遊戲內按下 %s 鍵可記錄玩家身份",
   "==================== 信件 ====================": "",
   "tip.n.letter.item_name": "給 %s 的一封信",
   "tip.n.letter.name": "親愛的 %s，歡迎登上%s！",
@@ -663,5 +665,5 @@
   "tip.n.letter.tooltip1": "您的客艙僅用於您%s的旅程",
   "tip.n.letter.date": "%d年%d月%d日",
   "tip.n.letter.tooltip2": "開拓星穹列車組祝您旅途愉快、平安",
-  "tip.n.letter.map_name":"開拓星穹列車"
+  "tip.n.letter.map_name": "開拓星穹列車"
 }
