@@ -8,7 +8,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
-import java.util.List;
 
 public class NoellesRolesConfig {
     public static ConfigClassHandler<NoellesRolesConfig> HANDLER = ConfigClassHandler.createBuilder(NoellesRolesConfig.class)
@@ -26,6 +25,12 @@ public class NoellesRolesConfig {
 
     @SerialEntry(comment = "Starting cooldown (in ticks)")
     public int generalCooldownTicks = GameConstants.getInTicks(0,30);
+
+    @SerialEntry(comment = "Enable client blood render")
+    public boolean enableClientBlood = true;
+
+    @SerialEntry(comment = "Punishment for a civilian's accidental killing of another civilian")
+    public boolean accidentalKillPunishment = true;
 
     @SerialEntry(comment = "Allow Natural deaths to trigger voodoo (deaths without an assigned killer)")
     public boolean voodooNonKillerDeaths = false;

@@ -90,6 +90,7 @@
   "announcement.win.coroner": "乘客胜利！",
   "announcement.win.the_insane_damned_paranoid_killer": "杀手胜利！",
   "death_reason.noellesroles.voodoo": "巫毒魔法。",
+  "death_reason.noellesroles.shot_innocent": "误杀平民而亡。",
   "death_reason.trainmurdermystery.voodoo": "巫毒魔法。",
   "death_reason.trainmurdermystery.bat_hit": "遭受钝器重击！",
   "death_reason.trainmurdermystery.fell_out_of_train": "被列车碾压。",

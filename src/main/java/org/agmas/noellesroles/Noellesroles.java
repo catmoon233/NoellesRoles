@@ -10,19 +10,23 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
+import dev.doctor4t.trainmurdermystery.event.OnPlayerKilledPlayer;
+import dev.doctor4t.trainmurdermystery.event.OnTeammateKilledTeammate;
 import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
-import dev.doctor4t.trainmurdermystery.item.KnifeItem;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -48,6 +52,8 @@ import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
+import org.agmas.noellesroles.blood.BloodMain;
+import org.agmas.noellesroles.blood.particle.BloodParticle;
 import org.agmas.noellesroles.commands.AdminFreeCamCommand;
 import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.agmas.noellesroles.commands.ConfigCommand;
@@ -244,17 +250,10 @@ public class Noellesroles implements ModInitializer {
         // 同时出现
         Harpymodloader.Occupations_Roles.put(ModRoles.POISONER, ModRoles.DOCTOR);
         // 设置刀击中效果
-        KnifeItem.PlayerKilledPlayer = (victim, killer) -> {
-            // killer.displayClientMessage(Component.literal("DEBUG: 你杀了人！"), true);
-            killer.addEffect(new MobEffectInstance(
-                    MobEffects.MOVEMENT_SPEED, // ID
-                    1, // 持续时间（tick）
-                    0, // 等级（0 = 速度 I）
-                    false, // ambient（环境效果，如信标）
-                    false, // showParticles（显示粒子）
-                    false // showIcon（显示图标）
-            ));
-        };
+
+        // 注册血液粒子工厂
+        Registry.register(BuiltInRegistries.PARTICLE_TYPE, Noellesroles.id("deathblood"),
+            BloodMain.BLOOD_PARTICLE);        
     }
 
     /**
@@ -709,6 +708,10 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(ManipulatorC2SPacket.ID, ManipulatorC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(OpenLockGuiC2SPacket.ID, OpenLockGuiC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLockGuiC2SPacket.ID, OpenLockGuiC2SPacket.CODEC);
+
+        PayloadTypeRegistry.playS2C().register(BloodConfigS2CPacket.ID, BloodConfigS2CPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(BloodConfigS2CPacket.ID, BloodConfigS2CPacket.CODEC);
+
         PayloadTypeRegistry.playC2S().register(BanditRevolverShootPayload.ID,
                 BanditRevolverShootPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID,
@@ -744,6 +747,31 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+        OnTeammateKilledTeammate.EVENT.register((victim, killer, isInnocent, deathReason) -> {
+            if (GameFunctions.isPlayerAliveAndSurvival(killer)) {
+                if (isInnocent) {
+                    if (NoellesRolesConfig.HANDLER.instance().accidentalKillPunishment) {
+                        if (deathReason.getPath().equals("bat_hit") || deathReason.getPath().equals("grenade")
+                                || deathReason.getPath().equals("gun_shot")
+                                || deathReason.getPath().equals("knife_stab")) {
+                            GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
+                        }
+                    }
+                }
+            }
+        });
+        OnPlayerKilledPlayer.EVENT.register((victim, killer, deathReason) -> {
+            if (deathReason.equals(OnPlayerKilledPlayer.DeathReason.KNIFE)) {
+                killer.addEffect(new MobEffectInstance(
+                        MobEffects.MOVEMENT_SPEED, // ID
+                        1, // 持续时间（tick）
+                        0, // 等级（0 = 速度 I）
+                        false, // ambient（环境效果，如信标）
+                        false, // showParticles（显示粒子）
+                        false // showIcon（显示图标）
+                ));
+            }
+        });
         ShouldDropOnDeath.EVENT.register(((itemStack) -> {
             final var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
             if ("exposure:album".equals(key) || "exposure:photograph".equals(key)
@@ -1045,6 +1073,9 @@ public class Noellesroles implements ModInitializer {
                 DeathPenaltyComponent penaltyComponent = ModComponents.DEATH_PENALTY.get(player);
                 penaltyComponent.check();
             }
+        });
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            sender.sendPacket(new BloodConfigS2CPacket(NoellesRolesConfig.HANDLER.instance().enableClientBlood));
         });
 
         // 示例：监听是否能看到毒药

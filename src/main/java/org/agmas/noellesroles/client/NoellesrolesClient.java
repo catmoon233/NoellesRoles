@@ -15,7 +15,6 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.Vec3i;
@@ -27,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.screen.GuessRoleScreen;
 import org.agmas.noellesroles.client.screen.LockGameScreen;
 import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
@@ -39,11 +39,11 @@ import org.agmas.noellesroles.packet.OpenIntroPayload;
 import org.agmas.noellesroles.packet.OpenLockGuiC2SPacket;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
-
+import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
 import java.util.*;
 
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.*;
@@ -61,6 +61,7 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static Map<UUID, UUID> SHUFFLED_PLAYER_ENTRIES_CACHE = Maps.newHashMap();
     public static Component currentBroadcastMessage = null;
     public static int broadcastMessageTicks = 0;
+    public static BloodMain bloodMain = new BloodMain();
 
     @Override
     public void onInitializeClient() {
@@ -107,7 +108,11 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
-
+        ClientPlayNetworking.registerGlobalReceiver(BloodConfigS2CPacket.ID, (payload, context) -> {
+            bloodMain.enabled = payload.enabled();
+            LoggerFactory.getLogger(this.getClass())
+                    .info("Blood Particle status: " + (bloodMain.enabled ? "Enabled" : "Disabled"));
+        });
         ClientPlayNetworking.registerGlobalReceiver(OpenLockGuiC2SPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
@@ -236,6 +241,9 @@ public class NoellesrolesClient implements ClientModInitializer {
 
         // 6. 注册Screen
         registerScreens();
+
+        // 7. 注册血粒子
+        bloodMain.init();
     }
 
     public void tooltipHelper(Item item, ItemStack itemStack, List<Component> list) {
