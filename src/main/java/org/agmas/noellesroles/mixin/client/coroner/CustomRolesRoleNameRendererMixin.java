@@ -51,7 +51,10 @@ public abstract class CustomRolesRoleNameRendererMixin {
                 }
                 // 死亡惩罚
                 int di_color = HarpymodloaderClient.hudRole.color();
-                boolean hasPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player).hasPenalty();
+                var deathPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player);
+                boolean hasPenalty = false;
+                if (deathPenalty != null)
+                    hasPenalty = deathPenalty.hasPenalty();
                 if (hasPenalty) {
                     name = Component.translatable("message.noellesroles.penalty.limit.role");
                     di_color = Color.RED.getRGB();

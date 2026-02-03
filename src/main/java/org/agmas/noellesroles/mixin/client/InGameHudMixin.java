@@ -19,10 +19,13 @@ public class InGameHudMixin {
     private void renderBlackout(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player != null) {
-            if (ModComponents.DEATH_PENALTY.get(client.player).hasPenalty()) {
+            var deathPenalty = ModComponents.DEATH_PENALTY.get(client.player);
+            if (deathPenalty == null)
+                return;
+            if (deathPenalty.hasPenalty()) {
                 int width = client.getWindow().getGuiScaledWidth();
                 int height = client.getWindow().getGuiScaledHeight();
-                
+
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);

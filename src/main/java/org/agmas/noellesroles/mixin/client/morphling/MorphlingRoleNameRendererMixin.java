@@ -33,10 +33,16 @@ public abstract class MorphlingRoleNameRendererMixin {
         if (instance.isInvisible()) {
             return Component.literal("");
         }
-        boolean hasPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player).hasPenalty();
+        var deathPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player);
+        boolean hasPenalty = false;
+        if (deathPenalty != null)
+            hasPenalty = deathPenalty.hasPenalty();
+        // boolean hasPenalty =
+        // ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player).hasPenalty();
 
         if (hasPenalty) {
-            // return Component.translatable("message.noellesroles.penalty.limit.player_name");
+            // return
+            // Component.translatable("message.noellesroles.penalty.limit.player_name");
         }
         if ((MorphlingPlayerComponent.KEY.get(instance)).getMorphTicks() > 0) {
             if (instance.level().getPlayerByUUID(MorphlingPlayerComponent.KEY.get(instance).disguise) != null) {

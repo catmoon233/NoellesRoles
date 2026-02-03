@@ -52,6 +52,7 @@ public abstract class PlayerResetMixin {
     }
 
     private static void clearAllComponents(ServerPlayer player) {
+
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
         InControlCCA inControlCCA =InControlCCA.KEY.get(player);
