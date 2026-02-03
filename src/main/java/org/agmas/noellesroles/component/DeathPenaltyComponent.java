@@ -25,7 +25,6 @@ public class DeathPenaltyComponent implements RoleComponent {
             return;
         } else {
             if (this.penaltyExpiry < 0) {
-
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
                 boolean INSANE_alive = false;
                 boolean CONSPIRATOR_alive = false;

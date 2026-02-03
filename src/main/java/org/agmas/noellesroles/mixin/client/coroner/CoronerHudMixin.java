@@ -85,7 +85,10 @@ public abstract class CoronerHudMixin {
             if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.CORONER)
                     || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)
                     || TMMClient.isPlayerSpectatingOrCreative()) {
-                boolean hasPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player).hasPenalty();
+                var deathPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player);
+                boolean hasPenalty = false;
+                if (deathPenalty != null)
+                    hasPenalty = deathPenalty.hasPenalty();
                 context.pose().pushPose();
                 context.pose().translate((float) context.guiWidth() / 2.0F, (float) context.guiHeight() / 2.0F + 6.0F,
                         0.0F);
@@ -136,7 +139,8 @@ public abstract class CoronerHudMixin {
                                 .withColor(ModRoles.VULTURE.color());
                         context.drawString(renderer, roleInfo, -renderer.width(roleInfo) / 2, 48, CommonColors.WHITE);
                     } else {
-                        NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+                        NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY
+                                .get(player);
                         if (abilityPlayerComponent.cooldown <= 0 && TMMClient.isPlayerAliveAndInSurvival()) {
                             Component roleInfo = Component
                                     .translatable("hud.vulture.eat",
