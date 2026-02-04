@@ -115,7 +115,7 @@ public class InventoryIntroductionRenderer {
                         return (int) ((float) font.width(component) * scale);
                      }).max().orElse(0);
                      int maxWidth = Math.max(scaledNameWidth, maxInfoWidth);
-                     this.renderScaledTextWithShadow(context, font, modifierNameComponent, scaledX,
+                     this.renderScaledTextWithShadow(context, font, modifierNameComponent, scaledX - maxWidth / scale,
                            scaledY, scale,
                            16777215,
                            4210752);
@@ -123,7 +123,7 @@ public class InventoryIntroductionRenderer {
                            .hasNext(); currentY += (int) (9.0F * scale) + 2) {
                         Component line = (Component) var22.next();
                         float lineY = (float) currentY / scale;
-                        context.drawString(font, line, (int) (scaledX), (int) lineY, 11184810);
+                        context.drawString(font, line, (int) (scaledX - maxWidth / scale), (int) lineY, 11184810);
                         Objects.requireNonNull(font);
                      }
                      poseStack.popPose();
