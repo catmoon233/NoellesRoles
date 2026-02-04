@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.client.screen;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,9 +10,12 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
-import org.agmas.noellesroles.Noellesroles;
+
+import org.agmas.harpymodloader.modifiers.HMLModifiers;
+import org.agmas.harpymodloader.modifiers.Modifier;
 import org.agmas.noellesroles.client.widget.SelectedRoleIntroTextWidget;
 import org.agmas.noellesroles.utils.RoleUtils;
 import java.util.ArrayList;
@@ -44,7 +48,7 @@ public class RoleIntroduceScreen extends Screen {
     private Button prevPageButton;
     private Button nextPageButton;
     private SelectedRoleIntroTextWidget selectedRoleIntroWidget;
-    private Role selectedRole;
+    private Object selectedRole;
 
     /**
      * 选择阶段：搜索职业
@@ -64,7 +68,7 @@ public class RoleIntroduceScreen extends Screen {
         super(Component.translatable("gui.roleintroduce.select_role.title"));
 
         // 加载可用角色
-        for (Role role : Noellesroles.getEnableRoles()) {
+        for (Role role : TMMRoles.ROLES.values()) {
             availableRoles.add(role);
         }
     }
@@ -89,7 +93,19 @@ public class RoleIntroduceScreen extends Screen {
                 filteredRoles.add(role);
             }
         }
+        // 过滤搜索结果
+        List<Modifier> filteredModifiers = new ArrayList<>();
+        for (Modifier role : HMLModifiers.MODIFIERS) {
+            String roleName = role.getName().getString();
+            if (searchContent == null || roleName.toLowerCase().contains(searchContent.toLowerCase())
+                    || role.identifier().toString().contains(searchContent.toLowerCase())) {
+                filteredModifiers.add(role);
+            }
+        }
 
+        var filtered = new ArrayList<Object>();
+        filtered.addAll(filteredRoles);
+        filtered.addAll(filteredModifiers);
         // 翻页相关
         // 动态定义
         CARDS_PER_ROW = 5; // 每行最多5个卡牌
@@ -111,7 +127,7 @@ public class RoleIntroduceScreen extends Screen {
         }
         // LoggerFactory.getLogger("gamblerScreen").info("[W/H] " + this.width + "/" +
         // this.height);
-        totalPages = (int) Math.ceil(filteredRoles.size() / (double) CARDS_PER_PAGE);
+        totalPages = (int) Math.ceil(filtered.size() / (double) CARDS_PER_PAGE);
 
         // 确保当前页码有效
         if (totalPages > 0) {
@@ -122,7 +138,7 @@ public class RoleIntroduceScreen extends Screen {
 
         // 计算当前页的角色范围
         int startIndex = currentRolePage * CARDS_PER_PAGE;
-        int endIndex = Math.min(startIndex + CARDS_PER_PAGE, filteredRoles.size());
+        int endIndex = Math.min(startIndex + CARDS_PER_PAGE, filtered.size());
 
         // 计算布局 - 居中显示卡牌
         int totalCardsWidth = CARDS_PER_ROW * CARD_WIDTH + (CARDS_PER_ROW - 1) * CARD_SPACING_X;
@@ -138,7 +154,7 @@ public class RoleIntroduceScreen extends Screen {
 
         // 添加当前页的角色卡牌
         for (int i = startIndex; i < endIndex; i++) {
-            Role role = filteredRoles.get(i);
+            Object role = filtered.get(i);
             int indexOnPage = i - startIndex;
             int col = indexOnPage % CARDS_PER_ROW;
             int row = indexOnPage / CARDS_PER_ROW;
@@ -150,7 +166,6 @@ public class RoleIntroduceScreen extends Screen {
             roleCardWidgets.add(card);
             addRenderableWidget(card);
         }
-
         // 添加翻页按钮
         int buttonWidth = 80;
         int buttonHeight = 25;
@@ -212,7 +227,7 @@ public class RoleIntroduceScreen extends Screen {
             // 解决奇怪问题
         }
         // 根据搜索结果设置搜索框颜色
-        if (filteredRoles.isEmpty() && !searchContent.isEmpty()) {
+        if (filtered.isEmpty() && !searchContent.isEmpty()) {
             searchWidget.setTextColor(0xFFAA0000); // 红色，表示没有搜索结果
         } else {
             searchWidget.setTextColor(0xFFFFFFFF); // 白色
@@ -235,7 +250,7 @@ public class RoleIntroduceScreen extends Screen {
     /**
      * 角色被选中时调用
      */
-    public void onRoleSelected(Role role) {
+    public void onRoleSelected(Object role) {
         if (minecraft == null || minecraft.player == null)
             return;
         this.minecraft.setScreen(new RoleIntroduceDetailScreen(role, this));
@@ -303,18 +318,24 @@ public class RoleIntroduceScreen extends Screen {
      * 角色卡牌小部件
      */
     private class RoleCardWidget extends AbstractWidget {
-        private final Role role;
+        private final Object role;
         private boolean hovered;
         private float hoverAnimation = 0f;
 
-        public RoleCardWidget(int x, int y, int width, int height, Role role, int index) {
-            super(x, y, width, height, RoleUtils.getRoleName(role));
+        public static MutableComponent MakeCardMessage(Object role) {
+            return Component.translatable("gui.roleintroduce.card.display_name",
+                    RoleUtils.getRoleOrModifierTypeName(role).withStyle(ChatFormatting.AQUA),
+                    RoleUtils.getRoleOrModifierNameWithColor(role)).withStyle(ChatFormatting.GOLD);
+        }
+
+        public RoleCardWidget(int x, int y, int width, int height, Object role, int index) {
+            super(x, y, width, height, MakeCardMessage(role));
             this.role = role;
             // 设置工具提示
             Component tooltip = Component
-                    .translatable("screen.roleintroduce.click_to_select",
-                            RoleUtils.getRoleName(role).withColor(role.getColor()),
-                            RoleUtils.getRoleDescription(role).withStyle(ChatFormatting.WHITE))
+                    .translatable("screen.roleintroduce.click_to_select", RoleUtils.getRoleOrModifierTypeName(role),
+                            RoleUtils.getRoleOrModifierNameWithColor(role),
+                            RoleUtils.getRoleOrModifierDescription(role).withStyle(ChatFormatting.WHITE))
                     .withStyle(ChatFormatting.GOLD);
             this.setTooltip(Tooltip.create(tooltip));
         }
@@ -400,7 +421,7 @@ public class RoleIntroduceScreen extends Screen {
             guiGraphics.renderOutline(iconX, iconY, iconSize, iconSize, 0xFFFFFFFF);
 
             // 绘制职业首字母
-            String initial = getMessage().getString().substring(0, 1);
+            String initial = RoleUtils.getRoleOrModifierName(role).getString().substring(0, 1);
             int textX = iconX + iconSize / 2 - font.width(initial) / 2;
             int textY = iconY + iconSize / 2 - font.lineHeight / 2;
             guiGraphics.drawString(font, initial, textX, textY, 0xFFFFFF, true);
@@ -459,13 +480,7 @@ public class RoleIntroduceScreen extends Screen {
         private int getRoleColor() {
             // 根据职业类型返回不同的颜色
             // 这里只是一个示例，您可以根据实际的职业属性返回不同的颜色
-            switch (role.identifier().getPath()) {
-                case "knight":
-                    return 0xFF4A90E2; // 蓝色
-                default:
-                    // 使用hashCode生成稳定但随机的颜色
-                    return role.getColor();
-            }
+            return RoleUtils.getRoleOrModifierColor(role);
         }
 
         private int blendColors(int color1, int color2, float ratio) {
@@ -550,13 +565,26 @@ public class RoleIntroduceScreen extends Screen {
 
         // 计算新索引
         int newIndex = currentIndex + delta;
-        if (newIndex < 0)
-            newIndex = 0;
-        if (newIndex >= roleCardWidgets.size())
-            newIndex = roleCardWidgets.size() - 1;
+        if (newIndex < 0) {
+            if (prevPageButton.isActive()) {
+                prevPageButton.onClick(0, 0);
+                newIndex = roleCardWidgets.size() - 1;
+            } else {
+                newIndex = 0;
+            }
+        }
+        if (newIndex >= roleCardWidgets.size()) {
+            if (nextPageButton.isActive()) {
+                newIndex = 0;
+                nextPageButton.onClick(0, 0);
+            } else {
+                newIndex = roleCardWidgets.size() - 1;
+            }
+        }
 
         if (newIndex >= 0 && newIndex < roleCardWidgets.size()) {
             selectedRole = roleCardWidgets.get(newIndex).role;
         }
+
     }
 }

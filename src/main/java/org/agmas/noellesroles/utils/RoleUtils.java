@@ -2,6 +2,7 @@ package org.agmas.noellesroles.utils;
 
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.events.ModdedRoleRemoved;
+import org.agmas.harpymodloader.modifiers.Modifier;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,7 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
+import io.github.mortuusars.exposure.util.color.Color;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -124,5 +126,61 @@ public class RoleUtils {
 
     public static MutableComponent getRoleDescription(Role selectedRole) {
         return Component.translatable("info.screen.roleid." + selectedRole.getIdentifier().getPath());
+    }
+
+    public static MutableComponent getModifierDescription(Modifier modifier) {
+        return Component
+                .translatable("info.screen.modifier." + modifier.identifier().getPath());
+    }
+
+    public static Component getRoleOrModifierName(Object role) {
+        if (role instanceof Role r) {
+            return getRoleName(r);
+        } else if (role instanceof Modifier m) {
+            return m.getName(false);
+        } else {
+            return Component.literal("Unknown");
+        }
+    }
+
+    public static MutableComponent getRoleOrModifierNameWithColor(Object role) {
+        if (role instanceof Role r) {
+            return getRoleName(r).withColor(r.color());
+        } else if (role instanceof Modifier m) {
+            return m.getName(true);
+        } else {
+            return Component.literal("Unknown");
+        }
+    }
+
+    public static MutableComponent getRoleOrModifierDescription(Object role) {
+        if (role instanceof Role r) {
+            return getRoleDescription(r);
+        } else if (role instanceof Modifier m) {
+            return getModifierDescription(m);
+        } else {
+            return Component.literal("Unknown");
+        }
+    }
+
+    public static int getRoleOrModifierColor(Object role) {
+        if (role instanceof Role r) {
+            return r.color();
+        } else if (role instanceof Modifier m) {
+            return m.color();
+        } else {
+            return Color.WHITE.getRGB();
+        }
+    }
+
+    public static MutableComponent getRoleOrModifierTypeName(Object role) {
+         if (role instanceof Role) {
+            return Component.translatable("display.type.role");
+        } else if (role instanceof Modifier) {
+            return Component.translatable("display.type.modifier");
+        } else {
+            return Component.translatable("display.type.unknown");
+        }
+        // 
     }
 }

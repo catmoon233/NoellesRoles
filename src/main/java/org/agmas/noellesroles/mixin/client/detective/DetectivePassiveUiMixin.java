@@ -28,17 +28,20 @@ public class DetectivePassiveUiMixin {
             return;
         }
 
-
-        if (TMMClient.gameComponent==null ){
+        if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null) {
             return;
         }
-        if ( !TMMClient.gameComponent.isRole(mc.player, ModRoles.DETECTIVE)){
+        if (Minecraft.getInstance().player.isSpectator())
+            return;
+        
+        if (TMMClient.gameComponent == null) {
+            return;
+        }
+        if (!TMMClient.gameComponent.isRole(mc.player, ModRoles.DETECTIVE)) {
             return;
         }
 
         Vec3 playerPos = mc.player.getPosition(deltaTracker.getGameTimeDeltaPartialTick(true));
-
-
 
         // 当前帧索引
         int frameIndex = (tick / FRAME_DURATION) % FRAME_COUNT;
@@ -65,11 +68,11 @@ public class DetectivePassiveUiMixin {
 
             poseStack.pushPose();
 
-            int x = (int)screen.x;
-            int y = (int)screen.y;
+            int x = (int) screen.x;
+            int y = (int) screen.y;
 
-            int drawX = - FRAME_WIDTH / 2; // 左移半宽
-            int drawY = - FRAME_HEIGHT / 2; // 上移半高
+            int drawX = -FRAME_WIDTH / 2; // 左移半宽
+            int drawY = -FRAME_HEIGHT / 2; // 上移半高
 
             double distance = playerPos.distanceTo(info.pos);
             float dynamicScale;
@@ -88,8 +91,7 @@ public class DetectivePassiveUiMixin {
                     drawX, drawY,
                     frameIndex * FRAME_WIDTH, 0,
                     FRAME_WIDTH, FRAME_HEIGHT,
-                    FRAME_WIDTH * FRAME_COUNT, FRAME_HEIGHT
-            );
+                    FRAME_WIDTH * FRAME_COUNT, FRAME_HEIGHT);
 
             poseStack.popPose();
 

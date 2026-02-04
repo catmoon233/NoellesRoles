@@ -3,6 +3,7 @@ package org.agmas.noellesroles.mixin.client.conductor;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -19,6 +20,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MasterKeyHudMixin {
     @Inject(method = "renderHud", at = @At("HEAD"))
     private static void executionerHudRenderer(Font renderer, LocalPlayer player, GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null) {
+            return;
+        }
+        if (Minecraft.getInstance().player.isSpectator())
+            return;
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
         if (player.getMainHandItem().is(ModItems.MASTER_KEY) && !ConfigWorldComponent.KEY.get(player.level()).masterKeyIsVisible) {
             context.pose().pushPose();

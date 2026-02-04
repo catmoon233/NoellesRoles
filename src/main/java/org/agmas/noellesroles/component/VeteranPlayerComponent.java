@@ -60,7 +60,7 @@ public class VeteranPlayerComponent implements RoleComponent {
     public void markKnifeUsed() {
         if (knifeUsed) return;
         
-        this.knifeUsed = true;
+        // this.knifeUsed = true;
         
         // 发送消息给玩家
         if (player instanceof ServerPlayer serverPlayer) {

@@ -24,6 +24,11 @@ public abstract class RecallerHudMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     public void phantomHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null) {
+            return;
+        }
+        if (Minecraft.getInstance().player.isSpectator())
+            return;
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(Minecraft.getInstance().player.level());
         NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
         RecallerPlayerComponent recallerPlayerComponent = RecallerPlayerComponent.KEY.get(Minecraft.getInstance().player);
