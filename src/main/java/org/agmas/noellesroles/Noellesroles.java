@@ -300,13 +300,12 @@ public class Noellesroles implements ModInitializer {
 
         // 亡命徒初始物品
         List<Supplier<ItemStack>> looseItems = new ArrayList<>();
-        looseItems.add(() ->TMMItems.CROWBAR.getDefaultInstance());
-        looseItems.add(() ->TMMItems.DERRINGER.getDefaultInstance());
-        looseItems.add(() ->TMMItems.KNIFE.getDefaultInstance());
-        looseItems.add(() ->ModItems.DEFENSE_VIAL.getDefaultInstance());
+        looseItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
+        looseItems.add(() -> TMMItems.DERRINGER.getDefaultInstance());
+        looseItems.add(() -> TMMItems.KNIFE.getDefaultInstance());
+        looseItems.add(() -> ModItems.DEFENSE_VIAL.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(TMMRoles.LOOSE_END, looseItems);
 
-        
         // // 强盗初始物品
         // List<Supplier<ItemStack>> banditItems = new ArrayList<>();
         // banditItems.add(() -> HSRItems.BANDIT_REVOLVER.getDefaultInstance());
@@ -525,7 +524,8 @@ public class Noellesroles implements ModInitializer {
         // 乘务员商店
         // 手电筒（moonlight_lamp） - 150金币
         if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("handheldmoon:moonlight_lamp"))) {
-            final var moonlightLampItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse("handheldmoon:moonlight_lamp"));
+            final var moonlightLampItem = BuiltInRegistries.ITEM
+                    .get(ResourceLocation.parse("handheldmoon:moonlight_lamp"));
             if (moonlightLampItem != null) {
                 final var defaultInstance = moonlightLampItem.getDefaultInstance();
                 ATTENDANT_SHOP.add(new ShopEntry(defaultInstance, 150, ShopEntry.Type.TOOL) {
@@ -689,7 +689,18 @@ public class Noellesroles implements ModInitializer {
             VETERAN_SHOP.add(new ShopEntry(
                     ModItems.SP_KNIFE.getDefaultInstance(),
                     250,
-                    ShopEntry.Type.WEAPON));
+                    ShopEntry.Type.WEAPON) {
+                @Override
+                public boolean onBuy(@NotNull Player player) {
+                    boolean flag = super.onBuy(player);
+                    if(!flag) return false;
+                    var com = VeteranPlayerComponent.KEY.get(player);
+                    if (com != null) {
+                        com.knifeUsed = false;
+                    }
+                    return true;
+                }
+            });
             ShopContent.customEntries.put(
                     ModRoles.VETERAN_ID, VETERAN_SHOP);
         }
