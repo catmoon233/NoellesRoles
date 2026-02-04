@@ -69,9 +69,6 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
-        // for (Role role : TMMRoles.ROLES) {
-        //
-        // }
         roleIntroClientBind = KeyBindingHelper
                 .registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".role_intro",
                         InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.trainmurdermystery.keybinds"));

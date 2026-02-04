@@ -5,8 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 public class ManipulatorRole extends NoramlRole {
     public ManipulatorRole(ResourceLocation identifier, int color, boolean isInnocent, boolean canUseKiller, MoodType moodType, int maxSprintTime, boolean canSeeTime) {
         super(identifier, color, isInnocent, canUseKiller, moodType, maxSprintTime, canSeeTime);

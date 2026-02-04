@@ -1,40 +1,25 @@
 
 package org.agmas.noellesroles.roles.manipulator;
 
-import dev.doctor4t.trainmurdermystery.api.Role;
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.phys.Vec3;
-import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.entity.ManipulatorBodyEntity;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Math;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 /**
  * 操纵师组件
@@ -44,10 +29,12 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     public static final ComponentKey<ManipulatorPlayerComponent> KEY = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator"),
             ManipulatorPlayerComponent.class);
+
     @Override
     public Player getPlayer() {
         return player;
     }
+
     public static final int CONTROL_DURATION = 30 * 20;
 
     public static final int CONTROL_COOLDOWN = 60 * 20;
@@ -60,8 +47,6 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
 
     public boolean isControlling;
 
-    public int controlTimer;
-
     public int cooldown;
 
     @Override
@@ -73,14 +58,12 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
         this.player = player;
         this.target = null;
         this.isControlling = false;
-        this.controlTimer = 0;
         this.cooldown = 0;
     }
 
     public void reset() {
         this.target = null;
         this.isControlling = false;
-        this.controlTimer = 0;
         this.cooldown = 0;
 
         this.sync();
@@ -89,7 +72,6 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     public void clearAll() {
         this.target = null;
         this.isControlling = false;
-        this.controlTimer = 0;
         this.cooldown = 0;
 
         this.sync();
@@ -100,7 +82,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     }
 
     public boolean canUseAbility() {
-        return  !isControlling && cooldown <= 0;
+        return !isControlling && cooldown <= 0;
     }
 
     /**
@@ -110,11 +92,11 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     public void setTarget(UUID targetUuid) {
         if (!canUseAbility())
             return;
-        if (!(player instanceof ServerPlayer serverPlayer))
+        if (!(player instanceof ServerPlayer sp))
             return;
         stopControl(false);
         Player targetPlayer = player.level().getPlayerByUUID(targetUuid);
-        if (targetPlayer == null || !(targetPlayer instanceof ServerPlayer serverTarget))
+        if (targetPlayer == null || !(targetPlayer instanceof ServerPlayer))
             return;
 
         if (targetUuid.equals(player.getUUID()))
@@ -123,12 +105,23 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
         if (!GameFunctions.isPlayerAliveAndSurvival(targetPlayer))
             return;
         isControlling = true;
-        controlTimer = CONTROL_DURATION;
+        float percent = 0.5f;
+        int alivePlayerCount = 0;
+        var players = sp.level().players();
+        int playerCount = players.size();
+        for (var spp : players) {
+            if (GameFunctions.isPlayerAliveAndSurvival(spp)) {
+                alivePlayerCount++;
+            }
+        }
+        percent = Math.max(0.5f, alivePlayerCount / playerCount);
+        int controlTime = (int) ((float) CONTROL_DURATION * percent);
         this.target = targetUuid;
         InControlCCA.KEY.get(targetPlayer).isControlling = true;
+        InControlCCA.KEY.get(targetPlayer).controlTimer = controlTime;
+        InControlCCA.KEY.get(targetPlayer).controller = player;
         this.sync();
     }
-
 
     /**
      * 停止操控
@@ -142,13 +135,10 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
 
         Player targetPlayer = player.level().getPlayerByUUID(target);
         if (targetPlayer != null) {
-            InControlCCA.KEY.get(targetPlayer).isControlling = false;
-            InControlCCA.KEY.get(targetPlayer).sync();
+            InControlCCA.KEY.get(targetPlayer).stopControl();
         }
 
-
         isControlling = false;
-        controlTimer = 0;
         target = null;
 
         // 设置冷却
@@ -174,13 +164,12 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
         this.sync();
     }
 
-
-
-
-
-
     public float getControlSeconds() {
-        return controlTimer / 20.0f;
+        Player targetPlayer = player.level().getPlayerByUUID(target);
+        if (targetPlayer != null) {
+            return InControlCCA.KEY.get(targetPlayer).controlTimer / 20.0f;
+        }
+        return 0f;
     }
 
     public float getCooldownSeconds() {
@@ -190,29 +179,13 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     @Override
     public void serverTick() {
 
-
         if (!GameFunctions.isPlayerAliveAndSurvival(player))
             return;
 
         if (cooldown > 0) {
             cooldown--;
-            if (cooldown % 20 == 0 ) {
+            if (cooldown % 20 == 0) {
                 sync();
-            }
-        }
-
-        if (isControlling) {
-
-            if (controlTimer > 0) {
-                controlTimer--;
-
-                if (controlTimer % 20 == 0) {
-                    sync();
-                }
-
-                if (controlTimer <= 0) {
-                    stopControl(true);
-                }
             }
         }
     }
@@ -223,11 +196,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
             tag.putUUID("target", this.target);
         }
         tag.putBoolean("isControlling", this.isControlling);
-        tag.putInt("controlTimer", this.controlTimer);
         tag.putInt("cooldown", this.cooldown);
-
-
-
 
     }
 
@@ -235,7 +204,6 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.target = tag.contains("target") ? tag.getUUID("target") : null;
         this.isControlling = tag.contains("isControlling") && tag.getBoolean("isControlling");
-        this.controlTimer = tag.contains("controlTimer") ? tag.getInt("controlTimer") : 0;
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
 
     }
