@@ -52,7 +52,7 @@
   "info.screen.modifier.feather": "Modifier\nYou have no collision volume and have Slow Falling effect.",
   "info.screen.modifier.magnate": "Modifier\nGain 25 coins every 60 seconds.",
   "info.screen.modifier.taskmaster": "Modifier\nKiller/Neutral/Innocent players gain extra coins when completing tasks.",
-  "info.screen.modifier.allergist": "Modifier\nWhen eating/drinking, there's a chance to trigger one of the following effects:\n33% Nothing happens, 33% Slowness II, 33% Speed II, 1% Death",
+  "info.screen.modifier.allergist": "Modifier\nWhen eating/drinking, there's a chance to trigger one of the following effects:\n33% Nothing happens, 33% Poison immunity once, 33% Speed II, 1% Death",
   "info.screen.modifier.cursed": "Modifier\nGain a random potion effect every 30 seconds.\nWhen you die, this modifier is passed to your killer.",
   "info.screen.modifier.secretive": "Modifier\nOthers cannot obtain information from your corpse.",
   "info.screen.modifier.knight": "Modifier\nWhen in a dark environment, there's a chance to swap positions with other players.",

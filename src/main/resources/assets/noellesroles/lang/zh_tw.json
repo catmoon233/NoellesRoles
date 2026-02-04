@@ -53,7 +53,7 @@
   "info.screen.modifier.feather": "修飾符\n你沒有碰撞體積，自帶緩降效果。",
   "info.screen.modifier.magnate": "修飾符\n每60s獲得25金幣。",
   "info.screen.modifier.taskmaster": "修飾符\n殺手/中立/平民玩家完成任務後獲得額外的金幣",
-  "info.screen.modifier.allergist": "修飾符\n玩家喫東西/喝飲料時有概率觸發以下效果之一。\n33%無事發生，33%獲得緩慢2，33%獲得速度2，1%死亡",
+  "info.screen.modifier.allergist": "修飾符\n玩家喫東西/喝飲料時有概率觸發以下效果之一。\n33%無事發生，33%免疫1次中毒，33%獲得速度2，1%死亡",
   "info.screen.modifier.cursed": "修飾符\n每30s獲得隨機藥水效果\n你死亡後，此修飾符會被傳遞給擊殺你的人。",
   "info.screen.modifier.secretive": "修飾符\n別人無法從你的屍體上獲取信息。",
   "info.screen.modifier.knight": "修飾符\n當玩家處於黑暗環境中，有概率與其它玩家交換位置。",
