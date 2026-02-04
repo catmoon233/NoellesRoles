@@ -86,7 +86,6 @@
     "client.StalkerRoleNameMixin",
     "client.StarHudMixin",
     "client.admirer.AdmirerHudMixin",
-    "client.InvisbleHandItem",
     "client.broadcaster.BroadcasterHudMixin",
     "client.conductor.MasterKeyInvisibilityMixin",
     "client.coroner.CoronerHudMixin",

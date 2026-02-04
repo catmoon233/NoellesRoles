@@ -126,6 +126,8 @@ public class NoellesrolesClient implements ClientModInitializer {
             });
         });
         Listen.registerEvents();
+        InvisbleHandItem.register();
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (roleGuessNoteClientBind.consumeClick()) {
                 client.execute(() -> {
@@ -234,7 +236,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                     // 非炸弹客始终不可见
                     return 0.0F;
                 });
-        
+
         OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
             if (TMMClient.gameComponent != null) {
                 var role = TMMClient.gameComponent.getRole(minecraft.player);

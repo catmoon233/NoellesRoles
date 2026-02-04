@@ -202,7 +202,6 @@ public class Noellesroles implements ModInitializer {
 
         // 注册网络处理器
         registerPackets();
-
         // 初始化HSR组件
         HSRItems.init();
         HSRSounds.init();
