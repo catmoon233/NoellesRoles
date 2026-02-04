@@ -34,6 +34,7 @@ public class StalkerHudMixin {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null)
             return;
+        if(client.player.isSpectator()) return;
 
         // 获取跟踪者组件
         StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(client.player);

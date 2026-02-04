@@ -33,6 +33,7 @@ public class PsychologistHudMixin {
     private void renderPsychologistHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null) return;
+        if(client.player.isSpectator()) return;
         
         // 检查是否是心理学家
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);

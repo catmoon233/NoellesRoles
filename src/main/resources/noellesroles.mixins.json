@@ -62,6 +62,7 @@
     "defaultRequire": 1
   },
   "client": [
+    "client.general.InventoryIntroductionRenderer",
     "client.AvengerHudMixin",
     "client.BomberHudMixin",
     "client.BoxerHudMixin",

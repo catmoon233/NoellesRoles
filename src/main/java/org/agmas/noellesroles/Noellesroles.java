@@ -298,6 +298,15 @@ public class Noellesroles implements ModInitializer {
         doctorItems.add(() -> ModItems.DEFIBRILLATOR.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.DOCTOR, doctorItems);
 
+        // 亡命徒初始物品
+        List<Supplier<ItemStack>> looseItems = new ArrayList<>();
+        looseItems.add(() ->TMMItems.CROWBAR.getDefaultInstance());
+        looseItems.add(() ->TMMItems.DERRINGER.getDefaultInstance());
+        looseItems.add(() ->TMMItems.KNIFE.getDefaultInstance());
+        looseItems.add(() ->ModItems.DEFENSE_VIAL.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(TMMRoles.LOOSE_END, looseItems);
+
+        
         // // 强盗初始物品
         // List<Supplier<ItemStack>> banditItems = new ArrayList<>();
         // banditItems.add(() -> HSRItems.BANDIT_REVOLVER.getDefaultInstance());

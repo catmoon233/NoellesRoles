@@ -28,6 +28,7 @@ public abstract class MonitorHudMixin {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null)
             return;
+        if(client.player.isSpectator()) return;
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
         if (!gameWorld.isRole(client.player, ModRoles.MONITOR))

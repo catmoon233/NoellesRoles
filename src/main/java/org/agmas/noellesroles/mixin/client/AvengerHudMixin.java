@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.mixin.client;
 
-import net.minecraft.client.multiplayer.PlayerInfo;
 import org.agmas.noellesroles.component.AvengerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -31,6 +30,7 @@ public abstract class AvengerHudMixin {
     private static void avengerHudRenderer(Font renderer, LocalPlayer player, GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null) return;
+        if(client.player.isSpectator()) return;
         
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
         

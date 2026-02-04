@@ -1,6 +1,8 @@
 package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+
+import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -55,7 +58,7 @@ public abstract class PlayerResetMixin {
 
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
-        InControlCCA inControlCCA =InControlCCA.KEY.get(player);
+        InControlCCA inControlCCA = InControlCCA.KEY.get(player);
         inControlCCA.reset();
 
         ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(player);
@@ -109,8 +112,9 @@ public abstract class PlayerResetMixin {
         // 清除记录员组件状态
         RecorderPlayerComponent recorderComp = ModComponents.RECORDER.get(player);
         recorderComp.reset();
-
-
+        // 删除modifier
+        WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
+        worldModifierComponent.modifiers.clear();
         // 清除该玩家放置的所有灾厄印记实体
         clearCalamityMarks(player);
     }
