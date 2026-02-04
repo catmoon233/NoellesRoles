@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.mixin.client;
 
-import dev.doctor4t.trainmurdermystery.api.Role;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
@@ -37,6 +36,7 @@ public abstract class PuppeteerHudMixin {
     public void renderPuppeteerHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null) return;
+        if(client.player.isSpectator()) return;
 
         // 获取傀儡师组件
         PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(client.player);

@@ -31,6 +31,7 @@ public class BoxerHudMixin {
     private void renderBoxerAbilityStatus(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null) return;
+        if(client.player.isSpectator()) return;
         
         // 检查是否是拳击手
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);

@@ -30,6 +30,7 @@ public class BomberHudMixin {
         Player player = client.player;
         if (player == null)
             return;
+        if(client.player.isSpectator()) return;
 
         ItemStack mainHandItem = player.getMainHandItem();
         if (mainHandItem.is(ModItems.BOMB)) {

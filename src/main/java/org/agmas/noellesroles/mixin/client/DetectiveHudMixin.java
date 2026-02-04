@@ -30,6 +30,7 @@ public class DetectiveHudMixin {
     private void renderDetectiveAbilityStatus(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null) return;
+        if(client.player.isSpectator()) return;
         
         // 检查是否是私家侦探
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
