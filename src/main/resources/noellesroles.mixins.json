@@ -63,6 +63,7 @@
   },
   "client": [
     "client.general.InventoryIntroductionRenderer",
+    "client.general.MessageBelowMoney",
     "client.AvengerHudMixin",
     "client.BomberHudMixin",
     "client.BoxerHudMixin",

@@ -680,7 +680,7 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
         // 处理攻击冷却倒计时
         if (attackCooldown > 0) {
             attackCooldown--;
-            if (attackCooldown == 0) {
+            if (attackCooldown % 20 == 0) {
                 sync();
             }
         }
