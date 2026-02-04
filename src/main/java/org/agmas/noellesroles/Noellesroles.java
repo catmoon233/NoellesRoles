@@ -132,6 +132,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> SINGER_SHOP = new ArrayList<>();
     // ==================== 乘务员商店 ====================
     public static ArrayList<ShopEntry> ATTENDANT_SHOP = new ArrayList<>();
+    // ==================== 退伍军人商店 ====================
+    public static ArrayList<ShopEntry> VETERAN_SHOP = new ArrayList<>();
 
     private static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
@@ -681,6 +683,17 @@ public class Noellesroles implements ModInitializer {
             ShopContent.customEntries.put(
                     ModRoles.SINGER_ID, SINGER_SHOP);
         }
+
+        // 退伍军人商店
+        {
+            VETERAN_SHOP.add(new ShopEntry(
+                    ModItems.SP_KNIFE.getDefaultInstance(),
+                    250,
+                    ShopEntry.Type.WEAPON));
+            ShopContent.customEntries.put(
+                    ModRoles.VETERAN_ID, VETERAN_SHOP);
+        }
+
         // 故障机器人商店
         {
             List<ShopEntry> glitchRobotShop = new ArrayList<>();
