@@ -689,19 +689,7 @@ public class Noellesroles implements ModInitializer {
             VETERAN_SHOP.add(new ShopEntry(
                     ModItems.SP_KNIFE.getDefaultInstance(),
                     250,
-                    ShopEntry.Type.WEAPON) {
-                @Override
-                public boolean onBuy(@NotNull Player player) {
-                    boolean flag = super.onBuy(player);
-                    if(!flag) return false;
-                    var com = VeteranPlayerComponent.KEY.get(player);
-                    if (com != null) {
-                        com.knifeUsed = false;
-                        com.sync();
-                    }
-                    return true;
-                }
-            });
+                    ShopEntry.Type.WEAPON));
             ShopContent.customEntries.put(
                     ModRoles.VETERAN_ID, VETERAN_SHOP);
         }
