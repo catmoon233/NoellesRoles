@@ -31,6 +31,11 @@ public abstract class ExecutionerHudMixin {
 
     @Inject(method = "renderHud", at = @At("HEAD"))
     private static void executionerHudRenderer(Font renderer, LocalPlayer player, GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null) {
+            return;
+        }
+        if (Minecraft.getInstance().player.isSpectator())
+            return;
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
 
         // 检查是否是Executioner角色且存活

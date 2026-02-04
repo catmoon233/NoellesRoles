@@ -30,7 +30,9 @@ public class TrapperHudMixin {
     private void renderTrapperChargesStatus(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null) return;
-        
+
+        if (client.player.isSpectator())
+            return;
         // 检查是否是设陷者
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
         if (!gameWorld.isRole(client.player, ModRoles.TRAPPER)) return;

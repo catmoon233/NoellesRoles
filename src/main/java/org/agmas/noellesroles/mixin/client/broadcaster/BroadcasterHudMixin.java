@@ -27,7 +27,11 @@ public abstract class BroadcasterHudMixin {
         if (Minecraft.getInstance().player == null) {
             return;
         }
-
+        if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null) {
+            return;
+        }
+        if (Minecraft.getInstance().player.isSpectator())
+            return;
         if (NoellesrolesClient.currentBroadcastMessage != null && NoellesrolesClient.broadcastMessageTicks > 0) {
             Component message = NoellesrolesClient.currentBroadcastMessage;
             Font textRenderer = getFont();

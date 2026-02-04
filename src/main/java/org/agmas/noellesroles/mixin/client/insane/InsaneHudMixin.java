@@ -18,26 +18,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
 public abstract class InsaneHudMixin {
-    @Shadow public abstract Font getFont();
+    @Shadow
+    public abstract Font getFont();
 
     @Inject(method = "render", at = @At("TAIL"))
     public void phantomHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(Minecraft.getInstance().player.level());
-        if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+        if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null) {
+            return;
+        }
+        if (Minecraft.getInstance().player.isSpectator())
+            return;
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                .get(Minecraft.getInstance().player.level());
+        if (gameWorldComponent.isRole(Minecraft.getInstance().player,
+                ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
 
             final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(Minecraft.getInstance().player);
             if (insaneKillerPlayerComponent.isActive) {
-                var text = Component.translatable("insane.tip.over", NoellesrolesClient.abilityBind.getTranslatedKeyMessage().getString()).append(" ");
-                context.drawString(getFont(), text, context.guiWidth() - getFont().width(text), context.guiHeight() - 20, ModRoles.MORPHLING.color());
+                var text = Component.translatable("insane.tip.over",
+                        NoellesrolesClient.abilityBind.getTranslatedKeyMessage().getString()).append(" ");
+                context.drawString(getFont(), text, context.guiWidth() - getFont().width(text),
+                        context.guiHeight() - 20, ModRoles.MORPHLING.color());
 
             } else {
                 final var morphTicks = insaneKillerPlayerComponent.cooldown;
                 if (morphTicks > 0) {
                     var text = Component.translatable("insane.tip", ((int) (morphTicks * 0.05))).append(" ");
-                    context.drawString(getFont(), text, context.guiWidth() - getFont().width(text), context.guiHeight() - 20, ModRoles.MORPHLING.color());
-                }else {
-                    var text = Component.translatable("insane.tip.ready", NoellesrolesClient.abilityBind.getTranslatedKeyMessage().getString()).append(" ");
-                    context.drawString(getFont(), text, context.guiWidth() - getFont().width(text), context.guiHeight() - 20, ModRoles.MORPHLING.color());
+                    context.drawString(getFont(), text, context.guiWidth() - getFont().width(text),
+                            context.guiHeight() - 20, ModRoles.MORPHLING.color());
+                } else {
+                    var text = Component.translatable("insane.tip.ready",
+                            NoellesrolesClient.abilityBind.getTranslatedKeyMessage().getString()).append(" ");
+                    context.drawString(getFont(), text, context.guiWidth() - getFont().width(text),
+                            context.guiHeight() - 20, ModRoles.MORPHLING.color());
                 }
             }
         }
