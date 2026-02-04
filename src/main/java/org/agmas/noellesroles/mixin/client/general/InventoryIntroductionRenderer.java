@@ -18,6 +18,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,6 +29,19 @@ public class InventoryIntroductionRenderer {
    public InventoryIntroductionRenderer() {
    }
 
+   private float getScare(int height) {
+      if (height <= 300) {
+         return 0.4f;
+      }
+      if (height <= 400) {
+         return 0.6f;
+      }
+      if (height >= 600) {
+         return 1f;
+      }
+      return 0.8f;
+   }
+
    @Inject(method = { "render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V" }, at = { @At("TAIL") })
    public void render(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
       LocalPlayer player = Minecraft.getInstance().player;
@@ -35,14 +49,15 @@ public class InventoryIntroductionRenderer {
          GameWorldComponent gameWorldComponent = TMMClient.gameComponent;
          if (gameWorldComponent != null) {
             // Role
+            float scale = getScare(context.guiHeight());
             Role role = gameWorldComponent.getRole(player);
+            Font font = Minecraft.getInstance().font;
+
             if (role != null) {
                String roleName = role.getIdentifier().getPath();
                if (roleName != null) {
-                  Font font = Minecraft.getInstance().font;
                   int x = 10;
                   int y = 10;
-                  float scale = 0.8F;
                   Component roleNameComponent = Component.translatable("announcement.role." + roleName)
                         .withStyle(ChatFormatting.BOLD);
                   Component roleInfoComponent = Component.translatable("info.screen.roleid." + roleName);
@@ -85,15 +100,12 @@ public class InventoryIntroductionRenderer {
             if (worldModifierComponent != null) {
                var modifiers = worldModifierComponent.getModifiers(player);
                if (modifiers != null && modifiers.size() > 0) {
-                  Font font = Minecraft.getInstance().font;
-                  float scale = 0.8F;
-                  int x = (int) ((float) context.guiWidth()) - 10;
-                  int y = 20;
+                  int x = 10;
+                  int y = (int) ((float) context.guiHeight()) - 10;
                   for (var modifier : modifiers) {
                      Component modifierNameComponent = modifier.getName()
                            .withStyle(ChatFormatting.BOLD);
-                     Component modifierInfoComponent = Component
-                           .translatable("info.screen.modifier." + modifier.identifier().getPath());
+                     Component modifierInfoComponent = RoleUtils.getModifierDescription(modifier);
                      PoseStack poseStack = context.pose();
                      poseStack.pushPose();
                      poseStack.scale(scale, scale, 1.0F);
@@ -115,20 +127,20 @@ public class InventoryIntroductionRenderer {
                         return (int) ((float) font.width(component) * scale);
                      }).max().orElse(0);
                      int maxWidth = Math.max(scaledNameWidth, maxInfoWidth);
-                     this.renderScaledTextWithShadow(context, font, modifierNameComponent, scaledX - maxWidth / scale,
-                           scaledY, scale,
+                     this.renderScaledTextWithShadow(context, font, modifierNameComponent, scaledX,
+                           scaledY - totalHeight / scale, scale,
                            16777215,
                            4210752);
                      for (Iterator<Component> var22 = infoLines.iterator(); var22
                            .hasNext(); currentY += (int) (9.0F * scale) + 2) {
                         Component line = (Component) var22.next();
                         float lineY = (float) currentY / scale;
-                        context.drawString(font, line, (int) (scaledX - maxWidth / scale), (int) lineY, 11184810);
+                        context.drawString(font, line, (int) (scaledX), (int) (lineY - totalHeight / scale), 11184810);
                         Objects.requireNonNull(font);
                      }
                      poseStack.popPose();
 
-                     this.drawScaledBackground(context, x - maxWidth, y, maxWidth, totalHeight);
+                     this.drawScaledBackground(context, x, y - totalHeight, maxWidth, totalHeight);
                      y += totalHeight + 10;
                   }
 
@@ -136,6 +148,7 @@ public class InventoryIntroductionRenderer {
             }
          }
       }
+
    }
 
    private void renderScaledTextWithShadow(GuiGraphics context, Font font, Component text, float x, float y,

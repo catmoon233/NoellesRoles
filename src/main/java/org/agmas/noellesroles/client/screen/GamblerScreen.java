@@ -108,7 +108,8 @@ public class GamblerScreen extends Screen {
         List<Role> filteredRoles = new ArrayList<>();
         for (Role role : availableRoles) {
             String roleName = RoleUtils.getRoleName(role).getString();
-            if (searchContent == null || roleName.toLowerCase().contains(searchContent.toLowerCase())) {
+            if (searchContent == null || roleName.toLowerCase().contains(searchContent.toLowerCase())
+                    || role.identifier().toString().contains(searchContent.toLowerCase())) {
                 filteredRoles.add(role);
             }
         }
@@ -650,11 +651,22 @@ public class GamblerScreen extends Screen {
 
         // 计算新索引
         int newIndex = currentIndex + delta;
-        if (newIndex < 0)
-            newIndex = 0;
-        if (newIndex >= roleCardWidgets.size())
-            newIndex = roleCardWidgets.size() - 1;
-
+        if (newIndex < 0) {
+            if (prevPageButton.isActive()) {
+                prevPageButton.onClick(0, 0);
+                newIndex = roleCardWidgets.size() - 1;
+            } else {
+                newIndex = 0;
+            }
+        }
+        if (newIndex >= roleCardWidgets.size()) {
+            if (nextPageButton.isActive()) {
+                newIndex = 0;
+                nextPageButton.onClick(0, 0);
+            } else {
+                newIndex = roleCardWidgets.size() - 1;
+            }
+        }
         if (newIndex >= 0 && newIndex < roleCardWidgets.size()) {
             selectedRole = roleCardWidgets.get(newIndex).role;
         }

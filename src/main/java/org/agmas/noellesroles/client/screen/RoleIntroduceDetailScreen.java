@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.client.screen;
 
-import dev.doctor4t.trainmurdermystery.api.Role;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -11,12 +10,12 @@ import org.agmas.noellesroles.client.widget.SelectedRoleIntroTextWidget;
 import org.agmas.noellesroles.utils.RoleUtils;
 
 public class RoleIntroduceDetailScreen extends Screen {
-    private final Role role;
+    private final Object role;
     private final Screen parent;
 
-    protected RoleIntroduceDetailScreen(Role role, Screen parent) {
-        super(Component.translatable("gui.roleintroduce.details.title",
-                RoleUtils.getRoleName(role).withColor(role.getColor())));
+    protected RoleIntroduceDetailScreen(Object role, Screen parent) {
+        super(Component.translatable("gui.roleintroduce.details.title", RoleUtils.getRoleOrModifierTypeName(role),
+                RoleUtils.getRoleOrModifierNameWithColor(role)));
         this.role = role;
         this.parent = parent;
     }
@@ -31,10 +30,10 @@ public class RoleIntroduceDetailScreen extends Screen {
         var widget = new SelectedRoleIntroTextWidget(Component.nullToEmpty(""), font);
         var selectedRole = role;
         if (selectedRole != null) {
-            MutableComponent selectedText =  Component
+            MutableComponent selectedText = Component
                     .translatable("gui.roleintroduce.details.tip",
-                            RoleUtils.getRoleName(selectedRole).withColor(selectedRole.getColor()),
-                            RoleUtils.getRoleDescription(selectedRole).withStyle(ChatFormatting.WHITE))
+                            RoleUtils.getRoleOrModifierTypeName(role),RoleUtils.getRoleOrModifierNameWithColor(selectedRole),
+                            RoleUtils.getRoleOrModifierDescription(selectedRole).withStyle(ChatFormatting.WHITE))
                     .withStyle(ChatFormatting.GOLD);
             String[] texts = selectedText.getString().split("\n");
             int wwidth = 200;
