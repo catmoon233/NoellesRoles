@@ -5,6 +5,7 @@ import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,58 +31,46 @@ import static dev.doctor4t.trainmurdermystery.block.SmallDoorBlock.HALF;
  */
 @Mixin(SmallDoorBlock.class)
 public class LockMixin {
-    @Inject(
-            method = "useWithoutItem",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z",ordinal = 0),
-            cancellable = true
-    )
+    @Inject(method = "useWithoutItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z", ordinal = 0), cancellable = true)
     private void injectLockPickGame(
             BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit,
-            CallbackInfoReturnable<InteractionResult> cir
-            )
-    {
+            CallbackInfoReturnable<InteractionResult> cir) {
         // 用于小游戏结束后查询锁的位置
         BlockPos lockPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos;
-        if(player.getMainHandItem().is(TMMItems.LOCKPICK))
-        {
+        if (player.getMainHandItem().is(TMMItems.LOCKPICK)) {
             // 当当前门上无锁时，检查附近门的情况：实现锁对附近门的影响
-            if(LockEntityManager.getInstance().getLockEntity(lockPos) == null)
-            {
+            if (LockEntityManager.getInstance().getLockEntity(lockPos) == null) {
                 if (world.getBlockEntity(lockPos.below()) instanceof SmallDoorBlockEntity entity) {
-                    switch (entity.getFacing())
-                    {
-                    case NORTH:
-                    case SOUTH:
-                        if(LockEntityManager.getInstance().getLockEntity(lockPos.east()) != null)
-                            lockPos = lockPos.east();
-                        else if (LockEntityManager.getInstance().getLockEntity(lockPos.west()) != null) {
-                            lockPos = lockPos.west();
-                        }
-                        break;
-                    case EAST:
-                    case WEST:
-                        if(LockEntityManager.getInstance().getLockEntity(lockPos.north()) != null)
-                            lockPos = lockPos.north();
-                        else if (LockEntityManager.getInstance().getLockEntity(lockPos.south()) != null) {
-                            lockPos = lockPos.south();
-                        }
-                        break;
+                    switch (entity.getFacing()) {
+                        case NORTH:
+                        case SOUTH:
+                            if (LockEntityManager.getInstance().getLockEntity(lockPos.east()) != null)
+                                lockPos = lockPos.east();
+                            else if (LockEntityManager.getInstance().getLockEntity(lockPos.west()) != null) {
+                                lockPos = lockPos.west();
+                            }
+                            break;
+                        case EAST:
+                        case WEST:
+                            if (LockEntityManager.getInstance().getLockEntity(lockPos.north()) != null)
+                                lockPos = lockPos.north();
+                            else if (LockEntityManager.getInstance().getLockEntity(lockPos.south()) != null) {
+                                lockPos = lockPos.south();
+                            }
+                            break;
                     }
                 }
             }
 
-            if(LockEntityManager.getInstance().getLockEntity(lockPos) != null) {
+            if (LockEntityManager.getInstance().getLockEntity(lockPos) != null) {
                 // 当手持撬锁器且该门上锁时：进入撬锁小游戏
 
-                player.displayClientMessage(Component.literal("开始撬锁小游戏"), true);
+                player.displayClientMessage(Component.translatable("message.lock.game.start").withStyle(ChatFormatting.AQUA), true);
                 // 客户端：打开GUI
 
                 if (player instanceof ServerPlayer serverPlayer) {
                     ServerPlayNetworking.send(serverPlayer, new OpenLockGuiS2CPacket(lockPos,
-                            LockEntityManager.getInstance().getLockEntity(lockPos).getId()
-                    ));
+                            LockEntityManager.getInstance().getLockEntity(lockPos).getId()));
                 }
                 // 返回 false 阻止原始方法执行
                 cir.setReturnValue(InteractionResult.FAIL);

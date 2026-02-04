@@ -11,6 +11,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -64,7 +65,7 @@ public class RicesRoleRhapsody implements ModInitializer {
     public static final CustomPacketPayload.Type<PsychologistC2SPacket> PSYCHOLOGIST_PACKET = PsychologistC2SPacket.ID;
     public static final CustomPacketPayload.Type<PuppeteerC2SPacket> PUPPETEER_PACKET = PuppeteerC2SPacket.ID;
     public static final CustomPacketPayload.Type<LockGameC2Packet> LOCK_GAME_PACKET = LockGameC2Packet.ID;
-    
+
     @Override
     public void onInitialize() {
 
@@ -250,15 +251,13 @@ public class RicesRoleRhapsody implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(LockGameC2Packet.ID, LockGameC2Packet.CODEC);
         PayloadTypeRegistry.playS2C().register(LockGameC2Packet.ID, LockGameC2Packet.CODEC);
         // 撬锁
-         ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
+        ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
             ServerPlayer player = context.player();
             ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if(payload.result())
-            {
+            if (payload.result()) {
+                context.player().displayClientMessage(Component.translatable("message.lock.unlock").withStyle(ChatFormatting.GREEN), true);
                 LockEntityManager.getInstance().removeLockEntity(payload.pos(), payload.entityId());
-            }
-            else if(lockPick.getItem() == TMMItems.LOCKPICK)
-            {
+            } else if (lockPick.getItem() == TMMItems.LOCKPICK) {
                 lockPick.shrink(1);
             }
         });
@@ -774,12 +773,9 @@ public class RicesRoleRhapsody implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
             ServerPlayer player = context.player();
             ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if(payload.result())
-            {
+            if (payload.result()) {
                 LockEntityManager.getInstance().removeLockEntity(payload.pos(), payload.entityId());
-            }
-            else if(lockPick.getItem() == TMMItems.LOCKPICK)
-            {
+            } else if (lockPick.getItem() == TMMItems.LOCKPICK) {
                 // TODO : 应该给撬锁器添加损坏动画和音效，但是它本来就没有耐久，如果要做可能要引入多个包，暂不处理
                 lockPick.shrink(1);
             }

@@ -18,6 +18,7 @@ import java.util.function.UnaryOperator;
 
 import org.agmas.noellesroles.item.*;
 import org.agmas.noellesroles.utils.LocalDateData;
+import org.slf4j.LoggerFactory;
 
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.item.KnifeItem;
@@ -25,11 +26,23 @@ import dev.doctor4t.trainmurdermystery.item.KnifeItem;
 public class ModItems {
     public static void init() {
         // TMMItems. = register(new Item(new Item.Properties().stacksTo(1)), "letter");
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.DEFENSE_VIAL);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.SMOKE_GRENADE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.BLANK_CARTRIDGE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.ALARM_TRAP);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.HALLUCINATION_BOTTLE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.REINFORCEMENT);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.CONSPIRACY_PAGE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.LETTER_ITEM);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.DEFIBRILLATOR);
+        // TMMItems.INVISIBLE_ITEMS.add(TMMItems.KNIFE);
+        
         TMMItems.INIT_ITEMS.LETTER = LETTER_ITEM;
         TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc = (letter, serverPlayerEntity) -> {
             Component displayName = serverPlayerEntity.getDisplayName();
             letter.set(DataComponents.ITEM_NAME,
-                    Component.translatable("tip.n.letter.item_name", displayName).withStyle(ChatFormatting.AQUA));
+                    Component.translatable("tip.n.letter.item_name", displayName)
+                            .withStyle(ChatFormatting.AQUA));
 
             int letterColor = 0xC5AE8B;
             String tipString = "tip.n.letter.";
