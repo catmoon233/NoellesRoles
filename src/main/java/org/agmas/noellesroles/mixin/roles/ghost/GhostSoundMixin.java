@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerLevel.class)
 public class GhostSoundMixin {
-    @Inject(method = "playSeededSound", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "playSeededSound*", at = @At("HEAD"), cancellable = true)
     private void onPlaySound(Player source, double x, double y, double z, Holder<SoundEvent> sound, SoundSource category, float volume, float pitch, long seed, CallbackInfo ci) {
         if (source != null) {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(source.level());

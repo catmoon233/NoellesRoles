@@ -30,7 +30,6 @@
     "roles.framing.DoNotApplyFakePoisonMixin",
     "roles.framing.FramingPassiveIncomeMixin",
     "roles.gambler.GamblerDeathMixin",
-    "roles.ghost.EntitySelectorMixin",
     "roles.ghost.GhostSoundMixin",
     "roles.glitch_robot.GlitchRobotNoPoisonMixin",
     "roles.host.MasterKeyDropMixin",
@@ -62,8 +61,6 @@
     "defaultRequire": 1
   },
   "client": [
-    "client.general.InventoryIntroductionRenderer",
-    "client.general.MessageBelowMoney",
     "client.AvengerHudMixin",
     "client.BomberHudMixin",
     "client.BoxerHudMixin",
@@ -95,6 +92,8 @@
     "client.detective.PlaySoundEventMixin",
     "client.executioner.ExecutionerScreenMixin",
     "client.executioner.ExecutionerShopScreenMixin",
+    "client.general.InventoryIntroductionRenderer",
+    "client.general.MessageBelowMoney",
     "client.insane.InsaneHudMixin",
     "client.insane.InsaneKillerRenderMixin",
     "client.insane.KeyBindingMixin",

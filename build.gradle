@@ -64,6 +64,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modApi files("libs/CrosshairAddons-2.1.0-1.21.jar")
+    modApi files("libs/WalksyLib-0.9.96+1.21.jar")
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modApi files("libs/trainmurdermystery-3.1.01-1.21.1.jar")

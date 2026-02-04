@@ -61,6 +61,7 @@ import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
+import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
 import org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent;
 import org.agmas.noellesroles.packet.*;
@@ -239,6 +240,25 @@ public class Noellesroles implements ModInitializer {
             }
             return false;
         });
+        TMM.canPushableBy.add(entity -> {
+            return !(entity instanceof PuppeteerBodyEntity);
+        });
+        TMM.canPushableBy.add(entity -> {
+            if (entity instanceof ServerPlayer serverPlayer){
+                InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(serverPlayer);
+                return !insaneKillerPlayerComponent.isActive;
+            }
+            return true;
+        });
+        TMM.canPushableBy.add(
+                entity -> {
+                    if (entity instanceof ServerPlayer serverPlayer) {
+                        GhostPlayerComponent ghostPlayerComponent = GhostPlayerComponent.KEY.get(serverPlayer);
+                        return !ghostPlayerComponent.isActive;
+                    }
+                    return true;
+                }
+        );
         TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
         });
@@ -732,9 +752,10 @@ public class Noellesroles implements ModInitializer {
 
         PayloadTypeRegistry.playC2S().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);
-
+        PayloadTypeRegistry.playS2C().register(BreakArmorPayload.ID, BreakArmorPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(MorphC2SPacket.ID, MorphC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(OpenIntroPayload.ID, OpenIntroPayload.CODEC);
+
         PayloadTypeRegistry.playC2S().register(OpenIntroPayload.ID, OpenIntroPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(AbilityC2SPacket.ID, AbilityC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
@@ -802,7 +823,7 @@ public class Noellesroles implements ModInitializer {
                 killer.addEffect(new MobEffectInstance(
                         MobEffects.MOVEMENT_SPEED, // ID
                         1, // 持续时间（tick）
-                        0, // 等级（0 = 速度 I）
+                        1, // 等级（0 = 速度 I）
                         false, // ambient（环境效果，如信标）
                         false, // showParticles（显示粒子）
                         false // showIcon（显示图标）
@@ -838,14 +859,7 @@ public class Noellesroles implements ModInitializer {
                     return false;
                 }
             }
-            BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(playerEntity);
-            if (bartenderPlayerComponent.getArmor() > 0) {
 
-                playerEntity.level().playSound(playerEntity, playerEntity.blockPosition(),
-                        TMMSounds.ITEM_PSYCHO_ARMOUR, SoundSource.MASTER, 5.0F, 1.0F);
-                bartenderPlayerComponent.removeArmor();
-                return false;
-            }
             if (gameWorldComponent.isRole(playerEntity,
                     ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
                 final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(playerEntity);

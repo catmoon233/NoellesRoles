@@ -36,16 +36,11 @@ import org.agmas.noellesroles.client.event.OnMessageBelowMoneyRenderer;
 import org.agmas.noellesroles.client.screen.BroadcasterScreen;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntityManager;
-import org.agmas.noellesroles.packet.AbilityC2SPacket;
-import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
-import org.agmas.noellesroles.packet.OpenIntroPayload;
-import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
-import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
-import org.agmas.noellesroles.packet.VultureEatC2SPacket;
-import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
+import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
+import walksy.crosshairaddons.CrosshairAddons;
 
 import java.util.*;
 
@@ -95,6 +90,14 @@ public class NoellesrolesClient implements ClientModInitializer {
             client.execute(() -> {
                 if (client.player != null) {
                     client.setScreen(new RoleIntroduceScreen(client.player));
+                }
+            });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(BreakArmorPayload.ID, (payload, context) -> {
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null) {
+                    CrosshairAddons.getStateManager().handleBreakPacket(payload.x(), payload.y(), payload.z());
                 }
             });
         });

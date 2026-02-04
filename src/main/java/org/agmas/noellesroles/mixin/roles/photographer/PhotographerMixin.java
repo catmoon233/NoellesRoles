@@ -3,6 +3,7 @@ package org.agmas.noellesroles.mixin.roles.photographer;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure_polaroid.world.item.InstantCameraItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,13 +26,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_ANGLE;
 import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_DISTANCE;
 
-@Mixin(InstantCameraItem.class)
+@Mixin(CameraItem.class)
 public class PhotographerMixin {
     @Inject(
-            method = "printPhotograph",
+            method = "takePhoto",
             at = @At("HEAD")
     )
-    public void printPhotograph(CameraHolder holder, ItemStack stack, Frame frame, CallbackInfo ci) {
+    public void noe$take(CameraHolder holder, ServerPlayer executingPlayer, ItemStack stack, CallbackInfo ci) {
         final var holderEntity = holder.asHolderEntity();
         if (holderEntity instanceof ServerPlayer serverPlayer){
             serverPlayer.serverLevel().players().forEach(
