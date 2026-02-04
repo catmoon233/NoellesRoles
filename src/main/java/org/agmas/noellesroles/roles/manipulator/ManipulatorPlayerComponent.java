@@ -7,6 +7,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +32,9 @@ import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * 操纵师组件
