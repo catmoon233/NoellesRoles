@@ -3,6 +3,7 @@ package org.agmas.noellesroles.client;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.doctor4t.ratatouille.util.TextUtils;
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
@@ -13,6 +14,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -29,6 +31,8 @@ import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.screen.GuessRoleScreen;
 import org.agmas.noellesroles.client.screen.LockGameScreen;
 import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
+import org.agmas.noellesroles.client.event.MutableComponentResult;
+import org.agmas.noellesroles.client.event.OnMessageBelowMoneyRenderer;
 import org.agmas.noellesroles.client.screen.BroadcasterScreen;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntityManager;
@@ -233,6 +237,22 @@ public class NoellesrolesClient implements ClientModInitializer {
                     // 非炸弹客始终不可见
                     return 0.0F;
                 });
+
+        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
+            if (TMMClient.gameComponent != null) {
+                var role = TMMClient.gameComponent.getRole(minecraft.player);
+                if (role != null) {
+                    if (role.canUseKiller()) {
+                        return new MutableComponentResult(
+                                Component
+                                        .translatable("message.tip.for_killer",
+                                                Component.keybind("key." + TMM.MOD_ID + ".instinct"))
+                                        .withStyle(ChatFormatting.WHITE));
+                    }
+                }
+            }
+            return null;
+        });
 
         // 5. 注册实体渲染器
         registerEntityRenderers();

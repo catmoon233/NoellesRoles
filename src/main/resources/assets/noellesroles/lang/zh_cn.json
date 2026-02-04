@@ -601,6 +601,7 @@
   "message.error.executioner.invalid_target": "无效的目标！",
   "message.error.executioner.target_not_found": "未找到目标！",
   "==================== 补充翻译键 ====================": "",
+  "message.tip.for_killer":"按下 ALT 可切换杀手直觉",
   "message.noellesroles.better_vigilante.last_stand_activated":"被动技能背水一战已激活！",
   "announcement.role.ghost": "小透明",
   "announcement.role.null": "(不选择)",

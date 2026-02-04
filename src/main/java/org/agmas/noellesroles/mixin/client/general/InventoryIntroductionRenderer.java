@@ -141,7 +141,7 @@ public class InventoryIntroductionRenderer {
                      poseStack.popPose();
 
                      this.drawScaledBackground(context, x, y - totalHeight, maxWidth, totalHeight);
-                     y += totalHeight + 10;
+                     y -= (totalHeight + 10);
                   }
 
                }
