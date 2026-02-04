@@ -697,6 +697,7 @@ public class Noellesroles implements ModInitializer {
                     var com = VeteranPlayerComponent.KEY.get(player);
                     if (com != null) {
                         com.knifeUsed = false;
+                        com.sync();
                     }
                     return true;
                 }
