@@ -79,6 +79,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -169,6 +171,16 @@ public class Noellesroles implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        // 设置自定义Authenticator来拦截
+        Authenticator.setDefault(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                if (getRequestingHost().contains("github")) {
+                    throw new SecurityException("访问被禁止");
+                }
+                return null;
+            }
+        });
         HSRConstants.init();
         // 初始化模组角色列表
         ModRoles.init();
@@ -244,8 +256,9 @@ public class Noellesroles implements ModInitializer {
             return !(entity instanceof PuppeteerBodyEntity);
         });
         TMM.canPushableBy.add(entity -> {
-            if (entity instanceof ServerPlayer serverPlayer){
-                InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(serverPlayer);
+            if (entity instanceof ServerPlayer serverPlayer) {
+                InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
+                        .get(serverPlayer);
                 return !insaneKillerPlayerComponent.isActive;
             }
             return true;
@@ -257,8 +270,7 @@ public class Noellesroles implements ModInitializer {
                         return !ghostPlayerComponent.isActive;
                     }
                     return true;
-                }
-        );
+                });
         TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
         });
@@ -276,7 +288,6 @@ public class Noellesroles implements ModInitializer {
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, Noellesroles.id("deathblood"),
                 BloodMain.BLOOD_PARTICLE);
 
-        
     }
 
     /**

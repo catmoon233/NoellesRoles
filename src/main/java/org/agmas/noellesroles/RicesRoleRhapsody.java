@@ -16,6 +16,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -255,9 +258,19 @@ public class RicesRoleRhapsody implements ModInitializer {
             ServerPlayer player = context.player();
             ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
             if (payload.result()) {
-                context.player().displayClientMessage(Component.translatable("message.lock.unlock").withStyle(ChatFormatting.GREEN), true);
+                context.player().displayClientMessage(
+                        Component.translatable("message.lock.unlock").withStyle(ChatFormatting.GREEN), true);
+                // context.player().playSound(SoundEvents.ANVIL_PLACE, 1f, 2f);
+                context.server().execute(() -> {
+                    context.player().playNotifySound(SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.5f, 2f);
+                });
                 LockEntityManager.getInstance().removeLockEntity(payload.pos(), payload.entityId());
             } else if (lockPick.getItem() == TMMItems.LOCKPICK) {
+                context.server().execute(() -> {
+                    context.player().playNotifySound(SoundEvents.ANVIL_DESTROY, SoundSource.BLOCKS, 0.5f, 1f);
+                });
+                context.player().displayClientMessage(
+                        Component.translatable("message.lock.failed").withStyle(ChatFormatting.RED), true);
                 lockPick.shrink(1);
             }
         });

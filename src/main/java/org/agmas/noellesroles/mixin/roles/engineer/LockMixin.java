@@ -9,6 +9,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -68,6 +70,7 @@ public class LockMixin {
 
                 player.displayClientMessage(
                         Component.translatable("message.lock.game.start").withStyle(ChatFormatting.AQUA), true);
+                player.playNotifySound(SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.5f, 1.5f);
                 // 客户端：打开GUI
                 var lockEntity = LockEntityManager.getInstance().getLockEntity(lockPos);
                 if (lockEntity != null) {
