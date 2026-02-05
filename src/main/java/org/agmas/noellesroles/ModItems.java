@@ -35,6 +35,7 @@ public class ModItems {
         TMMItems.INVISIBLE_ITEMS.add(ModItems.CONSPIRACY_PAGE);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.LETTER_ITEM);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.DEFIBRILLATOR);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.BOMB);
         // TMMItems.INVISIBLE_ITEMS.add(TMMItems.KNIFE);
         
         TMMItems.INIT_ITEMS.LETTER = LETTER_ITEM;

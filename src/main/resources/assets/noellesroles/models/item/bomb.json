@@ -2,13 +2,5 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "noellesroles:item/bomb"
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "noellesroles:visible": 0.0
-      },
-      "model": "noellesroles:item/bomb_invisible"
-    }
-  ]
+  }
 }
