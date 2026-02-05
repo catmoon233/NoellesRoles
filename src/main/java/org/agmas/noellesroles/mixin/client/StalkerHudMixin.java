@@ -1,6 +1,9 @@
 package org.agmas.noellesroles.mixin.client;
 
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
+import org.agmas.noellesroles.role.ModRoles;
+
+import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
@@ -34,11 +37,19 @@ public class StalkerHudMixin {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null)
             return;
-        if(client.player.isSpectator()) return;
+        if (client.player.isSpectator())
+            return;
+        if (TMMClient.gameComponent == null)
+            return;
+        var role = TMMClient.gameComponent.getRole(client.player);
+        if (role == null)
+            return;
+        if (!role.identifier().getPath().equals(ModRoles.STALKER.identifier().getPath())) {
+            return;
+        }
 
         // 获取跟踪者组件
         StalkerPlayerComponent stalkerComp = StalkerPlayerComponent.KEY.get(client.player);
-
         // 检查是否是跟踪者
         if (!stalkerComp.isActiveStalker())
             return;
