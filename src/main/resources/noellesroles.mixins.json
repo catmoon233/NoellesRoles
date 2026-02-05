@@ -11,7 +11,6 @@
     "MasterKeyDoorMixin",
     "PlayerResetMixin",
     "SpawnMixin",
-    "UpdateBanMixin",
     "accessor.PlayerPoisonComponentAccessor",
     "roles.ConspiratorPlayerMixin",
     "roles.avengerKill.AvengerKillMixin",
