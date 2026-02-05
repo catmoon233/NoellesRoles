@@ -155,6 +155,10 @@ public class LockGameScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         animations.forEach(animation -> animation.renderUpdate(partialTick));
         animations.removeIf(AbstractAnimation::isFinished);
+        guiGraphics.drawString(this.font, Component.translatable("screen.noellesroles.loot.lockGameTip"),
+                width / 2 - font.width(Component.translatable("screen.noellesroles.loot.lockGameTip")) / 2,
+                height - pixelSize * 2,
+                0xFFFFFFFF);
     }
 
     @Override
