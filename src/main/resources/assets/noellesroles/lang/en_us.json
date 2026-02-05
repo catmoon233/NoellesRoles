@@ -171,6 +171,7 @@
   "screen.noellesroles.recorder.prev_page": "Prev",
   "screen.noellesroles.recorder.next_page": "Next",
   "screen.noellesroles.recorder.page_info": "Page %s / %s",
+  "screen.noellesroles.loot.lootBtn": "Start Loot",
   "==================== 赌徒角色 ====================": "",
   "game.win.gambler": "Gambler wins with a 1% chance, laughing at everyone!",
   "gui.noellesroles.gambler.title": "Gambler Role Selection",
