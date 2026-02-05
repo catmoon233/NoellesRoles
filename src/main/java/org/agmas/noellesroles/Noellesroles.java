@@ -1543,6 +1543,7 @@ public class Noellesroles implements ModInitializer {
                         if (vulturePlayerComponent.bodiesEaten >= vulturePlayerComponent.bodiesRequired) {
                             ArrayList<Role> shuffledKillerRoles = new ArrayList<>(getEnableKillerRoles());
                             shuffledKillerRoles.removeIf(role -> role.identifier().equals(ModRoles.EXECUTIONER_ID)
+                                    || role.identifier().equals(ModRoles.POISONER_ID)
                                     || Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller()
                                     || HarpyModLoaderConfig.HANDLER.instance().disabled
                                             .contains(role.identifier().getPath()));

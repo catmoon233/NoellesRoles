@@ -90,10 +90,11 @@ public class GamblerPlayerComponent implements RoleComponent, ServerTickingCompo
     private void drawNewRole() {
         List<Role> allRoles = new ArrayList<>(Noellesroles.getEnableRoles());
         
-        // 过滤掉禁用的角色、赌徒自己、已经在列表中的角色
+        // 过滤掉禁用的角色、赌徒自己、已经在列表中的角色、毒师
         List<Role> validRoles = allRoles.stream()
                 .filter(role -> !HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()))
                 .filter(role -> !role.identifier().equals(ModRoles.GAMBLER_ID))
+                .filter(role -> !role.identifier().equals(ModRoles.POISONER_ID))
                 .filter(role -> !availableRoles.contains(role.identifier()))
                 .collect(Collectors.toList());
 

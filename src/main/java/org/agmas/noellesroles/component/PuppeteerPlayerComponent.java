@@ -371,6 +371,7 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
     private Role getRandomKillerRole() {
         final var availableKillerRoles = getAvailableKillerRoles();
         availableKillerRoles.removeIf(a -> a.getIdentifier().equals(ModRoles.STALKER_ID));
+        availableKillerRoles.removeIf(a -> a.getIdentifier().equals(ModRoles.POISONER_ID));
 
         if (availableKillerRoles.isEmpty()) {
             // 如果没有可用的杀手角色，使用原版杀手
