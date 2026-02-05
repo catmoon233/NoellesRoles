@@ -27,20 +27,11 @@ import net.minecraft.world.level.GameType;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
-import org.agmas.noellesroles.client.screen.GuessRoleScreen;
-import org.agmas.noellesroles.client.screen.LockGameScreen;
-import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
-import org.agmas.noellesroles.client.screen.BroadcasterScreen;
+import org.agmas.noellesroles.client.screen.*;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
-import org.agmas.noellesroles.packet.AbilityC2SPacket;
-import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
-import org.agmas.noellesroles.packet.OpenIntroPayload;
-import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
-import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
-import org.agmas.noellesroles.packet.VultureEatC2SPacket;
-import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
+import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
@@ -126,6 +117,16 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+        // 注册抽奖网络包处理：接收服务器抽奖结果后播放抽奖动画
+        ClientPlayNetworking.registerGlobalReceiver(LootS2CPacket.ID, (payload, context)->{
+            final var client = context.client();
+            client.execute(() -> {
+                        if (client.player != null) {
+                            client.setScreen(new LootScreen(payload.ansID()));
+                        }
+                    });
+        });
+
         Listen.registerEvents();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (roleGuessNoteClientBind.consumeClick()) {

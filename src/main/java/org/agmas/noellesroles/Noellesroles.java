@@ -46,16 +46,13 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.noellesroles.commands.*;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.blood.BloodMain;
-import org.agmas.noellesroles.commands.AdminFreeCamCommand;
-import org.agmas.noellesroles.commands.BroadcastCommand;
-import org.agmas.noellesroles.commands.ConfigCommand;
-import org.agmas.noellesroles.commands.SetRoleMaxCommand;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
@@ -192,6 +189,7 @@ public class Noellesroles implements ModInitializer {
         AdminFreeCamCommand.register();
         SetRoleMaxCommand.register();
         ConfigCommand.register();
+        LootCommand.register();
 
         // 注册网络包类型
         registerPackets1();
@@ -717,6 +715,9 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(InsaneKillerAbilityC2SPacket.ID, InsaneKillerAbilityC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(RecorderC2SPacket.TYPE, RecorderC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(MonitorMarkC2SPacket.ID, MonitorMarkC2SPacket.CODEC);
+
+        // 注册抽奖网络包
+        PayloadTypeRegistry.playS2C().register(LootS2CPacket.ID, LootS2CPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {

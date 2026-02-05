@@ -88,8 +88,6 @@ public class BezierAnimation extends AbstractAnimation {
 
     @Override
     public void update() {
-        if(!isFinished)
-        {
             progress += 1f / (float) durationTicks;
             progress = Math.min(progress, 1f);
             callback.onExecute(calculateDeltaPosition(progress));
@@ -101,9 +99,10 @@ public class BezierAnimation extends AbstractAnimation {
                         deltaErrorY > 0.5f ? 1 : deltaErrorY < -0.5f ? -1 : deltaErrorY));
                 isFinished = true;
             }
-        }
     }
-
+    public void setCallback(Callback<Vec2> callback) {
+        this.callback = callback;
+    }
     public void openIntErrorFix() {
         isIntErrorFixOpen = true;
     }
@@ -112,9 +111,7 @@ public class BezierAnimation extends AbstractAnimation {
     }
 
     private final Vec2 control1, control2, end;
-    private float progress = 0f;
-    private final int durationTicks; // 动画持续时间（刻）
-    private final Callback<Vec2> callback;
+    private Callback<Vec2> callback;
     // 是否打开整数误差修正：用于回调修改为整数时的误差修正
     private boolean isIntErrorFixOpen = true;
     private float lastX = 0;
