@@ -5,11 +5,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
 
-import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
-import org.agmas.harpymodloader.events.ResetPlayerEvent;
 import org.agmas.noellesroles.ConfigWorldComponent;
-import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,7 +17,6 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerNoteComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
 @Mixin(PlayerList.class)
 public class DecServerJoinPlayer {
