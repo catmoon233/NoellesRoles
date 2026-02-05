@@ -20,12 +20,16 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.AABB;
+
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
@@ -36,6 +40,7 @@ import org.agmas.noellesroles.client.event.MutableComponentResult;
 import org.agmas.noellesroles.client.event.OnMessageBelowMoneyRenderer;
 import org.agmas.noellesroles.client.screen.BroadcasterScreen;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
@@ -123,9 +128,33 @@ public class NoellesrolesClient implements ClientModInitializer {
                 if (client.player != null) {
                     if (!isPlayerInAdventureMode(client.player))
                         return;
-                    final var pos = payload.pos();
-                    Minecraft.getInstance()
-                            .setScreen(new LockGameScreen(pos, LockEntityManager.getInstance().getLockEntity(pos)));
+                    BlockPos pos = payload.pos();
+                    int x = pos.getX();
+                    int lockLength = payload.lockLength();
+                    int y = pos.getY();
+                    int z = pos.getZ();
+                    UUID entityId = payload.lockId();
+                    AABB areas = new AABB(
+                            x - 5, y - 5, z - 5,
+                            x + 5, y + 5, z + 5);
+                    var entities = Minecraft.getInstance().level.getEntities(client.player, areas, (entity) -> {
+                        if (entity instanceof LockEntity) {
+                            return true;
+                        }
+                        return false;
+                    });
+                    Entity lockEntity = null;
+                    for (var entity : entities) {
+                        if (entity.getUUID().equals(entityId)) {
+                            lockEntity = entity;
+                        }
+                    }
+                    if (lockEntity instanceof LockEntity lock) {
+                        lock.setLength(lockLength);
+                        Minecraft.getInstance()
+                                .setScreen(new LockGameScreen(pos, lock));
+                    }
+
                 }
             });
         });

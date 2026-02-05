@@ -46,32 +46,31 @@ public class LockItem extends Item implements AdventureUsable {
 
     /**
      * 计算锁实体的位置
+     * 
      * @param context 上下文
-     * @param door 被使用的门
+     * @param door    被使用的门
      * @return 锁的坐标
      */
-    public Vec3 getLockEntityPos(UseOnContext context, DoorBlockEntity door){
+    public Vec3 getLockEntityPos(UseOnContext context, DoorBlockEntity door) {
         double x = context.getClickedPos().getX() + 0.5;
         // 确保锁位于上半部分
         double y = door.getBlockPos().above().getY();
         double z = context.getClickedPos().getZ() + 0.5;
-        switch (door.getFacing())
-        {
-        case EAST:
-        case WEST:
-            x = context.getClickLocation().x;
-            break;
-        case SOUTH:
-        case NORTH:
-            z = context.getClickLocation().z;
-            break;
+        switch (door.getFacing()) {
+            case EAST:
+            case WEST:
+                x = context.getClickLocation().x;
+                break;
+            case SOUTH:
+            case NORTH:
+                z = context.getClickLocation().z;
+                break;
         }
         return new Vec3(x, y, z);
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context)
-    {
+    public InteractionResult useOn(UseOnContext context) {
         Level world = context.getLevel();
         BlockEntity entity = world.getBlockEntity(context.getClickedPos());
         if (!(entity instanceof DoorBlockEntity))
@@ -81,8 +80,7 @@ public class LockItem extends Item implements AdventureUsable {
             // 判定玩家点击的方向：只运行在门的正反面点击
             Direction clickedFace = context.getClickedFace();
             Direction doorFacing = door.getFacing();
-            if(clickedFace != doorFacing && clickedFace != doorFacing.getOpposite())
-            {
+            if (clickedFace != doorFacing && clickedFace != doorFacing.getOpposite()) {
                 return InteractionResult.PASS;
             }
 
@@ -90,10 +88,8 @@ public class LockItem extends Item implements AdventureUsable {
             player.swing(InteractionHand.MAIN_HAND, true);
 
             // 将锁添加到世界中
-            if(!world.isClientSide)
-            {
-                LockEntity lockEntity = new LockEntity(ModEntities.LOCK_ENTITY, world);
-                lockEntity.setLength(length);
+            if (!world.isClientSide) {
+                LockEntity lockEntity = new LockEntity(ModEntities.LOCK_ENTITY, world, length);
                 lockEntity.setResistance(resistance);
                 lockEntity.setPos(getLockEntityPos(context, door));
                 lockEntity.setXRot(0.f);
@@ -102,11 +98,12 @@ public class LockItem extends Item implements AdventureUsable {
                 // 在门上方一格记录锁
                 LockEntityManager.getInstance().addLockEntity(door.getBlockPos().above(), lockEntity);
                 if (!player.isCreative()) {
-                    //回放记录
-//                    if (TMM.REPLAY_MANAGER != null) {
-//                        TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(), BuiltInRegistries.ITEM.getKey(this));
-//                    }
-                    //添加锁成功且非创造模式：消耗门锁
+                    // 回放记录
+                    // if (TMM.REPLAY_MANAGER != null) {
+                    // TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
+                    // BuiltInRegistries.ITEM.getKey(this));
+                    // }
+                    // 添加锁成功且非创造模式：消耗门锁
                     player.getItemInHand(context.getHand()).shrink(1);
                 }
 
@@ -116,10 +113,11 @@ public class LockItem extends Item implements AdventureUsable {
         return super.useOn(context);
     }
 
-    public void setLength(int length){
+    public void setLength(int length) {
         this.length = length;
     }
-    public void setResistance(float resistance){
+
+    public void setResistance(float resistance) {
         this.resistance = resistance;
     }
 

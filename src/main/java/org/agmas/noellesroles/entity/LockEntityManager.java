@@ -1,8 +1,6 @@
 package org.agmas.noellesroles.entity;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Vec3i;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 
 import java.util.HashMap;
@@ -14,64 +12,59 @@ import java.util.Stack;
  * 锁实体管理器单例
  * - 管理锁实体与门之间的关系
  * - 使用方式：使用撬锁器开门时查询是否被锁实体影响
- * - NOTE : 该管理器并不会在关闭地图(也可能是游戏？)后保存数据，总之就是重启之后所有锁实体将不会影响到门，但是考虑到游戏也不会在关闭后继续，所以没必要管
- * - TODO : 游戏结束后需要自动清理锁实体并重置列表防止被上局影响
+ * - NOTE :
+ * 该管理器并不会在关闭地图(也可能是游戏？)后保存数据，总之就是重启之后所有锁实体将不会影响到门，但是考虑到游戏也不会在关闭后继续，所以没必要管
  */
 public class LockEntityManager {
-    /** 重置锁实体映射*/private LockEntityManager() {};
-    public static LockEntityManager getInstance(){
+    /** 重置锁实体映射 */
+    private LockEntityManager() {
+    };
+
+    public static LockEntityManager getInstance() {
         return instance;
     }
 
-    /** 重置锁实体映射*/
+    /** 重置锁实体映射 */
     public void resetLockEntities() {
         // 清理所有已删除的锁实体
         cleanDeadEntities();
         // 清理仍然存在的锁实体
-        lockEntities.values().forEach(stack ->
-                stack.forEach(Entity::discard)
-        );
+        lockEntities.values().forEach(stack -> stack.forEach(Entity::discard));
         lockEntities.clear();
     }
 
-    /** 清理所有已删除的锁实体，由于锁操作不多，每次操作的时候清理一下最方便快捷，对性能也没啥影响*/
-    public void cleanDeadEntities()
-    {
-        lockEntities.values().forEach(stack ->
-                stack.removeIf(entity -> entity == null || entity.isRemoved())
-        );
+    /** 清理所有已删除的锁实体，由于锁操作不多，每次操作的时候清理一下最方便快捷，对性能也没啥影响 */
+    public void cleanDeadEntities() {
+        lockEntities.values().forEach(stack -> stack.removeIf(entity -> entity == null || entity.isRemoved()));
         lockEntities.entrySet().removeIf(entry -> entry.getValue().isEmpty());
     }
-    /** 清理指定位置的已删除的锁实体，有更好的性能*/
-    public void cleanStackDeadEntities(Vec3i pos)
-    {
+
+    /** 清理指定位置的已删除的锁实体，有更好的性能 */
+    public void cleanStackDeadEntities(Vec3i pos) {
         Stack<LockEntity> stack;
-        if(lockEntities.containsKey(pos))
+        if (lockEntities.containsKey(pos))
             stack = lockEntities.get(pos);
         else
             return;
 
         stack.removeIf(entity -> entity == null || entity.isRemoved());
 
-        if(stack.isEmpty())
+        if (stack.isEmpty())
             lockEntities.remove(pos);
     }
 
-    /** 获取对应位置的锁实体*/
-    public LockEntity getLockEntity(Vec3i pos)
-    {
+    /** 获取对应位置的锁实体 */
+    public LockEntity getLockEntity(Vec3i pos) {
         cleanStackDeadEntities(pos);
         if (lockEntities.containsKey(pos))
             return lockEntities.get(pos).peek();
         return null;
     }
 
-    /** 添加锁实体*/
-    public void addLockEntity(Vec3i pos, LockEntity lockEntity)
-    {
+    /** 添加锁实体 */
+    public void addLockEntity(Vec3i pos, LockEntity lockEntity) {
         cleanStackDeadEntities(pos);
-        if(!lockEntities.containsKey(pos))
-        {
+        if (!lockEntities.containsKey(pos)) {
             Stack<LockEntity> stack = new Stack<>();
             lockEntities.put(pos, stack);
         }
@@ -80,18 +73,18 @@ public class LockEntityManager {
 
     /**
      * 移除栈顶锁实体
-     * <p>移除锁实体时，会自动移除栈顶锁实体，如果栈为空则移除整个位置</p>
+     * <p>
+     * 移除锁实体时，会自动移除栈顶锁实体，如果栈为空则移除整个位置
+     * </p>
+     * 
      * @param pos 锁实体的位置
      */
-    public void removeLockEntity(Vec3i pos)
-    {
+    public void removeLockEntity(Vec3i pos) {
         cleanStackDeadEntities(pos);
-        if (lockEntities.containsKey(pos))
-        {
+        if (lockEntities.containsKey(pos)) {
             lockEntities.get(pos).peek().discard();
             lockEntities.get(pos).pop();
-            if (lockEntities.get(pos).isEmpty())
-            {
+            if (lockEntities.get(pos).isEmpty()) {
                 lockEntities.remove(pos);
             }
         }
@@ -99,36 +92,31 @@ public class LockEntityManager {
 
     /**
      * 移除指定锁实体
-     * @param pos 锁实体的位置
+     * 
+     * @param pos        锁实体的位置
      * @param lockEntity 目标锁实体
      */
-    public void removeLockEntity(Vec3i pos, LockEntity lockEntity)
-    {
+    public void removeLockEntity(Vec3i pos, LockEntity lockEntity) {
         cleanStackDeadEntities(pos);
-        if (lockEntities.containsKey(pos))
-        {
+        if (lockEntities.containsKey(pos)) {
             lockEntities.get(pos).remove(lockEntity);
-            if(lockEntity != null)
+            if (lockEntity != null)
                 lockEntity.discard();
 
-            if (lockEntities.get(pos).isEmpty())
-            {
+            if (lockEntities.get(pos).isEmpty()) {
                 lockEntities.remove(pos);
             }
         }
     }
 
-    public void removeLockEntity(Vec3i pos, int entityId)
-    {
+    public void removeLockEntity(Vec3i pos, int entityId) {
         cleanStackDeadEntities(pos);
-        if (lockEntities.containsKey(pos))
-        {
+        if (lockEntities.containsKey(pos)) {
             // 使用迭代器寻找目标实体调用销毁函数并移出队列
             Iterator<LockEntity> iterator = lockEntities.get(pos).iterator();
             while (iterator.hasNext()) {
                 LockEntity entity = iterator.next();
-                if (entity.getId() == entityId)
-                {
+                if (entity.getId() == entityId) {
                     // 析构实体
                     entity.discard();
                     // 从队列移除
@@ -136,8 +124,7 @@ public class LockEntityManager {
                     break;
                 }
             }
-            if (lockEntities.get(pos).isEmpty())
-            {
+            if (lockEntities.get(pos).isEmpty()) {
                 lockEntities.remove(pos);
             }
         }

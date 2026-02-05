@@ -15,7 +15,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -58,6 +57,8 @@ public class LockMixin {
                                 lockPos = lockPos.south();
                             }
                             break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -65,13 +66,17 @@ public class LockMixin {
             if (LockEntityManager.getInstance().getLockEntity(lockPos) != null) {
                 // 当手持撬锁器且该门上锁时：进入撬锁小游戏
 
-                player.displayClientMessage(Component.translatable("message.lock.game.start").withStyle(ChatFormatting.AQUA), true);
+                player.displayClientMessage(
+                        Component.translatable("message.lock.game.start").withStyle(ChatFormatting.AQUA), true);
                 // 客户端：打开GUI
-
-                if (player instanceof ServerPlayer serverPlayer) {
-                    ServerPlayNetworking.send(serverPlayer, new OpenLockGuiS2CPacket(lockPos,
-                            LockEntityManager.getInstance().getLockEntity(lockPos).getId()));
+                var lockEntity = LockEntityManager.getInstance().getLockEntity(lockPos);
+                if (lockEntity != null) {
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        ServerPlayNetworking.send(serverPlayer, new OpenLockGuiS2CPacket(lockPos,
+                                lockEntity.getUUID(), lockEntity.getLength()));
+                    }
                 }
+
                 // 返回 false 阻止原始方法执行
                 cir.setReturnValue(InteractionResult.FAIL);
             }
