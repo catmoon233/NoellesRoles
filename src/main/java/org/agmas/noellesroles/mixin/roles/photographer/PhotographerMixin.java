@@ -68,7 +68,7 @@ public class PhotographerMixin {
         Vec3 targetPos = boundTarget.getEyePosition();
 
         double distance = eyePos.distanceTo(targetPos);
-        if (distance > 20)
+        if (distance > 12)
             return false;
 
         // 视野角度检查（90度扇形，半角45度）

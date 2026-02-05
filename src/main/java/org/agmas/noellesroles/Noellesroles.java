@@ -630,12 +630,12 @@ public class Noellesroles implements ModInitializer {
                     });
                 }
             }
-            // 拍立得相纸 - 25金币
+            // 拍立得相纸 - 75金币
             if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("exposure_polaroid:instant_color_slide"))) {
                 var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("exposure_polaroid:instant_color_slide"));
                 if (item != null) {
                     final var defaultInstance = item.getDefaultInstance();
-                    entries.add(new ShopEntry(defaultInstance, 25, ShopEntry.Type.TOOL) {
+                    entries.add(new ShopEntry(defaultInstance, 75, ShopEntry.Type.TOOL) {
                         @Override
                         public boolean onBuy(@NotNull Player player) {
                             player.addItem(defaultInstance.copy());
