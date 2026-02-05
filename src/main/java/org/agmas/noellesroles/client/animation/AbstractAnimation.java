@@ -1,29 +1,27 @@
 package org.agmas.noellesroles.client.animation;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.network.chat.Component;
 
-// TODO：抽象动画类，实现To动画和By动画以支持更多功能
 public abstract class AbstractAnimation {
-    protected AbstractAnimation(AbstractWidget widget) {
+    protected AbstractAnimation(AbstractWidget widget, int durationTicks)
+    {
         this.widget = widget;
+        this.durationTicks = durationTicks;
     }
     public void renderUpdate(float deltaTime) {
         if(isFinished)
             return;
         // deltaTime的单位为0.10秒
         delayTime += deltaTime / 10;
-        while (delayTime >= secondPerTick)
+        while (delayTime >= secondPerTick && !isFinished)
         {
+            progress += 1f / (float) durationTicks;
+            progress = Math.min(progress, 1f);
             update();
+            if(progress >= 1f)
+                isFinished = true;
             delayTime -= secondPerTick;
         }
-//        if (Minecraft.getInstance().player != null) {
-//                        Minecraft.getInstance().player.sendSystemMessage(Component.literal(
-//                                "process: " + progress
-//                        ));
-//                    }
     }
     public void reStrt()
     {
@@ -42,7 +40,6 @@ public abstract class AbstractAnimation {
     public void setDurationTicks(int durationTicks)
     {
         this.durationTicks = durationTicks;
-//        reSet();
     }
     public int getDurationTicks() {
         return durationTicks;
