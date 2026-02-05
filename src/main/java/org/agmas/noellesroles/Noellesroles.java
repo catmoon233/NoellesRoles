@@ -171,16 +171,6 @@ public class Noellesroles implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // 设置自定义Authenticator来拦截
-        Authenticator.setDefault(new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                if (getRequestingHost().contains("github")) {
-                    throw new SecurityException("访问被禁止");
-                }
-                return null;
-            }
-        });
         HSRConstants.init();
         // 初始化模组角色列表
         ModRoles.init();

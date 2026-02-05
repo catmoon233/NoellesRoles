@@ -57,6 +57,7 @@ repositories {
 
     // Datasync
     maven { url = "https://maven.uuid.gg/releases" }
+
 }
 
 dependencies {
