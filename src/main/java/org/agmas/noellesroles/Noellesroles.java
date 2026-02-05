@@ -211,7 +211,7 @@ public class Noellesroles implements ModInitializer {
 
         // 设置角色最大数量
         Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
-        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 0);
+        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, 1);
 
