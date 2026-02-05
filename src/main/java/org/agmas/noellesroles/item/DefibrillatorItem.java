@@ -11,6 +11,10 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.ModComponents;
+import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 
 public class DefibrillatorItem extends Item {
@@ -50,7 +54,17 @@ public class DefibrillatorItem extends Item {
                             target.setGameMode(net.minecraft.world.level.GameType.ADVENTURE);
                             target.setHealth(target.getMaxHealth());
                             target.removeAllEffects();
-                            
+
+                            // 获取尸体的死亡原因组件，读取原始职业
+                            BodyDeathReasonComponent bodyComponent = BodyDeathReasonComponent.KEY.get(body);
+                            net.minecraft.resources.ResourceLocation originalRoleId = bodyComponent.playerRole;
+                            Role originalRole = TMMRoles.ROLES.get(originalRoleId);
+
+                            // 如果找到原始职业，恢复它
+                            if (originalRole != null) {
+                                RoleUtils.changeRole(target, originalRole, false);
+                            }
+
                             DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(target);
                             component.reset();
 
