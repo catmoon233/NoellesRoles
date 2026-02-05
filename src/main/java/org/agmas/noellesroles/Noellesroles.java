@@ -470,7 +470,7 @@ public class Noellesroles implements ModInitializer {
 
         ENGINEER_SHOP.add(new ShopEntry(
                 ModItems.LOCK_ITEM.getDefaultInstance(),
-                175,
+                100,
                 ShopEntry.Type.TOOL));
 
         // 拳击手商店
