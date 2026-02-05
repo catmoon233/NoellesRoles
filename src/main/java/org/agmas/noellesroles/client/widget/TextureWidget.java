@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.client.widget;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -36,12 +37,12 @@ public class TextureWidget extends AbstractWidget {
     }
 
     // 拷贝构造
-    public TextureWidget(TextureWidget lockPickBody) {
-        this(lockPickBody.getX(), lockPickBody.getY(), lockPickBody.getWidth(), lockPickBody.getHeight(),
-                lockPickBody.renderWidth, lockPickBody.renderHeight,
-                lockPickBody.textureWidth, lockPickBody.textureHeight,
-                lockPickBody.textureU, lockPickBody.textureV,
-                lockPickBody.TEXTURE);
+    public TextureWidget(TextureWidget textureWidget) {
+        this(textureWidget.getX(), textureWidget.getY(), textureWidget.getWidth(), textureWidget.getHeight(),
+                textureWidget.renderWidth, textureWidget.renderHeight,
+                textureWidget.textureWidth, textureWidget.textureHeight,
+                textureWidget.textureU, textureWidget.textureV,
+                textureWidget.TEXTURE);
     }
 
     @Override
@@ -54,12 +55,20 @@ public class TextureWidget extends AbstractWidget {
                 this.textureWidth, this.textureHeight
         );
     }
-
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
 
     }
-
+    @Override
+    public void setSize(int i, int j)
+    {
+        float scaleX = (float) i / (float) this.width;
+        float scaleY = (float) j / (float) this.height;
+        float deltaX = this.width * scaleX - this.width;
+        float deltaY = this.height * scaleY - this.height;
+        super.setSize(i, j);
+        this.setPosition((int)(this.getX() - deltaX / 2), (int)(this.getY() - deltaY / 2));
+    }
     public void setRenderSize(int renderWidth, int renderHeight){
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
@@ -68,9 +77,18 @@ public class TextureWidget extends AbstractWidget {
         this.textureU = textureU;
         this.textureV = textureV;
     }
-    protected final ResourceLocation TEXTURE;
-    protected final int textureWidth;
-    protected final int textureHeight;
+    public void setTEXTURE(ResourceLocation TEXTURE, int textureWidth, int textureHeight)
+    {
+        this.TEXTURE = TEXTURE;
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
+    }
+    public void setTEXTURE(ResourceLocation TEXTURE) {
+        this.TEXTURE = TEXTURE;
+    }
+    protected ResourceLocation TEXTURE;
+    protected int textureWidth;
+    protected int textureHeight;
     protected int renderWidth;
     protected int renderHeight;
     // 纹理起始顶点

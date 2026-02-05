@@ -155,6 +155,10 @@ public class LockGameScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         animations.forEach(animation -> animation.renderUpdate(partialTick));
         animations.removeIf(AbstractAnimation::isFinished);
+        guiGraphics.drawString(this.font, Component.translatable("screen.noellesroles.loot.lockGameTip"),
+                width / 2 - font.width(Component.translatable("screen.noellesroles.loot.lockGameTip")) / 2,
+                height - pixelSize * 2,
+                0xFFFFFFFF);
     }
 
     @Override
@@ -173,14 +177,16 @@ public class LockGameScreen extends Screen {
                         new Vec2(0, -upMovement * pixelSize),
                         // 相对运动
                         new Vec2(0, 0),
-                        20));
-                if (curIdx == lockEntity.getSeriesUnlockIdx(unlockingIdx)) {
+                        5
+                ));
+                if(curIdx == lockEntity.getSeriesUnlockIdx(unlockingIdx)) {
                     animations.add(new BezierAnimation(
                             lockCores.get(curIdx),
-                            new Vec2(0, -upMovement * pixelSize),
-                            new Vec2(0, -upMovement * pixelSize),
-                            new Vec2(0, -upMovement * pixelSize),
-                            20));
+                            new Vec2(0, - upMovement * pixelSize),
+                            new Vec2(0, - upMovement * pixelSize),
+                            new Vec2(0, - upMovement * pixelSize),
+                            5
+                            ));
                     // 成功解锁
                     ++unlockingIdx;
                     if (unlockingIdx == lockEntity.getLength()) {
@@ -197,7 +203,8 @@ public class LockGameScreen extends Screen {
                             new Vec2(0, -upMovement * pixelSize),
                             new Vec2(0, -upMovement * pixelSize),
                             new Vec2(0, 0),
-                            20));
+                            5
+                    ));
                     // 尝试失败
                     RandomSource entityRandom = lockEntity.getRandom();
                     if (entityRandom.nextFloat() < lockEntity.getResistance()) {
@@ -216,7 +223,8 @@ public class LockGameScreen extends Screen {
                     animations.add(new BezierAnimation(
                             lockPick,
                             new Vec2(-lockInterval * pixelSize, 0),
-                            20));
+                            10
+                    ));
                     --curIdx;
                 }
                 yield true;
@@ -226,7 +234,8 @@ public class LockGameScreen extends Screen {
                     animations.add(new BezierAnimation(
                             lockPick,
                             new Vec2(lockInterval * pixelSize, 0),
-                            20));
+                            10
+                    ));
                     ++curIdx;
                 }
                 yield true;
