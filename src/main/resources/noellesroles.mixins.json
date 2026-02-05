@@ -68,7 +68,6 @@
     "client.DetectiveHudMixin",
     "client.EngineerHudMixin",
     "client.GamblerHudMixin",
-    "client.InGameHudMixin",
     "client.InstinctMixin",
     "client.LamBugFix",
     "client.LobbyCreditsHudMixin",

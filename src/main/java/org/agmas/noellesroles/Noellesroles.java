@@ -50,7 +50,6 @@ import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
-import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.commands.AdminFreeCamCommand;
 import org.agmas.noellesroles.commands.BroadcastCommand;
@@ -79,8 +78,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -989,7 +986,6 @@ public class Noellesroles implements ModInitializer {
                 manipulatorPlayerComponent.sync();
             }
             if (role.equals(ModRoles.BOMBER)) {
-                BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(player);
                 if (role.equals(ModRoles.MONITOR)) {
                     MonitorPlayerComponent monitorComponent = MonitorPlayerComponent.KEY.get(player);
                     monitorComponent.reset();
