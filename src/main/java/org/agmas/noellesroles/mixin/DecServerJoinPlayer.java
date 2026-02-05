@@ -27,14 +27,18 @@ public class DecServerJoinPlayer {
     @Inject(method = "placeNewPlayer", at = @At("TAIL"))
     public void placeNewPlayer(Connection connection, ServerPlayer serverPlayer,
             CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
-                GameFunctions.resetPlayer(serverPlayer);
+        var modifierComponent = WorldModifierComponent.KEY.get(serverPlayer.level());
+        var pl = modifierComponent.modifiers.get(serverPlayer.getUUID());
+        if (pl != null) {
+            pl.clear();
+        }
         ((PlayerMoodComponent) PlayerMoodComponent.KEY.get(serverPlayer)).reset();
         ((PlayerShopComponent) PlayerShopComponent.KEY.get(serverPlayer)).reset();
         ((PlayerPoisonComponent) PlayerPoisonComponent.KEY.get(serverPlayer)).reset();
         ((PlayerPsychoComponent) PlayerPsychoComponent.KEY.get(serverPlayer)).reset();
         ((PlayerNoteComponent) PlayerNoteComponent.KEY.get(serverPlayer)).reset();
-        ResetPlayerEvent.EVENT.invoker().resetPlayer(serverPlayer);
-        ConfigWorldComponent.KEY.get(serverPlayer.level()).sync();
+        // ResetPlayerEvent.EVENT.invoker().resetPlayer(serverPlayer);
+        // ConfigWorldComponent.KEY.get(serverPlayer.level()).sync();
         WorldModifierComponent.KEY.get(serverPlayer.level()).sync();
     }
 }
