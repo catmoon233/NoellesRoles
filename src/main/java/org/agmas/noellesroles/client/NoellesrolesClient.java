@@ -150,7 +150,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                             lockEntity = entity;
                         }
                     }
-                    if (lockEntity instanceof LockEntity lock) {
+                    if (lockEntity != null && lockEntity instanceof LockEntity lock) {
                         lock.setLength(lockLength);
                         Minecraft.getInstance()
                                 .setScreen(new LockGameScreen(pos, lock));
