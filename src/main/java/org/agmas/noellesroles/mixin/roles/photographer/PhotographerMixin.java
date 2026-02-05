@@ -48,7 +48,7 @@ public class PhotographerMixin {
                                     serverPlayer1.addEffect(new MobEffectInstance(MobEffects.GLOWING, 20 *3, 0, true, false, true));
 
                                 }
-                                serverPlayer1.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 20 *4, 0, true, false, true));
+                                serverPlayer1.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 20 *3, 0, true, false, true));
                             }
                         }
                     }
