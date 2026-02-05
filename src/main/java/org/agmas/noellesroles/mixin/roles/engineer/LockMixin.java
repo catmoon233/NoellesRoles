@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
+import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,7 +39,10 @@ public class LockMixin {
             CallbackInfoReturnable<InteractionResult> cir) {
         // 用于小游戏结束后查询锁的位置
         BlockPos lockPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos;
-        if (player.getMainHandItem().is(TMMItems.LOCKPICK)) {
+        boolean canBeAffectedByLock =
+                // 如果该物品会被锁影响，就继续加|| xxx 即可，然后在下面的if语句里具体操作
+                player.getMainHandItem().is(TMMItems.LOCKPICK) || player.getMainHandItem().is(ModItems.MASTER_KEY_P);
+        if (canBeAffectedByLock) {
             // 当当前门上无锁时，检查附近门的情况：实现锁对附近门的影响
             if (LockEntityManager.getInstance().getLockEntity(lockPos) == null) {
                 if (world.getBlockEntity(lockPos.below()) instanceof SmallDoorBlockEntity entity) {
@@ -66,22 +70,30 @@ public class LockMixin {
             }
 
             if (LockEntityManager.getInstance().getLockEntity(lockPos) != null) {
-                // 当手持撬锁器且该门上锁时：进入撬锁小游戏
-
-                player.displayClientMessage(
-                        Component.translatable("message.lock.game.start").withStyle(ChatFormatting.AQUA), true);
-                player.playNotifySound(SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.5f, 1.5f);
-                // 客户端：打开GUI
-                var lockEntity = LockEntityManager.getInstance().getLockEntity(lockPos);
-                if (lockEntity != null) {
-                    if (player instanceof ServerPlayer serverPlayer) {
-                        ServerPlayNetworking.send(serverPlayer, new OpenLockGuiS2CPacket(lockPos,
-                                lockEntity.getUUID(), lockEntity.getLength()));
+                // 根据手中物品决定锁的影响
+                if(player.getMainHandItem().is(TMMItems.LOCKPICK))
+                {
+                    // 当手持撬锁器且该门上锁时：进入撬锁小游戏
+                    player.displayClientMessage(
+                            Component.translatable("message.lock.game.start").withStyle(ChatFormatting.AQUA), true);
+                    player.playNotifySound(SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.5f, 1.5f);
+                    // 客户端：打开GUI
+                    var lockEntity = LockEntityManager.getInstance().getLockEntity(lockPos);
+                    if (lockEntity != null) {
+                        if (player instanceof ServerPlayer serverPlayer) {
+                            ServerPlayNetworking.send(serverPlayer, new OpenLockGuiS2CPacket(lockPos,
+                                    lockEntity.getUUID(), lockEntity.getLength()));
+                        }
                     }
+                    // 返回 false 阻止原始方法执行
+                    cir.setReturnValue(InteractionResult.FAIL);
+                }
+                else
+                {
+                    // 默认行为：阻止原操作
+                    cir.setReturnValue(InteractionResult.FAIL);
                 }
 
-                // 返回 false 阻止原始方法执行
-                cir.setReturnValue(InteractionResult.FAIL);
             }
         }
     }
