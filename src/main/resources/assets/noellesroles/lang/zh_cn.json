@@ -181,6 +181,7 @@
   "screen.noellesroles.recorder.prev_page": "上一页",
   "screen.noellesroles.recorder.next_page": "下一页",
   "screen.noellesroles.recorder.page_info": "第 %s / %s 页",
+  "screen.noellesroles.loot.lootBtn": "开始抽奖",
   "==================== 赌徒角色 ====================": "",
   "game.win.gambler": "赌徒以1%的概率取得胜利，他正讥笑着所有人！",
   "gui.noellesroles.gambler.title": "赌徒角色选择",
