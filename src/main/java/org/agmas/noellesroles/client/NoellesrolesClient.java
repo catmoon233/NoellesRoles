@@ -38,14 +38,12 @@ import org.agmas.noellesroles.client.event.MutableComponentResult;
 import org.agmas.noellesroles.client.event.OnMessageBelowMoneyRenderer;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
-import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
 import walksy.crosshairaddons.CrosshairAddons;
 
-import java.net.URL;
 import java.util.*;
 
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.*;
@@ -67,7 +65,7 @@ public class NoellesrolesClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-
+        
         roleIntroClientBind = KeyBindingHelper
                 .registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".role_intro",
                         InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.trainmurdermystery.keybinds"));

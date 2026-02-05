@@ -166,7 +166,7 @@ public class ModRoles {
                         .registerRole(new NoramlRole(PATROLLER_ID, 0x1B8AE5, true, false, Role.MoodType.REAL,
                                         dev.doctor4t.trainmurdermystery.game.GameConstants.getInTicks(0, 10), false)
                                         .setVigilanteTeam(true).setComponentKey(PatrollerPlayerComponent.KEY))
-                        .setCanPickUpRevolver(false);
+                        .setCanPickUpRevolver(true);
 
         // 杀手阵营角色
         public static Role MORPHLING = TMMRoles

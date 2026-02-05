@@ -51,7 +51,6 @@ import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
-import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
@@ -76,8 +75,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -209,7 +206,7 @@ public class Noellesroles implements ModInitializer {
 
         // 设置角色最大数量
         Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
-        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 0);
+        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, 1);
 
@@ -628,12 +625,12 @@ public class Noellesroles implements ModInitializer {
                     });
                 }
             }
-            // 拍立得相纸 - 25金币
+            // 拍立得相纸 - 75金币
             if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("exposure_polaroid:instant_color_slide"))) {
                 var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("exposure_polaroid:instant_color_slide"));
                 if (item != null) {
                     final var defaultInstance = item.getDefaultInstance();
-                    entries.add(new ShopEntry(defaultInstance, 25, ShopEntry.Type.TOOL) {
+                    entries.add(new ShopEntry(defaultInstance, 75, ShopEntry.Type.TOOL) {
                         @Override
                         public boolean onBuy(@NotNull Player player) {
                             player.addItem(defaultInstance.copy());
@@ -990,7 +987,6 @@ public class Noellesroles implements ModInitializer {
                 manipulatorPlayerComponent.sync();
             }
             if (role.equals(ModRoles.BOMBER)) {
-                BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(player);
                 if (role.equals(ModRoles.MONITOR)) {
                     MonitorPlayerComponent monitorComponent = MonitorPlayerComponent.KEY.get(player);
                     monitorComponent.reset();
@@ -1544,6 +1540,7 @@ public class Noellesroles implements ModInitializer {
                         if (vulturePlayerComponent.bodiesEaten >= vulturePlayerComponent.bodiesRequired) {
                             ArrayList<Role> shuffledKillerRoles = new ArrayList<>(getEnableKillerRoles());
                             shuffledKillerRoles.removeIf(role -> role.identifier().equals(ModRoles.EXECUTIONER_ID)
+                                    || role.identifier().equals(ModRoles.POISONER_ID)
                                     || Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller()
                                     || HarpyModLoaderConfig.HANDLER.instance().disabled
                                             .contains(role.identifier().getPath()));

@@ -100,7 +100,7 @@ public class AvengerPlayerComponent implements RoleComponent, ServerTickingCompo
         if (!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(serverPlayer.level());
         List<UUID> innocentPlayers = new ArrayList<>();
 
         gameWorld.getRoles().forEach((uuid, role) -> {

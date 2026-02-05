@@ -2,20 +2,14 @@ package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents.Command;
-import net.fabricmc.loader.impl.util.log.LogCategory;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleProvider;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.commands.ExecuteCommand;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 
 import org.agmas.noellesroles.ModItems;
@@ -26,7 +20,6 @@ import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
-import org.slf4j.LoggerFactory;
 
 public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 
@@ -52,6 +45,9 @@ public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingC
         if (!gameWorld.isRole(player, ModRoles.GLITCH_ROBOT)) {
             return;
         }
+        if (!GameFunctions.isPlayerAliveAndSurvival(player)) {
+            return;
+        }
 
         // 故障计时器
         glitchTimer++;
@@ -68,17 +64,17 @@ public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingC
     public static void onKnockOut(Player victim) {
         if (victim instanceof ServerPlayer sp) {
             // 创建半径为4的缓慢2效果云，持续5秒（100 ticks）
-            // var command = "execute at @s run summon area_effect_cloud ~ ~ ~ {Radius:4,Duration:100,RadiusOnUse:0f,RadiusPerTick:0f,WaitTime:0,potion_contents:{custom_effects:[{id:\"slowness\",amplifier:1,duration:100,ambient:false,show_icon:false,show_particles:false}]},custom_particle:{type:\"dust\",color:15924992,scale:1}}";
+            // var command = "execute at @s run summon area_effect_cloud ~ ~ ~
+            // {Radius:4,Duration:100,RadiusOnUse:0f,RadiusPerTick:0f,WaitTime:0,potion_contents:{custom_effects:[{id:\"slowness\",amplifier:1,duration:100,ambient:false,show_icon:false,show_particles:false}]},custom_particle:{type:\"dust\",color:15924992,scale:1}}";
             // try {
-            //     sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack(),
-            //             command);
+            // sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack(),
+            // command);
             // } catch (Exception e) {
-            //     LoggerFactory.getLogger(GlitchRobotPlayerComponent.class).warn(
-            //             "Failed to execute : " + command + ", error: " + e.getMessage());
+            // LoggerFactory.getLogger(GlitchRobotPlayerComponent.class).warn(
+            // "Failed to execute : " + command + ", error: " + e.getMessage());
             // }
             AreaEffectCloud cloud = new AreaEffectCloud(sp.level(), sp.getX(), sp.getY(),
-            sp.getZ());
-
+                    sp.getZ());
 
             cloud.setRadius(6.0F);
             cloud.setDuration(100); // 5秒
@@ -87,7 +83,7 @@ public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingC
             cloud.setWaitTime(0);
             cloud.setParticle(ParticleTypes.EFFECT);
             cloud.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2,
-            false, false, true));
+                    false, false, true));
             sp.level().addFreshEntity(cloud);
         }
     }

@@ -89,11 +89,13 @@ public class GamblerPlayerComponent implements RoleComponent, ServerTickingCompo
 
     private void drawNewRole() {
         List<Role> allRoles = new ArrayList<>(Noellesroles.getEnableRoles());
-        
+
         // 过滤掉禁用的角色、赌徒自己、已经在列表中的角色
         List<Role> validRoles = allRoles.stream()
                 .filter(role -> !HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()))
                 .filter(role -> !role.identifier().equals(ModRoles.GAMBLER_ID))
+                .filter(role -> !role.identifier().equals(ModRoles.DOCTOR_ID))
+                .filter(role -> !role.identifier().equals(ModRoles.POISONER_ID))
                 .filter(role -> !availableRoles.contains(role.identifier()))
                 .collect(Collectors.toList());
 
@@ -102,14 +104,13 @@ public class GamblerPlayerComponent implements RoleComponent, ServerTickingCompo
             Role drawnRole = validRoles.getFirst();
             if (player instanceof ServerPlayer serverPlayer) {
 
-
                 if (drawnRole.canUseKiller()) {
                     CriteriaTriggers.USED_TOTEM.trigger(serverPlayer, TMMItems.KNIFE.getDefaultInstance());
-                } else if (drawnRole.isInnocent()){
+                } else if (drawnRole.isInnocent()) {
                     CriteriaTriggers.USED_TOTEM.trigger(serverPlayer, TMMItems.KEY.getDefaultInstance());
-                }else if (drawnRole.isVigilanteTeam()) {
+                } else if (drawnRole.isVigilanteTeam()) {
                     CriteriaTriggers.USED_TOTEM.trigger(serverPlayer, TMMItems.REVOLVER.getDefaultInstance());
-                }else if (!drawnRole.isInnocent()) {
+                } else if (!drawnRole.isInnocent()) {
                     CriteriaTriggers.USED_TOTEM.trigger(serverPlayer, TMMItems.POISON_VIAL.getDefaultInstance());
                 }
                 serverPlayer.gameEvent(GameEvent.ITEM_INTERACT_FINISH);

@@ -1,8 +1,10 @@
 package org.agmas.noellesroles.mixin;
 
+import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.item.ItemEntity;
 
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
@@ -30,6 +32,12 @@ public class EntityClear {
             } else if (entity instanceof AreaEffectCloud) {
                 entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
                 // 删除机器人药水云
+            } else if (entity instanceof ItemEntity) {
+                entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+                // 删除物品
+            }else if (entity instanceof PlayerBodyEntity) {
+                entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+                // 删除尸体
             }
         });
     }

@@ -1,20 +1,13 @@
 package org.agmas.noellesroles.component;
 
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
-import net.minecraft.resources.ResourceLocation;
-
 import java.util.UUID;
 
 /**
@@ -88,11 +81,13 @@ public class MonitorPlayerComponent implements RoleComponent, ServerTickingCompo
         }
         // 检查目标是否存活，如果死亡则清除标记
         if (this.markedTarget != null) {
-            Player targetPlayer = this.player.level().getPlayerByUUID(this.markedTarget);
-            if (targetPlayer == null || !GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
-                // 目标不存在或已死亡，清除标记
-                this.markedTarget = null;
-                this.sync();
+            if (!this.player.level().isClientSide()) {
+                Player targetPlayer = this.player.getServer().getPlayerList().getPlayer(this.markedTarget);
+                if (targetPlayer == null || !GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
+                    // 目标不存在或已死亡，清除标记
+                    this.markedTarget = null;
+                    this.sync();
+                }
             }
         }
     }
