@@ -635,7 +635,7 @@ public class Noellesroles implements ModInitializer {
                 var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse("exposure_polaroid:instant_color_slide"));
                 if (item != null) {
                     final var defaultInstance = item.getDefaultInstance();
-                    entries.add(new ShopEntry(defaultInstance, 50, ShopEntry.Type.TOOL) {
+                    entries.add(new ShopEntry(defaultInstance, 100, ShopEntry.Type.TOOL) {
                         @Override
                         public boolean onBuy(@NotNull Player player) {
                             player.addItem(defaultInstance.copy());
