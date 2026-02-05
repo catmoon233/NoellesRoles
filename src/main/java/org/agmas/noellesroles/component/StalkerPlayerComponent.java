@@ -3,9 +3,13 @@ package org.agmas.noellesroles.component;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
@@ -636,6 +640,9 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
      * 检查是否是活跃的跟踪者
      */
     public boolean isActiveStalker() {
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player);
+        if (!gameWorldComponent.isRole(player, ModRoles.STALKER))
+            return false;
         return isStalkerMarked && phase > 0;
     }
 
