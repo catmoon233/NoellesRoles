@@ -88,11 +88,13 @@ public class MonitorPlayerComponent implements RoleComponent, ServerTickingCompo
         }
         // 检查目标是否存活，如果死亡则清除标记
         if (this.markedTarget != null) {
-            Player targetPlayer = this.player.level().getPlayerByUUID(this.markedTarget);
-            if (targetPlayer == null || !GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
-                // 目标不存在或已死亡，清除标记
-                this.markedTarget = null;
-                this.sync();
+            if (!this.player.level().isClientSide()) {
+                Player targetPlayer = this.player.level().getPlayerByUUID(this.markedTarget);
+                if (targetPlayer == null || !GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
+                    // 目标不存在或已死亡，清除标记
+                    this.markedTarget = null;
+                    this.sync();
+                }
             }
         }
     }
