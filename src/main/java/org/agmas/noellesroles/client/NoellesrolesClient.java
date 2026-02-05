@@ -48,6 +48,7 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
 import walksy.crosshairaddons.CrosshairAddons;
 
+import java.net.URL;
 import java.util.*;
 
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.*;

@@ -76,9 +76,9 @@ public class InControlCCA implements RoleComponent, ServerTickingComponent {
         }
         if (isControlling) {
             if (controlTimer > 0) {
-                controlTimer--;
+                --controlTimer;
                 if (player.isShiftKeyDown()) {
-                    controlTimer--;
+                    --controlTimer;
                 }
                 if (controlTimer % 20 == 0) {
                     sync();

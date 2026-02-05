@@ -114,12 +114,14 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
                 alivePlayerCount++;
             }
         }
-        percent = Math.max(0.5f, alivePlayerCount / playerCount);
+        percent = Math.max(0.5f, (float) alivePlayerCount / playerCount);
         int controlTime = (int) ((float) CONTROL_DURATION * percent);
         this.target = targetUuid;
-        InControlCCA.KEY.get(targetPlayer).isControlling = true;
-        InControlCCA.KEY.get(targetPlayer).controlTimer = controlTime;
-        InControlCCA.KEY.get(targetPlayer).controller = player;
+        final var inControlCCA = InControlCCA.KEY.get(targetPlayer);
+        inControlCCA.isControlling = true;
+        inControlCCA.controlTimer = controlTime;
+        inControlCCA.controller = player;
+        inControlCCA.sync();
         this.sync();
     }
 
