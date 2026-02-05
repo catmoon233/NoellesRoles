@@ -11,10 +11,10 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
-import org.agmas.harpymodloader.modded_murder.ModdedMurderGameMode;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.ModComponents;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
@@ -61,8 +61,10 @@ public class DefibrillatorItem extends Item {
                             if (gameComp != null) {
                                 var role = gameComp.getRole(target);
                                 target.getInventory().clearContent();
-                                if (role != null)
+                                if (role != null) {
                                     ModdedRoleAssigned.EVENT.invoker().assignModdedRole(target, role);
+                                    TMM.REPLAY_MANAGER.recordPlayerRevival(target.getUUID(), role);
+                                }
                             }
                             DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(target);
                             component.reset();
