@@ -9,8 +9,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+
+import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.harpymodloader.modded_murder.ModdedMurderGameMode;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.ModComponents;
+
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 
 public class DefibrillatorItem extends Item {
@@ -40,24 +46,32 @@ public class DefibrillatorItem extends Item {
                                     true);
                             return;
                         }
-
+                        GameWorldComponent gameComp = GameWorldComponent.KEY.get(player.level());
                         // 通过UUID查找玩家，而不是通过名字
                         java.util.UUID playerUuid = body.getPlayerUuid();
-                        net.minecraft.server.level.ServerPlayer target = player.getServer().getPlayerList().getPlayer(playerUuid);
+                        net.minecraft.server.level.ServerPlayer target = player.getServer().getPlayerList()
+                                .getPlayer(playerUuid);
 
                         if (target != null) {
                             target.teleportTo(body.getX(), body.getY(), body.getZ());
                             target.setGameMode(net.minecraft.world.level.GameType.ADVENTURE);
                             target.setHealth(target.getMaxHealth());
                             target.removeAllEffects();
-                            
+                            TrainVoicePlugin.resetPlayer(target.getUUID());
+                            if (gameComp != null) {
+                                var role = gameComp.getRole(target);
+                                target.getInventory().clearContent();
+                                if (role != null)
+                                    ModdedRoleAssigned.EVENT.invoker().assignModdedRole(target, role);
+                            }
                             DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(target);
                             component.reset();
 
                             body.discard();
 
                             player.displayClientMessage(
-                                    Component.translatable("message.noellesroles.defibrillator.revived", target.getName()),
+                                    Component.translatable("message.noellesroles.defibrillator.revived",
+                                            target.getName()),
                                     true);
                             target.displayClientMessage(
                                     Component.translatable("message.noellesroles.defibrillator.you_revived"), true);
