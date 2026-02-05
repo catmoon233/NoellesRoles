@@ -39,6 +39,8 @@ public class StalkerHudMixin {
             return;
         if (client.player.isSpectator())
             return;
+        if (TMMClient.gameComponent == null)
+            return;
         var role = TMMClient.gameComponent.getRole(client.player);
         if (!role.identifier().getPath().equals(ModRoles.STALKER.identifier().getPath())) {
             return;

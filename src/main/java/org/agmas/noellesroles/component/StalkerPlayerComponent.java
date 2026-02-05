@@ -641,6 +641,8 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
      */
     public boolean isActiveStalker() {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (gameWorldComponent == null)
+            return false;
         if (!gameWorldComponent.isRole(player, ModRoles.STALKER))
             return false;
         return isStalkerMarked && phase > 0;
