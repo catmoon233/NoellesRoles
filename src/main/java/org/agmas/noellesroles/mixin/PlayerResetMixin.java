@@ -36,7 +36,7 @@ public abstract class PlayerResetMixin {
     @Inject(method = "resetPlayer", at = @At("TAIL"))
     private static void clearAllComponentsOnReset(ServerPlayer player, CallbackInfo ci) {
         // 清除跟踪者组件状态
-        clearAllComponents(player);
+        //clearAllComponents(player);
         ServerPlayNetworking.send(player, new PlayerResetS2CPacket());
     }
 
@@ -48,7 +48,7 @@ public abstract class PlayerResetMixin {
         // 清除客户端自定义笔记状态
 
         serverWorld.players().forEach((pl) -> {
-            clearAllComponents(pl);
+            //clearAllComponents(pl);
             ServerPlayNetworking.send(pl, new PlayerResetS2CPacket());
         });
     }
