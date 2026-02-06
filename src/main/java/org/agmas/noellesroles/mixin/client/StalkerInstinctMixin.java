@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.client;
 
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
+import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
