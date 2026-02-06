@@ -846,8 +846,7 @@ public class Noellesroles implements ModInitializer {
         ShouldDropOnDeath.EVENT.register(((itemStack) -> {
             final var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
             if ("exposure:album".equals(key) || "exposure:photograph".equals(key)
-                    || "exposure:stacked_photographs".equals(key) || itemStack.is(ModItems.PATROLLER_REVOLVER)
-                    || itemStack.is(TMMItems.DERRINGER)) {
+                    || "exposure:stacked_photographs".equals(key) || itemStack.is(ModItems.PATROLLER_REVOLVER)) {
                 return true;
             }
 
