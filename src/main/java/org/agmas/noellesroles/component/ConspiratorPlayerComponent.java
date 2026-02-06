@@ -41,7 +41,7 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
     public static final ComponentKey<ConspiratorPlayerComponent> KEY = ModComponents.CONSPIRATOR;
 
     // 死亡倒计时：5秒 = 400 ticks
-    public static final int DEATH_COUNTDOWN = 5 * 20;
+    public static final int DEATH_COUNTDOWN = 10 * 20;
 
     private final Player player;
 
@@ -147,7 +147,7 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
                 newTarget.deathCountdown = DEATH_COUNTDOWN;
             }
             final var playerShopComponent = PlayerShopComponent.KEY.get(player);
-            playerShopComponent.setBalance(100+playerShopComponent.balance);
+            playerShopComponent.setBalance(100 + playerShopComponent.balance);
 
             serverPlayer.displayClientMessage(
                     Component.translatable("message.noellesroles.conspirator.correct", targetName)
