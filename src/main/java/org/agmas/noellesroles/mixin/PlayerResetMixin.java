@@ -115,6 +115,7 @@ public abstract class PlayerResetMixin {
         // 删除modifier
         WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
         worldModifierComponent.modifiers.clear();
+        worldModifierComponent.sync();
         // 清除该玩家放置的所有灾厄印记实体
         clearCalamityMarks(player);
     }
