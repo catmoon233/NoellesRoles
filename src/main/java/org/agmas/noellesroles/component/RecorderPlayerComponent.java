@@ -164,7 +164,7 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         }
 
         int totalPlayers = player.level().players().size();
-        int requiredCorrect = (int) Math.ceil(totalPlayers * 0.4);
+        int requiredCorrect = (int) Math.ceil(totalPlayers * 0.3);
 
         if (requiredCorrect < 2)
             requiredCorrect = 2;
