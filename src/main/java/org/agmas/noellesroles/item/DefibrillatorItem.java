@@ -11,6 +11,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.ModComponents;
 
@@ -68,9 +69,10 @@ public class DefibrillatorItem extends Item {
                             }
                             DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(target);
                             component.reset();
+                            DeathPenaltyComponent deathPenalty = ModComponents.DEATH_PENALTY.get(target);
+                            deathPenalty.clear();
 
                             body.discard();
-
                             player.displayClientMessage(
                                     Component.translatable("message.noellesroles.defibrillator.revived",
                                             target.getName()),
