@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -59,10 +58,10 @@ public abstract class PlayerResetMixin {
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
         InControlCCA inControlCCA = InControlCCA.KEY.get(player);
-        inControlCCA.reset();
+        inControlCCA.clear();
 
         ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(player);
-        manipulatorComp.reset();
+        manipulatorComp.clear();
         // 清除惩罚组件状态
         DeathPenaltyComponent deathPenalty = ModComponents.DEATH_PENALTY.get(player);
         deathPenalty.clearAll();
@@ -73,33 +72,33 @@ public abstract class PlayerResetMixin {
 
         // 清除其他自定义组件状态
         NoellesRolesAbilityPlayerComponent abilityComp = ModComponents.ABILITY.get(player);
-        abilityComp.reset();
+        abilityComp.clear();
 
         AvengerPlayerComponent avengerComp = ModComponents.AVENGER.get(player);
-        avengerComp.reset();
+        avengerComp.clear();
 
         ConspiratorPlayerComponent conspiratorComp = ModComponents.CONSPIRATOR.get(player);
-        conspiratorComp.reset();
+        conspiratorComp.clear();
         InsaneKillerPlayerComponent insaneKillerComp = ModComponents.INSANE_KILLER.get(player);
-        insaneKillerComp.reset();
+        insaneKillerComp.clear();
 
         SlipperyGhostPlayerComponent slipperyGhostComp = ModComponents.SLIPPERY_GHOST.get(player);
-        slipperyGhostComp.reset();
+        slipperyGhostComp.clear();
 
         BroadcasterPlayerComponent broadcasterComp = ModComponents.BROADCASTER.get(player);
-        broadcasterComp.reset();
+        broadcasterComp.clear();
 
         PostmanPlayerComponent postmanComp = ModComponents.POSTMAN.get(player);
-        postmanComp.reset();
+        postmanComp.clear();
 
         DetectivePlayerComponent detectiveComp = ModComponents.DETECTIVE.get(player);
-        detectiveComp.reset();
+        detectiveComp.clear();
 
         BoxerPlayerComponent boxerComp = ModComponents.BOXER.get(player);
-        boxerComp.reset();
+        boxerComp.clear();
 
         AthletePlayerComponent athleteComp = ModComponents.ATHLETE.get(player);
-        athleteComp.reset();
+        athleteComp.clear();
 
         // 清除设陷者组件状态
         TrapperPlayerComponent trapperComp = ModComponents.TRAPPER.get(player);
@@ -111,10 +110,11 @@ public abstract class PlayerResetMixin {
 
         // 清除记录员组件状态
         RecorderPlayerComponent recorderComp = ModComponents.RECORDER.get(player);
-        recorderComp.reset();
+        recorderComp.clear();
         // 删除modifier
         WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
         worldModifierComponent.modifiers.clear();
+        worldModifierComponent.sync();
         // 清除该玩家放置的所有灾厄印记实体
         clearCalamityMarks(player);
     }

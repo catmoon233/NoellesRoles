@@ -60,7 +60,7 @@ public record BanditRevolverShootPayload(int target) implements CustomPacketPayl
 
                 if (var6 instanceof Player) {
                     Player target = (Player) var6;
-                    if ((double) target.distanceTo(player) < (double) 65.0F) {
+                    if ((double) target.distanceTo(player) < (double) 70) {
                         GameWorldComponent game = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
                         Item banditrevolver = HSRItems.BANDIT_REVOLVER;
                         boolean backfire = false;

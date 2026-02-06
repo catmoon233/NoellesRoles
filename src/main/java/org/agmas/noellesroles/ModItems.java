@@ -1,5 +1,6 @@
 package org.agmas.noellesroles;
 
+import dev.doctor4t.trainmurdermystery.api.ChargeableItemRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 import org.agmas.noellesroles.item.*;
+import org.agmas.noellesroles.item.charge_item.AntidoteReagentChargeItem;
 import org.agmas.noellesroles.utils.LocalDateData;
 
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -100,7 +102,7 @@ public class ModItems {
     public static final Item DELUSION_VIAL = register(
             new Item(new Item.Properties().stacksTo(1)),
             "delusion_vial");
-    
+
     public static final Item ROLE_MINE = register(
             new Item(new Item.Properties().stacksTo(1)),
             "role_mine");
@@ -237,6 +239,13 @@ public class ModItems {
             new LockItem(6, 0.1f, new Item.Properties().stacksTo(1)),
             "lock");
 
+        static {
+                ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
+        }
+        // public static final Item SHERIFF_GUN_MAINTENANCE = register(
+        // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
+        // "sheriff_gun_maintenance"
+        // );
     // public static final Item SHERIFF_GUN_MAINTENANCE = register(
     // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
     // "sheriff_gun_maintenance"
