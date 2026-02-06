@@ -9,6 +9,7 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.network.BreakArmorPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -243,7 +244,7 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
 
         ItemTooltipCallback.EVENT.register(((itemStack, tooltipContext, tooltipType, list) -> {
-            tooltipHelper(ModItems.DEFENSE_VIAL, itemStack, list);
+            tooltipHelper(TMMItems.DEFENSE_VIAL, itemStack, list);
             tooltipHelper(ModItems.DELUSION_VIAL, itemStack, list);
         }));
         // registerKeyBindings();

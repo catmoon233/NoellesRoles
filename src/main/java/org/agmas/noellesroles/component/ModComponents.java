@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.ConfigWorldComponent;
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
@@ -274,8 +273,6 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(GamblerPlayerComponent::new);
                 registry.beginRegistration(Player.class, MorphlingPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(MorphlingPlayerComponent::new);
-                registry.beginRegistration(Player.class, BartenderPlayerComponent.KEY)
-                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(BartenderPlayerComponent::new);
                 registry.beginRegistration(Player.class, VoodooPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(VoodooPlayerComponent::new);
                 registry.beginRegistration(PlayerBodyEntity.class, BodyDeathReasonComponent.KEY)
