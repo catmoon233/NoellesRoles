@@ -367,4 +367,17 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
         this.boundTargetUUID = tag.hasUUID("boundTargetUUID") ? tag.getUUID("boundTargetUUID") : null;
         this.boundTargetName = tag.contains("boundTargetName") ? tag.getString("boundTargetName") : "";
     }
+
+    @Override
+    public void clear() {
+        this.energy = 0;
+        this.isGazing = false;
+        this.gazingTargetCount = 0;
+        this.isAdmirerMarked = true;
+        this.hasTransformed = false;
+        this.energyTickCounter = 0;
+        this.boundTargetUUID = null;
+        this.boundTargetName = "";
+        this.sync();
+    }
 }
