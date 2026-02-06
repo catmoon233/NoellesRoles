@@ -6,7 +6,6 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
@@ -14,13 +13,13 @@ import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.ConfigWorldComponent;
 import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 
 @Mixin(PlayerRenderer.class)
@@ -57,6 +56,18 @@ public abstract class MorphlingRendererMixin {
                 }
 
             }
+            // 检查双重人格组件 - 如果玩家不是活跃人格，则显示主人格的皮肤
+            var splitPersonalityComponent = SplitPersonalityComponent.KEY.get(abstractClientPlayerEntity);
+            if (splitPersonalityComponent != null && !splitPersonalityComponent.isCurrentlyActive()) {
+                AbstractClientPlayer mainPlayer = (AbstractClientPlayer) abstractClientPlayerEntity.level().getPlayerByUUID(splitPersonalityComponent.getMainPersonality());
+                if (mainPlayer != null && mainPlayer != abstractClientPlayerEntity) {
+                    // 获取主人格的皮肤纹理
+                    cir.setReturnValue(getTextureLocation(mainPlayer));
+                    cir.cancel();
+                    return;
+                }
+            }
+            
             final var morphlingPlayerComponent = MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity);
             if (morphlingPlayerComponent != null && morphlingPlayerComponent.getMorphTicks() > 0 ) {
                 if (abstractClientPlayerEntity.getCommandSenderWorld().getPlayerByUUID((MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity)).disguise) != null) {
@@ -70,7 +81,7 @@ public abstract class MorphlingRendererMixin {
                     Log.info(LogCategory.GENERAL, "Morphling disguise is null!!!");
 
                 }
-                if (Minecraft.getInstance().player != null && MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise.equals(Minecraft.getInstance().player.getUUID())) {
+                if (Minecraft.getInstance().player != null && MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise != null && MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise.equals(Minecraft.getInstance().player.getUUID())) {
                     if (Minecraft.getInstance().player != abstractClientPlayerEntity) { // 防止自己伪装成自己导致递归
                         cir.setReturnValue(getTextureLocation(Minecraft.getInstance().player));
                         cir.cancel();
@@ -87,8 +98,17 @@ public abstract class MorphlingRendererMixin {
     
     @WrapOperation(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getSkin()Lnet/minecraft/client/resources/PlayerSkin;"))
     PlayerSkin renderArm(AbstractClientPlayer instance, Operation<PlayerSkin> original) {
+        // 检查双重人格组件 - 如果玩家不是活跃人格，则返回主人格的皮肤
+        var splitPersonalityComponent = SplitPersonalityComponent.KEY.get(instance);
+        if (splitPersonalityComponent != null && !splitPersonalityComponent.isCurrentlyActive()) {
+            AbstractClientPlayer mainPlayer = (AbstractClientPlayer) instance.level().getPlayerByUUID(splitPersonalityComponent.getMainPersonality());
+            if (mainPlayer != null && mainPlayer != instance) {
+                return mainPlayer.getSkin();
+            }
+        }
+        
         var component = MorphlingPlayerComponent.KEY.get(instance);
-        if (component != null && component.getMorphTicks() > 0) {
+        if (component != null && component.getMorphTicks() > 0 && component.disguise != null) {
             if (instance.getCommandSenderWorld().getPlayerByUUID(component.disguise) != null) {
                  AbstractClientPlayer disguisePlayer = (AbstractClientPlayer) instance.getCommandSenderWorld().getPlayerByUUID(component.disguise);
                  if (disguisePlayer != null && disguisePlayer != instance) { // 防止自己伪装成自己导致递归
@@ -98,6 +118,7 @@ public abstract class MorphlingRendererMixin {
                 Log.info(LogCategory.GENERAL, "Morphling disguise is null!!!");
             }
         }
+        
         if (TMMClient.moodComponent != null) {
             if ((ConfigWorldComponent.KEY.get(instance.level())).insaneSeesMorphs && TMMClient.moodComponent.isLowerThanDepressed() && NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.containsKey(instance.getUUID())) {
                 var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(instance.getUUID()));
@@ -108,5 +129,7 @@ public abstract class MorphlingRendererMixin {
         }
         return original.call(instance);
     }
+
+
 
 }
