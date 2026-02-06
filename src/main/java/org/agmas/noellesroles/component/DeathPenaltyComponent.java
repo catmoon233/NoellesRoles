@@ -128,9 +128,4 @@ public class DeathPenaltyComponent implements RoleComponent {
     public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putLong("penaltyExpiry", this.penaltyExpiry);
     }
-
-    @Override
-    public void clear() {
-        this.reset();
-    }
 }

@@ -720,4 +720,26 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
         this.isPuppeteerMarked = tag.contains("isPuppeteerMarked") && tag.getBoolean("isPuppeteerMarked");
         this.usedPuppetCount = tag.contains("usedPuppetCount") ? tag.getInt("usedPuppetCount") : 0;
     }
+
+    @Override
+    public void clear() {
+        this.phase = 0;
+        this.collectedBodies = 0;
+        this.collectedBodyUuids.clear();
+        this.collectCooldown = 0;
+        this.abilityCooldown = 0;
+        this.isControllingPuppet = false;
+        this.puppetControlTimer = 0;
+        this.originalPosition = Vec3.ZERO;
+        this.originalYaw = 0;
+        this.originalPitch = 0;
+        this.puppetEntityUuid = null;
+        this.puppetSkinUuid = null;
+        this.puppetRole = null;
+        this.isPuppeteerMarked = true;
+        this.originalInventory = NonNullList.withSize(41, ItemStack.EMPTY);
+        this.puppetInventory = NonNullList.withSize(41, ItemStack.EMPTY);
+        this.usedPuppetCount = 0;
+        this.sync();
+    }
 }
