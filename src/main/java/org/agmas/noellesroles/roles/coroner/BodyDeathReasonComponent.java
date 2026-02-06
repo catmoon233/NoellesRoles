@@ -21,8 +21,14 @@ public class BodyDeathReasonComponent implements RoleComponent, ServerTickingCom
     public boolean vultured = false;
     public PlayerBodyEntity playerBodyEntity;
 
+    @Override
     public void reset() {
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public BodyDeathReasonComponent(PlayerBodyEntity playerBodyEntity) {

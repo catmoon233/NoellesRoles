@@ -26,11 +26,17 @@ public class ThiefPlayerComponent implements RoleComponent {
         return player;
     }
 
+    @Override
     public void reset() {
         this.blackoutPrice = 100;
         this.hasBlackoutEffect = false;
         this.hasThiefsHonor = false;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public void sync() {

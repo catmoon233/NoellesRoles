@@ -36,10 +36,16 @@ public class NoiseMakerPlayerComponent implements RoleComponent, ServerTickingCo
         return player;
     }
 
+    @Override
     public void reset() {
         this.isActive = true;
         this.cooldown = 0;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public NoiseMakerPlayerComponent(Player player) {

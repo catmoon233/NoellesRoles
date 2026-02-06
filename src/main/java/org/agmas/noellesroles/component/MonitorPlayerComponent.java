@@ -58,10 +58,16 @@ public class MonitorPlayerComponent implements RoleComponent, ServerTickingCompo
     /**
      * 重置组件状态
      */
+    @Override
     public void reset() {
         this.markedTarget = null;
         this.cooldown = 0;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public float getCooldownSeconds() {

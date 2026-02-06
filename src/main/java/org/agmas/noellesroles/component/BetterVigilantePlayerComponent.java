@@ -60,10 +60,16 @@ public class BetterVigilantePlayerComponent implements RoleComponent, ServerTick
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
      */
+    @Override
     public void reset() {
         this.lastStandActivated = false;
 
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        clearAll();
     }
 
     /**

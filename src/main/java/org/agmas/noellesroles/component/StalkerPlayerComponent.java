@@ -154,6 +154,7 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
      */
+    @Override
     public void reset() {
         this.phase = 1;
         this.energy = 0;
@@ -179,6 +180,11 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
         this.ph2_energy_need = playerCount * 2;
 
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        clearAll();
     }
 
     /**

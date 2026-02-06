@@ -89,6 +89,7 @@ public class PsychologistPlayerComponent implements RoleComponent, ServerTicking
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
      */
+    @Override
     public void reset() {
         this.cooldown = 0;
         this.healingTarget = null;
@@ -97,6 +98,11 @@ public class PsychologistPlayerComponent implements RoleComponent, ServerTicking
         this.isHealing = false;
         this.targetLastPos = null;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     /**

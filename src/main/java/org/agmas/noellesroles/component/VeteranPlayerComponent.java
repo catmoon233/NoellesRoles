@@ -39,9 +39,15 @@ public class VeteranPlayerComponent implements RoleComponent {
     /**
      * 重置组件状态
      */
+    @Override
     public void reset() {
         this.knifeUsed = false;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
     
     /**

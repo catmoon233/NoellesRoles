@@ -112,12 +112,18 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
      */
+    @Override
     public void reset() {
         this.abilityCooldown = 0;
         this.isActive = true;
         this.currentMusicIndex = -1;
         this.musicRemainingTicks = 0;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        clearAll();
     }
 
     /**

@@ -78,11 +78,17 @@ public class BoxerPlayerComponent implements RoleComponent, ServerTickingCompone
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
      */
+    @Override
     public void reset() {
         this.cooldown = INITIAL_COOLDOWN; // 开局60秒冷却
         this.invulnerabilityTicks = 0;
         this.isInvulnerable = false;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     @Override

@@ -49,6 +49,11 @@ public class InControlCCA implements RoleComponent, ServerTickingComponent {
     }
 
     @Override
+    public void clear() {
+        this.reset();
+    }
+
+    @Override
     public void readFromNbt(CompoundTag compoundTag, HolderLookup.Provider provider) {
         isControlling = compoundTag.getBoolean("isControlling");
         controlTimer = compoundTag.getInt("controlTimer");

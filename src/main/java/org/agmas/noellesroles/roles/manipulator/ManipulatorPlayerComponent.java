@@ -61,12 +61,18 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
         this.cooldown = 0;
     }
 
+    @Override
     public void reset() {
         this.target = null;
         this.isControlling = false;
         this.cooldown = 0;
 
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        clearAll();
     }
 
     public void clearAll() {

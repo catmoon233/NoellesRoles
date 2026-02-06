@@ -102,6 +102,7 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
      */
+    @Override
     public void reset() {
         this.trapCharges = MAX_TRAP_CHARGES;
         this.rechargeTimer = 0;
@@ -110,6 +111,11 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
         this.prisonTimers.clear();
         this.prisonPositions.clear();
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
     
     /**

@@ -37,9 +37,16 @@ public class PatrollerPlayerComponent implements RoleComponent, ServerTickingCom
         return player == this.player || GameFunctions.isPlayerAliveAndSurvival(player);
     }
 
+
+    @Override
     public void reset() {
         this.hasTriggered = false;
         sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public void sync() {

@@ -21,9 +21,15 @@ public class VoodooPlayerComponent implements RoleComponent {
     public Player getPlayer() {
         return player;
     }
+    @Override
     public void reset() {
         this.target = player.getUUID();
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public VoodooPlayerComponent(Player player) {

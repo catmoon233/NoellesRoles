@@ -47,9 +47,15 @@ public class InsaneKillerPlayerComponent
         return player;
     }
 
+    @Override
     public void reset() {
         isActive = false;
         cooldown = 200;
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public void toggleAbility() {

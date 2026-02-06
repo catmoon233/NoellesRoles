@@ -24,12 +24,18 @@ public class RecallerPlayerComponent implements RoleComponent, ServerTickingComp
     public Player getPlayer() {
         return player;
     }
+    @Override
     public void reset() {
         this.placed = false;
         this.x = 0;
         this.y = 0;
         this.z = 0;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public RecallerPlayerComponent(Player player) {

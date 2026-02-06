@@ -36,12 +36,18 @@ public class ExecutionerPlayerComponent implements RoleComponent, ServerTickingC
     /**
      * 重置组件状态
      */
+    @Override
     public void reset() {
         this.target = null;
         this.targetSelected = false;
         this.won = false;
         this.shopUnlocked = false;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public ExecutionerPlayerComponent(Player player) {

@@ -27,9 +27,15 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
     public int morphTicks = 0;
     public int tickR = 0;
 
+    @Override
     public void reset() {
         this.stopMorph();
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     @Override

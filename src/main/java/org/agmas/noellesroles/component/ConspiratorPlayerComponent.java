@@ -86,11 +86,17 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
     /**
      * 重置组件状态
      */
+    @Override
     public void reset() {
         this.targetList.clear();
         this.hasKilled = false;
         this.wrongGuessCount = 0;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     /**

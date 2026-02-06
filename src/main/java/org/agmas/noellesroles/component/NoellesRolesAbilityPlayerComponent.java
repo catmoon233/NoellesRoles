@@ -52,11 +52,17 @@ public class NoellesRolesAbilityPlayerComponent implements RoleComponent, Server
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
      */
+    @Override
     public void reset() {
         this.cooldown = 0;
         this.charges = -1;
         this.maxCharges = -1;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
     
     /**

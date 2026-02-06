@@ -130,6 +130,7 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
      */
+    @Override
     public void reset() {
         this.phase = 1;
         this.collectedBodies = 0;

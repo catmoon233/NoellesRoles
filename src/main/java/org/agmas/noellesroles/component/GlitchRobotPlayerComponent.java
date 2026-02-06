@@ -40,6 +40,11 @@ public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingC
     }
 
     @Override
+    public void clear() {
+        this.reset();
+    }
+
+    @Override
     public void serverTick() {
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.GLITCH_ROBOT)) {

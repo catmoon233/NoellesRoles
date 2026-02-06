@@ -41,6 +41,7 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
         return player;
     }
 
+    @Override
     public void reset() {
         this.isActive = true;
         this.cooldown = 0;
@@ -48,6 +49,11 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
         this.abilityUnlocked = false;
         this.unlockNotified = false;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public GhostPlayerComponent(Player player) {

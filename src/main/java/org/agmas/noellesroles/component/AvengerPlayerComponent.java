@@ -58,6 +58,7 @@ public class AvengerPlayerComponent implements RoleComponent, ServerTickingCompo
     /**
      * 重置组件状态
      */
+    @Override
     public void reset() {
         this.targetPlayer = null;
         this.activated = false;
@@ -65,6 +66,11 @@ public class AvengerPlayerComponent implements RoleComponent, ServerTickingCompo
         this.targetName = "";
         this.bound = false;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     @Override

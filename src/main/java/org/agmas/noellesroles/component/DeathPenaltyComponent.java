@@ -108,9 +108,15 @@ public class DeathPenaltyComponent implements RoleComponent {
         return true;
     }
 
+    @Override
     public void reset() {
         this.penaltyExpiry = 0;
         ModComponents.DEATH_PENALTY.sync(player);
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     @Override

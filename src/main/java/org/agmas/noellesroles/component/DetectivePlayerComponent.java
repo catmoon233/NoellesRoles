@@ -55,10 +55,16 @@ public class DetectivePlayerComponent implements RoleComponent, ServerTickingCom
     /**
      * 重置组件状态
      */
+    @Override
     public void reset() {
         this.cooldown = 0;
         this.inspectingTarget = null;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
     
     /**

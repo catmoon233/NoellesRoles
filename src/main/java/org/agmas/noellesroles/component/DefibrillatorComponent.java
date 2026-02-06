@@ -44,6 +44,7 @@ public class DefibrillatorComponent implements RoleComponent {
         ModComponents.DEFIBRILLATOR.sync(player);
     }
 
+    @Override
     public void reset() {
         this.protectionExpiry = 0;
         this.isDead = false;
@@ -51,6 +52,11 @@ public class DefibrillatorComponent implements RoleComponent {
         this.corpseEntityId = null;
         this.deathPos = null;
         ModComponents.DEFIBRILLATOR.sync(player);
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     @Override

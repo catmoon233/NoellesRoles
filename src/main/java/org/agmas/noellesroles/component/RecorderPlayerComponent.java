@@ -50,6 +50,7 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         this.player = player;
     }
 
+    @Override
     public void reset() {
         this.guesses.clear();
         this.availableRoles.clear();
@@ -57,6 +58,11 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         this.wrongGuessCount = 0;
         this.rolesInitialized = false;
         ModComponents.RECORDER.sync(this.player);
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public List<ResourceLocation> getAvailableRoles() {

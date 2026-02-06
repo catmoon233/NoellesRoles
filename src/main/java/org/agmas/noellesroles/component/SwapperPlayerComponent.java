@@ -115,4 +115,9 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
         target1 = null;
         target2 = null;
     }
+
+    @Override
+    public void clear() {
+        this.reset();
+    }
 }

@@ -88,12 +88,18 @@ public class SlipperyGhostPlayerComponent implements RoleComponent, ServerTickin
     /**
      * 重置组件
      */
+    @Override
     public void reset() {
         this.tickCounter = 0;
         this.blankCartridgeCooldown = 0;
         this.smokeGrenadeCooldown = 0;
         this.blackoutCooldown = 0;
         sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
     
     /**

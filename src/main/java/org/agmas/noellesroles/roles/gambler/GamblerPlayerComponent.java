@@ -48,12 +48,18 @@ public class GamblerPlayerComponent implements RoleComponent, ServerTickingCompo
         return player;
     }
 
+    @Override
     public void reset() {
         this.usedAbility = false;
         this.availableRoles.clear();
         this.selectedRole = null;
         this.roleDrawTimer = 0;
         this.sync();
+    }
+
+    @Override
+    public void clear() {
+        this.reset();
     }
 
     public GamblerPlayerComponent(Player player) {
