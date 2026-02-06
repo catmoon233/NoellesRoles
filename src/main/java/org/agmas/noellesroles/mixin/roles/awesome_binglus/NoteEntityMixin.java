@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.mixin.roles.awesome_binglus;
 
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -25,13 +26,16 @@ public abstract class NoteEntityMixin extends Entity {
         NoteEntity note = (NoteEntity) (Object) this;
         final var attached = note.getAttached(ModRoles.ENTITY_NOTE_MAKER);
         if (attached != null) {
-            if (note.tickCount >= 20 * 30){
+            if (note.tickCount >= 20 * 60){
                 note.remove(Entity.RemovalReason.DISCARDED);
             }else {
                 try {
                     final Optional<? extends Player> first = level().players().stream().filter(player -> player.getUUID().toString().equals(attached)).findFirst();
                     if (first.isPresent()){
                         Player player = first.get();
+                        if (!GameFunctions.isPlayerAliveAndSurvival(player)){
+                            note.remove(Entity.RemovalReason.DISCARDED);
+                        }
                         double yawRadians = Math.toRadians(player.getYRot());
                         double offsetX = -Math.sin(yawRadians) * -0.2; // 从玩家位置向后偏移2格
                         double offsetZ = Math.cos(yawRadians) * -0.2;

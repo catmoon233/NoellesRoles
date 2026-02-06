@@ -1,7 +1,5 @@
 package org.agmas.noellesroles.mixin.client.morphling;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.fabricmc.loader.impl.util.log.Log;
@@ -22,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 
 @Mixin(CapeLayer.class)
@@ -63,6 +62,18 @@ public abstract class MorphlingCapeRendererMixin {
                 }
 
             }
+            // 检查双重人格组件 - 如果玩家不是活跃人格，则显示主人格的斗篷
+            var splitPersonalityComponent = SplitPersonalityComponent.KEY.get(abstractClientPlayerEntity);
+            if (splitPersonalityComponent != null && !splitPersonalityComponent.isCurrentlyActive()) {
+                AbstractClientPlayer mainPlayer = (AbstractClientPlayer) abstractClientPlayerEntity.level().getPlayerByUUID(splitPersonalityComponent.getMainPersonality());
+                if (mainPlayer != null && mainPlayer != abstractClientPlayerEntity) {
+                    PlayerSkin mainSkin = mainPlayer.getSkin();
+                    if (mainSkin != null) {
+                        return mainSkin.capeTexture();
+                    }
+                }
+            }
+            
             final var morphlingPlayerComponent = MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity);
             if (morphlingPlayerComponent != null && morphlingPlayerComponent.getMorphTicks() > 0 ) {
                 if (abstractClientPlayerEntity.getCommandSenderWorld().getPlayerByUUID((MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity)).disguise) != null) {
@@ -76,7 +87,7 @@ public abstract class MorphlingCapeRendererMixin {
                     Log.info(LogCategory.GENERAL, "Morphling disguise is null!!!");
 
                 }
-                if (Minecraft.getInstance().player != null && MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise.equals(Minecraft.getInstance().player.getUUID())) {
+                if (Minecraft.getInstance().player != null && MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise != null && MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise.equals(Minecraft.getInstance().player.getUUID())) {
                     if (Minecraft.getInstance().player != abstractClientPlayerEntity) { // 防止自己伪装成自己导致递归
                         return Minecraft.getInstance().player.getSkin().capeTexture();
                     }
