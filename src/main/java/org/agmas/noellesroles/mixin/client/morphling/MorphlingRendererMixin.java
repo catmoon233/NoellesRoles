@@ -108,7 +108,7 @@ public abstract class MorphlingRendererMixin {
         }
         
         var component = MorphlingPlayerComponent.KEY.get(instance);
-        if (component != null && component.getMorphTicks() > 0) {
+        if (component != null && component.getMorphTicks() > 0 && component.disguise != null) {
             if (instance.getCommandSenderWorld().getPlayerByUUID(component.disguise) != null) {
                  AbstractClientPlayer disguisePlayer = (AbstractClientPlayer) instance.getCommandSenderWorld().getPlayerByUUID(component.disguise);
                  if (disguisePlayer != null && disguisePlayer != instance) { // 防止自己伪装成自己导致递归
@@ -118,6 +118,7 @@ public abstract class MorphlingRendererMixin {
                 Log.info(LogCategory.GENERAL, "Morphling disguise is null!!!");
             }
         }
+        
         if (TMMClient.moodComponent != null) {
             if ((ConfigWorldComponent.KEY.get(instance.level())).insaneSeesMorphs && TMMClient.moodComponent.isLowerThanDepressed() && NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.containsKey(instance.getUUID())) {
                 var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(instance.getUUID()));
@@ -128,5 +129,7 @@ public abstract class MorphlingRendererMixin {
         }
         return original.call(instance);
     }
+
+
 
 }
