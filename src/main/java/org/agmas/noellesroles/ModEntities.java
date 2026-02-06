@@ -70,6 +70,7 @@ public class ModEntities {
     /**
      * 锁实体 - 保护门不被撬锁器打开
      */
+    @SuppressWarnings("deprecation")
     public static final EntityType<LockEntity> LOCK_ENTITY = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "lock"),

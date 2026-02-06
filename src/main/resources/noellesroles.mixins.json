@@ -12,7 +12,6 @@
     "PlayerResetMixin",
     "SpawnMixin",
     "accessor.PlayerPoisonComponentAccessor",
-    "client.posioner.AntidoteReagentMixin",
     "roles.ConspiratorPlayerMixin",
     "roles.avengerKill.AvengerKillMixin",
     "roles.awesome_binglus.NoteEntityMixin",
