@@ -46,6 +46,7 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.harpymodloader.modded_murder.RoleAssignmentManager;
 import org.agmas.noellesroles.commands.*;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
@@ -205,7 +206,8 @@ public class Noellesroles implements ModInitializer {
         HSRSounds.init();
 
         // 设置角色最大数量
-        Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
+        // 和医生一起生成
         Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, 1);
@@ -266,7 +268,7 @@ public class Noellesroles implements ModInitializer {
                 "noellesroles:mint_candies"));
 
         // 同时出现
-        Harpymodloader.Occupations_Roles.put(ModRoles.POISONER, ModRoles.DOCTOR);
+        RoleAssignmentManager.addOccupationRole(ModRoles.DOCTOR, ModRoles.POISONER);
         // 设置刀击中效果
 
         // 注册血液粒子工厂
