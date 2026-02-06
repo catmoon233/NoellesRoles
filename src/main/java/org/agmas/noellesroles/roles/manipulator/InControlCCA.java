@@ -1,24 +1,29 @@
 package org.agmas.noellesroles.roles.manipulator;
 
-import dev.doctor4t.trainmurdermystery.api.RoleComponent;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import java.util.UUID;
 
 import org.agmas.noellesroles.Noellesroles;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
+
+import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public class InControlCCA implements RoleComponent, ServerTickingComponent {
     public static final ComponentKey<InControlCCA> KEY = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "in_control"),
             InControlCCA.class);
 
-    public Player controller;
+    public UUID controller;
     public Player player;
     public boolean isControlling = false;
     public int controlTimer;
@@ -57,26 +62,51 @@ public class InControlCCA implements RoleComponent, ServerTickingComponent {
     public void readFromNbt(CompoundTag compoundTag, HolderLookup.Provider provider) {
         isControlling = compoundTag.getBoolean("isControlling");
         controlTimer = compoundTag.getInt("controlTimer");
+        if (compoundTag.hasUUID("controller"))
+            controller = compoundTag.getUUID("controller");
     }
 
     @Override
     public void writeToNbt(CompoundTag compoundTag, HolderLookup.Provider provider) {
         compoundTag.putBoolean("isControlling", isControlling);
         compoundTag.putInt("controlTimer", controlTimer);
+        if (controller != null)
+            compoundTag.putUUID("controller", controller);
     }
 
     public void stopControl() {
         this.isControlling = false;
         this.controlTimer = 0;
         this.controller = null;
-
+        if (this.player != null) {
+            this.player.displayClientMessage(Component.translatable("message.noellesroles.manipulator.control_ended")
+                    .withStyle(ChatFormatting.GREEN), true);
+        }
+        this.reset();
         this.sync();
+    }
+
+    public void stopControlFromUpstream(boolean isTimeout) {
+        if (this.controller != null) {
+            if ((player instanceof ServerPlayer sp)) {
+                var controller_p = sp.level().getPlayerByUUID(this.controller);
+                var controllerComponent = ManipulatorPlayerComponent.KEY.get(controller_p);
+                if (controllerComponent != null) {
+                    controllerComponent.stopControl(isTimeout);
+                    this.controller = null;
+                }
+            }
+        }
+        this.stopControl();
+        this.reset();
     }
 
     @Override
     public void serverTick() {
         if (!GameFunctions.isPlayerAliveAndSurvival(player)) {
-            this.reset();
+            if (this.isControlling) {
+                this.stopControlFromUpstream(false);
+            }
             return;
         }
         if (isControlling) {
@@ -91,16 +121,7 @@ public class InControlCCA implements RoleComponent, ServerTickingComponent {
             }
 
             if (controlTimer <= 0) {
-                if (this.controller != null) {
-                    var controllerComponent = ManipulatorPlayerComponent.KEY.get(this.controller);
-                    if (controllerComponent != null)
-                        controllerComponent.stopControl(true);
-                    else
-                        stopControl();
-                } else {
-                    stopControl();
-
-                }
+                this.stopControlFromUpstream(true);
             }
         }
     }

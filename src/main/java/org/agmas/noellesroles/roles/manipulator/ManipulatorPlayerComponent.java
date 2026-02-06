@@ -88,7 +88,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     }
 
     public boolean canUseAbility() {
-        return !isControlling && cooldown <= 0;
+        return !isControlling;
     }
 
     /**
@@ -100,6 +100,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
             return;
         if (!(player instanceof ServerPlayer sp))
             return;
+        // player.displayClientMessage(Component.literal("test # start"), true);
         stopControl(false);
         Player targetPlayer = player.level().getPlayerByUUID(targetUuid);
         if (targetPlayer == null || !(targetPlayer instanceof ServerPlayer))
@@ -120,15 +121,17 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
                 alivePlayerCount++;
             }
         }
-        percent = Math.max(0.5f, (float) alivePlayerCount / playerCount);
+        percent = Math.clamp(0.5f, 1f, (float) alivePlayerCount / playerCount);
         int controlTime = (int) ((float) CONTROL_DURATION * percent);
         this.target = targetUuid;
         final var inControlCCA = InControlCCA.KEY.get(targetPlayer);
         inControlCCA.isControlling = true;
         inControlCCA.controlTimer = controlTime;
-        inControlCCA.controller = player;
+        inControlCCA.controller = player.getUUID();
         inControlCCA.sync();
         this.sync();
+        // this.cooldown = CONTROL_COOLDOWN;
+
     }
 
     /**
@@ -141,16 +144,20 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
         if (!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        Player targetPlayer = player.level().getPlayerByUUID(target);
-        if (targetPlayer != null) {
-            InControlCCA.KEY.get(targetPlayer).stopControl();
+        if (target != null) {
+            Player targetPlayer = player.level().getPlayerByUUID(target);
+            if (targetPlayer != null) {
+                InControlCCA.KEY.get(targetPlayer).stopControl();
+            }
+        } else {
+            isControlling = false;
+            target = null;
+            return;
         }
-
         isControlling = false;
         target = null;
-
         // 设置冷却
-        cooldown = CONTROL_COOLDOWN;
+        // cooldown = CONTROL_COOLDOWN;
 
         // 发送消息
         if (timeout) {
@@ -187,13 +194,28 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     @Override
     public void serverTick() {
 
-        if (!GameFunctions.isPlayerAliveAndSurvival(player))
+        if (!GameFunctions.isPlayerAliveAndSurvival(player)) {
+            if (this.isControlling) {
+                this.stopControl(false);
+            }
             return;
+        }
 
-        if (cooldown > 0) {
-            cooldown--;
-            if (cooldown % 20 == 0) {
-                sync();
+        if (isControlling) {
+            if (target != null) {
+                long currentTime = player.level().getGameTime();
+                if (currentTime % 20 == 0) {
+                    if ((player instanceof ServerPlayer serverPlayer)) {
+                        Player targetPlayer = serverPlayer.level().getPlayerByUUID(target);
+                        if (targetPlayer != null) {
+                            if (!InControlCCA.KEY.get(targetPlayer).isControlling) {
+                                stopControl(false);
+                            }
+                        } else {
+                            stopControl(false);
+                        }
+                    }
+                }
             }
         }
     }
@@ -204,7 +226,6 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
             tag.putUUID("target", this.target);
         }
         tag.putBoolean("isControlling", this.isControlling);
-        tag.putInt("cooldown", this.cooldown);
 
     }
 
@@ -212,7 +233,7 @@ public class ManipulatorPlayerComponent implements RoleComponent, ServerTickingC
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.target = tag.contains("target") ? tag.getUUID("target") : null;
         this.isControlling = tag.contains("isControlling") && tag.getBoolean("isControlling");
-        this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
+        // this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
 
     }
 }

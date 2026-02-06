@@ -18,7 +18,6 @@ public class PlayerControlMixin {
 
     // 随机移动数据类
 
-
     @Inject(method = "aiStep", at = @At("HEAD"))
     public void noe$aiStep(CallbackInfo ci) {
         Player player = (Player) (Object) this;
@@ -29,7 +28,7 @@ public class PlayerControlMixin {
                 final var inControlCCA = InControlCCA.KEY.get(serverPlayer);
                 if (inControlCCA.isControlling) {
                     // 只有生存模式的玩家才会随机移动
-                    if (!serverPlayer.isAlive() || serverPlayer.isSpectator() || serverPlayer.isCreative()) {
+                    if (!GameFunctions.isPlayerAliveAndSurvival(serverPlayer)) {
                         RandomMoveData.randomMoveData.remove(serverPlayer);
                         return;
                     }
@@ -37,7 +36,8 @@ public class PlayerControlMixin {
                     // 如果玩家正在控制（有输入），则停止随机移动
 
                     // 获取或创建随机移动数据
-                    RandomMoveData data = RandomMoveData.randomMoveData.computeIfAbsent(serverPlayer, k -> new RandomMoveData());
+                    RandomMoveData data = RandomMoveData.randomMoveData.computeIfAbsent(serverPlayer,
+                            k -> new RandomMoveData());
 
                     // 更新移动数据
                     data.tick();
@@ -48,8 +48,7 @@ public class PlayerControlMixin {
                         data.moveDirection = new Vec3(
                                 Math.sin(angle) * RandomMoveData.MOVE_SPEED,
                                 0,
-                                Math.cos(angle) * RandomMoveData.MOVE_SPEED
-                        );
+                                Math.cos(angle) * RandomMoveData.MOVE_SPEED);
                     }
 
                     // 应用移动
@@ -61,8 +60,6 @@ public class PlayerControlMixin {
             }
         }
     }
-
-
 
     private void applyRandomMovement(ServerPlayer player, RandomMoveData data) {
         // 检查玩家是否在地面或可以站立的位置
