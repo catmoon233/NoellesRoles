@@ -3,6 +3,8 @@ package org.agmas.noellesroles.mixin.client.bartender;
 import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
+import dev.doctor4t.trainmurdermystery.index.TMMParticles;
+
 import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,7 +27,7 @@ public class DefenseVialViewMixin {
         if (blockEntity instanceof BeveragePlateBlockEntity tray) {
             if (tray.getPoisoner() != null) {
                 if (((GameWorldComponent) GameWorldComponent.KEY.get(world)).isRole(UUID.fromString(tray.getPoisoner()), ModRoles.BARTENDER) && CanSeePoison.EVENT.invoker().visible(Minecraft.getInstance().player)) {
-                    world.addParticle(ParticleTypes.HAPPY_VILLAGER, (double) ((float) pos.getX() + 0.5F), (double) pos.getY(), (double) ((float) pos.getZ() + 0.5F), (double) 0.0F, (double) 0.15F, (double) 0.0F);
+                    world.addParticle(TMMParticles.POISON, (double) ((float) pos.getX() + 0.5F), (double) pos.getY(), (double) ((float) pos.getZ() + 0.5F), (double) 0.0F, (double) 0.15F, (double) 0.0F);
                     ci.cancel();
                 }
             }

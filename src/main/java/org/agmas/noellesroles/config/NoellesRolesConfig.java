@@ -92,9 +92,6 @@ public class NoellesRolesConfig {
     @SerialEntry(comment = "Morphling - Morph cooldown in seconds")
     public int morphlingMorphCooldown = 20;
 
-    @SerialEntry(comment = "Bartender - Glow duration in seconds")
-    public int bartenderGlowDuration = 40;
-
 //    @SerialEntry(comment = "Recaller - Maximum recall distance in blocks")
 //    public int recallerMaxDistance = 50;
 //

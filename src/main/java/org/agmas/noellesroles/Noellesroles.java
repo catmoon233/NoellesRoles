@@ -320,7 +320,7 @@ public class Noellesroles implements ModInitializer {
         looseItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
         looseItems.add(() -> TMMItems.DERRINGER.getDefaultInstance());
         looseItems.add(() -> TMMItems.KNIFE.getDefaultInstance());
-        looseItems.add(() -> ModItems.DEFENSE_VIAL.getDefaultInstance());
+        looseItems.add(() -> TMMItems.DEFENSE_VIAL.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(TMMRoles.LOOSE_END, looseItems);
 
         // // 强盗初始物品
@@ -599,7 +599,7 @@ public class Noellesroles implements ModInitializer {
                 ModRoles.JESTER_ID, Noellesroles.FRAMING_ROLES_SHOP);
         {
             List<ShopEntry> entries = new ArrayList<>();
-            entries.add(new ShopEntry(ModItems.DEFENSE_VIAL.getDefaultInstance(), 200, ShopEntry.Type.POISON));
+            entries.add(new ShopEntry(TMMItems.DEFENSE_VIAL.getDefaultInstance(), 200, ShopEntry.Type.POISON));
 
             ShopContent.customEntries.put(
                     ModRoles.BARTENDER_ID, entries);
@@ -814,14 +814,16 @@ public class Noellesroles implements ModInitializer {
         OnTeammateKilledTeammate.EVENT.register((victim, killer, isInnocent, deathReason) -> {
             if (GameFunctions.isPlayerAliveAndSurvival(killer)) {
                 if (isInnocent) {
+                    GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
+                    if (gameWorldComponent.isRole(victim, ModRoles.VOODOO)) {
+                        return;
+                    }
                     if (NoellesRolesConfig.HANDLER.instance().accidentalKillPunishment) {
                         if (deathReason.getPath().equals("revolver_shot")
                                 || deathReason.getPath().equals("bat_hit")
                                 || deathReason.getPath().equals("gun_shot")
                                 || deathReason.getPath().equals("knife_stab")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
-                        } else {
-                            LoggerFactory.getLogger(MOD_ID).warn(deathReason.toString());
                         }
                     }
                 }
