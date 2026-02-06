@@ -41,7 +41,8 @@ public class LockMixin {
         BlockPos lockPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos;
         boolean canBeAffectedByLock =
                 // 如果该物品会被锁影响，就继续加|| xxx 即可，然后在下面的if语句里具体操作
-                player.getMainHandItem().is(TMMItems.LOCKPICK) || player.getMainHandItem().is(ModItems.MASTER_KEY_P);
+                player.getMainHandItem().is(TMMItems.LOCKPICK) || player.getMainHandItem().is(ModItems.MASTER_KEY_P)
+                        || player.getMainHandItem().is(ModItems.MASTER_KEY);
         if (canBeAffectedByLock) {
             // 当当前门上无锁时，检查附近门的情况：实现锁对附近门的影响
             if (LockEntityManager.getInstance().getLockEntity(lockPos) == null) {
@@ -71,8 +72,7 @@ public class LockMixin {
 
             if (LockEntityManager.getInstance().getLockEntity(lockPos) != null) {
                 // 根据手中物品决定锁的影响
-                if(player.getMainHandItem().is(TMMItems.LOCKPICK))
-                {
+                if (player.getMainHandItem().is(TMMItems.LOCKPICK)) {
                     // 当手持撬锁器且该门上锁时：进入撬锁小游戏
                     player.displayClientMessage(
                             Component.translatable("message.lock.game.start").withStyle(ChatFormatting.AQUA), true);
@@ -87,9 +87,7 @@ public class LockMixin {
                     }
                     // 返回 false 阻止原始方法执行
                     cir.setReturnValue(InteractionResult.FAIL);
-                }
-                else
-                {
+                } else {
                     // 默认行为：阻止原操作
                     cir.setReturnValue(InteractionResult.FAIL);
                 }
