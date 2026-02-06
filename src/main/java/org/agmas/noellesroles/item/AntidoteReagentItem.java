@@ -1,15 +1,18 @@
 package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 
 public class AntidoteReagentItem extends Item {
     public AntidoteReagentItem(Properties properties) {
@@ -27,8 +30,7 @@ public class AntidoteReagentItem extends Item {
     public void releaseUsing(ItemStack stack, Level level, LivingEntity user, int timeCharged) {
         if (!level.isClientSide && user instanceof Player player) {
             if (this.getUseDuration(stack, user) - timeCharged >= 10) {
-                net.minecraft.world.phys.HitResult hitResult = org.agmas.noellesroles.repack.items.AntidoteItem
-                        .getAntidoteTarget(player);
+                net.minecraft.world.phys.HitResult hitResult = getTarget(player);
 
                 if (hitResult instanceof net.minecraft.world.phys.EntityHitResult entityHitResult) {
                     if (entityHitResult.getEntity() instanceof Player target) {
@@ -52,9 +54,12 @@ public class AntidoteReagentItem extends Item {
         }
     }
 
+    public static HitResult getTarget(Player user) {
+        return ProjectileUtil.getHitResultOnViewVector(user, entity -> entity instanceof Player player && GameFunctions.isPlayerAliveAndSurvival(player), 30f);
+    }
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return 72000;
+        return 200;
     }
 
     @Override

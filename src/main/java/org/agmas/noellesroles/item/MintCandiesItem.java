@@ -2,6 +2,7 @@ package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -48,6 +49,8 @@ public class MintCandiesItem extends Item {
         
         // 开始使用（吃）
         user.startUsingItem(hand);
+        final var playerShopComponent = PlayerShopComponent.KEY.get(user);
+        playerShopComponent.setBalance(playerShopComponent.balance +15);
         return InteractionResultHolder.consume(itemStack);
     }
     
