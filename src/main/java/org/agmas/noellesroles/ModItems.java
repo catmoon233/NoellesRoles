@@ -18,7 +18,10 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 import org.agmas.noellesroles.item.*;
+import org.agmas.noellesroles.item.charge_item.AntidoteChargeItem;
 import org.agmas.noellesroles.item.charge_item.AntidoteReagentChargeItem;
+import org.agmas.noellesroles.item.charge_item.ToxinChargeItem;
+import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.utils.LocalDateData;
 
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -241,6 +244,8 @@ public class ModItems {
 
         static {
                 ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
+                ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());
+                ChargeableItemRegistry.register(HSRItems.ANTIDOTE, new AntidoteChargeItem());
         }
         // public static final Item SHERIFF_GUN_MAINTENANCE = register(
         // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),

@@ -55,7 +55,7 @@ public class AntidoteReagentItem extends Item {
     }
 
     public static HitResult getTarget(Player user) {
-        return ProjectileUtil.getHitResultOnViewVector(user, entity -> entity instanceof Player player && GameFunctions.isPlayerAliveAndSurvival(player), 30f);
+        return ProjectileUtil.getHitResultOnViewVector(user, entity -> entity instanceof Player player && GameFunctions.isPlayerAliveAndSurvival(player), 10f);
     }
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {

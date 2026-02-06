@@ -14,7 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class HSRConstants {
-    public static int toxinPoisonTime = getInTicks(0, 10);
+    public static int toxinPoisonTime = getInTicks(0, 15);
     float banditRevolverDropChance = 0.2F;
     public static Map<Item, Integer> ITEM_COOLDOWNS = new HashMap();
     public static List<ShopEntry> POISONER_SHOP_ENTRIES = new ArrayList<>();
