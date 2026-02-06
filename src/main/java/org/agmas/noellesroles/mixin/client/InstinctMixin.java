@@ -51,7 +51,8 @@ public abstract class InstinctMixin {
 
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
         if (gameWorldComponent.isRole(player, ModRoles.JESTER)
-                || gameWorldComponent.isRole(player, TMMRoles.LOOSE_END)) {
+                || gameWorldComponent.isRole(player, TMMRoles.LOOSE_END)
+                || gameWorldComponent.isRole(player, ModRoles.RECORDER)) {
             if (instinctKeybind.isDown()) {
                 cir.setReturnValue(true);
                 cir.cancel();
@@ -88,7 +89,8 @@ public abstract class InstinctMixin {
                 .get(Minecraft.getInstance().player.level());
         if (target instanceof Player) {
             if (!((Player) target).isSpectator()) {
-                dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent bartenderPlayerComponent = dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent.KEY.get((Player) target);
+                dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent bartenderPlayerComponent = dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent.KEY
+                        .get((Player) target);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get((Player) target);
                 if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BARTENDER)
                         && bartenderPlayerComponent.glowTicks > 0) {
