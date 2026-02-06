@@ -539,6 +539,14 @@ public class Noellesroles implements ModInitializer {
                 ShopEntry.Type.TOOL));
 
         // 乘务员商店
+        // 乘务员钥匙 - 75金币
+        ATTENDANT_SHOP.add(new ShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 75, ShopEntry.Type.TOOL) {
+            @Override
+            public boolean onBuy(@NotNull Player player) {
+                player.addItem(ModItems.MASTER_KEY_P.getDefaultInstance().copy());
+                return true;
+            }
+        });
         // 手电筒（moonlight_lamp） - 150金币
         if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("handheldmoon:moonlight_lamp"))) {
             final var moonlightLampItem = BuiltInRegistries.ITEM
