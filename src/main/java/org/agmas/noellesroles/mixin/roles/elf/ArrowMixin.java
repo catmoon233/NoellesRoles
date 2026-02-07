@@ -53,7 +53,7 @@ public class ArrowMixin {
 
         }
     }
-    @Inject(method = "onHitEntity", at = @At("TAIL"))
+    @Inject(method = "onHitEntity", at = @At("HEAD"))
     private void noellesroles$onHitPlayerBody(EntityHitResult entityHitResult, CallbackInfo ci) {
         if (TMMConfig.isLobby)return;
         if (entityHitResult.getEntity() instanceof PlayerBodyEntity player){
