@@ -17,6 +17,7 @@ public class SPClientTick {
     @Inject(method = "clientDo", at = @At("HEAD"), cancellable = true)
     private void clientDo(CallbackInfo ci) {
         SplitPersonalityComponent comp = (SplitPersonalityComponent) (Object) this;
+        if (comp.getTemporaryRevivalStartTick()>0 || comp.getTemporaryRevivalStartTick() ==-1)return;
         if (!comp.isDeath()){
             if (!comp.isCurrentlyActive()){
                 player.level().players().forEach(p -> {
