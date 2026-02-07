@@ -51,7 +51,7 @@
   "info.screen.modifier.refugee": "修饰符\n拥有难民修饰符的玩家会在死亡120秒后复活成亡命徒。\n变成亡命徒后你需要击杀掉所有玩家才能获胜。\n若你在变成亡命徒后被别人杀死，则场上的游戏时间/物品栏/金币/理智回溯到亡命徒复活的时刻。\n所有在亡命徒期间被杀死的玩家会复活。",
   "info.screen.modifier.tiny": "修饰符\n你的个子更矮。",
   "info.screen.modifier.tall": "修饰符\n你的个子更高。",
-  "info.screen.modifier.feather": "修饰符\n你没有碰撞体积，自带缓降效果。",
+  "info.screen.modifier.feather": "修饰符\n你没有碰撞体积。",
   "info.screen.modifier.magnate": "修饰符\n每60s获得25金币。",
   "info.screen.modifier.taskmaster": "修饰符\n杀手/中立/平民玩家完成任务后获得额外的金币",
   "info.screen.modifier.allergist": "修饰符\n玩家吃东西/喝饮料时有概率触发以下效果之一。\n33%无事发生，33%免疫1次中毒，33%获得速度2，1%死亡",
