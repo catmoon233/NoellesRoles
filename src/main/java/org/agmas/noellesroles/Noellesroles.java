@@ -1752,11 +1752,25 @@ public class Noellesroles implements ModInitializer {
                 }
 
             }
-            if (gameWorldComponent.isRole(context.player(), ModRoles.PHANTOM) && abilityPlayerComponent.cooldown <= 0) {
-                context.player().addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,
-                        NoellesRolesConfig.HANDLER.instance().phantomInvisibilityDuration * 20, 0, true, false, true));
-                abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
-                        NoellesRolesConfig.HANDLER.instance().phantomInvisibilityCooldown);
+            if (gameWorldComponent.isRole(context.player(), ModRoles.PHANTOM)) {
+                if (abilityPlayerComponent.cooldown <= 0) {
+                    context.player().addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,
+                            NoellesRolesConfig.HANDLER.instance().phantomInvisibilityDuration * 20, 0, true, false,
+                            true));
+                    abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
+                            NoellesRolesConfig.HANDLER.instance().phantomInvisibilityCooldown);
+                } else {
+                    var effectINVISIBILITY = context.player().getEffect(MobEffects.INVISIBILITY);
+                    if (effectINVISIBILITY != null) {
+                        if (effectINVISIBILITY.getDuration() > 0) {
+                            context.player().removeEffect(MobEffects.INVISIBILITY);
+                            context.player().displayClientMessage(
+                                    Component.translatable("tip.phantom.exited").withStyle(ChatFormatting.YELLOW),
+                                    true);
+                        }
+                    }
+                }
+
             }
             // else if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)
             // && abilityPlayerComponent.cooldown <= 0) {
