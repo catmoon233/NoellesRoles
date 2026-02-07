@@ -41,12 +41,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.SpectralArrow;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
@@ -327,7 +329,11 @@ public class Noellesroles implements ModInitializer {
 
         // 游侠初始物品
         List<Supplier<ItemStack>> elfItems = new ArrayList<>();
-        elfItems.add(() -> Items.BOW.getDefaultInstance());
+        elfItems.add(() -> {
+            var item = Items.BOW.getDefaultInstance();
+            item.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
+            return item;
+        });
         INITIAL_ITEMS_MAP.put(ModRoles.ELF, elfItems);
 
         // 亡命徒初始物品
@@ -597,6 +603,7 @@ public class Noellesroles implements ModInitializer {
                     if (itemCount > 0)
                         return false;
                     ItemStack item = Items.CROSSBOW.getDefaultInstance();
+                    item.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
                     return RoleUtils.insertStackInFreeSlot(player, item);
                 }
             });
@@ -615,7 +622,7 @@ public class Noellesroles implements ModInitializer {
                     }
                     if (itemCount >= 2)
                         return false;
-                    return RoleUtils.insertStackInFreeSlot(player, PoisonArrow);
+                    return RoleUtils.insertStackInFreeSlot(player, PoisonArrow.copy());
                 }
             });
 
@@ -633,7 +640,7 @@ public class Noellesroles implements ModInitializer {
                     }
                     if (itemCount >= 2)
                         return false;
-                    return RoleUtils.insertStackInFreeSlot(player, SpectralArrow);
+                    return RoleUtils.insertStackInFreeSlot(player, SpectralArrow.copy());
                 }
             });
             ShopContent.customEntries.put(
