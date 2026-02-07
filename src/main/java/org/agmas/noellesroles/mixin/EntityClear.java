@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.mixin;
 
+import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.level.ServerLevel;
@@ -41,6 +42,9 @@ public class EntityClear {
                 entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
                 // 删除物品
             } else if (entity instanceof PlayerBodyEntity) {
+                entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+                // 删除尸体
+            } else if (entity instanceof NoteEntity) {
                 entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
                 // 删除尸体
             }

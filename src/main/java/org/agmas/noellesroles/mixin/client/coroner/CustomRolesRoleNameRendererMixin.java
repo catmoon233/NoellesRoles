@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.client.coroner;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 
@@ -30,6 +31,7 @@ import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,23 +49,6 @@ public abstract class CustomRolesRoleNameRendererMixin {
             CallbackInfo ci) {
         if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null)
             return;
-        if (NoellesrolesClient.hudTarget != null) {
-            if (TMMClient.gameComponent.isRole(Minecraft.getInstance().player.getUUID(), ModRoles.ATTENDANT)) {
-                String room_name_ = "No Room";
-
-                if (GameFunctions.roomToPlayer.containsKey(NoellesrolesClient.hudTarget.getUUID())) {
-                    int room_number = GameFunctions.roomToPlayer.get(NoellesrolesClient.hudTarget.getUUID());
-                    room_name_ = "Room " + room_number;
-                }
-                var room_name = Component.translatable("message.noellesroles.attendant.room_show",
-                        Component.literal(room_name_).withStyle(ChatFormatting.GOLD));
-                // NoellesrolesClient.hudTarget
-                var _color = Color.MAGENTA.getRGB();
-
-                context.drawString(renderer, room_name, -renderer.width(room_name) / 2, 0,
-                        _color | (int) (nametagAlpha * 255.0F) << 24);
-            }
-        }
         if (HarpymodloaderClient.hudRole != null) {
             if (TMMClient.isPlayerSpectatingOrCreative()) {
                 MutableComponent name = Harpymodloader.getRoleName(HarpymodloaderClient.hudRole);
@@ -75,8 +60,7 @@ public abstract class CustomRolesRoleNameRendererMixin {
                     }
                 }
                 // 死亡惩罚
-                if (Minecraft.getInstance() != null || Minecraft.getInstance().player == null)
-                    return;
+
                 Player player = Minecraft.getInstance().player;
                 int di_color = HarpymodloaderClient.hudRole.color();
                 var deathPenalty = ModComponents.DEATH_PENALTY.get(player.level());
@@ -97,8 +81,27 @@ public abstract class CustomRolesRoleNameRendererMixin {
                     name = Component.translatable("message.noellesroles.penalty.limit.role");
                     di_color = Color.RED.getRGB();
                 }
+
                 context.drawString(renderer, name, -renderer.width(name) / 2, 0,
                         di_color | (int) (nametagAlpha * 255.0F) << 24);
+            }
+        }
+        if (NoellesrolesClient.hudTarget != null) {
+
+            if (TMMClient.gameComponent.isRole(Minecraft.getInstance().player.getUUID(), ModRoles.ATTENDANT)) {
+                String room_name_ = "No Room";
+
+                if (GameFunctions.roomToPlayer.containsKey(NoellesrolesClient.hudTarget.getUUID())) {
+                    int room_number = GameFunctions.roomToPlayer.get(NoellesrolesClient.hudTarget.getUUID());
+                    room_name_ = "Room " + room_number;
+                }
+                var room_name = Component.translatable("message.noellesroles.attendant.room_show",
+                        Component.literal(room_name_).withStyle(ChatFormatting.GOLD));
+                // NoellesrolesClient.hudTarget
+                var _color = Color.MAGENTA.getRGB();
+
+                context.drawString(renderer, room_name, -renderer.width(room_name) / 2, 0,
+                        _color | (int) (nametagAlpha * 255.0F) << 24);
             }
         }
     }
@@ -106,7 +109,7 @@ public abstract class CustomRolesRoleNameRendererMixin {
     @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDisplayName()Lnet/minecraft/network/chat/Component;"))
     private static void b(Font renderer, @NotNull LocalPlayer player, GuiGraphics context, DeltaTracker tickCounter,
             CallbackInfo ci, @Local Player target) {
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
+        GameWorldComponent gameWorldComponent = TMMClient.gameComponent;
         WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
         if (gameWorldComponent.getRole(target) != null) {
             NoellesrolesClient.hudTarget = target;
