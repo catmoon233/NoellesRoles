@@ -8,12 +8,13 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 import net.minecraft.network.chat.Component;
 
 import java.awt.Color;
@@ -51,10 +52,21 @@ public abstract class CustomRolesRoleNameRendererMixin {
                 }
                 // 死亡惩罚
                 int di_color = HarpymodloaderClient.hudRole.color();
-                var deathPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player);
+                var deathPenalty = ModComponents.DEATH_PENALTY.get(player.level());
                 boolean hasPenalty = false;
                 if (deathPenalty != null)
                     hasPenalty = deathPenalty.hasPenalty();
+
+                final var worldModifierComponent = WorldModifierComponent.KEY
+                        .get(player.level());
+                if (worldModifierComponent != null) {
+                    if (worldModifierComponent.isModifier(player.getUUID(), SEModifiers.SPLIT_PERSONALITY)) {
+                        if (!SplitPersonalityComponent.KEY.get(player).isDeath()) {
+                            hasPenalty = true;
+                        }
+                    }
+                }
+
                 if (hasPenalty) {
                     name = Component.translatable("message.noellesroles.penalty.limit.role");
                     di_color = Color.RED.getRGB();

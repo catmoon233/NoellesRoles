@@ -16,58 +16,62 @@ import net.minecraft.world.entity.player.Player;
 
 @Mixin(GameFunctions.class)
 public class ExecutionerConfirmMixin {
-    @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At("HEAD"),cancellable = true)
-    private static void executionerConfirm(Player victim, boolean spawnBody, Player killer, ResourceLocation identifier, CallbackInfo ci) {
+    @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At("HEAD"), cancellable = true)
+    private static void executionerConfirm(Player victim, boolean spawnBody, Player killer, ResourceLocation identifier,
+            CallbackInfo ci) {
         final var world = victim.level();
-        if (world==null)return;
+        if (world == null)
+            return;
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(world);
-        if (gameWorldComponent==null)return;
-
+        if (gameWorldComponent == null)
+            return;
 
         for (UUID uuid : gameWorldComponent.getAllWithRole(ModRoles.EXECUTIONER)) {
             Player executioner = world.getPlayerByUUID(uuid);
-            if (executioner == null) continue;
-//            boolean invalidKill = false;
-//            if (killer != null) {
-//                if (gameWorldComponent.getRole(killer).canUseKiller()) invalidKill = true;
-//            }
+            if (executioner == null)
+                continue;
+            // boolean invalidKill = false;
+            // if (killer != null) {
+            // if (gameWorldComponent.getRole(killer).canUseKiller()) invalidKill = true;
+            // }
             ExecutionerPlayerComponent executionerPlayerComponent = ExecutionerPlayerComponent.KEY.get(executioner);
             PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(executioner);
-            if (executionerPlayerComponent.target != null && executionerPlayerComponent.target.equals(victim.getUUID()) ) {
+            if (executionerPlayerComponent.target != null
+                    && executionerPlayerComponent.target.equals(victim.getUUID())) {
                 executionerPlayerComponent.assignRandomTarget();
-//                ArrayList<Role> shuffledKillerRoles = new ArrayList<>(TMMRoles.ROLES);
-//                shuffledKillerRoles.removeIf(role -> Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller() || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()));
-//                if (shuffledKillerRoles.isEmpty()) shuffledKillerRoles.add(TMMRoles.KILLER);
-//                Collections.shuffle(shuffledKillerRoles);
+                // ArrayList<Role> shuffledKillerRoles = new ArrayList<>(TMMRoles.ROLES);
+                // shuffledKillerRoles.removeIf(role ->
+                // Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller() ||
+                // HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()));
+                // if (shuffledKillerRoles.isEmpty()) shuffledKillerRoles.add(TMMRoles.KILLER);
+                // Collections.shuffle(shuffledKillerRoles);
 
-//                gameWorldComponent.addRole(executioner,shuffledKillerRoles.getFirst());
-//                ModdedRoleAssigned.EVENT.invoker().assignModdedRole(executioner,shuffledKillerRoles.getFirst());
-                if (killer!=null&& killer.getUUID().equals(uuid)){
-                    playerShopComponent.setBalance(playerShopComponent.balance -25);
+                // gameWorldComponent.addRole(executioner,shuffledKillerRoles.getFirst());
+                // ModdedRoleAssigned.EVENT.invoker().assignModdedRole(executioner,shuffledKillerRoles.getFirst());
+                if (killer != null && killer.getUUID().equals(uuid)) {
+                    playerShopComponent.setBalance(playerShopComponent.balance - 25);
 
-                }else {
+                } else {
                     playerShopComponent.setBalance(playerShopComponent.balance + 50);
                 }
-                 executionerPlayerComponent.sync();
+                executionerPlayerComponent.sync();
                 playerShopComponent.sync();
             }
         }
-        if (killer==null)return;
+        if (killer == null)
+            return;
         final var role = gameWorldComponent.getRole(killer);
-        if (role== null)return;
-        if (killer!=null) {
-            if (victim!=null) {
+        if (role == null)
+            return;
+        if (killer != null) {
+            if (victim != null) {
                 if (role.getIdentifier().equals(ModRoles.EXECUTIONER_ID)) {
 
                     if (!ExecutionerPlayerComponent.KEY.get(killer).target.equals(victim.getUUID())) {
                         ci.cancel();
                     }
                 }
-            }else {
-                return;
             }
-        }else {
-            return;
         }
 
     }

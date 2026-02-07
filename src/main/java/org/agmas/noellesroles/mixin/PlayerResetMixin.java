@@ -2,7 +2,6 @@ package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
-import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
@@ -54,7 +53,6 @@ public abstract class PlayerResetMixin {
     }
 
     private static void clearAllComponents(ServerPlayer player) {
-
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
         InControlCCA inControlCCA = InControlCCA.KEY.get(player);
