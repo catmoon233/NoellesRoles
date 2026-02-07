@@ -373,7 +373,7 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
         this.energy = 0;
         this.isGazing = false;
         this.gazingTargetCount = 0;
-        this.isAdmirerMarked = true;
+        this.isAdmirerMarked = false;
         this.hasTransformed = false;
         this.energyTickCounter = 0;
         this.boundTargetUUID = null;
