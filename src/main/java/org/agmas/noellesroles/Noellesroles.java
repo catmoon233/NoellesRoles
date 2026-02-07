@@ -44,6 +44,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import org.agmas.harpymodloader.Harpymodloader;
@@ -323,6 +325,11 @@ public class Noellesroles implements ModInitializer {
         doctorItems.add(() -> ModItems.DEFIBRILLATOR.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.DOCTOR, doctorItems);
 
+        // 游侠初始物品
+        List<Supplier<ItemStack>> elfItems = new ArrayList<>();
+        elfItems.add(() -> Items.BOW.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.ELF, elfItems);
+
         // 亡命徒初始物品
         List<Supplier<ItemStack>> looseItems = new ArrayList<>();
         looseItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
@@ -383,7 +390,6 @@ public class Noellesroles implements ModInitializer {
     public static void addInitialItemsForRole(Player player, Role role) {
         List<Supplier<ItemStack>> itemSuppliers = INITIAL_ITEMS_MAP.get(role);
         if (itemSuppliers != null) {
-
             for (Supplier<ItemStack> itemSupplier : itemSuppliers) {
                 ItemStack itemStack = itemSupplier.get();
                 if (itemStack != null && !itemStack.isEmpty()) {
@@ -411,6 +417,7 @@ public class Noellesroles implements ModInitializer {
                 return PlayerShopComponent.useBlackout(player);
             }
         });
+
         // 阴谋家商店
         CONSPIRATOR_SHOP.add(new ShopEntry(
                 ModItems.CONSPIRACY_PAGE.getDefaultInstance(),
@@ -576,6 +583,60 @@ public class Noellesroles implements ModInitializer {
         initShops();
         ShopContent.register();
         {
+            // 游侠商店
+            var shopEntries = new ArrayList<ShopEntry>();
+            shopEntries.add(new ShopEntry(Items.CROSSBOW.getDefaultInstance(), 325, ShopEntry.Type.WEAPON) {
+                @Override
+                public boolean onBuy(@NotNull Player player) {
+                    int itemCount = 0;
+                    for (var item : player.getInventory().items) {
+                        if (item.is(Items.CROSSBOW)) {
+                            itemCount++;
+                        }
+                    }
+                    if (itemCount > 0)
+                        return false;
+                    ItemStack item = Items.CROSSBOW.getDefaultInstance();
+                    return RoleUtils.insertStackInFreeSlot(player, item);
+                }
+            });
+            final var PoisonArrow = Items.TIPPED_ARROW.getDefaultInstance();
+            PoisonArrow.set(DataComponents.ITEM_NAME, Component.translatable("item.poison_arrow.name"));
+            PoisonArrow.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.POISON));
+            shopEntries.add(new ShopEntry(PoisonArrow, 75, ShopEntry.Type.WEAPON) {
+                @Override
+                public boolean onBuy(@NotNull Player player) {
+                    int itemCount = 0;
+                    for (var item : player.getInventory().items) {
+                        if (item.is(Items.TIPPED_ARROW)) {
+                            itemCount++;
+                        }
+                    }
+                    if (itemCount >= 2)
+                        return false;
+                    return RoleUtils.insertStackInFreeSlot(player, PoisonArrow);
+                }
+            });
+
+            final var SpectralArrow = Items.SPECTRAL_ARROW.getDefaultInstance();
+            shopEntries.add(new ShopEntry(SpectralArrow, 50, ShopEntry.Type.WEAPON) {
+                @Override
+                public boolean onBuy(@NotNull Player player) {
+                    int itemCount = 0;
+                    for (var item : player.getInventory().items) {
+                        if (item.is(Items.SPECTRAL_ARROW)) {
+                            itemCount++;
+                        }
+                    }
+                    if (itemCount >= 2)
+                        return false;
+                    return RoleUtils.insertStackInFreeSlot(player, SpectralArrow);
+                }
+            });
+            ShopContent.customEntries.put(
+                    ModRoles.ELF_ID, shopEntries);
+        }
+        {
             ShopContent.customEntries.put(
                     ModRoles.MANIPULATOR_ID, ShopContent.defaultEntries);
         }
@@ -683,7 +744,8 @@ public class Noellesroles implements ModInitializer {
         }
         {
             ShopContent.customEntries.put(
-                    ModRoles.ADMIRER_ID, List.of(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 150, ShopEntry.Type.TOOL)));
+                    ModRoles.ADMIRER_ID,
+                    List.of(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 150, ShopEntry.Type.TOOL)));
         }
         {
             ShopContent.customEntries.put(
@@ -1144,7 +1206,7 @@ public class Noellesroles implements ModInitializer {
                     }
                     TrainVoicePlugin.resetPlayer(player.getUUID());
                     component.reset();
-                    
+
                     player.displayClientMessage(Component.translatable("message.noellesroles.defibrillator.revived"),
                             true);
                 }
