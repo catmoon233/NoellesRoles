@@ -7,6 +7,8 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -24,7 +26,9 @@ import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.client.HarpymodloaderClient;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.modifiers.Modifier;
+import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.component.ModComponents;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,6 +45,25 @@ public abstract class CustomRolesRoleNameRendererMixin {
     @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I", ordinal = 0))
     private static void b(Font renderer, @NotNull LocalPlayer lp, GuiGraphics context, DeltaTracker tickCounter,
             CallbackInfo ci) {
+        if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null)
+            return;
+        if (NoellesrolesClient.hudTarget != null) {
+            if (TMMClient.gameComponent.isRole(Minecraft.getInstance().player.getUUID(), ModRoles.ATTENDANT)) {
+                String room_name_ = "No Room";
+
+                if (GameFunctions.roomToPlayer.containsKey(NoellesrolesClient.hudTarget.getUUID())) {
+                    int room_number = GameFunctions.roomToPlayer.get(NoellesrolesClient.hudTarget.getUUID());
+                    room_name_ = "Room " + room_number;
+                }
+                var room_name = Component.translatable("message.noellesroles.attendant.room_show",
+                        Component.literal(room_name_).withStyle(ChatFormatting.GOLD));
+                // NoellesrolesClient.hudTarget
+                var _color = Color.MAGENTA.getRGB();
+
+                context.drawString(renderer, room_name, -renderer.width(room_name) / 2, 0,
+                        _color | (int) (nametagAlpha * 255.0F) << 24);
+            }
+        }
         if (HarpymodloaderClient.hudRole != null) {
             if (TMMClient.isPlayerSpectatingOrCreative()) {
                 MutableComponent name = Harpymodloader.getRoleName(HarpymodloaderClient.hudRole);
@@ -86,9 +109,11 @@ public abstract class CustomRolesRoleNameRendererMixin {
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
         WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
         if (gameWorldComponent.getRole(target) != null) {
+            NoellesrolesClient.hudTarget = target;
             HarpymodloaderClient.hudRole = gameWorldComponent.getRole(target);
             HarpymodloaderClient.modifiers = worldModifierComponent.getModifiers(target);
         } else {
+            NoellesrolesClient.hudTarget = target;
             HarpymodloaderClient.hudRole = TMMRoles.CIVILIAN;
             HarpymodloaderClient.modifiers = null;
         }

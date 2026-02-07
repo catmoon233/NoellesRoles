@@ -58,6 +58,7 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static Player target;
     public static PlayerBodyEntity targetBody;
     public static Player targetFakeBody;
+    public static Player hudTarget;
 
     public static Map<UUID, UUID> SHUFFLED_PLAYER_ENTRIES_CACHE = Maps.newHashMap();
     public static Component currentBroadcastMessage = null;

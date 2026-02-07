@@ -268,8 +268,8 @@ public class Noellesroles implements ModInitializer {
         TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
         });
-        TMM.canCollideEntity.add(entity -> {
-            return entity instanceof NoteEntity;
+        TMM.canPushableBy.add(entity -> {
+            return !(entity instanceof NoteEntity);
         });
         TMM.canDropItem.addAll(List.of(
                 "exposure:stacked_photographs",
