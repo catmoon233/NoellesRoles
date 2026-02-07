@@ -101,15 +101,15 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         int playerCount = player.level().players().size();
         int cooldownSeconds;
         if (playerCount < 10) {
-            cooldownSeconds = 30;
+            cooldownSeconds = 1;
         } else if (playerCount < 15) {
-            cooldownSeconds = 25;
+            cooldownSeconds = 1;
         } else if (playerCount < 20) {
-            cooldownSeconds = 15;
+            cooldownSeconds = 1;
         } else if (playerCount < 30) {
-            cooldownSeconds = 10;
+            cooldownSeconds = 1;
         } else {
-            cooldownSeconds = 5;
+            cooldownSeconds = 1;
         }
         serverPlayer.getCooldowns().addCooldown(ModItems.WRITTEN_NOTE, cooldownSeconds * 20);
         if (target != null) {
