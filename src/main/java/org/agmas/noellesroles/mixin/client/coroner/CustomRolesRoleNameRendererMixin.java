@@ -60,7 +60,6 @@ public abstract class CustomRolesRoleNameRendererMixin {
                 boolean hasPenalty = false;
                 if (deathPenalty != null)
                     hasPenalty = deathPenalty.hasPenalty();
-
                 final var worldModifierComponent = WorldModifierComponent.KEY
                         .get(player.level());
                 if (worldModifierComponent != null) {
@@ -78,7 +77,6 @@ public abstract class CustomRolesRoleNameRendererMixin {
                 context.drawString(renderer, name, -renderer.width(name) / 2, 0,
                         di_color | (int) (nametagAlpha * 255.0F) << 24);
             }
-
         }
     }
 

@@ -8,6 +8,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
+import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
@@ -262,6 +263,9 @@ public class Noellesroles implements ModInitializer {
                 });
         TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
+        });
+        TMM.canCollideEntity.add(entity -> {
+            return entity instanceof NoteEntity;
         });
         TMM.canDropItem.addAll(List.of(
                 "exposure:stacked_photographs",

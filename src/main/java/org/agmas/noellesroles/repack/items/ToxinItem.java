@@ -1,7 +1,11 @@
 package org.agmas.noellesroles.repack.items;
 
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -18,7 +22,7 @@ import net.minecraft.world.phys.HitResult;
 import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.repack.HSRSounds;
-import org.agmas.noellesroles.repack.ToxinUsePayload;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 
 public class ToxinItem extends Item {
@@ -49,6 +53,18 @@ public class ToxinItem extends Item {
                                 player.swing(InteractionHand.MAIN_HAND);
                                 if (!player.isCreative()) {
                                     player.getMainHandItem().shrink(1);
+                                    if (player.level() instanceof ServerLevel slevel) {
+                                        var gameComponent = GameWorldComponent.KEY.get(player.level());
+                                        slevel.players().forEach((pl) -> {
+                                            if (pl.distanceToSqr(player) <= 100) {
+                                                if (gameComponent.isRole(pl, ModRoles.DOCTOR)) {
+                                                    pl.displayClientMessage(Component
+                                                            .translatable("message.noellesroles.doctor.someone_toxin")
+                                                            .withStyle(ChatFormatting.YELLOW), true);
+                                                }
+                                            }
+                                        });
+                                    }
                                     player.getCooldowns().addCooldown(HSRItems.TOXIN,
                                             (Integer) HSRConstants.ITEM_COOLDOWNS.get(HSRItems.TOXIN));
                                 }
@@ -75,7 +91,7 @@ public class ToxinItem extends Item {
 
             var10000 = false;
             return var10000;
-        }, (double) 30.0F);
+        }, (double) 12.0F);
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
