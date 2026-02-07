@@ -990,6 +990,13 @@ public class Noellesroles implements ModInitializer {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
             }
+            if (server.getPlayerCount() > 24) {
+                Harpymodloader.setRoleMaximum(ModRoles.ELF, 2);
+            } else if (server.getPlayerCount() > 10) {
+                Harpymodloader.setRoleMaximum(ModRoles.ELF, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.ELF, 0);
+            }
         }));
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
