@@ -26,6 +26,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 public class RecorderPlayerComponent implements RoleComponent, ServerTickingComponent {
@@ -41,8 +42,8 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
     private Map<UUID, String> startPlayers = new HashMap<>();
 
     private int wrongGuessCount = 0;
-    private static final int MAX_WRONG_GUESSES = 10;
-
+    // private int MAX_WRONG_GUESSES = 10;
+    private int MAX_WRONG_GUESSES = 10;
     private boolean rolesInitialized = false;
     private boolean wasRunning = false;
 
@@ -57,6 +58,12 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         this.startPlayers.clear();
         this.wrongGuessCount = 0;
         this.rolesInitialized = false;
+        this.MAX_WRONG_GUESSES = 5;
+        if (this.player instanceof ServerPlayer sp) {
+            int player_count = sp.level().players().size();
+            this.MAX_WRONG_GUESSES = (player_count / 2);
+            this.MAX_WRONG_GUESSES = Mth.clamp(5, 20, this.MAX_WRONG_GUESSES);
+        }
         ModComponents.RECORDER.sync(this.player);
     }
 
@@ -286,7 +293,9 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
                 }
             }
         }
-
+        MAX_WRONG_GUESSES = tag.getInt("MAX_WRONG_GUESSES");
+        if (MAX_WRONG_GUESSES <= 5)
+            MAX_WRONG_GUESSES = 5;
         wrongGuessCount = tag.getInt("wrongGuessCount");
         rolesInitialized = tag.getBoolean("rolesInitialized");
     }
@@ -316,6 +325,7 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         tag.put("startPlayers", startPlayersTag);
 
         tag.putInt("wrongGuessCount", wrongGuessCount);
+        tag.putInt("MAX_WRONG_GUESSES", MAX_WRONG_GUESSES);
         tag.putBoolean("rolesInitialized", rolesInitialized);
     }
 
