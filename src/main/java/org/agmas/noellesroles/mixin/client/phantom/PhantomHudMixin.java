@@ -48,11 +48,12 @@ public abstract class PhantomHudMixin {
             if (inve != null) {
                 int time = inve.getDuration();
                 if (time > 0) {
-                    line = Component.translatable("tip.phantom.activing", time / 20);
+                    line = Component.translatable("tip.phantom.activing", time / 20,
+                            Component.keybind("key.noellesroles.ability"));
                 }
             }
 
-            drawY -= getFont().wordWrapHeight(line, 999999);
+            drawY -= getFont().lineHeight;
             context.drawString(getFont(), line, context.guiWidth() - getFont().width(line) - 12, drawY - 12,
                     CommonColors.RED);
         }

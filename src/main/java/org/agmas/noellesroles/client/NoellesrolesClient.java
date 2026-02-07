@@ -66,7 +66,7 @@ public class NoellesrolesClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        
+        InstinctRenderer.registerInstinctEvents();
         roleIntroClientBind = KeyBindingHelper
                 .registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".role_intro",
                         InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.trainmurdermystery.keybinds"));
@@ -156,13 +156,13 @@ public class NoellesrolesClient implements ClientModInitializer {
             });
         });
         // 注册抽奖网络包处理：接收服务器抽奖结果后播放抽奖动画
-        ClientPlayNetworking.registerGlobalReceiver(LootS2CPacket.ID, (payload, context)->{
+        ClientPlayNetworking.registerGlobalReceiver(LootS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
-                        if (client.player != null) {
-                            client.setScreen(new LootScreen(payload.ansID()));
-                        }
-                    });
+                if (client.player != null) {
+                    client.setScreen(new LootScreen(payload.ansID()));
+                }
+            });
         });
 
         Listen.registerEvents();
