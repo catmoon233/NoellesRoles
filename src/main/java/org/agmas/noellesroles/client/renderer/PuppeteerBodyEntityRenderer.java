@@ -44,11 +44,11 @@ public class PuppeteerBodyEntityRenderer extends EntityRenderer<PuppeteerBodyEnt
         PlayerInfo entry = instance.getConnection().getPlayerInfo(ownerUuid);
         if (entry != null) {
             AbstractClientPlayer fakePlayer = new RemotePlayer(instance.level, new GameProfile(ownerUuid, entry.getProfile().getName()));
-            Minecraft.getInstance().getEntityRenderDispatcher().render(fakePlayer, 0.0D, 0.0D, 0, 0, tickDelta, matrices, vertexConsumers, light);
+            Minecraft.getInstance().getEntityRenderDispatcher().render(fakePlayer, 0.0D, 0.0D, 0, 0, 0, matrices, vertexConsumers, light);
 
         }else {
             AbstractClientPlayer fakePlayer = new RemotePlayer(instance.level, new GameProfile(UUID.randomUUID(), "pupu"));
-            Minecraft.getInstance().getEntityRenderDispatcher().render(fakePlayer, 0.0D, 0.0D, 0, 0, tickDelta, matrices, vertexConsumers, light);
+            Minecraft.getInstance().getEntityRenderDispatcher().render(fakePlayer, 0.0D, 0.0D, 0, 0, 0, matrices, vertexConsumers, light);
 
         }
         

@@ -810,7 +810,7 @@ public class ModRoles {
         Harpymodloader.setRoleMaximum(GLITCH_ROBOT_ID, 1);
 
         // 游侠
-        Harpymodloader.setRoleMaximum(ELF_ID, 2);
+        Harpymodloader.setRoleMaximum(ELF_ID, 1);
     }
 
     // ==================== 工具方法 ====================

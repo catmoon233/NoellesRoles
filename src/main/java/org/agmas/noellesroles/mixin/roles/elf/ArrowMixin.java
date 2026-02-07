@@ -9,7 +9,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.SpectralArrow;
@@ -42,25 +41,30 @@ public class ArrowMixin {
             }
         }
     }
-    private static boolean isHit =false ;
+
+    private static boolean isHit = false;
+
     @Inject(method = "onHitEntity", at = @At("TAIL"))
     private void noellesroles$onHitEntitTail(EntityHitResult entityHitResult, CallbackInfo ci) {
-        if (TMMConfig.isLobby)return;
-        if (isHit){
+        if (TMMConfig.isLobby)
+            return;
+        if (isHit) {
             AbstractArrow arrow = (AbstractArrow) (Object) this;
             arrow.discard();
             isHit = false;
-
         }
     }
+
     @Inject(method = "onHitEntity", at = @At("HEAD"))
     private void noellesroles$onHitPlayerBody(EntityHitResult entityHitResult, CallbackInfo ci) {
-        if (TMMConfig.isLobby)return;
-        if (entityHitResult.getEntity() instanceof PlayerBodyEntity player){
+        if (TMMConfig.isLobby)
+            return;
+        if (entityHitResult.getEntity() instanceof PlayerBodyEntity player) {
             AbstractArrow arrow = (AbstractArrow) (Object) this;
             arrow.discard();
         }
     }
+
     @Inject(method = "onHitBlock", at = @At("TAIL"))
     private void noellesroles$onHitBlock(BlockHitResult blockHitResult, CallbackInfo ci) {
         if (TMMConfig.isLobby)
@@ -80,6 +84,8 @@ public class ArrowMixin {
                     arrow1.discard();
                 }
             }
+        } else {
+            arrow.discard();
         }
     }
 }
