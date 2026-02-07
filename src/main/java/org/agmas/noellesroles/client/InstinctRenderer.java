@@ -30,7 +30,6 @@ public class InstinctRenderer {
                     .get(self.level());
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
-
                 dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent bartenderPlayerComponent = dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent.KEY
                         .get(target_player);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
