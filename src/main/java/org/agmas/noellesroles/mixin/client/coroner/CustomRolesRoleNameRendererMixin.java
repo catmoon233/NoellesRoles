@@ -63,7 +63,7 @@ public abstract class CustomRolesRoleNameRendererMixin {
 
                 Player player = Minecraft.getInstance().player;
                 int di_color = HarpymodloaderClient.hudRole.color();
-                var deathPenalty = ModComponents.DEATH_PENALTY.get(player.level());
+                var deathPenalty = ModComponents.DEATH_PENALTY.get(player);
                 boolean hasPenalty = false;
                 if (deathPenalty != null)
                     hasPenalty = deathPenalty.hasPenalty();
@@ -71,7 +71,8 @@ public abstract class CustomRolesRoleNameRendererMixin {
                         .get(player.level());
                 if (worldModifierComponent != null) {
                     if (worldModifierComponent.isModifier(player.getUUID(), SEModifiers.SPLIT_PERSONALITY)) {
-                        if (!SplitPersonalityComponent.KEY.get(player).isDeath()) {
+                        var splitComponent = SplitPersonalityComponent.KEY.get(player);
+                        if (splitComponent != null && !splitComponent.isDeath()) {
                             hasPenalty = true;
                         }
                     }
