@@ -3,6 +3,7 @@ package org.agmas.noellesroles.mixin.roles.elf;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -34,13 +35,32 @@ public class ArrowMixin {
             if (arrow instanceof Arrow) {
                 if (arrow.getOwner() instanceof ServerPlayer serverPlayer) {
                     if (GameWorldComponent.KEY.get(serverPlayer.serverLevel()).isRole(serverPlayer, ModRoles.ELF)) {
+                        isHit = true;
                         GameFunctions.killPlayer(player, true, serverPlayer, TMM.id("arrow"));
                     }
                 }
             }
         }
     }
+    private static boolean isHit =false ;
+    @Inject(method = "onHitEntity", at = @At("TAIL"))
+    private void noellesroles$onHitEntitTail(EntityHitResult entityHitResult, CallbackInfo ci) {
+        if (TMMConfig.isLobby)return;
+        if (isHit){
+            AbstractArrow arrow = (AbstractArrow) (Object) this;
+            arrow.discard();
+            isHit = false;
 
+        }
+    }
+    @Inject(method = "onHitEntity", at = @At("HEAD"))
+    private void noellesroles$onHitPlayerBody(EntityHitResult entityHitResult, CallbackInfo ci) {
+        if (TMMConfig.isLobby)return;
+        if (entityHitResult.getEntity() instanceof PlayerBodyEntity player){
+            AbstractArrow arrow = (AbstractArrow) (Object) this;
+            arrow.discard();
+        }
+    }
     @Inject(method = "onHitBlock", at = @At("TAIL"))
     private void noellesroles$onHitBlock(BlockHitResult blockHitResult, CallbackInfo ci) {
         if (TMMConfig.isLobby)

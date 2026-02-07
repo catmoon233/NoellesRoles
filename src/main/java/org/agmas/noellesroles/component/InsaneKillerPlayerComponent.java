@@ -119,20 +119,10 @@ public class InsaneKillerPlayerComponent
         // target = tag.contains("target") ? tag.getUUID("target") : null;
     }
 
-    private long lastClientTickTime = 0;
-    private static final long CLIENT_TICK_INTERVAL_MS = 50; // 1000ms / 20 ticks per second = 50ms per tick
 
     @Override
     public void clientTick() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastClientTickTime >= CLIENT_TICK_INTERVAL_MS) {
-            lastClientTickTime = currentTime;
-            playerBodyEntities.forEach(
-                    (uuid, playerBodyEntity) -> {
-                        if (playerBodyEntity.getPlayerUuid().equals(uuid))
-                            ++playerBodyEntity.tickCount;
-                    });
-        }
+
     }
 
     // @Override
