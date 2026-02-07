@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.client.manipulator;
 
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedHandledScreen;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import org.agmas.noellesroles.client.PlayerPaginationHelper;
 import org.agmas.noellesroles.client.RoleScreenHelper;
 import org.agmas.noellesroles.client.widget.ManipulatorPlayerWidget;
@@ -55,16 +56,16 @@ public abstract class ManipulatorScreenMixin extends LimitedHandledScreen<Invent
     public LocalPlayer player;
 
     @Unique
-    private RoleScreenHelper<AbstractClientPlayer> roleScreenHelper;
+    private RoleScreenHelper<PlayerInfo> roleScreenHelper;
 
     public ManipulatorScreenMixin(InventoryMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
 
     @Unique
-    private RoleScreenHelper<AbstractClientPlayer> getRoleScreenHelper() {
+    private RoleScreenHelper<PlayerInfo> getRoleScreenHelper() {
         if (roleScreenHelper == null) {
-            roleScreenHelper = new RoleScreenHelper<>(
+            roleScreenHelper = new RoleScreenHelper<PlayerInfo>(
                     player,
                     ModRoles.MANIPULATOR,
                     this::createManipulatorWidget,
@@ -77,10 +78,10 @@ public abstract class ManipulatorScreenMixin extends LimitedHandledScreen<Invent
     }
 
     @Unique
-    private ManipulatorPlayerWidget createManipulatorWidget(int x, int y, AbstractClientPlayer playerEntity, int index) {
+    private ManipulatorPlayerWidget createManipulatorWidget(int x, int y, PlayerInfo playerEntity, int index) {
         ManipulatorPlayerWidget widget = new ManipulatorPlayerWidget(
                 (LimitedInventoryScreen) (Object) this,
-                x, y, playerEntity, index
+                x, y, playerEntity
         );
         addDrawableChild(widget);
         return widget;
@@ -98,14 +99,14 @@ public abstract class ManipulatorScreenMixin extends LimitedHandledScreen<Invent
     }
 
     @Unique
-    private List<AbstractClientPlayer> getEligiblePlayers() {
+    private List<PlayerInfo> getEligiblePlayers() {
         Minecraft client = Minecraft.getInstance();
         if (client.level == null || client.player == null) {
             return List.of();
         }
 
-        return client.level.players().stream()
-                .filter(a -> a.getUUID() != player.getUUID() && isPlayerInAdventureMode(a))
+        return client.getConnection().getOnlinePlayers().stream()
+                .filter(a -> a.getProfile().getId() != player.getUUID() && a.getGameMode() == GameType.ADVENTURE)
                 .collect(Collectors.toList());
     }
 

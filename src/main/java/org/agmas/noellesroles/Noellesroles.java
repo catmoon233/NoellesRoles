@@ -677,6 +677,10 @@ public class Noellesroles implements ModInitializer {
         }
         {
             ShopContent.customEntries.put(
+                    ModRoles.ADMIRER_ID, List.of(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 150, ShopEntry.Type.TOOL)));
+        }
+        {
+            ShopContent.customEntries.put(
                     ModRoles.POSTMAN_ID, POSTMAN_SHOP);
         }
 
@@ -943,8 +947,8 @@ public class Noellesroles implements ModInitializer {
                 if (VulturePlayerComponent.KEY.isProvidedBy(player)) {
                     VulturePlayerComponent vulturePlayerComponent = VulturePlayerComponent.KEY.get(player);
                     vulturePlayerComponent.reset();
-                    vulturePlayerComponent.bodiesRequired = (int) ((player.level().players().size() / 3f)
-                            - Math.floor(player.level().players().size() / 6f));
+                    vulturePlayerComponent.bodiesRequired = Math.max(1, (int) ((player.level().players().size() / 3f)
+                            - Math.floor(player.level().players().size() / 6f)));
                     vulturePlayerComponent.sync();
                 }
             }

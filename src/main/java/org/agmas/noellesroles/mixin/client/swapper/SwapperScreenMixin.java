@@ -80,7 +80,7 @@ public abstract class SwapperScreenMixin extends LimitedHandledScreen<InventoryM
     private SwapperPlayerWidget createSwapperWidget(int x, int y, PlayerInfo playerEntity, int index) {
         SwapperPlayerWidget widget = new SwapperPlayerWidget(
                 (LimitedInventoryScreen) (Object) this,
-                x, y, playerEntity, index
+                x, y, playerEntity
         );
         addDrawableChild(widget);
         return widget;

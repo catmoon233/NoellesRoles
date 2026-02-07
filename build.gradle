@@ -98,7 +98,9 @@ dependencies {
     modRuntimeOnly "maven.modrinth:simple-voice-chat:fabric-${voicechat_version}"
     // modRuntimeOnly files("libs/fzzy_config-0.7.5+1.21.jar")
     modRuntimeOnly "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}:fabric-stub"
-
+    modImplementation "maven.modrinth:sodium:${sodium_version}-fabric"
+    modImplementation "maven.modrinth:iris:${iris_version}-fabric"
+    modRuntimeOnly("org.anarres:jcpp:${jcpp_version}")
 }
 
 processResources {

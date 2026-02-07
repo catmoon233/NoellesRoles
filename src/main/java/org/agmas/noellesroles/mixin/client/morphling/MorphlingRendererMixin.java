@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SkinSplitPersonalityComponent;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 import java.util.UUID;
@@ -65,19 +66,21 @@ public abstract class MorphlingRendererMixin {
             }
             // 检查双重人格组件 - 如果玩家不是活跃人格，则显示主人格的皮肤
 
-            var splitPersonalityComponent = SplitPersonalityComponent.KEY.get(abstractClientPlayerEntity);
-            if (splitPersonalityComponent != null && !splitPersonalityComponent.isCurrentlyActive()) {
-                UUID mainPersonalityId = splitPersonalityComponent.getMainPersonality();
-                if (mainPersonalityId != null) {
-                    final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(mainPersonalityId));
-                    if (playerInfo==null){
-                        return;
-                    }
-                    final var skin = playerInfo.getSkin();
-                    if (skin==null)return;
-                    final var texture = skin.texture();
-                    cir.setReturnValue(texture);
-                    cir.cancel();
+            var splitPersonalityComponent = SkinSplitPersonalityComponent.KEY.get(abstractClientPlayerEntity);
+            if (splitPersonalityComponent != null) {
+                final var skinToAppearAs = splitPersonalityComponent.getSkinToAppearAs();
+                if (skinToAppearAs !=null) {
+
+                        final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(skinToAppearAs);
+                        if (playerInfo == null) {
+                            return;
+                        }
+                        final var skin = playerInfo.getSkin();
+                        if (skin == null) return;
+                        final var texture = skin.texture();
+                        cir.setReturnValue(texture);
+                        cir.cancel();
+
                 }
             }
 
@@ -85,7 +88,7 @@ public abstract class MorphlingRendererMixin {
             final var morphlingPlayerComponent = MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity);
             if (morphlingPlayerComponent != null && morphlingPlayerComponent.getMorphTicks() > 0 ) {
                 final var disguise = (MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity)).disguise;
-                final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(disguise));
+                final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(disguise);
                 if (playerInfo==null)return;
                 final var skin = playerInfo.getSkin();
                 if (skin==null)return;

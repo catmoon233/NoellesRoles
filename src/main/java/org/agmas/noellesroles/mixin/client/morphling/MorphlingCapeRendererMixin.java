@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SkinSplitPersonalityComponent;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 import java.util.UUID;
@@ -64,21 +65,23 @@ public abstract class MorphlingCapeRendererMixin {
 
             }
             // 检查双重人格组件 - 如果玩家不是活跃人格，则显示主人格的斗篷
-            var splitPersonalityComponent = SplitPersonalityComponent.KEY.get(abstractClientPlayerEntity);
-            if (splitPersonalityComponent != null && !splitPersonalityComponent.isCurrentlyActive()) {
-                UUID mainPersonalityId = splitPersonalityComponent.getMainPersonality();
-                if (mainPersonalityId != null) {
-                    final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(mainPersonalityId));
-                    if (playerInfo==null) {
-                        return instance.capeTexture();
+            var skinSplitPersonalityComponent = SkinSplitPersonalityComponent.KEY.get(abstractClientPlayerEntity);
+            if (skinSplitPersonalityComponent != null) {
+                final var skinToAppearAs = skinSplitPersonalityComponent.getSkinToAppearAs();
+                if (skinToAppearAs !=null) {
+
+                        final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(skinToAppearAs);
+                        if (playerInfo == null) {
+                            return instance.capeTexture();
+                        }
+                        final var skin = playerInfo.getSkin();
+                        if (skin == null) {
+                            return instance.capeTexture();
+                        }
+                        final var texture = skin.capeTexture();
+                        return texture;
                     }
-                    final var skin = playerInfo.getSkin();
-                    if (skin==null) {
-                        return instance.capeTexture();
-                    }
-                    final var texture = skin.capeTexture();
-                    return texture;
-                }
+
             }
             
 
@@ -87,7 +90,7 @@ public abstract class MorphlingCapeRendererMixin {
                 UUID disguiseUuid = MorphlingPlayerComponent.KEY.get(abstractClientPlayerEntity).disguise;
                 if (disguiseUuid != null) {
                     // 尝试通过 TMMClient 获取玩家信息，而不是直接获取世界中的玩家
-                    final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(disguiseUuid));
+                    final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(disguiseUuid);
                     if (playerInfo != null) {
                         final var skin = playerInfo.getSkin();
                         if (skin != null) {

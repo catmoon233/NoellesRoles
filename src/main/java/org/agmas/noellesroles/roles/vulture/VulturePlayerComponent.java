@@ -25,14 +25,15 @@ public class VulturePlayerComponent implements RoleComponent, ServerTickingCompo
     }
     @Override
     public void reset() {
-        this.bodiesEaten = 0;
-        this.bodiesRequired = 0;
+
         this.sync();
     }
 
     @Override
     public void clear() {
-        this.reset();
+        this.bodiesEaten = 0;
+        this.bodiesRequired = 0;
+        this.sync();
     }
 
     public VulturePlayerComponent(Player player) {

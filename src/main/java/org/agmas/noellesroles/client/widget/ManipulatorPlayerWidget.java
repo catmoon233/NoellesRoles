@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.client.widget;
 
+import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -8,8 +9,11 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.GameType;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.packet.ManipulatorC2SPacket;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
@@ -17,29 +21,47 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
+/**
+ * 操控者玩家选择组件
+ * @author YourName
+ */
 public class ManipulatorPlayerWidget extends Button {
     public final LimitedInventoryScreen screen;
-    public final AbstractClientPlayer targetPlayer;
+    public final PlayerInfo targetPlayer;
+    private Component displayText = Component.empty();
+    private java.util.List<net.minecraft.util.FormattedCharSequence> cachedLines = new java.util.ArrayList<>();
 
     public ManipulatorPlayerWidget(LimitedInventoryScreen screen, int x, int y,
-            @NotNull AbstractClientPlayer targetPlayer, int index) {
-        super(x, y, 16, 16, targetPlayer.getName(), (button) -> {
-            ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY
-                    .get(Minecraft.getInstance().player);
-            NoellesRolesAbilityPlayerComponent abilityComp = NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
+            @NotNull PlayerInfo targetPlayer) {
+        super(x, y, 16, 16, Component.literal(targetPlayer.getProfile().getName()), (button) -> {
+            AbstractClientPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(player);
+                NoellesRolesAbilityPlayerComponent abilityComp = NoellesRolesAbilityPlayerComponent.KEY.get(player);
 
-            if (abilityComp.cooldown <= 0 && !manipulatorComp.isControlling) {
-                ClientPlayNetworking.send(new ManipulatorC2SPacket(targetPlayer.getUUID()));
+                if (abilityComp.cooldown <= 0 && !manipulatorComp.isControlling) {
+                    ClientPlayNetworking.send(new ManipulatorC2SPacket(targetPlayer.getProfile().getId()));
+                }
             }
         }, DEFAULT_NARRATION);
         this.screen = screen;
         this.targetPlayer = targetPlayer;
+        if (targetPlayer.getGameMode() != GameType.ADVENTURE){
+            setDisplayText(Component.literal("\u00a74已死亡"));
+        }else {
+            if (TMMClient.gameComponent!=null && TMMClient.gameComponent.getRole(targetPlayer.getProfile().getId()) != null && TMMClient.gameComponent.getRole(targetPlayer.getProfile().getId()).canUseKiller()){
+                setDisplayText(Component.literal("\u00a76杀手同伙"));
+            }
+        }
     }
 
     @Override
     protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(Minecraft.getInstance().player);
-        NoellesRolesAbilityPlayerComponent abilityComp = NoellesRolesAbilityPlayerComponent.KEY.get(Minecraft.getInstance().player);
+        AbstractClientPlayer player = Minecraft.getInstance().player;
+        if (player == null) return;
+        
+        ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(player);
+        NoellesRolesAbilityPlayerComponent abilityComp = NoellesRolesAbilityPlayerComponent.KEY.get(player);
 
         boolean canControl = abilityComp.cooldown <= 0 && !manipulatorComp.isControlling;
 
@@ -50,8 +72,8 @@ public class ManipulatorPlayerWidget extends Button {
 
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.renderTooltip(Minecraft.getInstance().font, targetPlayer.getName(),
-                        this.getX() - 4 - Minecraft.getInstance().font.width(targetPlayer.getName()) / 2,
+                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(targetPlayer.getProfile().getName()),
+                        this.getX() - 4 - Minecraft.getInstance().font.width(targetPlayer.getProfile().getName()) / 2,
                         this.getY() - 9);
             }
         } else {
@@ -62,8 +84,8 @@ public class ManipulatorPlayerWidget extends Button {
 
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.renderTooltip(Minecraft.getInstance().font, targetPlayer.getName(),
-                        this.getX() - 4 - Minecraft.getInstance().font.width(targetPlayer.getName()) / 2,
+                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(targetPlayer.getProfile().getName()),
+                        this.getX() - 4 - Minecraft.getInstance().font.width(targetPlayer.getProfile().getName()) / 2,
                         this.getY() - 9);
             }
 
@@ -75,15 +97,65 @@ public class ManipulatorPlayerWidget extends Button {
                         this.getX(), this.getY(), Color.RED.getRGB(), true);
             }
         }
+        
+        // 渲染下方的文字
+        renderDisplayText(context);
     }
 
     private void drawShopSlotHighlight(GuiGraphics context, int x, int y, int z) {
         int color = -1862287543;
-        context.fillGradient(RenderType.guiOverlay(), x, y, x + 16, y + 14, color, color, z);
-        context.fillGradient(RenderType.guiOverlay(), x, y + 14, x + 15, y + 15, color, color, z);
-        context.fillGradient(RenderType.guiOverlay(), x, y + 15, x + 14, y + 16, color, color, z);
+        context.fillGradient(RenderType.guiOverlay(), x, y, x + 16, y + 14, color, color, 0);
+        context.fillGradient(RenderType.guiOverlay(), x, y + 14, x + 15, y + 15, color, color, 0);
+        context.fillGradient(RenderType.guiOverlay(), x, y + 15, x + 14, y + 16, color, color, 0);
     }
 
+    /**
+     * 设置要显示的文本
+     * @param text 要显示的文本组件
+     */
+    public void setDisplayText(Component text) {
+        this.displayText = text;
+        this.cachedLines.clear();
+    }
+    
+    /**
+     * 渲染显示文本
+     */
+    private void renderDisplayText(GuiGraphics context) {
+        if (displayText == null || displayText.getString().isEmpty()) {
+            return;
+        }
+        
+        Font font = Minecraft.getInstance().font;
+        int maxWidth = 50; // 最大宽度
+        int lineHeight = font.lineHeight + 1; // 行高
+        int yOffset = 20; // 距离widget的垂直偏移
+        
+        // 如果缓存为空，重新计算分行
+        if (cachedLines.isEmpty()) {
+            cachedLines = font.split(displayText, maxWidth);
+        }
+        
+        // 计算起始Y位置（widget底部 + 偏移）
+        int startY = this.getY() + this.getHeight() + yOffset;
+        
+        // 居中渲染每一行
+        for (int i = 0; i < cachedLines.size(); i++) {
+            net.minecraft.util.FormattedCharSequence line = cachedLines.get(i);
+            int lineWidth = font.width(line);
+            int x = this.getX() + (this.getWidth() - lineWidth) / 2; // 水平居中
+            int y = startY + (i * lineHeight);
+            
+            // 绘制背景半透明矩形
+            context.fill(x - 2, y - 1, x + lineWidth + 2, y + font.lineHeight + 1, 0x80000000);
+            
+            // 绘制文字
+            context.drawString(font, line, x, y, 0xFFFFFF, true);
+        }
+    }
+    
+    @Override
     public void renderString(GuiGraphics context, Font textRenderer, int color) {
+        // 空实现，因为我们有自己的文本渲染逻辑
     }
 }

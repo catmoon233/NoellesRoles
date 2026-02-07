@@ -79,7 +79,7 @@ public abstract class MorphlingScreenMixin extends LimitedHandledScreen<Inventor
     private MorphlingPlayerWidget createMorphlingWidget(int x, int y, PlayerInfo playerEntity, int index) {
         MorphlingPlayerWidget widget = new MorphlingPlayerWidget(
                 (LimitedInventoryScreen) (Object) this,
-                x, y, playerEntity, index
+                x, y, playerEntity
         );
         addDrawableChild(widget);
         return widget;
@@ -104,16 +104,10 @@ public abstract class MorphlingScreenMixin extends LimitedHandledScreen<Inventor
         }
 
         return client.getConnection().getListedOnlinePlayers().stream()
-                .filter(a -> a.getProfile().getId() != player.getUUID() && a.getGameMode() == GameType.ADVENTURE)
+                .filter(a -> a.getProfile().getId() != player.getUUID() )
                 .collect(Collectors.toList());
     }
 
-    @Unique
-    private boolean isPlayerInAdventureMode(AbstractClientPlayer targetPlayer) {
-        Minecraft client = Minecraft.getInstance();
-        var entry = client.player.connection.getPlayerInfo(targetPlayer.getUUID());
-        return entry != null && entry.getGameMode() == GameType.ADVENTURE;
-    }
 
     @Inject(method = "render", at = @At("HEAD"))
     private void noellesroles$onRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
