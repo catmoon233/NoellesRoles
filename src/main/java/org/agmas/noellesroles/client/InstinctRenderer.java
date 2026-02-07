@@ -7,7 +7,10 @@ import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.slf4j.LoggerFactory;
+
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -26,21 +29,21 @@ public class InstinctRenderer {
             if (self == null)
                 return -1;
 
-            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
-                    .get(self.level());
+            GameWorldComponent gameWorldComponent = TMMClient.gameComponent;
+            if (gameWorldComponent == null)
+                return -1;
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
-                dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent bartenderPlayerComponent = dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent.KEY
-                        .get(target_player);
+                BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(target_player);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
                 if (gameWorldComponent.isRole(self, ModRoles.BARTENDER)) {
+                    // LoggerFactory.getLogger("renderer").info("glowTick {}", bartenderPlayerComponent.glowTicks);
+
                     if (bartenderPlayerComponent.glowTicks > 0) {
                         return (Color.GREEN.getRGB());
-
                     }
                     if (bartenderPlayerComponent.getArmor() > 0) {
                         return (Color.BLUE.getRGB());
-
                     }
                 }
                 if ((gameWorldComponent.isRole(self, ModRoles.BARTENDER)
