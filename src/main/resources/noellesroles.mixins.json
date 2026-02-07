@@ -19,6 +19,7 @@
     "roles.awesome_binglus.NoteMixin",
     "roles.broadcaster.BroadcasterDeathMixin",
     "roles.coroner.CoronerAddDeathReasonMixin",
+    "roles.elf.ArrowMixin",
     "roles.engineer.EngineerCrowbarMixin",
     "roles.engineer.LockMixin",
     "roles.executioner.ExecutionerConfirmMixin",
@@ -79,6 +80,7 @@
     "client.StalkerRoleNameMixin",
     "client.StarHudMixin",
     "client.admirer.AdmirerHudMixin",
+    "client.bartender.DefenseVialViewMixin",
     "client.broadcaster.BroadcasterHudMixin",
     "client.conductor.MasterKeyInvisibilityMixin",
     "client.coroner.CoronerHudMixin",
@@ -114,8 +116,7 @@
     "client.voodoo.VoodooScreenMixin",
     "client.vulture.VultureEatenBodyMixin",
     "client.vulture.VultureHudMixin",
-    "roles.photographer.BlindnessEffectMixin",
-    "client.bartender.DefenseVialViewMixin"
+    "roles.photographer.BlindnessEffectMixin"
   ],
   "overwrites": {
     "requireAnnotations": true
