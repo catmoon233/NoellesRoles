@@ -113,7 +113,8 @@
     "client.voodoo.VoodooScreenMixin",
     "client.vulture.VultureEatenBodyMixin",
     "client.vulture.VultureHudMixin",
-    "roles.photographer.BlindnessEffectMixin"
+    "roles.photographer.BlindnessEffectMixin",
+    "client.bartender.DefenseVialViewMixin"
   ],
   "overwrites": {
     "requireAnnotations": true
