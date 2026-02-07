@@ -8,6 +8,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,6 +26,10 @@ public class EntityClear {
     private static void clearAllEntities(ServerLevel world, CallbackInfo ci) {
         // 清除所有锁实体及其映射
         LockEntityManager.getInstance().resetLockEntities();
+        for (var pl : world.players()) {
+            RoleUtils.RemoveAllPlayerAttributes(pl);
+        }
+
         world.getAllEntities().forEach((entity) -> {
             if (entity instanceof LockEntity) {
                 entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
@@ -35,7 +40,7 @@ public class EntityClear {
             } else if (entity instanceof ItemEntity) {
                 entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
                 // 删除物品
-            }else if (entity instanceof PlayerBodyEntity) {
+            } else if (entity instanceof PlayerBodyEntity) {
                 entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
                 // 删除尸体
             }

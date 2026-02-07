@@ -130,7 +130,7 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
         }
 
         PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(player);
-        if (shopComponent.balance < 100) {
+        if (shopComponent.balance < 150) {
             player.displayClientMessage(Component.translatable("message.noellesroles.insufficient_funds"), true);
             if (player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.level().playSound(null, serverPlayer.blockPosition(), TMMSounds.UI_SHOP_BUY_FAIL,
@@ -139,7 +139,8 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
             return;
         }
 
-        shopComponent.balance -= 100;
+
+        shopComponent.balance -= 150;
         shopComponent.sync();
 
         cooldown = 400;

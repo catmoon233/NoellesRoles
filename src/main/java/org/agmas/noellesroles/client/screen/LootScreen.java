@@ -8,7 +8,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec2;
@@ -20,7 +19,7 @@ import org.agmas.noellesroles.client.widget.TimerWidget;
 
 import java.util.ArrayList;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import org.agmas.noellesroles.utils.LotteryManager;
 //import com.mojang.blaze3d.vertex.VertexConsumer;
 //import com.mojang.math.Axis;
 //import org.joml.Matrix4f;
@@ -32,31 +31,8 @@ public class LootScreen extends Screen {
 //    private float rotationY = 45;
 //    private float lidAngle = 0;
 
-    // TODO: 作为皮肤查询使用，当皮肤系统建成后移动到皮肤管理器中
-    public static final ResourceLocation[] skinList = {
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/lock.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/bomb.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/note.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/sp_knife.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/master_key.png"),
-    };
-    // 皮肤品质映射
-    public static final int[] skinQualityList = {
-            4,
-            3,
-            0,
-            2,
-            1,
-    };
-    public static final ResourceLocation[] qualityList = {
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/common_skin.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/uncommon_skin.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/rare_skin.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/epic_skin.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/legendary_skin.png"),
-    };
-
     private static int pixelSize = 4;// 最大（默认）像素缩放的大小
+    private final float deltaScale = .3f;// 最终缩放增量比例
     // 随机的过卡次数：目标卡片位置会在最大和最小中roll一个随机值
     private final int minCardNum = 30;
     private final int maxCardNum = 80;
@@ -75,7 +51,6 @@ public class LootScreen extends Screen {
     private Button startBtn;
     private boolean isStart = false;// 是否启动抽卡
     private boolean isLooting = false;// 是否正在抽卡
-    private float deltaScale = .3f;// 最终缩放增量比例
     private int endCardIdx = 20;// 最终卡片所在索引
     private int totalPixels;// 显示的总像素数
     private int curEndIdx = 0;// 当前移除卡片所在索引
@@ -94,9 +69,12 @@ public class LootScreen extends Screen {
         }
         public Card(int x, int y, int w, int h, int id) {
             super(x, y, w, h, Component.empty());
-            skinBG = new TextureWidget(x, y, w, h, w, h, qualityList[skinQualityList[id]]);
+            skinBG = new TextureWidget(x, y, w, h, w, h,
+                    LotteryManager.TempLootAbleItemManager.getQualityResourceLocation(
+                            LotteryManager.TempLootAbleItemManager.getSkinQuality(id)));
             skin = new TextureWidget(x + pixelSize, y + pixelSize,
-                    w - 2 * pixelSize, h - 2 * pixelSize, w - 2 * pixelSize, h - 2 * pixelSize, skinList[id]);
+                    w - 2 * pixelSize, h - 2 * pixelSize, w - 2 * pixelSize, h - 2 * pixelSize,
+                    LotteryManager.TempLootAbleItemManager.getSkinResourceLocation(id));
         }
 
         @Override
@@ -211,7 +189,10 @@ public class LootScreen extends Screen {
         {
             Card card = new Card(centerX + totalPixels / 2 * pixelSize, centerY - cardSize * pixelSize / 2,
                     cardSize * pixelSize, cardSize * pixelSize,
-                    i != endCardIdx ? randomSource.nextInt(skinList.length) : ansID);
+                    // 获取随机皮肤
+                    // TODO : 抽奖时每个略过的皮肤如果是等概率可能不好看，最好还是改为和抽取相同的改了，不过目前还没有相关接口
+                    i != endCardIdx ? randomSource.nextInt(
+                            LotteryManager.TempLootAbleItemManager.getSkinListLen()) : ansID);
             card.visible = false;
             cards.add(card);
             int curLen = i * (cardSize + cardInterval) + totalPixels;

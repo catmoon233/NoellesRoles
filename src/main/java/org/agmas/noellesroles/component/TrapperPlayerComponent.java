@@ -70,17 +70,20 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
     public static final int GLOWING_DURATION = 100;
     
     // ==================== 状态变量 ====================
-    
+
     private final Player player;
-    
+
     /** 当前陷阱储存数量 */
     public int trapCharges = MAX_TRAP_CHARGES;
-    
+
     /** 陷阱恢复计时器（tick） */
     public int rechargeTimer = 0;
-    
+
     /** 是否已标记为设陷者 */
     public boolean isTrapperMarked = false;
+
+    /** 是否正在恢复陷阱（用于防止重置计时器） */
+    private boolean isRecharging = false;
     
     /** 记录每个玩家被触发陷阱的次数（用于增加囚禁时间） */
     private Map<UUID, Integer> triggerCounts = new HashMap<>();
@@ -107,6 +110,7 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
         this.trapCharges = MAX_TRAP_CHARGES;
         this.rechargeTimer = 0;
         this.isTrapperMarked = true;
+        this.isRecharging = false;
         this.triggerCounts.clear();
         this.prisonTimers.clear();
         this.prisonPositions.clear();
@@ -115,9 +119,16 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
 
     @Override
     public void clear() {
-        this.reset();
+        this.trapCharges = MAX_TRAP_CHARGES;
+        this.rechargeTimer = 0;
+        this.isTrapperMarked = false;
+        this.isRecharging = false;
+        this.triggerCounts.clear();
+        this.prisonTimers.clear();
+        this.prisonPositions.clear();
+        this.sync();
     }
-    
+
     /**
      * 完全清除组件状态（游戏结束时调用）
      */
@@ -125,6 +136,7 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
         this.trapCharges = MAX_TRAP_CHARGES;
         this.rechargeTimer = 0;
         this.isTrapperMarked = false;
+        this.isRecharging = false;
         this.triggerCounts.clear();
         this.prisonTimers.clear();
         this.prisonPositions.clear();
@@ -331,21 +343,31 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
         }
         // 处理陷阱恢复计时
         if (trapCharges < MAX_TRAP_CHARGES) {
-            if (rechargeTimer > 0) {
-                rechargeTimer--;
-                if (rechargeTimer == 0) {
-                    // 恢复一个陷阱
-                    trapCharges++;
-                    // 如果还没满，继续计时
-                    if (trapCharges < MAX_TRAP_CHARGES) {
-                        rechargeTimer = TRAP_RECHARGE_TIME;
+            if (isRecharging) {
+                if (rechargeTimer > 0) {
+                    rechargeTimer--;
+                    if (rechargeTimer == 0) {
+                        // 恢复一个陷阱
+                        trapCharges++;
+                        this.sync();
+                        // 如果还没满，继续计时
+                        if (trapCharges < MAX_TRAP_CHARGES) {
+                            rechargeTimer = TRAP_RECHARGE_TIME;
+                        } else {
+                            // 已满，停止恢复
+                            isRecharging = false;
+                        }
                     }
-
                 }
             } else {
                 // 开始恢复计时
+                isRecharging = true;
                 rechargeTimer = TRAP_RECHARGE_TIME;
             }
+        } else {
+            // 陷阱已满，停止恢复
+            isRecharging = false;
+            rechargeTimer = 0;
         }
         
         // 处理所有被囚禁玩家
@@ -401,6 +423,7 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
         tag.putInt("trapCharges", this.trapCharges);
         tag.putInt("rechargeTimer", this.rechargeTimer);
         tag.putBoolean("isTrapperMarked", this.isTrapperMarked);
+        tag.putBoolean("isRecharging", this.isRecharging);
         
         // 保存触发次数
         CompoundTag countsTag = new CompoundTag();
@@ -433,6 +456,7 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
         this.trapCharges = tag.contains("trapCharges") ? tag.getInt("trapCharges") : MAX_TRAP_CHARGES;
         this.rechargeTimer = tag.contains("rechargeTimer") ? tag.getInt("rechargeTimer") : 0;
         this.isTrapperMarked = tag.contains("isTrapperMarked") && tag.getBoolean("isTrapperMarked");
+        this.isRecharging = tag.contains("isRecharging") && tag.getBoolean("isRecharging");
         
         // 读取触发次数
         this.triggerCounts.clear();
