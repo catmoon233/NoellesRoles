@@ -119,7 +119,7 @@ public class ModItems {
             "boxing_glove");
 
     public static final Item ANTIDOTE_REAGENT = register(
-            new AntidoteReagentItem(new Item.Properties().stacksTo(16)),
+            new AntidoteReagentItem(new Item.Properties().stacksTo(16).durability(5)),
             "antidote_reagent");
 
     /**
