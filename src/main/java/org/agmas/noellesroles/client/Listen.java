@@ -62,7 +62,7 @@ public class Listen {
                     listening = true;
                 }
 
-                if (mc.level.getGameTime() - startListenTime >= 40) {
+                if (mc.level.getGameTime() - startListenTime >= 15) {
                     inListen = true;
                 }
             } else {
