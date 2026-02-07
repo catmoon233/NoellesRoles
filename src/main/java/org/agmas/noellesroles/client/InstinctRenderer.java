@@ -37,14 +37,18 @@ public class InstinctRenderer {
                 BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(target_player);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
                 if (gameWorldComponent.isRole(self, ModRoles.BARTENDER)) {
-                    // LoggerFactory.getLogger("renderer").info("glowTick {}", bartenderPlayerComponent.glowTicks);
-
-                    if (bartenderPlayerComponent.glowTicks > 0) {
-                        return (Color.GREEN.getRGB());
+                    // LoggerFactory.getLogger("renderer").info("glowTick {}",
+                    // bartenderPlayerComponent.glowTicks);
+                    if (bartenderPlayerComponent.getArmor() > 0 && playerPoisonComponent.poisonTicks > 0) {
+                        return (new Color(186, 255, 65).getRGB());
                     }
                     if (bartenderPlayerComponent.getArmor() > 0) {
                         return (Color.BLUE.getRGB());
                     }
+                    if (bartenderPlayerComponent.glowTicks > 0) {
+                        return (Color.GREEN.getRGB());
+                    }
+
                 }
                 if ((gameWorldComponent.isRole(self, ModRoles.BARTENDER)
                         || gameWorldComponent.isRole(self, ModRoles.POISONER))
