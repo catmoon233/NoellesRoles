@@ -16,7 +16,6 @@ import java.util.Stack;
  * 该管理器并不会在关闭地图(也可能是游戏？)后保存数据，总之就是重启之后所有锁实体将不会影响到门，但是考虑到游戏也不会在关闭后继续，所以没必要管
  */
 public class LockEntityManager {
-    /** 重置锁实体映射 */
     private LockEntityManager() {
     };
 
