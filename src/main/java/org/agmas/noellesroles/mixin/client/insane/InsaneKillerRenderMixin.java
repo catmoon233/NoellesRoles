@@ -46,6 +46,8 @@ public abstract class InsaneKillerRenderMixin
                     Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
                 }
                 final var value = new PlayerBodyEntity(TMMEntities.PLAYER_BODY, abstractClientPlayer.level());
+                value.setXRot(abstractClientPlayer.getXRot());
+
                 playerBodyEntities.put(abstractClientPlayer.getUUID(), value);
                 value.setPlayerUuid(abstractClientPlayer.getUUID());
             }

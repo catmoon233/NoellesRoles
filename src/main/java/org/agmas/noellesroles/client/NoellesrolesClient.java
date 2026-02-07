@@ -48,6 +48,7 @@ import walksy.crosshairaddons.CrosshairAddons;
 import java.util.*;
 
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.*;
+import static org.agmas.noellesroles.component.InsaneKillerPlayerComponent.playerBodyEntities;
 
 public class NoellesrolesClient implements ClientModInitializer {
 
@@ -64,6 +65,10 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static Component currentBroadcastMessage = null;
     public static int broadcastMessageTicks = 0;
     public static BloodMain bloodMain = new BloodMain();
+
+
+    private static long lastClientTickTime = 0;
+    private static final long CLIENT_TICK_INTERVAL_MS = 50; // 1000ms / 20 ticks per second = 50ms per tick
 
     @Override
     public void onInitializeClient() {
@@ -170,6 +175,16 @@ public class NoellesrolesClient implements ClientModInitializer {
         InvisbleHandItem.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastClientTickTime >= CLIENT_TICK_INTERVAL_MS) {
+                lastClientTickTime = currentTime;
+                playerBodyEntities.forEach(
+                        (uuid, playerBodyEntity) -> {
+                            if (playerBodyEntity.getPlayerUuid().equals(uuid))
+                                ++playerBodyEntity.tickCount;
+                        });
+
+            }
             if (roleGuessNoteClientBind.consumeClick()) {
                 client.execute(() -> {
                     client.setScreen(new GuessRoleScreen());

@@ -35,13 +35,25 @@ public class ArrowMixin {
             if (arrow instanceof Arrow) {
                 if (arrow.getOwner() instanceof ServerPlayer serverPlayer) {
                     if (GameWorldComponent.KEY.get(serverPlayer.serverLevel()).isRole(serverPlayer, ModRoles.ELF)) {
+                        isHit = true;
                         GameFunctions.killPlayer(player, true, serverPlayer, TMM.id("arrow"));
                     }
                 }
             }
         }
     }
-    @Inject(method = "onHitEntity", at = @At("HEAD"))
+    private static boolean isHit =false ;
+    @Inject(method = "onHitEntity", at = @At("TAIL"))
+    private void noellesroles$onHitEntitTail(EntityHitResult entityHitResult, CallbackInfo ci) {
+        if (TMMConfig.isLobby)return;
+        if (isHit){
+            AbstractArrow arrow = (AbstractArrow) (Object) this;
+            arrow.discard();
+            isHit = false;
+
+        }
+    }
+    @Inject(method = "onHitEntity", at = @At("TAIL"))
     private void noellesroles$onHitPlayerBody(EntityHitResult entityHitResult, CallbackInfo ci) {
         if (TMMConfig.isLobby)return;
         if (entityHitResult.getEntity() instanceof PlayerBodyEntity player){
