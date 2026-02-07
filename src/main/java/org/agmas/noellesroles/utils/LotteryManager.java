@@ -131,12 +131,10 @@ public class LotteryManager {
     {
         int curNum = randomSource.nextInt(maxGranularity);// 0 ~ maxGranularity -1
         float level = 0.0f;
-        for(int i = 0; i < poolProbability.length; ++i)
-        {
-            level += poolProbability[i];
-            if(curNum < level * maxGranularity)
-            {
-                ArrayList<Integer> curPool = lootPool.get(i).first;
+        for (Pair<ArrayList<Integer>, Float> arrayListFloatPair : lootPool) {
+            level += arrayListFloatPair.second;
+            if (curNum < level * maxGranularity) {
+                ArrayList<Integer> curPool = arrayListFloatPair.first;
                 // TODO : 为玩家解锁皮肤
                 return curPool.get(randomSource.nextInt(curPool.size()));
             }
