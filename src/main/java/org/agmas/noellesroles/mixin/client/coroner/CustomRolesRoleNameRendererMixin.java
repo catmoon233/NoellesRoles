@@ -8,6 +8,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -38,7 +39,7 @@ public abstract class CustomRolesRoleNameRendererMixin {
     private static float nametagAlpha;
 
     @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I", ordinal = 0))
-    private static void b(Font renderer, @NotNull LocalPlayer player, GuiGraphics context, DeltaTracker tickCounter,
+    private static void b(Font renderer, @NotNull LocalPlayer lp, GuiGraphics context, DeltaTracker tickCounter,
             CallbackInfo ci) {
         if (HarpymodloaderClient.hudRole != null) {
             if (TMMClient.isPlayerSpectatingOrCreative()) {
@@ -51,6 +52,9 @@ public abstract class CustomRolesRoleNameRendererMixin {
                     }
                 }
                 // 死亡惩罚
+                if (Minecraft.getInstance() != null || Minecraft.getInstance().player == null)
+                    return;
+                Player player = Minecraft.getInstance().player;
                 int di_color = HarpymodloaderClient.hudRole.color();
                 var deathPenalty = ModComponents.DEATH_PENALTY.get(player.level());
                 boolean hasPenalty = false;
