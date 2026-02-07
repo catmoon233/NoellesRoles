@@ -1110,12 +1110,13 @@ public class Noellesroles implements ModInitializer {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(player);
-                if (component.isDead && player.level().getGameTime() >= component.resurrectionTime) {
+                if (component.isDead && player.isSpectator() && player.level().getGameTime() >= component.resurrectionTime) {
                     // 复活逻辑
-                    player.setGameMode(net.minecraft.world.level.GameType.ADVENTURE);
                     if (component.deathPos != null) {
                         player.teleportTo(component.deathPos.x, component.deathPos.y, component.deathPos.z);
                     }
+                    player.setGameMode(net.minecraft.world.level.GameType.ADVENTURE);
+
                     player.setHealth(player.getMaxHealth());
 
                     // 移除尸体
@@ -1126,7 +1127,7 @@ public class Noellesroles implements ModInitializer {
                             entity.discard();
                         }
                     }
-
+                    
                     component.reset();
                     player.displayClientMessage(Component.translatable("message.noellesroles.defibrillator.revived"),
                             true);
