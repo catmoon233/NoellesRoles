@@ -547,7 +547,7 @@
   "message.noellesroles.puppeteer.collect_more": "还需要收集更多尸体！（%d/%d）",
   "==================== 操纵师角色 ====================": "",
   "announcement.role.manipulator": "操纵师",
-  "announcement.goals.manipulator": "选择一名玩家作为目标进行操控。你将在原地留下本体，同时获得目标的外观、物品栏和角色能力！持续50秒，本体死亡时你也会死亡！",
+  "announcement.goals.manipulator": "选择一名玩家作为目标进行操控。该目标会随即移动！持续50秒，本体死亡时你也会死亡！",
   "announcement.win.manipulator": "杀手胜利！",
   "hud.noellesroles.manipulator.title": "操纵师",
   "hud.noellesroles.manipulator.cooldown": "操纵冷却：%s秒",

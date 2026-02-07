@@ -7,6 +7,8 @@ import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.slf4j.LoggerFactory;
+
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
@@ -53,6 +55,7 @@ public class InstinctRenderer {
                             .get(self);
                     if (admirerPlayerComponent != null && admirerPlayerComponent.getBoundTarget() != null) {
                         if (admirerPlayerComponent.getBoundTarget().getUUID().equals(target.getUUID())) {
+                            // LoggerFactory.getLogger("Instinct").info("PINK");
                             return (Color.PINK.getRGB());
                         }
                     }
