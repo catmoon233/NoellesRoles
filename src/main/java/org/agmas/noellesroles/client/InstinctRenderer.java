@@ -7,8 +7,6 @@ import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
-import org.slf4j.LoggerFactory;
-
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
@@ -32,6 +30,26 @@ public class InstinctRenderer {
                     .get(self.level());
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
+
+                dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent bartenderPlayerComponent = dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent.KEY
+                        .get(target_player);
+                PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
+                if (gameWorldComponent.isRole(self, ModRoles.BARTENDER)) {
+                    if (bartenderPlayerComponent.glowTicks > 0) {
+                        return (Color.GREEN.getRGB());
+
+                    }
+                    if (bartenderPlayerComponent.getArmor() > 0) {
+                        return (Color.BLUE.getRGB());
+
+                    }
+                }
+                if ((gameWorldComponent.isRole(self, ModRoles.BARTENDER)
+                        || gameWorldComponent.isRole(self, ModRoles.POISONER))
+                        && playerPoisonComponent.poisonTicks > 0) {
+                    return (Color.RED.getRGB());
+                }
+
                 if (gameWorldComponent.isRole(self, ModRoles.EXECUTIONER)) {
                     ExecutionerPlayerComponent executionerPlayerComponent = (ExecutionerPlayerComponent) ExecutionerPlayerComponent.KEY
                             .get(self);
@@ -135,22 +153,6 @@ public class InstinctRenderer {
                     return (ModRoles.POSTMAN.color());
                 }
 
-                dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent bartenderPlayerComponent = dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent.KEY
-                        .get(target_player);
-                PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
-                if (gameWorldComponent.isRole(self, ModRoles.BARTENDER)
-                        && bartenderPlayerComponent.glowTicks > 0) {
-                    return (Color.GREEN.getRGB());
-                }
-                if (gameWorldComponent.isRole(self, ModRoles.BARTENDER)
-                        && bartenderPlayerComponent.getArmor() > 0) {
-                    return (Color.BLUE.getRGB());
-                }
-                if ((gameWorldComponent.isRole(self, ModRoles.BARTENDER)
-                        || gameWorldComponent.isRole(self, ModRoles.POISONER))
-                        && playerPoisonComponent.poisonTicks > 0) {
-                    return (Color.RED.getRGB());
-                }
             }
 
             return -1;

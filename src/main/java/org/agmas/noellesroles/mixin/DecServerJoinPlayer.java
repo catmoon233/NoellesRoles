@@ -7,6 +7,7 @@ import net.minecraft.server.players.PlayerList;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.ConfigWorldComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,7 +28,9 @@ public class DecServerJoinPlayer {
         var pl = modifierComponent.modifiers.get(serverPlayer.getUUID());
         if (pl != null) {
             pl.clear();
+            modifierComponent.sync();
         }
+        RoleUtils.RemoveAllPlayerAttributes(serverPlayer);
         ((PlayerMoodComponent) PlayerMoodComponent.KEY.get(serverPlayer)).reset();
         ((PlayerShopComponent) PlayerShopComponent.KEY.get(serverPlayer)).reset();
         ((PlayerPoisonComponent) PlayerPoisonComponent.KEY.get(serverPlayer)).reset();
@@ -37,4 +40,5 @@ public class DecServerJoinPlayer {
         ConfigWorldComponent.KEY.get(serverPlayer.level()).sync();
         WorldModifierComponent.KEY.get(serverPlayer.level()).sync();
     }
+
 }

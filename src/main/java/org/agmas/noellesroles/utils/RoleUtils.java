@@ -5,6 +5,8 @@ import org.agmas.harpymodloader.events.ModdedRoleRemoved;
 import org.agmas.harpymodloader.modifiers.Modifier;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -14,10 +16,13 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import io.github.mortuusars.exposure.util.color.Color;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -25,6 +30,25 @@ import net.minecraft.world.item.ItemStack;
  * 角色相关工具
  */
 public class RoleUtils {
+    public static void RemoveAllPlayerAttributes(ServerPlayer serverPlayer) {
+        var attris = serverPlayer.getAttributes();
+        if (attris != null) {
+            var allAttris = attris.getSyncableAttributes();
+            if (allAttris != null && allAttris.size() > 0) {
+                Multimap<Holder<Attribute>, AttributeModifier> multimap1 = ArrayListMultimap.create();
+                for (var attri : allAttris) {
+                    var amodifiers = attri.getModifiers();
+                    if (amodifiers != null) {
+                        for (var mo : amodifiers) {
+                            multimap1.put(attri.getAttribute(), mo);
+                        }
+                    }
+                }
+                attris.removeAttributeModifiers(multimap1);
+            }
+        }
+    }
+
     public static boolean isPlayerHasFreeSlot(@NotNull Player player) {
         for (int i = 0; i < 9; ++i) {
             ItemStack stack = player.getInventory().getItem(i);
@@ -174,13 +198,13 @@ public class RoleUtils {
     }
 
     public static MutableComponent getRoleOrModifierTypeName(Object role) {
-         if (role instanceof Role) {
+        if (role instanceof Role) {
             return Component.translatable("display.type.role");
         } else if (role instanceof Modifier) {
             return Component.translatable("display.type.modifier");
         } else {
             return Component.translatable("display.type.unknown");
         }
-        // 
+        //
     }
 }
