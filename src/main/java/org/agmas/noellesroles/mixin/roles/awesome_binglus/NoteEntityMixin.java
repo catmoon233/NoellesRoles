@@ -26,7 +26,7 @@ public abstract class NoteEntityMixin extends Entity {
         NoteEntity note = (NoteEntity) (Object) this;
         final var attached = note.getAttached(ModRoles.ENTITY_NOTE_MAKER);
         if (attached != null) {
-            if (note.tickCount >= 20 * 60){
+            if (note.tickCount >= 20 * 80){
                 note.remove(Entity.RemovalReason.DISCARDED);
             }else {
                 try {
