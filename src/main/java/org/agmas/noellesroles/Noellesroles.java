@@ -603,6 +603,7 @@ public class Noellesroles implements ModInitializer {
             final var PoisonArrow = Items.TIPPED_ARROW.getDefaultInstance();
             PoisonArrow.set(DataComponents.ITEM_NAME, Component.translatable("item.poison_arrow.name"));
             PoisonArrow.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.POISON));
+            PoisonArrow.set(DataComponents.MAX_STACK_SIZE, 1);
             shopEntries.add(new ShopEntry(PoisonArrow, 75, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
@@ -619,6 +620,8 @@ public class Noellesroles implements ModInitializer {
             });
 
             final var SpectralArrow = Items.SPECTRAL_ARROW.getDefaultInstance();
+            SpectralArrow.set(DataComponents.MAX_STACK_SIZE, 1);
+
             shopEntries.add(new ShopEntry(SpectralArrow, 50, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
