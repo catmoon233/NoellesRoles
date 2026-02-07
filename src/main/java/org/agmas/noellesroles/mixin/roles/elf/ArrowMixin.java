@@ -3,6 +3,7 @@ package org.agmas.noellesroles.mixin.roles.elf;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -37,6 +38,14 @@ public class ArrowMixin {
                     }
                 }
             }
+        }
+    }
+    @Inject(method = "onHitEntity", at = @At("HEAD"))
+    private void noellesroles$onHitPlayerBody(EntityHitResult entityHitResult, CallbackInfo ci) {
+        if (TMMConfig.isLobby)return;
+        if (entityHitResult.getEntity() instanceof PlayerBodyEntity player){
+            AbstractArrow arrow = (AbstractArrow) (Object) this;
+            arrow.discard();
         }
     }
     @Inject(method = "onHitBlock", at = @At("TAIL"))
