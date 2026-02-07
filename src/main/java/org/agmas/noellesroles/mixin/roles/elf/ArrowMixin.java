@@ -27,21 +27,24 @@ import java.util.List;
 public class ArrowMixin {
     @Inject(method = "onHitEntity", at = @At("HEAD"))
     private void noellesroles$onHitEntity(EntityHitResult entityHitResult, CallbackInfo ci) {
-        if (TMMConfig.isLobby)return;
-        if (entityHitResult.getEntity() instanceof ServerPlayer player){
+        if (TMMConfig.isLobby)
+            return;
+        if (entityHitResult.getEntity() instanceof ServerPlayer player) {
             AbstractArrow arrow = (AbstractArrow) (Object) this;
-            if (arrow instanceof Arrow arrow1) {
-                if (arrow.getOwner() instanceof ServerPlayer serverPlayer){
-                    if (GameWorldComponent.KEY.get(serverPlayer.serverLevel()).isRole(serverPlayer,ModRoles.ELF)){
-                        GameFunctions.killPlayer( player,true,serverPlayer, TMM.id("poison"));
+            if (arrow instanceof Arrow) {
+                if (arrow.getOwner() instanceof ServerPlayer serverPlayer) {
+                    if (GameWorldComponent.KEY.get(serverPlayer.serverLevel()).isRole(serverPlayer, ModRoles.ELF)) {
+                        GameFunctions.killPlayer(player, true, serverPlayer, TMM.id("arrow"));
                     }
                 }
             }
         }
     }
+
     @Inject(method = "onHitBlock", at = @At("TAIL"))
     private void noellesroles$onHitBlock(BlockHitResult blockHitResult, CallbackInfo ci) {
-        if (TMMConfig.isLobby)return;
+        if (TMMConfig.isLobby)
+            return;
         AbstractArrow arrow = (AbstractArrow) (Object) this;
         if (arrow instanceof SpectralArrow arrow1) {
             if (arrow.getOwner() instanceof ServerPlayer serverPlayer) {
@@ -49,9 +52,11 @@ public class ArrowMixin {
                     // 获取箭矢击中的位置
                     BlockPos hitPos = blockHitResult.getBlockPos();
                     // 获取附近玩家列表（例如半径为5格）
-                    List<ServerPlayer> nearbyPlayers = serverPlayer.serverLevel().getEntitiesOfClass(ServerPlayer.class, new AABB(hitPos).inflate(6));
+                    List<ServerPlayer> nearbyPlayers = serverPlayer.serverLevel().getEntitiesOfClass(ServerPlayer.class,
+                            new AABB(hitPos).inflate(6));
                     // 输出附近玩家数量
-                    serverPlayer.sendSystemMessage(Component.literal("附近玩家数量：" + nearbyPlayers.size()).withStyle(ChatFormatting.GREEN), true);
+                    serverPlayer.sendSystemMessage(
+                            Component.literal("附近玩家数量：" + nearbyPlayers.size()).withStyle(ChatFormatting.GREEN), true);
                     arrow1.discard();
                 }
             }
