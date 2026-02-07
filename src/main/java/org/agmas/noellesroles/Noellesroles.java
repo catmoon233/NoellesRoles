@@ -7,6 +7,7 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
@@ -32,6 +33,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -1110,7 +1112,8 @@ public class Noellesroles implements ModInitializer {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(player);
-                if (component.isDead && player.isSpectator() && player.level().getGameTime() >= component.resurrectionTime) {
+                if (component.isDead && player.isSpectator()
+                        && player.level().getGameTime() >= component.resurrectionTime) {
                     // 复活逻辑
                     if (component.deathPos != null) {
                         player.teleportTo(component.deathPos.x, component.deathPos.y, component.deathPos.z);
@@ -1120,15 +1123,20 @@ public class Noellesroles implements ModInitializer {
                     player.setHealth(player.getMaxHealth());
 
                     // 移除尸体
-                    if (component.corpseEntityId != null) {
-                        net.minecraft.world.entity.Entity entity = ((net.minecraft.server.level.ServerLevel) player
-                                .level()).getEntity(component.corpseEntityId);
-                        if (entity != null) {
-                            entity.discard();
+                    if (player.level() instanceof ServerLevel slevel) {
+                        var entities = slevel.getAllEntities();
+                        for (var bentity : entities) {
+                            if (bentity instanceof PlayerBodyEntity body) {
+                                if (body.getPlayerUuid().equals(player.getUUID())) {
+                                    body.discard();
+                                    break;
+                                }
+                            }
                         }
                     }
-                    
+                    TrainVoicePlugin.resetPlayer(player.getUUID());
                     component.reset();
+                    
                     player.displayClientMessage(Component.translatable("message.noellesroles.defibrillator.revived"),
                             true);
                 }
