@@ -14,18 +14,19 @@ import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPer
 public class SPClientTick {
     @Shadow @Final private Player player;
 
-    @Inject(method = "clientDo", at = @At("HEAD"), cancellable = true)
-    private void clientDo(CallbackInfo ci) {
-        SplitPersonalityComponent comp = (SplitPersonalityComponent) (Object) this;
-        if (comp.getTemporaryRevivalStartTick()>0 || comp.getTemporaryRevivalStartTick() ==-1)return;
-        if (!comp.isDeath()){
-            if (!comp.isCurrentlyActive()){
-                player.level().players().forEach(p -> {
-                    if (p.getUUID().equals(comp.getCurrentActivePerson())){
-                        Minecraft.getInstance().setCameraEntity( p);
-                    }
-                });
-            }
-        }
-    }
+//    @Inject(method = "clientDo", at = @At("HEAD"), cancellable = true)
+//    private void clientDo(CallbackInfo ci) {
+//        SplitPersonalityComponent comp = (SplitPersonalityComponent) (Object) this;
+//        if (comp.getMainPersonality() ==null || comp.getSecondPersonality()==null)return;
+//        if (comp.getTemporaryRevivalStartTick()>0 )return;
+//        if (!comp.isDeath()){
+//            if (!comp.isCurrentlyActive()){
+//                player.level().players().forEach(p -> {
+//                    if (p.getUUID().equals(comp.getCurrentActivePerson())){
+//                        Minecraft.getInstance().setCameraEntity( p);
+//                    }
+//                });
+//            }
+//        }
+//    }
 }
