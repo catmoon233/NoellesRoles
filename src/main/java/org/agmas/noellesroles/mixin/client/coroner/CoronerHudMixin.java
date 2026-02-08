@@ -19,6 +19,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+
+import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
@@ -107,8 +110,14 @@ public abstract class CoronerHudMixin {
                         .append(Component
                                 .translatable("death_reason." + bodyDeathReasonComponent.deathReason.getNamespace()
                                         + "." + bodyDeathReasonComponent.deathReason.getPath()));
-
-                if (bodyDeathReasonComponent.vultured) {
+                boolean vultured = bodyDeathReasonComponent.vultured;
+                var worldModifiers = WorldModifierComponent.KEY.get(Minecraft.getInstance().player.level());
+                if (worldModifiers != null) {
+                    if (worldModifiers.isModifier(NoellesrolesClient.targetFakeBody, SEModifiers.SECRETIVE)) {
+                        vultured = true;
+                    }
+                }
+                if (vultured) {
                     name = Component.literal("abcdefghijklmnopqrstuvwxyzaa").withStyle(ChatFormatting.OBFUSCATED);
                 }
                 if (hasPenalty) {
