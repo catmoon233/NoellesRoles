@@ -70,7 +70,7 @@ public abstract class CustomRolesRoleNameRendererMixin {
                 final var worldModifierComponent = WorldModifierComponent.KEY
                         .get(player.level());
                 if (worldModifierComponent != null) {
-                    if (worldModifierComponent.isModifier(player.getUUID(), SEModifiers.SPLIT_PERSONALITY)) {
+                    if (worldModifierComponent.isModifier(player, SEModifiers.SPLIT_PERSONALITY)) {
                         var splitComponent = SplitPersonalityComponent.KEY.get(player);
                         if (splitComponent != null && !splitComponent.isDeath()) {
                             hasPenalty = true;

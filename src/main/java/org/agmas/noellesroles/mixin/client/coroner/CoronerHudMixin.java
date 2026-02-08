@@ -14,6 +14,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -105,15 +106,16 @@ public abstract class CoronerHudMixin {
                 }
                 BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
                         .get(NoellesrolesClient.targetBody);
-                Component name = Component
+                MutableComponent name = Component
                         .translatable("hud.coroner.death_info", NoellesrolesClient.targetBody.tickCount / 20)
                         .append(Component
                                 .translatable("death_reason." + bodyDeathReasonComponent.deathReason.getNamespace()
                                         + "." + bodyDeathReasonComponent.deathReason.getPath()));
                 boolean vultured = bodyDeathReasonComponent.vultured;
-                var worldModifiers = WorldModifierComponent.KEY.get(Minecraft.getInstance().player.level());
+                final var worldModifiers = WorldModifierComponent.KEY.get(Minecraft.getInstance().player.level());
                 if (worldModifiers != null) {
-                    if (worldModifiers.isModifier(NoellesrolesClient.targetFakeBody, SEModifiers.SECRETIVE)) {
+                    if (worldModifiers.isModifier(NoellesrolesClient.targetBody.getPlayerUuid(),
+                            SEModifiers.SECRETIVE)) {
                         vultured = true;
                     }
                 }
