@@ -669,7 +669,7 @@ public class Noellesroles implements ModInitializer {
             List<ShopEntry> entries = new ArrayList<>(ShopContent.defaultEntries);
             entries.add(new ShopEntry(
                     ModItems.HALLUCINATION_BOTTLE.getDefaultInstance(),
-                    175,
+                    120,
                     ShopEntry.Type.TOOL));
 
             ShopContent.customEntries.put(
