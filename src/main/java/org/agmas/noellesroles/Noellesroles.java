@@ -49,6 +49,8 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.entity.EntityTypeTest;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
@@ -173,6 +175,7 @@ public class Noellesroles implements ModInitializer {
     @Override
     public void onInitialize() {
         HSRConstants.init();
+        Harpymodloader.HIDDEN_MODIFIERS.add(SEModifiers.SPLIT_PERSONALITY.identifier());
         // 初始化模组角色列表
         ModRoles.init();
         // 初始化初始物品映射
