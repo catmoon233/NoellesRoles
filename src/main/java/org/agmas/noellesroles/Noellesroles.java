@@ -51,7 +51,6 @@ import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
-import org.agmas.noellesroles.roles.bartender.BartenderPlayerComponent;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
@@ -76,8 +75,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -777,7 +774,8 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(MonitorMarkC2SPacket.ID, MonitorMarkC2SPacket.CODEC);
 
         // 注册抽奖网络包
-        PayloadTypeRegistry.playS2C().register(LootS2CPacket.ID, LootS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(LootResultS2CPacket.ID, LootResultS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(LootInfoScreenS2CPacket.ID, LootInfoScreenS2CPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {

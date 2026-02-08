@@ -25,13 +25,15 @@ import org.agmas.noellesroles.utils.LotteryManager;
 //import org.joml.Matrix4f;
 
 // TODO : 渲染3D方块动画
-public class LootScreen extends Screen {
+// TODO : 像二游一样的开始界面
+// TODO : 抽取时过卡的概率：离目标近概率提升
+// TODO : 抽卡速度可能被帧率影响？然后停在中途不动了，末速度还是别为0了，最后抽到了再归零吧
+public class LootScreen extends AbstractPixelScreen {
 //    // 方块动画所需变量
 //    private float rotationX = 30;
 //    private float rotationY = 45;
 //    private float lidAngle = 0;
 
-    private static int pixelSize = 4;// 最大（默认）像素缩放的大小
     private final float deltaScale = .3f;// 最终缩放增量比例
     // 随机的过卡次数：目标卡片位置会在最大和最小中roll一个随机值
     private final int minCardNum = 30;
@@ -48,9 +50,7 @@ public class LootScreen extends Screen {
     private LootSpeedController speedController;// 速度控制器：用于使用动画控制所有卡片移动
     private RandomSource randomSource;// 随机数源
     private TimerWidget timerWidget;// 定时器：用于抽卡结束之后缩放
-    private Button startBtn;
-    private boolean isStart = false;// 是否启动抽卡
-    private boolean isLooting = false;// 是否正在抽卡
+    private boolean isLooting = true;// 是否正在抽卡
     private int endCardIdx = 20;// 最终卡片所在索引
     private int totalPixels;// 显示的总像素数
     private int curEndIdx = 0;// 当前移除卡片所在索引
@@ -58,16 +58,17 @@ public class LootScreen extends Screen {
     private int accelerationTime = 0;// 加速时间
     private int slowDownTime = 0;// 减速时间
 
+    // TODO : 使卡片能适配物品大小，以及卡片框边距适配
     public static class Card extends AbstractWidget
     {
         // skin: 16*16 ; bg: 18*18
         protected TextureWidget skinBG;
         protected TextureWidget skin;
         protected boolean isSelected = false;// 是否被选中过：首次选中播放音效
-        public Card(int x, int y, int id) {
-            this(x, y, 16, 16, id);
+        public Card(int x, int y, int id, int pixelSize) {
+            this(x, y, 16, 16, id, pixelSize);
         }
-        public Card(int x, int y, int w, int h, int id) {
+        public Card(int x, int y, int w, int h, int id, int pixelSize) {
             super(x, y, w, h, Component.empty());
             skinBG = new TextureWidget(x, y, w, h, w, h,
                     LotteryManager.TempLootAbleItemManager.getQualityResourceLocation(
@@ -155,11 +156,10 @@ public class LootScreen extends Screen {
     {
         super.init();
 
-        int centerX = width / 2;
-        int centerY = height / 2;
         // 根据屏幕大小重新规划像素缩放 : 使显示的卡片范围略大于屏幕
         while (width > cardSize * (lastCardNum * 2 + 1) * pixelSize)
             ++pixelSize;
+
 
         speedController = new LootSpeedController();
         // 用于计算屏幕中心
@@ -167,23 +167,9 @@ public class LootScreen extends Screen {
         timerWidget = new TimerWidget(1, true, null);
         randomSource = RandomSource.create();
         endCardIdx = randomSource.nextInt(minCardNum, maxCardNum);
-        startBtn = Button.builder(
-                    Component.translatable("screen.noellesroles.loot.lootBtn"), // 按钮文本
-                    (buttonWidget) -> {
-                        isStart = true;
-                        isLooting = true;
-                        startBtn.visible = false;
-                    }
-            )
-            .pos(centerX - cardSize * pixelSize / 2, centerY - cardSize * pixelSize / 6)
-            .size(cardSize * pixelSize, cardSize / 3 * pixelSize) // 大小
-            .build();
-        addRenderableWidget(startBtn);
 
         totalPixels = cardSize * (lastCardNum * 2 + 1) + cardInterval * lastCardNum * 2;
 
-        int accelerationLen = 0;
-        int slowDownLen = 0;
         // 提前备好所需卡片
         for(int i = 0; i <= endCardIdx + lastCardNum; ++i)
         {
@@ -192,14 +178,10 @@ public class LootScreen extends Screen {
                     // 获取随机皮肤
                     // TODO : 抽奖时每个略过的皮肤如果是等概率可能不好看，最好还是改为和抽取相同的改了，不过目前还没有相关接口
                     i != endCardIdx ? randomSource.nextInt(
-                            LotteryManager.TempLootAbleItemManager.getSkinListLen()) : ansID);
+                            LotteryManager.TempLootAbleItemManager.getSkinListLen()) : ansID, pixelSize);
             card.visible = false;
             cards.add(card);
             int curLen = i * (cardSize + cardInterval) + totalPixels;
-            if(i == accelerationCardNum)
-                accelerationLen = curLen;
-            if(i == slowDownCardNum)
-                slowDownLen = curLen;
             addRenderableWidget(card);
         }
         cards.getFirst().visible = true;
@@ -207,17 +189,31 @@ public class LootScreen extends Screen {
         speedController.cards.add(cards.getFirst());
 
         /*
-         * 使用匀加速直线运动调整卡片速度
+         * 使用匀加速直线运动调整卡片的加速运动
          * 卡片终速度为v,加速时间为t,加速度为a
-         * 路程为s已知为accelerationIdx路程accelerationLen长，终速度v已知为totalPixels / baseDuration, 求a t
+         * 路程s已知为accelerationIdx路程accelerationLen长 = (accelerationCardNum * (cardSize + cardInterval) - cardInterval)
+         * 终速度v已知为totalPixels / baseDuration
+         * 求a t
          * {s = 1/2 a * t ^ 2;
          * {sv = a * t
          * => a = v ^ 2 / 2 * s
          * => t = 2 * s / v
          * 计算加速减速时间，用于插入速度管理动画
          */
-        accelerationTime = (2 * accelerationLen / (totalPixels / baseDuration));
-        slowDownTime = (2 * slowDownLen / (totalPixels / baseDuration));
+        accelerationTime = (2 * (accelerationCardNum * (cardSize + cardInterval) - cardInterval) / (totalPixels / baseDuration));
+        /*
+         * 使用三阶贝塞尔曲线作变加速运算调整卡片动画速度
+         * 卡片速度为v,加速时间为t,已知：
+         * 路程s为slowDownIdx路程slowDownLen长 = (slowDownCardNum * (cardSize + cardInterval) - cardInterval)
+         * 初速度v0 = totalPixels / baseDuration
+         * 控制点1速度为 0.3f * v0 (硬编码可能变)
+         * 控制点2速度为 0.1f * v0 (硬编码可能变)
+         * 终速度v已知为0
+         * 求目标时间t:贝塞尔曲线的持续时间
+         */
+        // TODO : 使用微积分重新计算结束时间以匹配速度
+        slowDownTime = (2 * (slowDownCardNum * (cardSize + cardInterval) - cardInterval) / (totalPixels / baseDuration));
+
         ConstantSpeedAnimation speedAnimation =
                 // 设置加速阶段为匀加速直线运动
                 new ConstantSpeedAnimation(
@@ -236,12 +232,8 @@ public class LootScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta)
     {
         super.render(guiGraphics, mouseX, mouseY, delta);
-        if(!isStart)
-            return;
-
         animations.forEach(animation -> animation.renderUpdate(delta));
         animations.removeIf(AbstractAnimation::isFinished);
-        int centerX = width / 2;
         int startX = centerX + totalPixels / 2 * pixelSize;// 卡片出现点
         // 当目标卡片移动到中心时停止处理卡片位移
         if(cards.get(endCardIdx).getX() > centerX - cardSize * pixelSize / 2)
@@ -271,12 +263,13 @@ public class LootScreen extends Screen {
                 {
                     float speed = (float) (totalPixels * pixelSize) / baseDuration;
                     // 减速使用贝塞尔曲线，使后期速度较慢
+                    // TODO : 由于目前减速时间公式还没有计算出来，为了防止动画停一半，这里先将末速度设置为非0：确保一定能移动到目标
                     BezierAnimation speedAnimation =
                             new BezierAnimation(
                                 speedController,
                                 new Vec2(speed * 0.7f, 0),
+                                new Vec2(speed * 0.8f, 0),
                                 new Vec2(speed * 0.9f, 0),
-                                new Vec2(speed, 0),
                                 slowDownTime,
                                 (Vec2 ans) -> {
                                     speedController.speed += (int) ans.x;
@@ -343,11 +336,10 @@ public class LootScreen extends Screen {
             // 绘制当前卡片指针
             int rectWidth = 4;
             int rectHeight = 100;
-            int centerY = height / 2 - rectHeight / 2;
             // 绘制填充矩形（RGBA颜色）
             guiGraphics.fill(
-                    centerX, centerY - cardSize * pixelSize / 2,
-                    centerX + rectWidth, centerY + rectHeight - cardSize * pixelSize / 2,
+                    centerX, centerY - rectHeight / 2 - cardSize * pixelSize / 2,
+                    centerX + rectWidth, centerY - rectHeight / 2 + rectHeight - cardSize * pixelSize / 2,
                     0x80FF0000  // 半透明红色 (ARGB: 80=50%透明度)
             );
         }
