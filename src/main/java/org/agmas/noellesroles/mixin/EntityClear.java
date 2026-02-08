@@ -25,29 +25,38 @@ public class EntityClear {
      */
     @Inject(method = "finalizeGame", at = @At("TAIL"))
     private static void clearAllEntities(ServerLevel world, CallbackInfo ci) {
-        // 清除所有锁实体及其映射
+        // 先清除所有锁实体及其映射
         LockEntityManager.getInstance().resetLockEntities();
-        for (var pl : world.players()) {
-            RoleUtils.RemoveAllPlayerAttributes(pl);
-        }
 
-        world.getAllEntities().forEach((entity) -> {
-            if (entity instanceof LockEntity) {
-                entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
-                // 删除锁
-            } else if (entity instanceof AreaEffectCloud) {
-                entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
-                // 删除机器人药水云
-            } else if (entity instanceof ItemEntity) {
-                entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
-                // 删除物品
-            } else if (entity instanceof PlayerBodyEntity) {
-                entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
-                // 删除尸体
-            } else if (entity instanceof NoteEntity) {
-                entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
-                // 删除尸体
+        try {
+
+
+            // 清除玩家属性
+            for (var pl : world.players()) {
+                RoleUtils.RemoveAllPlayerAttributes(pl);
             }
-        });
+
+            // 收集需要删除的实体列表，避免在遍历过程中修改集合
+            java.util.List<net.minecraft.world.entity.Entity> entitiesToRemove = new java.util.ArrayList<>();
+
+            world.getAllEntities().forEach((entity) -> {
+                if (entity instanceof LockEntity ||
+                        entity instanceof AreaEffectCloud ||
+                        entity instanceof ItemEntity ||
+                        entity instanceof PlayerBodyEntity ||
+                        entity instanceof NoteEntity) {
+                    entitiesToRemove.add(entity);
+                }
+            });
+
+            // 安全地删除收集到的实体
+            for (net.minecraft.world.entity.Entity entity : entitiesToRemove) {
+                if (!entity.isRemoved()) { // 双重检查确保实体未被其他地方删除
+                    entity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+                }
+            }
+        }catch (Exception ignored){
+            ignored.printStackTrace();
+        }
     }
 }

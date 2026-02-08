@@ -77,7 +77,7 @@ public class ArrowMixin {
                     BlockPos hitPos = blockHitResult.getBlockPos();
                     // 获取附近玩家列表（例如半径为5格）
                     List<ServerPlayer> nearbyPlayers = serverPlayer.serverLevel().getEntitiesOfClass(ServerPlayer.class,
-                            new AABB(hitPos).inflate(6));
+                            new AABB(hitPos).inflate(8));
                     // 输出附近玩家数量
                     serverPlayer.sendSystemMessage(
                             Component.literal("附近玩家数量：" + nearbyPlayers.size()).withStyle(ChatFormatting.GREEN), true);

@@ -36,7 +36,7 @@ public class SmokeGrenadeEntity extends ThrowableItemProjectile {
     // 烟雾半径
     private static final double SMOKE_RADIUS = 4.0;
     // 失明效果持续时间（比烟雾略长，确保连续性）
-    private static final int BLINDNESS_DURATION = 40; // 2秒
+    private static final int BLINDNESS_DURATION = 70; // 2秒
     
     private boolean directHit = false;
     private Player directHitTarget = null;
@@ -74,13 +74,10 @@ public class SmokeGrenadeEntity extends ThrowableItemProjectile {
             
             // 如果直接命中玩家，清空目标san值
             if (directHit && directHitTarget != null && directHitTarget instanceof ServerPlayer serverTarget) {
-                PlayerMoodComponent moodComponent = PlayerMoodComponent.KEY.get(serverTarget);
-                // 设置san值为0（疯狂状态）
-                moodComponent.setMood(0);
-                moodComponent.sync();
+
                 
                 // 给予目标额外的失明效果
-                serverTarget.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, false, false));
+                serverTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 100, 0, false, false));
             }
             
             // 生成烟雾区域实体（使用粒子模拟）
@@ -123,6 +120,7 @@ public class SmokeGrenadeEntity extends ThrowableItemProjectile {
     /**
      * 对范围内的玩家应用失明效果
      */
+
     private void applyBlindnessToPlayersInRadius(ServerLevel world) {
         AABB area = new AABB(
                 this.getX() - SMOKE_RADIUS, this.getY() - 1, this.getZ() - SMOKE_RADIUS,
@@ -135,7 +133,11 @@ public class SmokeGrenadeEntity extends ThrowableItemProjectile {
         );
         
         for (ServerPlayer player : players) {
-            player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, BLINDNESS_DURATION, 0, false, false));
+            PlayerMoodComponent moodComponent = PlayerMoodComponent.KEY.get(player);
+            // 设置san值为0（疯狂状态）
+            moodComponent.setMood(0.25f);
+            moodComponent.sync();
+            player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, BLINDNESS_DURATION, 0, false, false));
         }
     }
 }
