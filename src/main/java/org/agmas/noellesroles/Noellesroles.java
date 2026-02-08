@@ -1007,6 +1007,7 @@ public class Noellesroles implements ModInitializer {
                 player.addItem(TMMItems.REVOLVER.getDefaultInstance().copy());
                 return;
             }
+
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                     .get(player);
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
@@ -1117,6 +1118,11 @@ public class Noellesroles implements ModInitializer {
             // puppeteerComp.clearAll();
             // }
             RicesRoleRhapsody.onRoleAssigned(player, role);
+            if (role.identifier().equals(ModRoles.ELF.identifier())) {
+                PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(player);
+                shopComponent.setBalance(45);
+                return;
+            }
 
         });
         ServerTickEvents.END_SERVER_TICK.register(((server) -> {
