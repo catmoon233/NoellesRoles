@@ -12,6 +12,7 @@ import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
+import dev.doctor4t.trainmurdermystery.event.OnGameTrueStarted;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerKilledPlayer;
 import dev.doctor4t.trainmurdermystery.event.OnTeammateKilledTeammate;
 import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
@@ -593,7 +594,7 @@ public class Noellesroles implements ModInitializer {
         initShops();
         ShopContent.register();
         {
-            //死灵法师的商店
+            // 死灵法师的商店
             ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
 
         }
@@ -1015,10 +1016,7 @@ public class Noellesroles implements ModInitializer {
                 player.addItem(TMMItems.REVOLVER.getDefaultInstance().copy());
                 return;
             }
-            if (role.identifier().equals(ModRoles.ATTENDANT.identifier())) {
-                if (player instanceof ServerPlayer sp)
-                    TMM.SendRoomInfoToPlayer(sp);
-            }
+
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                     .get(player);
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
@@ -1187,7 +1185,17 @@ public class Noellesroles implements ModInitializer {
         // ModdedRoleAssigned.EVENT.register((player, role) -> {
         //
         // });
-
+        OnGameTrueStarted.EVENT.register((serverLevel) -> {
+            serverLevel.players().forEach(player -> {
+                GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
+                if (gameWorldComponent != null) {
+                    if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {
+                        TMM.SendRoomInfoToPlayer(player);
+                        // 发送房间信息
+                    }
+                }
+            });
+        });
         // 监听玩家死亡事件 - 用于激活复仇者能力、拳击手反制、跟踪者免疫和操纵师死亡判定
         AllowPlayerDeath.EVENT.register((victim, deathReason) -> {
             // 检查拳击手无敌反制
