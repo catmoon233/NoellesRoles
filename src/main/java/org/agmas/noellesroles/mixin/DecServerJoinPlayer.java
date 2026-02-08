@@ -39,6 +39,7 @@ public class DecServerJoinPlayer {
         // ResetPlayerEvent.EVENT.invoker().resetPlayer(serverPlayer);
         ConfigWorldComponent.KEY.get(serverPlayer.level()).sync();
         WorldModifierComponent.KEY.get(serverPlayer.level()).sync();
+        
     }
 
 }

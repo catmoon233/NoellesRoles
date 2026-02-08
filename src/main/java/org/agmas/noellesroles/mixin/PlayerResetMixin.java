@@ -35,7 +35,10 @@ public abstract class PlayerResetMixin {
     @Inject(method = "resetPlayer", at = @At("TAIL"))
     private static void clearAllComponentsOnReset(ServerPlayer player, CallbackInfo ci) {
         // 清除跟踪者组件状态
-        //clearAllComponents(player);
+        // clearAllComponents(player);
+        if (ModComponents.DEFIBRILLATOR.get(player) != null) {
+            ModComponents.DEFIBRILLATOR.get(player).clear();
+        }
         ServerPlayNetworking.send(player, new PlayerResetS2CPacket());
     }
 
@@ -47,7 +50,7 @@ public abstract class PlayerResetMixin {
         // 清除客户端自定义笔记状态
 
         serverWorld.players().forEach((pl) -> {
-            //clearAllComponents(pl);
+            // clearAllComponents(pl);
             ServerPlayNetworking.send(pl, new PlayerResetS2CPacket());
         });
     }
@@ -110,9 +113,10 @@ public abstract class PlayerResetMixin {
         RecorderPlayerComponent recorderComp = ModComponents.RECORDER.get(player);
         recorderComp.clear();
         // 删除modifier
-//        WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
-//        worldModifierComponent.modifiers.clear();
-//        worldModifierComponent.sync();
+        // WorldModifierComponent worldModifierComponent =
+        // WorldModifierComponent.KEY.get(player.level());
+        // worldModifierComponent.modifiers.clear();
+        // worldModifierComponent.sync();
         // 清除该玩家放置的所有灾厄印记实体
         clearCalamityMarks(player);
     }

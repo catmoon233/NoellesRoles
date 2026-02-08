@@ -48,7 +48,6 @@ public class EntityClear {
                     entitiesToRemove.add(entity);
                 }
             });
-
             // 安全地删除收集到的实体
             for (net.minecraft.world.entity.Entity entity : entitiesToRemove) {
                 if (!entity.isRemoved()) { // 双重检查确保实体未被其他地方删除
