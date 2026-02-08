@@ -76,7 +76,7 @@ public class AvengerPlayerComponent implements RoleComponent, ServerTickingCompo
         this.killerUuid = null;
         this.targetName = "";
         this.bound = false;
-        this.reset();
+        this.sync();
     }
 
     @Override
@@ -113,6 +113,9 @@ public class AvengerPlayerComponent implements RoleComponent, ServerTickingCompo
             return;
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(serverPlayer.level());
+        if (!gameWorld.isRole(player, ModRoles.AVENGER)) {
+            return;
+        }
         List<UUID> innocentPlayers = new ArrayList<>();
 
         gameWorld.getRoles().forEach((uuid, role) -> {
