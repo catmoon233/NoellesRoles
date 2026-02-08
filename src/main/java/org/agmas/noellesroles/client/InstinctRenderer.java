@@ -120,7 +120,7 @@ public class InstinctRenderer {
                         && TMMClient.isPlayerAliveAndInSurvival()) {
                     return -2;
                 }
-                
+
                 if (gameWorldComponent.isRole(self, ModRoles.RECORDER)) {
                     if (target instanceof Player targetPlayer) {
                         if (targetPlayer == self)
@@ -147,10 +147,14 @@ public class InstinctRenderer {
                     return (ModRoles.EXECUTIONER.color());
                 }
 
-                if (gameWorldComponent.getRole(target.getUUID()) != null
-                        && gameWorldComponent.getRole(target.getUUID()) != ModRoles.GHOST) {
+                if (gameWorldComponent.getRole(target_player.getUUID()) != null
+                        && gameWorldComponent.getRole(target_player.getUUID()) != ModRoles.GHOST) {
                     if (gameWorldComponent.isRole(target_player, ModRoles.JESTER) && TMMClient.isKiller()
                             && TMMClient.isPlayerAliveAndInSurvival()) {
+                        // 小透明看不到
+                        if (gameWorldComponent.isRole(target_player, ModRoles.GHOST)) {
+                            return -2;
+                        }
                         return (Color.PINK.getRGB());
                     }
                 }
