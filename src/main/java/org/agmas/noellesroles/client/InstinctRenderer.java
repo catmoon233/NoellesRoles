@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.client;
 
+import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
@@ -18,6 +19,8 @@ import java.awt.Color;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 public class InstinctRenderer {
     public static void registerInstinctEvents() {
@@ -27,10 +30,20 @@ public class InstinctRenderer {
             var self = Minecraft.getInstance().player;
             if (self == null)
                 return -1;
-
             GameWorldComponent gameWorldComponent = TMMClient.gameComponent;
+            WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(target.level());
             if (gameWorldComponent == null)
                 return -1;
+            if (worldModifierComponent != null) {
+                if (worldModifierComponent.isModifier(self, SEModifiers.SPLIT_PERSONALITY)) {
+                    if (self.isSpectator()) {
+                        var splitComponent = SplitPersonalityComponent.KEY.get(self);
+                        if (splitComponent != null && !splitComponent.isDeath()) {
+                            return -1;
+                        }
+                    }
+                }
+            }
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
                 BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(target_player);
