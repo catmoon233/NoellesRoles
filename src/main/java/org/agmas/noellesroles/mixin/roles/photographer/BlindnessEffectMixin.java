@@ -19,5 +19,9 @@ public class BlindnessEffectMixin {
         if (player.hasEffect(MobEffects.UNLUCK)){
             guiGraphics.fill(0,0, Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), 0xFF000000);
         }
+        if (player.hasEffect(MobEffects.WEAVING)){
+            //屏幕变红（30%透明度）
+            guiGraphics.fill(0,0, Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), 0x4DFF0000);
+        }
     }
 }
