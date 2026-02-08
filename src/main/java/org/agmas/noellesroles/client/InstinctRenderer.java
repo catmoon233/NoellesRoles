@@ -107,18 +107,24 @@ public class InstinctRenderer {
                 }
 
                 if (!hasInstinct)
-                    return -1;
+                    return -2;
 
                 // 直觉看不到旁观
 
                 if ((target_player).isSpectator())
-                    return -1;
+                    return -2;
                 // 需要开启直觉
 
+                // 小透明：杀手无法看到高亮
+                if (gameWorldComponent.isRole(target_player, ModRoles.GHOST) && TMMClient.isKiller()
+                        && TMMClient.isPlayerAliveAndInSurvival()) {
+                    return -2;
+                }
+                
                 if (gameWorldComponent.isRole(self, ModRoles.RECORDER)) {
                     if (target instanceof Player targetPlayer) {
                         if (targetPlayer == self)
-                            return -1;
+                            return -2;
 
                         RecorderPlayerComponent recorder = ModComponents.RECORDER.get(self);
                         if (recorder.getGuesses().containsKey(targetPlayer.getUUID())) {
@@ -147,13 +153,6 @@ public class InstinctRenderer {
                             && TMMClient.isPlayerAliveAndInSurvival()) {
                         return (Color.PINK.getRGB());
                     }
-                }
-
-                // 小透明：杀手无法看到高亮
-
-                if (gameWorldComponent.isRole(target_player, ModRoles.GHOST) && TMMClient.isKiller()
-                        && TMMClient.isPlayerAliveAndInSurvival()) {
-                    return (-1);
                 }
 
                 if ((gameWorldComponent.isRole(self, ModRoles.JESTER)
