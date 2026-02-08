@@ -76,7 +76,7 @@ public class AvengerPlayerComponent implements RoleComponent, ServerTickingCompo
         this.killerUuid = null;
         this.targetName = "";
         this.bound = false;
-        this.reset();
+        this.sync();
     }
 
     @Override
