@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import org.agmas.noellesroles.Noellesroles;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -107,28 +108,10 @@ public class LotteryManager {
     /**
      * 抽奖一次
      *
-     * @param server 基于服务器进行随机
-     */
-    public int rollOnce(MinecraftServer server) {
-        RandomSource random = server.overworld().getRandom();
-        return rollOnce(random);
-    }
-    /**
-     * 抽奖一次
-     *
-     * @param player 基于玩家进行随机
+     * @param player 基于玩家进行随机:抽奖结果需要对玩家信息查询修改，因此必然有player参数传入，所以直接用玩家源
      */
     public int rollOnce(ServerPlayer player) {
-        RandomSource random = player.getRandom();
-        return rollOnce(random);
-    }
-    /**
-     * 抽奖一次
-     *
-     * @param randomSource 基于随机源进行随机
-     */
-    public int rollOnce(RandomSource randomSource)
-    {
+        RandomSource randomSource = player.getRandom();
         int curNum = randomSource.nextInt(maxGranularity);// 0 ~ maxGranularity -1
         float level = 0.0f;
         for (Pair<ArrayList<Integer>, Float> arrayListFloatPair : lootPool) {
@@ -136,10 +119,16 @@ public class LotteryManager {
             if (curNum < level * maxGranularity) {
                 ArrayList<Integer> curPool = arrayListFloatPair.first;
                 // TODO : 为玩家解锁皮肤
-                return curPool.get(randomSource.nextInt(curPool.size()));
+                // TODO : 处理重复皮肤
+                int ans = curPool.get(randomSource.nextInt(curPool.size()));
+                LotteryRecordStorage.getInstance().updatePlayerLotteryData(player.getUUID(),
+                        lotteryRecordData -> lotteryRecordData.lotteryItems.add(
+                                new LotteryRecordData.LotteryItemData(ans, System.currentTimeMillis())
+                        ));
+                return ans;
             }
         }
-        // TODO : [warn]抽奖失败，可以打印一下异常信息
+        Noellesroles.LOGGER.warn("玩家UUID:" + player.getUUID() + "抽奖失败");
         return -1;
     }
     /** 添加抽奖机会 */

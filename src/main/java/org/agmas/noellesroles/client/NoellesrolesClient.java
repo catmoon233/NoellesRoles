@@ -162,11 +162,20 @@ public class NoellesrolesClient implements ClientModInitializer {
             });
         });
         // 注册抽奖网络包处理：接收服务器抽奖结果后播放抽奖动画
-        ClientPlayNetworking.registerGlobalReceiver(LootS2CPacket.ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(LootResultS2CPacket.ID, (payload, context)->{
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
                     client.setScreen(new LootScreen(payload.ansID()));
+                }
+            });
+        });
+        // 注册抽奖界面网络包处理：接收服务器奖池信息并显示界面
+        ClientPlayNetworking.registerGlobalReceiver(LootInfoScreenS2CPacket.ID, (payload, context)->{
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null) {
+                    client.setScreen(new LootInfoScreen());
                 }
             });
         });

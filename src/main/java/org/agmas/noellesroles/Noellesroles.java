@@ -881,7 +881,8 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(MonitorMarkC2SPacket.ID, MonitorMarkC2SPacket.CODEC);
 
         // 注册抽奖网络包
-        PayloadTypeRegistry.playS2C().register(LootS2CPacket.ID, LootS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(LootResultS2CPacket.ID, LootResultS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(LootInfoScreenS2CPacket.ID, LootInfoScreenS2CPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {

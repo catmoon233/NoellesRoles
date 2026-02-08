@@ -16,7 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -29,6 +28,7 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.screen.DetectiveInspectScreenHandler;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
 import org.agmas.noellesroles.screen.PostmanScreenHandler;
+import org.agmas.noellesroles.utils.LotteryManager;
 
 import java.util.ArrayList;
 
@@ -67,7 +67,9 @@ public class RicesRoleRhapsody implements ModInitializer {
     public static final CustomPacketPayload.Type<SingerAbilityC2SPacket> SINGER_ABILITY_PACKET = SingerAbilityC2SPacket.ID;
     public static final CustomPacketPayload.Type<PsychologistC2SPacket> PSYCHOLOGIST_PACKET = PsychologistC2SPacket.ID;
     public static final CustomPacketPayload.Type<PuppeteerC2SPacket> PUPPETEER_PACKET = PuppeteerC2SPacket.ID;
+    // TODO : 为什么锁有两个用法被注册
     public static final CustomPacketPayload.Type<LockGameC2Packet> LOCK_GAME_PACKET = LockGameC2Packet.ID;
+    public static final CustomPacketPayload.Type<LootRequestC2SPacket> LOOT_REQUIRE_PACKET = LootRequestC2SPacket.ID;
 
     @Override
     public void onInitialize() {
@@ -252,7 +254,10 @@ public class RicesRoleRhapsody implements ModInitializer {
 
         // 注册撬锁小游戏完成包
         PayloadTypeRegistry.playC2S().register(LockGameC2Packet.ID, LockGameC2Packet.CODEC);
-        PayloadTypeRegistry.playS2C().register(LockGameC2Packet.ID, LockGameC2Packet.CODEC);
+
+        // 注册抽奖请求包
+        PayloadTypeRegistry.playC2S().register(LootRequestC2SPacket.ID, LootRequestC2SPacket.CODEC);
+
         // 撬锁
         ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
             ServerPlayer player = context.player();
@@ -782,15 +787,24 @@ public class RicesRoleRhapsody implements ModInitializer {
             }
         });
 
-        // 处理锁游戏包
-        ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
-            ServerPlayer player = context.player();
-            ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (payload.result()) {
-                LockEntityManager.getInstance().removeLockEntity(payload.pos(), payload.entityId());
-            } else if (lockPick.getItem() == TMMItems.LOCKPICK) {
-                // TODO : 应该给撬锁器添加损坏动画和音效，但是它本来就没有耐久，如果要做可能要引入多个包，暂不处理
-                lockPick.shrink(1);
+        // 处理抽奖请求包
+        ServerPlayNetworking.registerGlobalReceiver(LOOT_REQUIRE_PACKET, (payload, context)->{
+           ServerPlayer player = context.player();
+            if (player == null)
+                return;
+            if(LotteryManager.getInstance().canRoll(player))
+            {
+                int rollID = LotteryManager.getInstance().rollOnce(player);
+                if(rollID != -1)
+                {
+                    ServerPlayNetworking.send(player, new LootResultS2CPacket(rollID));
+                    // 抽一次减一次
+                    LotteryManager.getInstance().addOrDegreeLotteryChance(player, -1);
+                }
+            }
+            else {
+                // 抽奖次数 = 0 限制
+                player.sendSystemMessage(Component.translatable("message.noellesroles.loot.limit"));
             }
         });
     }

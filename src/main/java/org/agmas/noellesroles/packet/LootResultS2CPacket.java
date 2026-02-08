@@ -14,11 +14,11 @@ import org.agmas.noellesroles.Noellesroles;
  * 客户端根据结果生成动画
  * </p>
  */
-public record LootS2CPacket(int ansID) implements CustomPacketPayload {
-    public static final ResourceLocation LOOT_PAYLOAD_ID =
+public record LootResultS2CPacket(int ansID) implements CustomPacketPayload {
+    public static final ResourceLocation LOOT_RESULT_PAYLOAD_ID =
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot");
-    public static final Type<LootS2CPacket> ID = new Type<>(LOOT_PAYLOAD_ID);
-    public static final StreamCodec<RegistryFriendlyByteBuf, LootS2CPacket> CODEC;
+    public static final Type<LootResultS2CPacket> ID = new Type<>(LOOT_RESULT_PAYLOAD_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, LootResultS2CPacket> CODEC;
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return ID;
@@ -28,10 +28,10 @@ public record LootS2CPacket(int ansID) implements CustomPacketPayload {
         buf.writeInt(ansID);
     }
 
-    public static LootS2CPacket read(FriendlyByteBuf buf) {
-        return new LootS2CPacket(buf.readInt());
+    public static LootResultS2CPacket read(FriendlyByteBuf buf) {
+        return new LootResultS2CPacket(buf.readInt());
     }
     static {
-        CODEC = StreamCodec.ofMember(LootS2CPacket::write, LootS2CPacket::read);
+        CODEC = StreamCodec.ofMember(LootResultS2CPacket::write, LootResultS2CPacket::read);
     }
 }
