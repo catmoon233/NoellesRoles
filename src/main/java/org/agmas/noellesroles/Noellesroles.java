@@ -1137,9 +1137,20 @@ public class Noellesroles implements ModInitializer {
             }
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(server.overworld());
             if (gameWorldComponent.isRunning()) {
+                var all_players = server.getPlayerList().getPlayers();
+                for (ServerPlayer player : all_players) {
+                    if (gameWorldComponent.isRole(player, ModRoles.ELF)) {
+                        if (server.overworld().getGameTime() % 200 == 0) {
+                            PlayerShopComponent plsc = PlayerShopComponent.KEY.get(player);
+                            if (plsc != null) {
+                                plsc.addToBalance(5);
+                            }
+                        }
+                    }
+                }
                 if (!gunsCooled) {
                     int gunCooldownTicks = 30 * 20;
-                    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                    for (ServerPlayer player : all_players) {
                         ItemCooldowns itemCooldownManager = player.getCooldowns();
                         itemCooldownManager.addCooldown(TMMItems.REVOLVER, gunCooldownTicks);
                         itemCooldownManager.addCooldown(TMMItems.KNIFE, gunCooldownTicks);
