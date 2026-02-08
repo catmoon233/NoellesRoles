@@ -27,7 +27,7 @@ import java.util.List;
 public class ArrowMixin {
     @Inject(method = "onHitEntity", at = @At("HEAD"))
     private void noellesroles$onHitEntity(EntityHitResult entityHitResult, CallbackInfo ci) {
-        if (TMMConfig.isLobby)
+        if (TMM.isLobby)
             return;
         if (entityHitResult.getEntity() instanceof ServerPlayer player) {
             AbstractArrow arrow = (AbstractArrow) (Object) this;
@@ -46,7 +46,7 @@ public class ArrowMixin {
 
     @Inject(method = "onHitEntity", at = @At("TAIL"))
     private void noellesroles$onHitEntitTail(EntityHitResult entityHitResult, CallbackInfo ci) {
-        if (TMMConfig.isLobby)
+        if (TMM.isLobby)
             return;
         if (isHit) {
             AbstractArrow arrow = (AbstractArrow) (Object) this;
@@ -57,7 +57,7 @@ public class ArrowMixin {
 
     @Inject(method = "onHitEntity", at = @At("HEAD"))
     private void noellesroles$onHitPlayerBody(EntityHitResult entityHitResult, CallbackInfo ci) {
-        if (TMMConfig.isLobby)
+        if (TMM.isLobby)
             return;
         if (entityHitResult.getEntity() instanceof PlayerBodyEntity player) {
             AbstractArrow arrow = (AbstractArrow) (Object) this;
@@ -67,7 +67,7 @@ public class ArrowMixin {
 
     @Inject(method = "onHitBlock", at = @At("TAIL"))
     private void noellesroles$onHitBlock(BlockHitResult blockHitResult, CallbackInfo ci) {
-        if (TMMConfig.isLobby)
+        if (TMM.isLobby)
             return;
         AbstractArrow arrow = (AbstractArrow) (Object) this;
         if (arrow instanceof SpectralArrow arrow1) {
