@@ -49,6 +49,8 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.entity.EntityTypeTest;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
@@ -81,11 +83,13 @@ import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pro.fazeclan.river.stupid_express.constants.SERoles;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
+import static pro.fazeclan.river.stupid_express.constants.SERoles.NECROMANCER_SHOP;
 
 public class Noellesroles implements ModInitializer {
     // public static Style RESETSTYLE = Style.EMPTY;
@@ -173,6 +177,7 @@ public class Noellesroles implements ModInitializer {
     @Override
     public void onInitialize() {
         HSRConstants.init();
+        Harpymodloader.HIDDEN_MODIFIERS.add(SEModifiers.SPLIT_PERSONALITY.identifier());
         // 初始化模组角色列表
         ModRoles.init();
         // 初始化初始物品映射
@@ -588,9 +593,15 @@ public class Noellesroles implements ModInitializer {
         initShops();
         ShopContent.register();
         {
+            //死灵法师的商店
+            ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
+
+        }
+
+        {
             // 游侠商店
             var shopEntries = new ArrayList<ShopEntry>();
-            shopEntries.add(new ShopEntry(Items.CROSSBOW.getDefaultInstance(), 325, ShopEntry.Type.WEAPON) {
+            shopEntries.add(new ShopEntry(Items.CROSSBOW.getDefaultInstance(), 250, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
                     int itemCount = 0;
@@ -606,6 +617,7 @@ public class Noellesroles implements ModInitializer {
                     return RoleUtils.insertStackInFreeSlot(player, item);
                 }
             });
+
             final var PoisonArrow = Items.TIPPED_ARROW.getDefaultInstance();
             PoisonArrow.set(DataComponents.ITEM_NAME, Component.translatable("item.poison_arrow.name"));
             PoisonArrow.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.POISON));

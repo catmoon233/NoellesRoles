@@ -888,14 +888,14 @@ public class RicesRoleRhapsody implements ModInitializer {
         // ==================== 复仇者角色处理 ====================
         if (role.equals(ModRoles.AVENGER)) {
             // 重置复仇者组件
-            AvengerPlayerComponent avengerComponent = ModComponents.AVENGER.get(player);
-            avengerComponent.reset();
-
-            // 随机绑定一个无辜玩家作为保护目标
-            // 延迟执行以确保所有玩家都已分配角色
-            if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.getServer().execute(avengerComponent::bindRandomTarget);
-            }
+//            AvengerPlayerComponent avengerComponent = ModComponents.AVENGER.get(player);
+//            avengerComponent.reset();
+//
+//            // 随机绑定一个无辜玩家作为保护目标
+//            // 延迟执行以确保所有玩家都已分配角色
+//            if (player instanceof ServerPlayer serverPlayer) {
+//                serverPlayer.getServer().execute(avengerComponent::bindRandomTarget);
+//            }
 
         }
 

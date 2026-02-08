@@ -98,7 +98,7 @@ public class InventoryIntroductionRenderer {
             // Modifier
             WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
             if (worldModifierComponent != null) {
-               var modifiers = worldModifierComponent.getModifiers(player);
+               var modifiers = worldModifierComponent.getDisplayableModifiers(player);
                if (modifiers != null && modifiers.size() > 0) {
                   int x = 10;
                   int y = (int) ((float) context.guiHeight()) - 10;
