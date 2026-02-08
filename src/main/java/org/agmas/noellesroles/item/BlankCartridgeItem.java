@@ -1,8 +1,8 @@
 package org.agmas.noellesroles.item;
 
-
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,72 +25,77 @@ import org.agmas.noellesroles.component.SlipperyGhostPlayerComponent;
  * - 使用后消耗
  */
 public class BlankCartridgeItem extends Item {
-    
+
     // 冷却时间: 30秒 = 600 ticks
     private static final int GUN_COOLDOWN_TICKS = 600;
-    
+
     public BlankCartridgeItem(Properties settings) {
         super(settings);
     }
-    
+
     @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity entity, InteractionHand hand) {
+    public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity entity,
+            InteractionHand hand) {
         if (user.level().isClientSide) {
             return InteractionResult.SUCCESS;
         }
-        
+
         // 检查目标是否为玩家
         if (!(entity instanceof ServerPlayer target)) {
             return InteractionResult.PASS;
         }
-        
+
         // 检查冷却
         SlipperyGhostPlayerComponent ghostComp = ModComponents.SLIPPERY_GHOST.get(user);
         if (ghostComp.isBlankCartridgeOnCooldown()) {
-            user.displayClientMessage(Component.literal("空包弹冷却中！剩余 " + ghostComp.getBlankCartridgeCooldownSeconds() + " 秒").withStyle(ChatFormatting.RED), true);
+            user.displayClientMessage(
+                    Component.literal("空包弹冷却中！剩余 " + ghostComp.getBlankCartridgeCooldownSeconds() + " 秒")
+                            .withStyle(ChatFormatting.RED),
+                    true);
             return InteractionResult.FAIL;
         }
-        
+
         // 检查目标是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(target)) {
             return InteractionResult.FAIL;
         }
-        
+
         // 获取目标手中的物品，检查是否为枪械
         ItemStack targetMainHand = target.getItemInHand(InteractionHand.MAIN_HAND);
         ItemStack targetOffHand = target.getItemInHand(InteractionHand.OFF_HAND);
-        
+
         boolean appliedCooldown = false;
-        
+
         // 检查主手是否为枪械
         if (isGun(targetMainHand)) {
             target.getCooldowns().addCooldown(targetMainHand.getItem(), GUN_COOLDOWN_TICKS);
             appliedCooldown = true;
         }
-        
+
         // 检查副手是否为枪械
         if (isGun(targetOffHand)) {
             target.getCooldowns().addCooldown(targetOffHand.getItem(), GUN_COOLDOWN_TICKS);
             appliedCooldown = true;
         }
-        
+
         if (appliedCooldown) {
             // 播放音效
             user.level().playSound(null, target.getX(), target.getY(), target.getZ(),
                     SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 0.5F);
-            
+
             // 通知目标
             target.displayClientMessage(Component.literal("你的枪械被空包弹干扰，进入冷却状态！").withStyle(ChatFormatting.RED), true);
-            
+
             // 通知使用者
-            user.displayClientMessage(Component.literal("成功使 " + target.getName().getString() + " 的枪械进入冷却！").withStyle(ChatFormatting.GREEN), true);
-            
+            user.displayClientMessage(Component.literal("成功使 " + target.getName().getString() + " 的枪械进入冷却！")
+                    .withStyle(ChatFormatting.GREEN), true);
+
             // 消耗物品
             stack.consume(1, user);
-            
+
             // 设置冷却
             ghostComp.setBlankCartridgeCooldown();
-            
+
             return InteractionResult.SUCCESS;
         } else {
             // 目标没有枪械
@@ -98,15 +103,16 @@ public class BlankCartridgeItem extends Item {
             return InteractionResult.FAIL;
         }
     }
-    
+
     /**
      * 检查物品是否为枪械
      */
     private boolean isGun(ItemStack stack) {
-        if (stack.isEmpty()) return false;
-        
+        if (stack.isEmpty())
+            return false;
+
         // 检查是否为原版枪械
-        Item item = stack.getItem();
-        return item == TMMItems.REVOLVER || item == TMMItems.DERRINGER;
+
+        return stack.is(TMMItemTags.GUNS);
     }
 }
