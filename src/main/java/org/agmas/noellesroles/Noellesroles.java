@@ -50,6 +50,7 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.entity.EntityTypeTest;
+import pro.fazeclan.river.stupid_express.BuyableShopEntry;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
 import org.agmas.harpymodloader.Harpymodloader;
@@ -90,7 +91,6 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
-import static pro.fazeclan.river.stupid_express.constants.SERoles.NECROMANCER_SHOP;
 
 public class Noellesroles implements ModInitializer {
     // public static Style RESETSTYLE = Style.EMPTY;
@@ -595,6 +595,9 @@ public class Noellesroles implements ModInitializer {
         ShopContent.register();
         {
             // 死灵法师的商店
+            var NECROMANCER_SHOP = new ArrayList<ShopEntry>();
+
+            NECROMANCER_SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
             ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
 
         }
