@@ -177,7 +177,7 @@ public class Noellesroles implements ModInitializer {
     @Override
     public void onInitialize() {
         HSRConstants.init();
-        Harpymodloader.HIDDEN_MODIFIERS.add(SEModifiers.SPLIT_PERSONALITY.identifier());
+        Harpymodloader.HIDDEN_MODIFIERS.add(SEModifiers.REFUGEE.identifier().getPath());
         // 初始化模组角色列表
         ModRoles.init();
         // 初始化初始物品映射
@@ -997,16 +997,12 @@ public class Noellesroles implements ModInitializer {
             }
             if (server.getPlayerCount() > 24) {
                 Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 2);
-            } else if (server.getPlayerCount() > 10) {
-                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
-            }
-            if (server.getPlayerCount() > 24) {
                 Harpymodloader.setRoleMaximum(ModRoles.ELF, 2);
             } else if (server.getPlayerCount() > 10) {
+                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 1);
                 Harpymodloader.setRoleMaximum(ModRoles.ELF, 1);
             } else {
+                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
                 Harpymodloader.setRoleMaximum(ModRoles.ELF, 0);
             }
         }));
@@ -1019,7 +1015,10 @@ public class Noellesroles implements ModInitializer {
                 player.addItem(TMMItems.REVOLVER.getDefaultInstance().copy());
                 return;
             }
-
+            if (role.identifier().equals(ModRoles.ATTENDANT.identifier())) {
+                if (player instanceof ServerPlayer sp)
+                    TMM.SendRoomInfoToPlayer(sp);
+            }
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                     .get(player);
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
