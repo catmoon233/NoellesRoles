@@ -449,6 +449,7 @@
   "key.noellesroles.ability": "使用技能",
   "key.noellesroles.guess_role_note": "身份猜测笔记",
   "key.noellesroles.role_intro": "职业介绍",
+  "key.noellesroles.taskinstinct": "任务点直觉",
   "==================== 设陷者角色 ====================": "",
   "hud.noellesroles.trapper.charges": "陷阱: %s/%s",
   "hud.noellesroles.trapper.recharge": "恢复中: %s秒",
@@ -622,7 +623,7 @@
   "message.error.executioner.invalid_target": "无效的目标！",
   "message.error.executioner.target_not_found": "未找到目标！",
   "==================== 补充翻译键 ====================": "",
-  "message.tip.for_killer": "按下 ALT 可切换杀手直觉",
+  "message.tip.for_killer": "按下 %s 可切换杀手直觉",
   "message.noellesroles.better_vigilante.last_stand_activated": "被动技能背水一战已激活！",
   "message.lock.game.start": "撬锁小游戏开始！",
   "message.lock.unlock": "锁已被撬掉！",
@@ -720,5 +721,7 @@
   "message.noellesroles.nianshou.death_by_firecrackers": "年兽 %s 被鞭炮驱散了！",
   "message.noellesroles.nianshou.gongxi_facai_reward": "恭喜发财！你获得100金币并回满san值！",
   "subtitles.gongxifacai": "恭喜发财",
-  "hud.noellesroles.nianshou.red_packets": "红包数量：%s"
+  "hud.noellesroles.nianshou.red_packets": "红包数量：%s",
+  "msg.noellesroles.taskpoint.available": "任务点透视已可用。按下 %s 开启或关闭。",
+  "message.tip.for_taskpoint": "按下 %s 可切换任务点透视"
 }
