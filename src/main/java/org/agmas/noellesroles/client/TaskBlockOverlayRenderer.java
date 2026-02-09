@@ -104,15 +104,16 @@ public class TaskBlockOverlayRenderer {
                         // TMM.LOGGER.warn("FIND LECTURE");
                         if (localLevel.getBlockEntity(blockPos6) instanceof LecternBlockEntity entity) {
                             ItemStack items = entity.getBook();
+                            int page = entity.getPage();
                             if (items != null) {
                                 // TMM.LOGGER.warn("FIND LECTURE WITH ENTIY DATA {} : {} {} {}",
                                 // items.getDisplayName().getString(),blockPos6.getX(),blockPos6.getY(),blockPos6.getZ());
-                                if (!items.isEmpty()) {
-                                    // TMM.LOGGER.warn("FIND LECTURE WITH ENTIY DATA {}",
-                                    // items.getDisplayName().getString();
+                                // if (!items.isEmpty()) {
+                                // TMM.LOGGER.warn("FIND LECTURE WITH ENTIY DATA {}",
+                                // items.getDisplayName().getString();
 
-                                    NoellesrolesClient.taskBlocks.put(blockPos6, 6);
-                                }
+                                NoellesrolesClient.taskBlocks.put(blockPos6, 6);
+                                // }
                             }
 
                         }
