@@ -4,10 +4,7 @@ import java.awt.Color;
 import java.util.OptionalDouble;
 
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.component.ModComponents;
-
 import dev.doctor4t.trainmurdermystery.item.CocktailItem;
-
 import dev.doctor4t.trainmurdermystery.block.FoodPlatterBlock;
 import dev.doctor4t.trainmurdermystery.block.SprinklerBlock;
 import dev.doctor4t.trainmurdermystery.block.TrimmedBedBlock;
@@ -17,7 +14,6 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
-import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -84,8 +80,7 @@ public class TaskBlockOverlayRenderer {
 
                     if (blockState.is(Blocks.BLACK_CONCRETE)) {
                         NoellesrolesClient.taskBlocks.put(blockPos6, 5);
-                    } else if (blockState.getBlock() instanceof TrimmedBedBlock
-                            && blockState.getValue(TrimmedBedBlock.PART).equals(BedPart.HEAD)) {
+                    } else if (blockState.getBlock() instanceof TrimmedBedBlock) {
                         NoellesrolesClient.taskBlocks.put(blockPos6, 4);
                         // 暂时忽略
                     } else if (blockState.getBlock() instanceof FoodPlatterBlock) {
@@ -106,11 +101,20 @@ public class TaskBlockOverlayRenderer {
 
                         }
                     } else if (blockState.getBlock() instanceof LecternBlock) {
+                        // TMM.LOGGER.warn("FIND LECTURE");
                         if (localLevel.getBlockEntity(blockPos6) instanceof LecternBlockEntity entity) {
                             ItemStack items = entity.getBook();
-                            if (!items.isEmpty()) {
+                            if (items != null) {
+                                // // TMM.LOGGER.warn("FIND LECTURE WITH ENTIY DATA {} : {} {} {}",
+                                // items.getDisplayName().getString(),blockPos6.getX(),blockPos6.getY(),blockPos6.getZ());
+                                // if (!items.isEmpty()) {
+                                // TMM.LOGGER.warn("FIND LECTURE WITH ENTIY DATA {}",
+                                // items.getDisplayName().getString());
+
                                 NoellesrolesClient.taskBlocks.put(blockPos6, 6);
+                                // }
                             }
+
                         }
                     } else if (blockState.getBlock() instanceof SprinklerBlock) {
                         NoellesrolesClient.taskBlocks.put(blockPos6, 3);
