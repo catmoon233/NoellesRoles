@@ -96,7 +96,7 @@ import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
 public class Noellesroles implements ModInitializer {
     // public static Style RESETSTYLE = Style.EMPTY;
 
-    public static String MOD_ID = "noellesroles";
+    public static final String MOD_ID = "noellesroles";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     // public static Role SHERIFF = TMMRoles.registerRole(new Role(SHERIFF_ID, new

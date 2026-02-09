@@ -235,7 +235,7 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                 GameWorldComponent gameWorld = GameWorldComponent.KEY.get(serverLevel);
                 boolean hasAliveNianShou = false;
                 for (Player p : serverLevel.players()) {
-                    if (gameWorld.isRole(p, ModRoles.NIAN_SHOU) && !GameFunctions.isPlayerEliminated(p)) {
+                    if (gameWorld.isRole(p, ModRoles.NIAN_SHOU) && GameFunctions.isPlayerAliveAndSurvival(p)) {
                         hasAliveNianShou = true;
                         break;
                     }
@@ -252,9 +252,7 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                     for (Player p : serverLevel.players()) {
                         if (GameFunctions.isPlayerAliveAndSurvival(p)) {
                             if (p instanceof ServerPlayer sp) {
-                                RoleUtils.playSound(sp, NRSounds.GONGXI_FACAI, SoundSource.RECORDS,
-                                        .5F,
-                                        1.0F);
+
                                 dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent shopComponent = dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY
                                         .get(p);
                                 shopComponent.addToBalance(100);
@@ -268,6 +266,9 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                                         Component.translatable("message.noellesroles.nianshou.gongxi_facai_reward")
                                                 .withStyle(ChatFormatting.GOLD),
                                         true);
+                                sp.playNotifySound(NRSounds.GONGXI_FACAI, SoundSource.AMBIENT,
+                                        0.5F,
+                                        1.0F);
                             }
                         }
                     }
