@@ -190,6 +190,7 @@
   "screen.noellesroles.recorder.page_info": "第 %s / %s 頁",
   "screen.noellesroles.loot.lockGameTip": "按 'W' 嘗試撬鎖, 按 'A'/'D' 移動撬鎖器",
   "screen.noellesroles.loot.lootBtn": "開始抽獎",
+  "message.noellesroles.loot.limit": "抽獎次數不足",
   "==================== 賭徒角色 ====================": "",
   "game.win.gambler": "賭徒以1%的概率取得勝利，他正譏笑著所有人！",
   "gui.noellesroles.gambler.title": "賭徒角色選擇",
