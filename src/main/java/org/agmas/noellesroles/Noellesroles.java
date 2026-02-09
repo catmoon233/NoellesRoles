@@ -55,6 +55,7 @@ import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
+import org.agmas.harpymodloader.events.GameInitializeEvent;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.modded_murder.RoleAssignmentManager;
 import org.agmas.noellesroles.commands.*;
@@ -942,12 +943,15 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
 
-        // 年兽角色：5%概率生成
-        if (Math.random() < 0.05) {
-            Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 1);
-        } else {
-            Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 0);
-        }
+        GameInitializeEvent.EVENT.register((serverLevel, gameWorldComponent, players) -> {
+            // 动态大小
+            // 年兽角色：5%概率生成
+            if (Math.random() < 0.1) {
+                Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 0);
+            }
+        });
     }
 
     public void registerEvents() {
