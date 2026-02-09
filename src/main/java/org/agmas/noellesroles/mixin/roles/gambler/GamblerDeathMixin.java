@@ -7,6 +7,8 @@ import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,6 +50,8 @@ public class GamblerDeathMixin {
 		GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(world);
 		if (gameWorldComponent.isRole(victim, ModRoles.GAMBLER)) {
 			GamblerPlayerComponent gamblerPlayerComponent = GamblerPlayerComponent.KEY.get(victim);
+			// 掉枪
+			RoleUtils.dropAndClearAllSatisfiedItems((ServerPlayer) victim, TMMItemTags.GUNS);
 
 			// 如果已经使用过能力，则正常死亡
 			if (gamblerPlayerComponent.usedAbility) {
@@ -72,15 +76,15 @@ public class GamblerDeathMixin {
 				// 随机选择一个警长阵营角色
 				ArrayList<Role> vigilanteRoles = new ArrayList<>();
 				for (Role role : TMMRoles.ROLES.values()) {
-					if (role.isVigilanteTeam() && !HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath())) {
+					if (role.isVigilanteTeam() && !HarpyModLoaderConfig.HANDLER.instance().disabled
+							.contains(role.identifier().getPath())) {
 						vigilanteRoles.add(role);
 					}
 				}
-				
 				if (vigilanteRoles.isEmpty()) {
 					vigilanteRoles.add(TMMRoles.VIGILANTE);
 				}
-				
+
 				Collections.shuffle(vigilanteRoles);
 				Role selectedRole = vigilanteRoles.get(0);
 
