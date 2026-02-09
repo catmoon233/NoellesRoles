@@ -143,6 +143,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> ATTENDANT_SHOP = new ArrayList<>();
     // ==================== 退伍军人商店 ====================
     public static ArrayList<ShopEntry> VETERAN_SHOP = new ArrayList<>();
+    // ==================== 巡警商店 ====================
+    public static ArrayList<ShopEntry> PATROLLER_SHOP = new ArrayList<>();
 
     private static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
@@ -527,6 +529,13 @@ public class Noellesroles implements ModInitializer {
                 TMMItems.FIRECRACKER.getDefaultInstance(),
                 25,
                 ShopEntry.Type.TOOL));
+
+        // 巡警商店
+        // 左轮手枪 - 300金币
+        PATROLLER_SHOP.add(new ShopEntry(
+                TMMItems.REVOLVER.getDefaultInstance(),
+                300,
+                ShopEntry.Type.WEAPON));
         BOMBER_SHOP.add(new ShopEntry(
                 TMMItems.LOCKPICK.getDefaultInstance(),
                 80,
@@ -816,6 +825,12 @@ public class Noellesroles implements ModInitializer {
                     ShopEntry.Type.WEAPON));
             ShopContent.customEntries.put(
                     ModRoles.VETERAN_ID, VETERAN_SHOP);
+        }
+
+        // 巡警商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.PATROLLER_ID, PATROLLER_SHOP);
         }
 
         // 故障机器人商店
