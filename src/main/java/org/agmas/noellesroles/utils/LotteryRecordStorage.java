@@ -3,6 +3,7 @@ package org.agmas.noellesroles.utils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
+import org.agmas.noellesroles.Noellesroles;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,6 +28,8 @@ import java.util.function.Consumer;
 public class LotteryRecordStorage {
     protected LotteryRecordStorage() {
         // 使用 FabricLoader获取服务器目录
+        // TODO :  - fix(LootRecord) : 修复了根目录地址为服务器根目录（没在带子服的服务器实验不确定是否生效）
+        // TODO : 似乎在java中直接查找(无法确定子服和主服的位置关系)不是很稳妥的方式，请使用配置文件指定路径
         this.lotteryDataDir = FabricLoader.getInstance()
                 .getGameDir()  // 获取服务器当前目录
                 .resolve(LOTTERY_DATA_DIR_NAME);
@@ -73,7 +76,6 @@ public class LotteryRecordStorage {
         if(dirtyPlayers.isEmpty())
             return;
         // TODO : [info]打印开始保存所有脏玩家数据日志
-
         int completeNum = 0;
         int failNum = 0;
         for (UUID playerId : dirtyPlayers) {
