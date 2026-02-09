@@ -145,6 +145,8 @@ public class Noellesroles implements ModInitializer {
     public static ArrayList<ShopEntry> VETERAN_SHOP = new ArrayList<>();
     // ==================== 巡警商店 ====================
     public static ArrayList<ShopEntry> PATROLLER_SHOP = new ArrayList<>();
+    // ==================== 年兽商店 ====================
+    public static ArrayList<ShopEntry> NIAN_SHOU_SHOP = new ArrayList<>();
 
     private static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
@@ -491,7 +493,17 @@ public class Noellesroles implements ModInitializer {
                 ModItems.ALARM_TRAP.getDefaultInstance(),
                 75,
                 ShopEntry.Type.TOOL));
-        ENGINEER_SHOP.add(new ShopEntry(
+
+        // 年兽商店
+        // 关灯 - 200金币
+        NIAN_SHOU_SHOP.add(
+                new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 200, ShopEntry.Type.TOOL) {
+                    public boolean onBuy(@NotNull Player player) {
+                        return PlayerShopComponent.useBlackout(player);
+                    }
+                });
+
+        BOXER_SHOP.add(new ShopEntry(
                 ModItems.MASTER_KEY_P.getDefaultInstance(),
                 90,
                 ShopEntry.Type.TOOL));
@@ -825,6 +837,13 @@ public class Noellesroles implements ModInitializer {
                     ShopEntry.Type.WEAPON));
             ShopContent.customEntries.put(
                     ModRoles.VETERAN_ID, VETERAN_SHOP);
+        }
+
+        // 年兽商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.NIAN_SHOU_ID, NIAN_SHOU_SHOP);
+        }
         }
 
         // 巡警商店
@@ -1215,6 +1234,34 @@ public class Noellesroles implements ModInitializer {
                     }
                 }
             });
+
+            // 年兽除岁效果：给所有玩家分发4个鞭炮
+            boolean hasNianShou = false;
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
+            if (gameWorldComponent != null) {
+                for (var player : serverLevel.players()) {
+                    if (gameWorldComponent.isRole(player, ModRoles.NIAN_SHOU)) {
+                        hasNianShou = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasNianShou) {
+                for (ServerPlayer player : serverLevel.players()) {
+                    // 给每个玩家4个鞭炮
+                    ItemStack firecrackerStack = new ItemStack(TMMItems.FIRECRACKER);
+                    firecrackerStack.setCount(4);
+                    player.getInventory().add(firecrackerStack);
+
+                    // 发送提示消息
+                    player.displayClientMessage(
+                        net.minecraft.network.chat.Component.translatable("message.noellesroles.nianshou.firecrackers_distributed")
+                            .withStyle(net.minecraft.ChatFormatting.GOLD),
+                        true
+                    );
+                }
+            }
         });
         // 监听玩家死亡事件 - 用于激活复仇者能力、拳击手反制、跟踪者免疫和操纵师死亡判定
         AllowPlayerDeath.EVENT.register((victim, deathReason) -> {

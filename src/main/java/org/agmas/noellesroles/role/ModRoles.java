@@ -122,6 +122,7 @@ public class ModRoles {
     public static final ResourceLocation MONITOR_ID = Noellesroles.id("monitor");
     public static final ResourceLocation RECORDER_ID = Noellesroles.id("recorder");
     public static ResourceLocation VULTURE_ID = Noellesroles.id("vulture");
+    public static final ResourceLocation NIAN_SHOU_ID = Noellesroles.id("nianshou");
     // ==================== 已注册角色定义 ====================
     // 乘客阵营角色
     public static Role ELF = TMMRoles.registerRole(
@@ -502,6 +503,22 @@ public class ModRoles {
      */
     public static Role GLITCH_ROBOT;
 
+    /**
+     * 年兽角色 - 中立阵营
+     * - 中立阵营 (isInnocent = false, canUseKiller = false)
+     * - 真实心情
+     * - 1.5倍体力
+     * - 在杀手视角为好人
+     * - 被动：完成任务维持san值
+     * - 黑暗环境获得护盾试剂和速度二（一局一次）
+     * - 可购买关灯（200金币）
+     * - 除岁：所有人获得4个鞭炮，年兽5格内12个鞭炮则年兽死亡
+     * - 红包：每2个任务获得1个红包，对他人发放红包可获得100金币
+     * - 恭喜发财：剩余5分钟时播放音乐，全场存活玩家获得100金币并回满san
+     * - 胜利条件：游戏结束时存活
+     */
+    public static Role NIAN_SHOU;
+
     // ==================== 其他变量定义 ====================
     public static ArrayList<Role> SHOW_MONEY_ROLES = new ArrayList<>();
     public static HashMap<Role, RoleAnnouncementTexts.RoleAnnouncementText> roleRoleAnnouncementTextHashMap = new HashMap<>();
@@ -740,6 +757,17 @@ public class ModRoles {
                 false // 不显示计分板
         ).setComponentKey(MonitorPlayerComponent.KEY).setCanSeeCoin(true));
 
+        // 年兽角色 - 中立阵营
+        NIAN_SHOU = TMMRoles.registerRole(new NoramlRole(
+                NIAN_SHOU_ID, // 角色 ID
+                new Color(255, 69, 0).getRGB(), // 红橙色 - 代表年兽的颜色
+                false, // isInnocent = 非乘客阵营（中立）
+                false, // canUseKiller = 无杀手能力（但可以购买关灯）
+                Role.MoodType.REAL, // 真实心情
+                (int) (TMMRoles.CIVILIAN.getMaxSprintTime() * 1.5), // 1.5倍体力
+                true // 隐藏计分板
+        ).setComponentKey(NianShouPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true).setSpawnWeight(0.05f));
+
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
         // 复仇者每局只能有 1 个
@@ -808,6 +836,9 @@ public class ModRoles {
 
         // 故障机器人每局只能有 1 个
         Harpymodloader.setRoleMaximum(GLITCH_ROBOT_ID, 1);
+
+        // 年兽每局只能有 1 个
+        Harpymodloader.setRoleMaximum(NIAN_SHOU_ID, 1);
 
         // 游侠
         Harpymodloader.setRoleMaximum(ELF_ID, 1);

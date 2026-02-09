@@ -702,5 +702,22 @@
   "tip.n.letter.tooltip1": "Your cabin is only for your %s journey",
   "tip.n.letter.date": "%d year %d month %d day",
   "tip.n.letter.tooltip2": "Astral Express Team wishes you a pleasant and safe journey",
-  "tip.n.letter.map_name": "Astral Express"
+  "tip.n.letter.map_name": "Astral Express",
+  "==================== Nian Shou (Year Beast) Role ====================": "",
+  "announcement.role.nianshou": "Nian Shou (Year Beast)",
+  "info.screen.roleid.nianshou": "Neutral Faction\nYou need to complete tasks to maintain your sanity. You have 1.5x stamina. You appear as innocent in killer vision.\nPassive - Elusive: When in darkness, you gain a Defense Vial (once per game) and Speed II. You can buy Light Off in the shop.\nPassive - Exorcism: When you are on the field, everyone gets 4 firecrackers. If there are 12 firecrackers within 5 blocks of the Nian Shou, the Nian Shou dies.\nActive - Generosity: Every 2 tasks completed, you gain 1 Red Packet. Use your skill on others to give them a Red Packet, granting them 100 gold.\nPassive - Gong Xi Fa Cai: When 5 minutes remain in the game, all surviving players receive 100 gold and their sanity is fully restored.\nVictory Condition: If the Nian Shou survives until the game ends, the Nian Shou wins.",
+  "announcement.goals.nianshou": "You arrive following the scent of the New Year. Stay away from firecrackers and try to survive until the end!",
+  "announcement.win.nianshou": "Gong Xi Fa Cai! Nian Shou wins!",
+  "message.noellesroles.nianshou.firecrackers_distributed": "Nian Shou is present! All players receive 4 firecrackers!",
+  "message.noellesroles.nianshou.red_packet_earned": "Completed 2 tasks, you gained 1 Red Packet!",
+  "message.noellesroles.nianshou.no_target": "Please aim at a player!",
+  "message.noellesroles.nianshou.no_red_packet": "You don't have a Red Packet!",
+  "message.noellesroles.nianshou.red_packet_sent": "You gave a Red Packet to %s!",
+  "message.noellesroles.nianshou.red_packet_received": "You received a Red Packet from Nian Shou, gained 100 gold!",
+  "message.noellesroles.nianshou.darkness_shield": "You are protected in the darkness!",
+  "message.noellesroles.nianshou.darkness_speed": "You move like the wind in darkness!",
+  "message.noellesroles.nianshou.death_by_firecrackers": "Nian Shou %s was driven away by firecrackers!",
+  "message.noellesroles.nianshou.gongxi_facai_reward": "Gong Xi Fa Cai! You gained 100 gold and full sanity!",
+  "subtitles.gongxifacai": "Gong Xi Fa Cai",
+  "hud.noellesroles.nianshou.red_packets": "Red Packets: %s"
 }

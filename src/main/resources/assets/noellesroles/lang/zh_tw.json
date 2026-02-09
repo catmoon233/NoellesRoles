@@ -703,5 +703,22 @@
   "tip.n.letter.tooltip1": "您的客艙僅用於您%s的旅程",
   "tip.n.letter.date": "%d年%d月%d日",
   "tip.n.letter.tooltip2": "開拓星穹列車組祝您旅途愉快、平安",
-  "tip.n.letter.map_name": "開拓星穹列車"
+  "tip.n.letter.map_name": "開拓星穹列車",
+  "==================== 年獸角色 ====================": "",
+  "announcement.role.nianshou": "年獸",
+  "info.screen.roleid.nianshou": "中立陣營\n你需要做任務維持san值，擁有1.5倍的體力，在殺手透視中為好人。\n被動-神出鬼沒：當你處於黑暗環境中時可獲得一個護盾試劑(一局僅觸發一次)和速度二，可以在商店中購買關燈\n被動-除歲：當你存在於場上時，所有人獲得4個鞭炮，如果年獸周圍(5格半徑)有12個鞭炮則年獸死亡。\n主動-散財：你每完成2個任務會獲得1個紅包，對他人使用技能發放紅包可使對方獲得100金幣。\n被動-恭喜發財：當遊戲剩餘5分鐘時，全場存活的玩家獲得100金幣並回滿san值。\n勝利條件：若遊戲結束時年獸存活，則年獸勝利。",
+  "announcement.goals.nianshou": "你循著年味而來，遠離鞭炮並努力活到最後！",
+  "announcement.win.nianshou": "恭喜發財！年獸勝利！",
+  "message.noellesroles.nianshou.firecrackers_distributed": "年獸在場！所有玩家獲得4個鞭炮！",
+  "message.noellesroles.nianshou.red_packet_earned": "已完成2個任務，你獲得1個紅包！",
+  "message.noellesroles.nianshou.no_target": "請將準星對準一名玩家！",
+  "message.noellesroles.nianshou.no_red_packet": "你沒有紅包！",
+  "message.noellesroles.nianshou.red_packet_sent": "你給 %s 發放了紅包！",
+  "message.noellesroles.nianshou.red_packet_received": "你收到了年獸的紅包，獲得100金幣！",
+  "message.noellesroles.nianshou.darkness_shield": "你在黑暗中受到了庇護！",
+  "message.noellesroles.nianshou.darkness_speed": "你在黑暗中來去如風！",
+  "message.noellesroles.nianshou.death_by_firecrackers": "年獸 %s 被鞭炮驅散了！",
+  "message.noellesroles.nianshou.gongxi_facai_reward": "恭喜發財！你獲得100金幣並回滿san值！",
+  "subtitles.gongxifacai": "恭喜發財",
+  "hud.noellesroles.nianshou.red_packets": "紅包數量：%s"
 }
