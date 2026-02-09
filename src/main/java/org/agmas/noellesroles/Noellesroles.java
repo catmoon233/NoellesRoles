@@ -285,7 +285,7 @@ public class Noellesroles implements ModInitializer {
                 "noellesroles:mint_candies"));
 
         // 同时出现
-        RoleAssignmentManager.addOccupationRole(ModRoles.DOCTOR, ModRoles.POISONER);
+        RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
         // 设置刀击中效果
 
         // 注册血液粒子工厂
