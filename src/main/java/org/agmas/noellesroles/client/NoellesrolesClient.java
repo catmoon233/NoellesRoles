@@ -360,7 +360,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                     return 0.0F;
                 });
         OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
-            if (TMMClient.gameComponent != null) {
+            if (TMMClient.gameComponent != null && !taskBlocks.isEmpty()) {
                 if (TMMClient.gameComponent.isRunning()) {
                     boolean canDisplay = false;
                     if (TMMClient.isPlayerAliveAndInSurvival()) {
