@@ -946,6 +946,11 @@ public class Noellesroles implements ModInitializer {
         GameInitializeEvent.EVENT.register((serverLevel, gameWorldComponent, players) -> {
             // 动态大小
             // 年兽角色：5%概率生成
+            if (Math.random() < 0.5) {
+                Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
+            }
             if (Math.random() < 0.1) {
                 Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 1);
             } else {
