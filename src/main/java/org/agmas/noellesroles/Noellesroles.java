@@ -51,6 +51,7 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import pro.fazeclan.river.stupid_express.BuyableShopEntry;
+import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
 import org.agmas.harpymodloader.Harpymodloader;
@@ -1187,6 +1188,12 @@ public class Noellesroles implements ModInitializer {
                 PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(player);
                 shopComponent.setBalance(45);
                 return;
+            }
+
+            // 纵火犯物品初始化
+            if (role.equals(SERoles.ARSONIST)) {
+                player.addItem(SEItems.JERRY_CAN.getDefaultInstance().copy());
+                player.addItem(SEItems.LIGHTER.getDefaultInstance().copy());
             }
 
         });
