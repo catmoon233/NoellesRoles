@@ -938,7 +938,8 @@ public class Noellesroles implements ModInitializer {
                                 || deathReason.getPath().equals("bat_hit")
                                 || deathReason.getPath().equals("gun_shot")
                                 || deathReason.getPath().equals("arrow")
-                                || deathReason.getPath().equals("knife_stab")) {
+                                || deathReason.getPath().equals("knife_stab")
+                                || deathReason.getPath().equals("fell_out_of_train")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
                         }
                     }
