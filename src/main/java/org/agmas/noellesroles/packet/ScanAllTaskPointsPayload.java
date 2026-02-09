@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record ScanAllTaskPointsPayload() implements CustomPacketPayload {
-    public static final ResourceLocation ABILITY_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "ability_no");
+    public static final ResourceLocation ABILITY_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "client_scan_task");
     public static final Type<ScanAllTaskPointsPayload> ID = new Type<>(ABILITY_PAYLOAD_ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, ScanAllTaskPointsPayload> CODEC;
 
