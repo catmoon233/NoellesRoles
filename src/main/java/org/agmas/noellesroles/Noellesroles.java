@@ -844,7 +844,6 @@ public class Noellesroles implements ModInitializer {
             ShopContent.customEntries.put(
                     ModRoles.NIAN_SHOU_ID, NIAN_SHOU_SHOP);
         }
-        }
 
         // 巡警商店
         {
@@ -1256,10 +1255,10 @@ public class Noellesroles implements ModInitializer {
 
                     // 发送提示消息
                     player.displayClientMessage(
-                        net.minecraft.network.chat.Component.translatable("message.noellesroles.nianshou.firecrackers_distributed")
-                            .withStyle(net.minecraft.ChatFormatting.GOLD),
-                        true
-                    );
+                            net.minecraft.network.chat.Component
+                                    .translatable("message.noellesroles.nianshou.firecrackers_distributed")
+                                    .withStyle(net.minecraft.ChatFormatting.GOLD),
+                            true);
                 }
             }
         });
