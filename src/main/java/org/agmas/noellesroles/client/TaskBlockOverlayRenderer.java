@@ -15,6 +15,7 @@ import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -79,20 +80,11 @@ public class TaskBlockOverlayRenderer {
                     var blockState = localLevel.getBlockState(blockPos6);
                     if (blockState.is(Blocks.AIR))
                         continue;
+                    blockCounts++;
+
                     if (blockState.is(Blocks.BLACK_CONCRETE)) {
                         NoellesrolesClient.taskBlocks.put(blockPos6, 5);
-                        continue;
-                    }
-                    if (blockState.is(Blocks.LECTERN)) {
-                        if (localLevel.getBlockEntity(blockPos6) instanceof LecternBlockEntity entity) {
-                            if (!entity.getBook().isEmpty()) {
-                                NoellesrolesClient.taskBlocks.put(blockPos6, 6);
-                            }
-                        }
-                        continue;
-                    }
-                    blockCounts++;
-                    if (blockState.getBlock() instanceof TrimmedBedBlock
+                    } else if (blockState.getBlock() instanceof TrimmedBedBlock
                             && blockState.getValue(TrimmedBedBlock.PART).equals(BedPart.HEAD)) {
                         NoellesrolesClient.taskBlocks.put(blockPos6, 4);
                         // 暂时忽略
@@ -112,6 +104,13 @@ public class TaskBlockOverlayRenderer {
                                 }
                             }
 
+                        }
+                    } else if (blockState.getBlock() instanceof LecternBlock) {
+                        if (localLevel.getBlockEntity(blockPos6) instanceof LecternBlockEntity entity) {
+                            ItemStack items = entity.getBook();
+                            if (!items.isEmpty()) {
+                                NoellesrolesClient.taskBlocks.put(blockPos6, 6);
+                            }
                         }
                     } else if (blockState.getBlock() instanceof SprinklerBlock) {
                         NoellesrolesClient.taskBlocks.put(blockPos6, 3);
@@ -289,7 +288,7 @@ public class TaskBlockOverlayRenderer {
                     break;
                 case 6:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(0, 0, 0), 0.5f,
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(255, 127, 39), 0.5f,
                                 true, 2f);
                     break;
                 default:
