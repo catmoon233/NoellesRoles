@@ -1000,10 +1000,10 @@ public class Noellesroles implements ModInitializer {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 0);
             }
-            if (server.getPlayerCount() > 24) {
+            if (server.getPlayerCount() >= 24) {
                 Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 2);
                 Harpymodloader.setRoleMaximum(ModRoles.ELF, 2);
-            } else if (server.getPlayerCount() > 10) {
+            } else if (server.getPlayerCount() >= 12) {
                 Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 1);
                 Harpymodloader.setRoleMaximum(ModRoles.ELF, 1);
             } else {
