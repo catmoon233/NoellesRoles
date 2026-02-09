@@ -74,7 +74,8 @@
       "noellesroles:death_penalty",
       "noellesroles:noise_maker",
       "noellesroles:player_reset",
-      "noellesroles:glitch_robot"
+      "noellesroles:glitch_robot",
+      "noellesroles:nianshou"
     ]
   },
   "mixins": [

@@ -4,5 +4,11 @@
 			"noellesroles:gamber_died"
 		],
 		"subtitle": "subtitles.gamber_died"
+	},
+	"noellesroles.gongxifacai": {
+		"sounds": [
+			"noellesroles:gongxifacai"
+		],
+		"subtitle": "subtitles.gongxifacai"
 	}
 }
