@@ -13,6 +13,7 @@ import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import io.github.mortuusars.exposure.util.color.Color;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -21,9 +22,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -75,20 +78,72 @@ public class RoleUtils {
         player.getInventory().setItem(slot, net.minecraft.world.item.ItemStack.EMPTY);
     }
 
-    public static void clearAllKnives(ServerPlayer player) {
+    public static int dropAndClearAllSatisfiedItems(ServerPlayer player, Item item) {
+        int count = 0;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            if (player.getInventory().getItem(i).is(item)) {
+                player.drop(player.getInventory().getItem(i), false);
+                player.getInventory().setItem(i, net.minecraft.world.item.ItemStack.EMPTY);
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int dropAndClearAllSatisfiedItems(ServerPlayer player, TagKey<Item> tagKey) {
+        int count = 0;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            if (player.getInventory().getItem(i).is(tagKey)) {
+                player.drop(player.getInventory().getItem(i), false);
+                player.getInventory().setItem(i, net.minecraft.world.item.ItemStack.EMPTY);
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int clearAllSatisfiedItems(ServerPlayer player, Item item) {
+        int count = 0;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            if (player.getInventory().getItem(i).is(item)) {
+                player.getInventory().setItem(i, net.minecraft.world.item.ItemStack.EMPTY);
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int clearAllSatisfiedItems(ServerPlayer player, TagKey<Item> tagKey) {
+        int count = 0;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            if (player.getInventory().getItem(i).is(tagKey)) {
+                player.getInventory().setItem(i, net.minecraft.world.item.ItemStack.EMPTY);
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int clearAllKnives(ServerPlayer player) {
+        int count = 0;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             if (player.getInventory().getItem(i).is(TMMItems.KNIFE)) {
                 player.getInventory().setItem(i, net.minecraft.world.item.ItemStack.EMPTY);
+                count++;
             }
         }
+        return count;
     }
 
-    public static void clearAllRevolver(ServerPlayer player) {
+    public static int clearAllRevolver(ServerPlayer player) {
+        int count = 0;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            if (player.getInventory().getItem(i).is(TMMItems.REVOLVER)) {
+            if (player.getInventory().getItem(i).is(TMMItemTags.GUNS)) {
                 player.getInventory().setItem(i, net.minecraft.world.item.ItemStack.EMPTY);
+                count++;
             }
         }
+        return count;
     }
 
     public static void sendWelcomeAnnouncement(ServerPlayer player) {

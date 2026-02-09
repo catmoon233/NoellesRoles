@@ -10,7 +10,10 @@ import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.datagen.TMMItemTagGen;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -35,7 +38,8 @@ public class GamblerRole extends Role {
 
             if (gamblerPlayerComponent.selectedRole != null) {
                 if (player instanceof ServerPlayer sp) {
-                    RoleUtils.clearAllRevolver(sp);
+                    // 掉枪
+                    RoleUtils.dropAndClearAllSatisfiedItems(sp, TMMItemTags.GUNS);
                 }
                 var role = RoleUtils.getRole(gamblerPlayerComponent.selectedRole);
                 if (role == null) {
@@ -46,7 +50,7 @@ public class GamblerRole extends Role {
                 RoleUtils.changeRole(player, role);
 
                 PlayerShopComponent playerShopComponent = (PlayerShopComponent) PlayerShopComponent.KEY.get(player);
-                playerShopComponent.setBalance(150);
+                playerShopComponent.addToBalance(50);
 
                 if (player instanceof ServerPlayer serverPlayer) {
 
