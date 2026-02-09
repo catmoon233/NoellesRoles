@@ -128,6 +128,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "category.trainmurdermystery.keybinds"));
         ClientPlayNetworking.registerGlobalReceiver(ScanAllTaskPointsPayload.ID, (payload, context) -> {
             Noellesroles.LOGGER.info("Schedule 'scan points' event in 5s!");
+            NoellesrolesClient.taskBlocks.clear();
             NoellesrolesClient.scanTaskPointsCountDown = 100;
         });
         ClientPlayNetworking.registerGlobalReceiver(BroadcastMessageS2CPacket.ID, (payload, context) -> {
