@@ -2,7 +2,7 @@ package org.agmas.noellesroles.client;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.CameraType;
-import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
+
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
@@ -156,7 +156,10 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             return;
         // 获取游戏世界组件
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
-
+        if(gameWorld.isRole(client.player,ModRoles.NIAN_SHOU)){
+            ClientPlayNetworking.send(new AbilityC2SPacket());
+            return;
+        }
         // 获取玩家的技能组件
         @SuppressWarnings("unused")
         NoellesRolesAbilityPlayerComponent abilityComponent = NoellesRolesAbilityPlayerComponent.KEY.get(client.player);

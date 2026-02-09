@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.Noellesroles;
@@ -96,11 +97,12 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
             ModComponents.NIAN_SHOU.sync(this.player);
             if (player instanceof ServerPlayer sp) {
                 sp.displayClientMessage(
-                    Component.translatable("message.noellesroles.nianshou.red_packet_earned")
-                        .withStyle(ChatFormatting.GOLD),
-                    true);
+                        Component.translatable("message.noellesroles.nianshou.red_packet_earned")
+                                .withStyle(ChatFormatting.GOLD),
+                        true);
             }
         }
+        sync();
     }
 
     @Override
@@ -134,9 +136,14 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
         }
     }
 
+    public void sync() {
+        ModComponents.NIAN_SHOU.sync(this.player);
+    }
+
     private void checkDarkness() {
         // 检查是否在黑暗环境下（光照等级 < 2）
-        int lightLevel = player.level().getRawBrightness(player.blockPosition(), net.minecraft.world.level.LightLayer.BLOCK.ordinal());
+        int lightLevel = player.level().getRawBrightness(player.blockPosition(),
+                net.minecraft.world.level.LightLayer.BLOCK.ordinal());
 
         if (lightLevel < 2) {
             if (!inDarkness) {
@@ -150,9 +157,9 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
 
                     if (player instanceof ServerPlayer sp) {
                         sp.displayClientMessage(
-                            Component.translatable("message.noellesroles.nianshou.darkness_shield")
-                                .withStyle(ChatFormatting.GOLD),
-                            true);
+                                Component.translatable("message.noellesroles.nianshou.darkness_shield")
+                                        .withStyle(ChatFormatting.GOLD),
+                                true);
                     }
                     ModComponents.NIAN_SHOU.sync(this.player);
                 }
@@ -163,14 +170,14 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                 if (player instanceof ServerPlayer sp) {
                     // 给予速度二效果（10秒 = 200 ticks）
                     sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                        net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED,
-                        200, // 10秒
-                        1 // 速度等级2
+                            net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED,
+                            200, // 10秒
+                            1 // 速度等级2
                     ));
                     sp.displayClientMessage(
-                        Component.translatable("message.noellesroles.nianshou.darkness_speed")
-                            .withStyle(ChatFormatting.GOLD),
-                        true);
+                            Component.translatable("message.noellesroles.nianshou.darkness_speed")
+                                    .withStyle(ChatFormatting.GOLD),
+                            true);
                 }
                 // 重置冷却时间（10秒 = 200 ticks）
                 speedEffectCooldown = 200;
@@ -201,9 +208,11 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                     // 发送死亡消息
                     for (Player p : player.level().players()) {
                         p.displayClientMessage(
-                            Component.translatable("message.noellesroles.nianshou.death_by_firecrackers", player.getName())
-                                .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
-                            true);
+                                Component
+                                        .translatable("message.noellesroles.nianshou.death_by_firecrackers",
+                                                player.getName())
+                                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+                                true);
                     }
                     // 杀死年兽（使用鞭炮死亡原因）
                     GameFunctions.killPlayer(player, true, null, Noellesroles.id("nianshou_firecrackers"));
@@ -237,23 +246,27 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                     gongXiFaCaiTimer = 0;
 
                     // 播放音乐
-                    serverLevel.playSound(null, player.blockPosition(), NRSounds.GONGXI_FACAI, net.minecraft.sounds.SoundSource.MUSIC, 1.0F, 1.0F);
 
                     // 为所有存活玩家发放100金币并回满san值
                     for (Player p : serverLevel.players()) {
-                        if (!GameFunctions.isPlayerEliminated(p)) {
+                        if (GameFunctions.isPlayerAliveAndSurvival(p)) {
                             if (p instanceof ServerPlayer sp) {
-                                dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent shopComponent = dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY.get(p);
+                                serverLevel.playSound(sp, sp.blockPosition(), NRSounds.GONGXI_FACAI, SoundSource.MUSIC,
+                                        .5F,
+                                        1.0F);
+                                dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent shopComponent = dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY
+                                        .get(p);
                                 shopComponent.addToBalance(100);
 
                                 // 回满san值
-                                dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent moodComponent = dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent.KEY.get(p);
+                                dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent moodComponent = dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent.KEY
+                                        .get(p);
                                 moodComponent.setMood(1f);
 
                                 sp.displayClientMessage(
-                                    Component.translatable("message.noellesroles.nianshou.gongxi_facai_reward")
-                                        .withStyle(ChatFormatting.GOLD),
-                                    true);
+                                        Component.translatable("message.noellesroles.nianshou.gongxi_facai_reward")
+                                                .withStyle(ChatFormatting.GOLD),
+                                        true);
                             }
                         }
                     }

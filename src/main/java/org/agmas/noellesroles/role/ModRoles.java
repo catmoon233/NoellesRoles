@@ -758,7 +758,7 @@ public class ModRoles {
         ).setComponentKey(MonitorPlayerComponent.KEY).setCanSeeCoin(true));
 
         // 年兽角色 - 中立阵营
-        NIAN_SHOU = TMMRoles.registerRole(new NoramlRole(
+        NIAN_SHOU = TMMRoles.registerRole(new NianShouRole(
                 NIAN_SHOU_ID, // 角色 ID
                 new Color(255, 69, 0).getRGB(), // 红橙色 - 代表年兽的颜色
                 false, // isInnocent = 非乘客阵营（中立）
