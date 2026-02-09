@@ -18,10 +18,14 @@ import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
 import io.github.mortuusars.exposure.util.color.Color;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -33,6 +37,20 @@ import net.minecraft.world.item.ItemStack;
  * 角色相关工具
  */
 public class RoleUtils {
+    public static void playSound(ServerPlayer serverPlayer, SoundEvent soundEvent, SoundSource soundSource, float volume,
+            float pitch) {
+        double x = serverPlayer.getX();
+        double y = serverPlayer.getY();
+        double z = serverPlayer.getZ();
+        playSound(serverPlayer, soundEvent, soundSource, x, y, z, volume, pitch);
+    }
+
+    public static void playSound(ServerPlayer serverPlayer, SoundEvent soundEvent, SoundSource soundSource, double x,
+            double y, double z, float volume, float pitch) {
+        serverPlayer.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent),
+                soundSource, x, y, z, volume, pitch, serverPlayer.getRandom().nextLong()));
+    }
+
     public static void RemoveAllPlayerAttributes(ServerPlayer serverPlayer) {
         var attris = serverPlayer.getAttributes();
         if (attris != null) {

@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.NRSounds;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
@@ -251,7 +252,7 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                     for (Player p : serverLevel.players()) {
                         if (GameFunctions.isPlayerAliveAndSurvival(p)) {
                             if (p instanceof ServerPlayer sp) {
-                                serverLevel.playSound(sp, sp.blockPosition(), NRSounds.GONGXI_FACAI, SoundSource.MUSIC,
+                                RoleUtils.playSound(sp, NRSounds.GONGXI_FACAI, SoundSource.RECORDS,
                                         .5F,
                                         1.0F);
                                 dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent shopComponent = dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY
