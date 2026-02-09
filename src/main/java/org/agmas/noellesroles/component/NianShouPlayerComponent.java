@@ -267,7 +267,7 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                                                 .withStyle(ChatFormatting.GOLD),
                                         true);
                                 sp.playNotifySound(NRSounds.GONGXI_FACAI, SoundSource.AMBIENT,
-                                        0.5F,
+                                        0.3F,
                                         1.0F);
                             }
                         }
