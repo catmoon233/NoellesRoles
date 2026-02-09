@@ -101,7 +101,7 @@ public abstract class CustomRolesRoleNameRendererMixin {
                 // NoellesrolesClient.hudTarget
                 var _color = Color.MAGENTA.getRGB();
 
-                context.drawString(renderer, room_name, -renderer.width(room_name) / 2, 0,
+                context.drawString(renderer, room_name, -renderer.width(room_name) / 2, -20,
                         _color | (int) (nametagAlpha * 255.0F) << 24);
             }
         }
