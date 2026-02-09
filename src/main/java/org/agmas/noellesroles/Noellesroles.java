@@ -885,6 +885,8 @@ public class Noellesroles implements ModInitializer {
                 ExecutionerSelectTargetC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BroadcasterC2SPacket.ID, BroadcasterC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(BroadcastMessageS2CPacket.ID, BroadcastMessageS2CPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(ScanAllTaskPointsPayload.ID, ScanAllTaskPointsPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(ScanAllTaskPointsPayload.ID, ScanAllTaskPointsPayload.CODEC);
 
         PayloadTypeRegistry.playC2S().register(PlayerResetS2CPacket.ID, PlayerResetS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(PlayerResetS2CPacket.ID, PlayerResetS2CPacket.CODEC);
@@ -1241,6 +1243,7 @@ public class Noellesroles implements ModInitializer {
         // });
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             serverLevel.players().forEach(player -> {
+                ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload());
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
                 if (gameWorldComponent != null) {
                     if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {

@@ -2,35 +2,50 @@ package org.agmas.noellesroles.client;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
+
 import dev.doctor4t.ratatouille.util.TextUtils;
 import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.block.FoodPlatterBlock;
+import dev.doctor4t.trainmurdermystery.block.SprinklerBlock;
+import dev.doctor4t.trainmurdermystery.block.TrimmedBedBlock;
+import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
+import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.item.CocktailItem;
 import dev.doctor4t.trainmurdermystery.network.BreakArmorPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
-
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
@@ -45,6 +60,7 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
 import walksy.crosshairaddons.CrosshairAddons;
 
+import java.awt.Color;
 import java.util.*;
 
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.*;
@@ -66,12 +82,121 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static int broadcastMessageTicks = 0;
     public static BloodMain bloodMain = new BloodMain();
 
-
     private static long lastClientTickTime = 0;
     private static final long CLIENT_TICK_INTERVAL_MS = 50; // 1000ms / 20 ticks per second = 50ms per tick
+    /**
+     * 1: 食物
+     * 2: 水
+     * 3: 洗澡
+     * 4: 床
+     */
+    public static HashMap<BlockPos, Integer> taskBlocks = new HashMap<>();
+    public static int scanTaskPointsCountDown = -1;
+
+    public void scanAllTaskBlocks() {
+        Noellesroles.LOGGER.info("Start to scan points!");
+        scanTaskPointsCountDown = -1;
+        if (Minecraft.getInstance() == null)
+            return;
+        if (Minecraft.getInstance().level == null)
+            return;
+        if (Minecraft.getInstance().player == null)
+            return;
+        var game = TMMClient.gameComponent;
+        if (game == null || !game.isRunning()) {
+            scanTaskPointsCountDown = -1;
+            return;
+        }
+        ClientLevel localLevel = Minecraft.getInstance().level;
+        taskBlocks.clear();
+        var areas = AreasWorldComponent.KEY.get(Minecraft.getInstance().level);
+        BlockPos backupMinPos = BlockPos.containing(areas.getResetTemplateArea().getMinPosition());
+        BlockPos backupMaxPos = BlockPos.containing(areas.getResetTemplateArea().getMaxPosition());
+        BoundingBox backupTrainBox = BoundingBox.fromCorners(backupMinPos, backupMaxPos);
+        BlockPos trainMinPos = BlockPos.containing(areas.getResetPasteArea().getMinPosition());
+        BlockPos trainMaxPos = trainMinPos.offset(backupTrainBox.getLength());
+        BoundingBox trainBox = BoundingBox.fromCorners(trainMinPos, trainMaxPos);
+        int blockCounts = 0;
+        for (int k = trainBox.minZ(); k <= trainBox.maxZ(); k++) {
+            for (int l = trainBox.minY(); l <= trainBox.maxY(); l++) {
+                for (int m = trainBox.minX(); m <= trainBox.maxX(); m++) {
+                    BlockPos blockPos6 = new BlockPos(m, l, k);
+                    if (!localLevel.isLoaded(blockPos6))
+                        continue;
+                    var blockState = localLevel.getBlockState(blockPos6);
+                    if (blockState.is(Blocks.AIR))
+                        continue;
+                    blockCounts++;
+                    if (blockState.getBlock() instanceof TrimmedBedBlock
+                            && blockState.getValue(TrimmedBedBlock.PART).equals(BedPart.HEAD)) {
+                        taskBlocks.put(blockPos6, 4);
+                    } else if (blockState.getBlock() instanceof FoodPlatterBlock) {
+                        if (localLevel.getBlockEntity(blockPos6) instanceof BeveragePlateBlockEntity entity) {
+                            var items = entity.getStoredItems();
+                            if (items.size() > 0) {
+                                ItemStack item_0 = items.get(0);
+                                Item item_ = item_0.getItem();
+                                if ((item_ instanceof CocktailItem)) {
+                                    taskBlocks.put(blockPos6, 2);
+                                } else {
+                                    FoodProperties foodPro = item_0.get(DataComponents.FOOD);
+                                    if (foodPro != null) {
+                                        taskBlocks.put(blockPos6, 1);
+                                    }
+                                }
+                            }
+
+                        }
+                    } else if (blockState.getBlock() instanceof SprinklerBlock) {
+                        taskBlocks.put(blockPos6, 3);
+                    }
+                }
+            }
+        }
+        if (blockCounts <= 0) {
+            Noellesroles.LOGGER.warn("Failed to scan blocks. Schedule another 'scan points' event in 10s!");
+            scanTaskPointsCountDown = 200;
+        }
+    }
 
     @Override
     public void onInitializeClient() {
+        WorldRenderEvents.AFTER_TRANSLUCENT.register((renderContext) -> {
+            var instance = Minecraft.getInstance();
+            if (instance == null)
+                return;
+            if (instance.player == null)
+                return;
+            if (instance.level == null)
+                return;
+            if (TMMClient.gameComponent == null)
+                return;
+            if (!TMMClient.gameComponent.isRunning())
+                return;
+            for (var set : taskBlocks.entrySet()) {
+                var pos = set.getKey();
+                int type = set.getValue();
+                switch (type) { // 1: 食物 2: 水 3: 洗澡 4: 床
+                    case 1:
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, Color.PINK, 0.5f, true);
+                        break;
+                    case 2:
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(153, 217, 234), 0.5f,
+                                true);
+                        break;
+                    case 3:
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(141, 234, 189), 0.5f,
+                                true);
+                        break;
+                    case 4:
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(234, 88, 88), 0.5f,
+                                true);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         InstinctRenderer.registerInstinctEvents();
         roleIntroClientBind = KeyBindingHelper
                 .registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".role_intro",
@@ -81,7 +206,10 @@ public class NoellesrolesClient implements ClientModInitializer {
                         InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_I, "category.trainmurdermystery.keybinds"));
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".ability",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
-
+        ClientPlayNetworking.registerGlobalReceiver(ScanAllTaskPointsPayload.ID, (payload, context) -> {
+            Noellesroles.LOGGER.info("Schedule 'scan points' event in 10s!");
+            NoellesrolesClient.scanTaskPointsCountDown = 200;
+        });
         ClientPlayNetworking.registerGlobalReceiver(BroadcastMessageS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
@@ -162,7 +290,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             });
         });
         // 注册抽奖网络包处理：接收服务器抽奖结果后播放抽奖动画
-        ClientPlayNetworking.registerGlobalReceiver(LootResultS2CPacket.ID, (payload, context)->{
+        ClientPlayNetworking.registerGlobalReceiver(LootResultS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
@@ -171,7 +299,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             });
         });
         // 注册抽奖界面网络包处理：接收服务器奖池信息并显示界面
-        ClientPlayNetworking.registerGlobalReceiver(LootInfoScreenS2CPacket.ID, (payload, context)->{
+        ClientPlayNetworking.registerGlobalReceiver(LootInfoScreenS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
@@ -193,6 +321,13 @@ public class NoellesrolesClient implements ClientModInitializer {
                                 ++playerBodyEntity.tickCount;
                         });
 
+            }
+            if (scanTaskPointsCountDown > 0) {
+                scanTaskPointsCountDown--;
+                if (scanTaskPointsCountDown == 0) {
+                    scanTaskPointsCountDown = -1;
+                    scanAllTaskBlocks();
+                }
             }
             if (roleGuessNoteClientBind.consumeClick()) {
                 client.execute(() -> {
