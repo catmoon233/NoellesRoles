@@ -448,6 +448,7 @@
   "key.noellesroles.ability": "Use Ability",
   "key.noellesroles.guess_role_note": "Identity Guess Note",
   "key.noellesroles.role_intro": "Role Introduction",
+  "key.noellesroles.taskinstinct": "Task Point Instinct",
   "==================== Trapper Role ====================": "",
   "hud.noellesroles.trapper.charges": "Traps: %s/%s",
   "hud.noellesroles.trapper.recharge": "Recharging: %ss",
@@ -621,7 +622,7 @@
   "message.error.executioner.invalid_target": "Invalid target!",
   "message.error.executioner.target_not_found": "Target not found!",
   "==================== Additional Translation Keys ====================": "",
-  "message.tip.for_killer": "Press ALT to toggle killer instinct",
+  "message.tip.for_killer": "Press %s to toggle killer instinct",
   "message.noellesroles.better_vigilante.last_stand_activated": "Passive skill Last Stand activated!",
   "message.lock.game.start": "Lockpicking mini-game started!",
   "message.lock.unlock": "Lock picked!",
@@ -719,5 +720,7 @@
   "message.noellesroles.nianshou.death_by_firecrackers": "Nian Shou %s was driven away by firecrackers!",
   "message.noellesroles.nianshou.gongxi_facai_reward": "Gong Xi Fa Cai! You gained 100 gold and full sanity!",
   "subtitles.gongxifacai": "Gong Xi Fa Cai",
-  "hud.noellesroles.nianshou.red_packets": "Red Packets: %s"
+  "hud.noellesroles.nianshou.red_packets": "Red Packets: %s",
+  "msg.noellesroles.taskpoint.available": "Task point perspective is available. Press %s to turn it on or off.",
+  "message.tip.for_taskpoint": "Press %s to switch task point perspective."
 }
