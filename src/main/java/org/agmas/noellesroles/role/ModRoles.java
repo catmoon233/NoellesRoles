@@ -766,7 +766,7 @@ public class ModRoles {
                 Role.MoodType.REAL, // 真实心情
                 (int) (TMMRoles.CIVILIAN.getMaxSprintTime() * 1.5), // 1.5倍体力
                 true // 隐藏计分板
-        ).setComponentKey(NianShouPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true).setSpawnWeight(0.05f));
+        ).setComponentKey(NianShouPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true));
 
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
