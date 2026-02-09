@@ -941,6 +941,13 @@ public class Noellesroles implements ModInitializer {
         // Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 0);
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
+
+        // 年兽角色：5%概率生成
+        if (Math.random() < 0.05) {
+            Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 1);
+        } else {
+            Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 0);
+        }
     }
 
     public void registerEvents() {
