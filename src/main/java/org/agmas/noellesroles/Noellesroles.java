@@ -496,16 +496,7 @@ public class Noellesroles implements ModInitializer {
                 75,
                 ShopEntry.Type.TOOL));
 
-        // 年兽商店
-        // 关灯 - 200金币
-        NIAN_SHOU_SHOP.add(
-                new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 200, ShopEntry.Type.TOOL) {
-                    public boolean onBuy(@NotNull Player player) {
-                        return PlayerShopComponent.useBlackout(player);
-                    }
-                });
-
-        BOXER_SHOP.add(new ShopEntry(
+        ENGINEER_SHOP.add(new ShopEntry(
                 ModItems.MASTER_KEY_P.getDefaultInstance(),
                 90,
                 ShopEntry.Type.TOOL));
@@ -514,6 +505,15 @@ public class Noellesroles implements ModInitializer {
                 ModItems.LOCK_ITEM.getDefaultInstance(),
                 100,
                 ShopEntry.Type.TOOL));
+
+        // 年兽商店
+        // 关灯 - 200金币
+        NIAN_SHOU_SHOP.add(
+                new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 200, ShopEntry.Type.TOOL) {
+                    public boolean onBuy(@NotNull Player player) {
+                        return PlayerShopComponent.useBlackout(player);
+                    }
+                });
 
         // 拳击手商店
         BOXER_SHOP.add(new ShopEntry(
@@ -954,7 +954,7 @@ public class Noellesroles implements ModInitializer {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
             }
-            if (Math.random() < 0.1) {
+            if (Math.random() < 0.2) {
                 Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 0);
@@ -1277,6 +1277,7 @@ public class Noellesroles implements ModInitializer {
                 for (ServerPlayer player : serverLevel.players()) {
                     // 给每个玩家4个鞭炮
                     ItemStack firecrackerStack = new ItemStack(TMMItems.FIRECRACKER);
+                    firecrackerStack.set(DataComponents.MAX_STACK_SIZE, 4);
                     firecrackerStack.setCount(4);
                     player.getInventory().add(firecrackerStack);
 

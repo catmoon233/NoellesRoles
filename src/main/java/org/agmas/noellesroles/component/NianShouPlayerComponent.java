@@ -114,7 +114,8 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.NIAN_SHOU))
             return;
-
+        if (!GameFunctions.isPlayerAliveAndSurvival(serverPlayer))
+            return;
         // 检查黑暗环境并触发护盾和速度
         checkDarkness();
 
@@ -205,7 +206,7 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
 
             // 如果有12个或更多鞭炮，年兽死亡（除岁成功）
             if (firecrackerCount >= 12) {
-                if (player instanceof ServerPlayer sp) {
+                if (player instanceof ServerPlayer) {
                     // 发送死亡消息
                     for (Player p : player.level().players()) {
                         p.displayClientMessage(
