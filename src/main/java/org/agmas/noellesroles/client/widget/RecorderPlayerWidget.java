@@ -2,6 +2,8 @@ package org.agmas.noellesroles.client.widget;
 
 import org.agmas.noellesroles.client.screen.RecorderScreen;
 import java.awt.*;
+
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,9 +22,10 @@ public class RecorderPlayerWidget extends Button {
     private final ResourceLocation skinTexture;
     private final int size;
     public boolean highlight = true;
+    private boolean hasGuessed = false;
 
     public RecorderPlayerWidget(RecorderScreen screen, int x, int y, int size,
-            UUID playerUuid, String playerName, ResourceLocation skinTexture, int index) {
+            UUID playerUuid, String playerName, ResourceLocation skinTexture, int index, boolean hasGuessed) {
         super(x, y, size, size, Component.literal(playerName),
                 (button) -> screen.onPlayerSelected(playerUuid, playerName),
                 DEFAULT_NARRATION);
@@ -31,6 +34,7 @@ public class RecorderPlayerWidget extends Button {
         this.playerName = playerName;
         this.skinTexture = skinTexture;
         this.size = size;
+        this.hasGuessed = hasGuessed;
     }
 
     @Override
@@ -49,7 +53,14 @@ public class RecorderPlayerWidget extends Button {
                 context.fill(getX(), getY(), getX() + size, getY() + size, new Color(127, 127, 127).getRGB());
             }
         }
-
+        if (hasGuessed) {
+            Font textRenderer = Minecraft.getInstance().font;
+            var msg = Component.translatable("screen.noellesroles.recorder.hasrecorded")
+                    .withStyle(ChatFormatting.YELLOW);
+            int textWidth = textRenderer.width(msg);
+            context.drawString(textRenderer, msg, getX() + size / 2 - textWidth / 2, getY() + size,
+                    Color.RED.getRGB());
+        }
         if (this.isHovered()) {
             drawShopSlotHighlight(context, getX(), getY(), 0);
 

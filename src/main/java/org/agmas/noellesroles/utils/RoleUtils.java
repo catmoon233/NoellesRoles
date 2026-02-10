@@ -1,17 +1,23 @@
 package org.agmas.noellesroles.utils;
 
+import java.util.OptionalInt;
+
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.events.ModdedRoleRemoved;
 import org.agmas.harpymodloader.modifiers.Modifier;
 import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
@@ -23,6 +29,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -37,7 +44,22 @@ import net.minecraft.world.item.ItemStack;
  * 角色相关工具
  */
 public class RoleUtils {
-    public static void playSound(ServerPlayer serverPlayer, SoundEvent soundEvent, SoundSource soundSource, float volume,
+    public static void customWinnerWin(ServerLevel serverWorld, GameFunctions.WinStatus WinStatus,
+            @Nullable String winnerId, @Nullable OptionalInt winnerColor) {
+        if (winnerId != null) {
+            GameFunctions.CustomWinnerID = winnerId;
+        }
+        if (winnerColor != null) {
+            if (!winnerColor.isEmpty())
+                GameFunctions.CustomWinnerColor = winnerColor.getAsInt();
+        }
+        GameRoundEndComponent.KEY.get(serverWorld).setRoundEndData(serverWorld.players(),
+                WinStatus);
+        GameFunctions.stopGame(serverWorld);
+    }
+
+    public static void playSound(ServerPlayer serverPlayer, SoundEvent soundEvent, SoundSource soundSource,
+            float volume,
             float pitch) {
         double x = serverPlayer.getX();
         double y = serverPlayer.getY();

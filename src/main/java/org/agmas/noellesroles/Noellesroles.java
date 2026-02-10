@@ -963,6 +963,7 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+        CustomWinnerClass.registerCustomWinners();
         OnTeammateKilledTeammate.EVENT.register((victim, killer, isInnocent, deathReason) -> {
             if (GameFunctions.isPlayerAliveAndSurvival(killer)) {
                 if (isInnocent) {

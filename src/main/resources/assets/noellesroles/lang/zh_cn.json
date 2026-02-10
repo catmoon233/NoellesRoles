@@ -590,6 +590,7 @@
   "item.noellesroles.written_note": "记录笔记",
   "item.noellesroles.written_note.tooltip": "右键使用来记录玩家的身份",
   "screen.noellesroles.recorder.title": "记录笔记",
+  "screen.noellesroles.recorder.hasrecorded": "已被记录",
   "screen.noellesroles.recorder.select_player": "选择目标玩家",
   "screen.noellesroles.recorder.select_role": "记录 %s 的角色",
   "screen.noellesroles.recorder.hint": "按 ESC 返回或取消",

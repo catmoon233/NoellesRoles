@@ -101,20 +101,8 @@ public class TaskBlockOverlayRenderer {
 
                         }
                     } else if (blockState.getBlock() instanceof LecternBlock) {
-                        // TMM.LOGGER.warn("FIND LECTURE");
-                        if (localLevel.getBlockEntity(blockPos6) instanceof LecternBlockEntity entity) {
-                            ItemStack items = entity.getBook();
-                            int page = entity.getPage();
-                            if (items != null) {
-                                // TMM.LOGGER.warn("FIND LECTURE WITH ENTIY DATA {} : {} {} {}",
-                                // items.getDisplayName().getString(),blockPos6.getX(),blockPos6.getY(),blockPos6.getZ());
-                                // if (!items.isEmpty()) {
-                                // TMM.LOGGER.warn("FIND LECTURE WITH ENTIY DATA {}",
-                                // items.getDisplayName().getString();
-
-                                NoellesrolesClient.taskBlocks.put(blockPos6, 6);
-                                // }
-                            }
+                        if (blockState.getValue(LecternBlock.HAS_BOOK)) {
+                            NoellesrolesClient.taskBlocks.put(blockPos6, 6);
 
                         }
                     } else if (blockState.getBlock() instanceof SprinklerBlock) {
@@ -126,13 +114,15 @@ public class TaskBlockOverlayRenderer {
         if (blockCounts <= 0) {
             Noellesroles.LOGGER.warn("Failed to scan blocks. Schedule another 'scan points' event in 5s!");
             NoellesrolesClient.scanTaskPointsCountDown = 100;
+        } else {
+            Noellesroles.LOGGER.info("Successed scanned task points!");
         }
-        Minecraft.getInstance().player.displayClientMessage(
-                Component
-                        .translatable("msg.noellesroles.taskpoint.available",
-                                Component.keybind("key.noellesroles.taskinstinct"))
-                        .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
-                true);
+        // Minecraft.getInstance().player.displayClientMessage(
+        // Component
+        // .translatable("msg.noellesroles.taskpoint.available",
+        // Component.keybind("key.noellesroles.taskinstinct"))
+        // .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
+        // true);
     }
 
     public static final RenderType ALWAYS_VISIBLE_THICK_LINES = RenderType.create(
@@ -266,7 +256,7 @@ public class TaskBlockOverlayRenderer {
         for (var set : NoellesrolesClient.taskBlocks.entrySet()) {
             var pos = set.getKey();
             int type = set.getValue();
-            switch (type) { // 1: 食物 2: 水 3: 洗澡 4: 床
+            switch (type) { // 1: 食物 2: 水 3: 洗澡 4: 床 5: 跑步机 6: 讲台
                 case 1:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, Color.PINK, 0.5f, true, 2f);
@@ -292,9 +282,9 @@ public class TaskBlockOverlayRenderer {
                                 true, 2f);
                     break;
                 case 6:
-                    if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(255, 127, 39), 0.5f,
-                                true, 2f);
+                    TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
+                            new Color(255, 127, 39), 0.5f,
+                            true, 2f);
                     break;
                 default:
                     break;

@@ -126,7 +126,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             Minecraft client = Minecraft.getInstance();
             if (client.player == null)
                 return;
-            client.setScreen(new RecorderScreen());
+            client.setScreen(new RecorderScreen(client.player));
         };
     }
 

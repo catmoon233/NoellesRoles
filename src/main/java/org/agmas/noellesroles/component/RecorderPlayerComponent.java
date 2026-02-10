@@ -7,6 +7,7 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
@@ -74,6 +75,10 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
 
     public List<ResourceLocation> getAvailableRoles() {
         return availableRoles;
+    }
+
+    public boolean hasGuessed(UUID playerUUID) {
+        return this.guesses.containsKey(playerUUID) && this.guesses.get(playerUUID) != null;
     }
 
     public Map<UUID, String> getStartPlayers() {
@@ -186,9 +191,7 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
 
         if (correctGuesses >= requiredCorrect) {
             if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-                GameRoundEndComponent.KEY.get(serverLevel).setRoundEndData(serverLevel.players(),
-                        GameFunctions.WinStatus.RECORDER);
-                GameFunctions.stopGame(serverLevel);
+                RoleUtils.customWinnerWin(serverLevel, GameFunctions.WinStatus.RECORDER, null, null);
             }
 
             // 广播胜利消息
