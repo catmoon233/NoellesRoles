@@ -59,6 +59,11 @@ public class NoiseMakerPlayerComponent implements RoleComponent, ServerTickingCo
     public void clientTick() {
     }
 
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return this.player == player;
+    }
+
     public void serverTick() {
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (!gameWorld.isRole(player, ModRoles.NOISEMAKER)) {
