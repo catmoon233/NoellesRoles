@@ -227,7 +227,7 @@ public class Noellesroles implements ModInitializer {
         // 设置角色最大数量
         Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
         // 和医生一起生成
-        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 0);
         Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, 1);
 
@@ -2083,20 +2083,14 @@ public class Noellesroles implements ModInitializer {
                 // 发放红包
                 nianShouComponent.useRedPacket();
 
-                // 目标玩家获得100金币
+                // 添加延迟发放计时器
                 if (target instanceof ServerPlayer targetSP) {
-                    dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent targetShop = dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY
-                            .get(target);
-                    targetShop.addToBalance(100);
+                    ConfigWorldComponent configWorld = ConfigWorldComponent.KEY.get(target.level());
+                    configWorld.addRedPacketTimer(target.getUUID());
 
                     // 提示年兽
                     sender.displayClientMessage(
                             Component.translatable("message.noellesroles.nianshou.red_packet_sent", target.getName())
-                                    .withStyle(ChatFormatting.GOLD),
-                            true);
-
-                    targetSP.displayClientMessage(
-                            Component.translatable("message.noellesroles.nianshou.red_packet_received", 100)
                                     .withStyle(ChatFormatting.GOLD),
                             true);
                 }

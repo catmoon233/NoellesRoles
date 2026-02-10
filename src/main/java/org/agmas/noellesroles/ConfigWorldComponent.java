@@ -8,11 +8,18 @@ import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingComponent {
     public static final ComponentKey<ConfigWorldComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "config"), ConfigWorldComponent.class);
@@ -21,9 +28,16 @@ public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingC
     public int masterKeyVisibleCount = 0;
     public boolean masterKeyIsVisible = false;
     private final Level world;
+    private final Map<UUID, Integer> redPacketTimers = new HashMap<>();
+    private static final int RED_PACKET_DELAY_TICKS = 300; // 15秒 = 300 ticks
 
     public void reset() {
+        this.redPacketTimers.clear();
         this.sync();
+    }
+
+    public void addRedPacketTimer(UUID playerUUID) {
+        redPacketTimers.put(playerUUID, RED_PACKET_DELAY_TICKS);
     }
 
     public ConfigWorldComponent(Level world) {
@@ -66,5 +80,35 @@ public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingC
                 masterKeyIsVisible =  world.getServer().getPlayerList().getPlayerCount() >= NoellesRolesConfig.HANDLER.instance().playerCountToMakeConducterKeyVisible;
         }
 
+        // 处理红包延迟发放
+        processRedPacketTimers();
+    }
+
+    private void processRedPacketTimers() {
+        if (!redPacketTimers.isEmpty() && world instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            redPacketTimers.entrySet().removeIf(entry -> {
+                UUID playerUUID = entry.getKey();
+                int ticksLeft = entry.getValue();
+
+                if (ticksLeft <= 0) {
+                    // 倒计时结束，发放金币
+                    ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(playerUUID);
+                    if (player != null && dev.doctor4t.trainmurdermystery.game.GameFunctions.isPlayerAliveAndSurvival(player)) {
+                        dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent shopComponent = dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent.KEY.get(player);
+                        shopComponent.addToBalance(100);
+
+                        player.displayClientMessage(
+                                Component.translatable("message.noellesroles.nianshou.red_packet_received_delayed", 100)
+                                        .withStyle(ChatFormatting.GOLD),
+                                true);
+                    }
+                    return true; // 移除该条目
+                } else {
+                    // 减少倒计时
+                    entry.setValue(ticksLeft - 1);
+                    return false; // 保留该条目
+                }
+            });
+        }
     }
 }
