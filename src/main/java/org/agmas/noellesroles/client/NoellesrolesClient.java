@@ -289,40 +289,36 @@ public class NoellesrolesClient implements ClientModInitializer {
             handleStalkerContinuousInput(client);
 
             if (abilityBind.consumeClick()) {
+                // 慕恋者持续按键检测（窥视）
+                handleAdmirerContinuousInput(client);
+                if (Minecraft.getInstance().player == null)
+                    return;
 
-                // FriendlyByteBuf data = PacketByteBufs.create();
-                client.execute(() -> {
-                    // 慕恋者持续按键检测（窥视）
-                    handleAdmirerContinuousInput(client);
-                    if (Minecraft.getInstance().player == null)
-                        return;
+                GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                        .get(Minecraft.getInstance().player.level());
 
-                    GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
-                            .get(Minecraft.getInstance().player.level());
-
-                    // 优先处理炸弹客，避免被 onAbilityKeyPressed 干扰
-                    if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BOMBER)) {
-                        ClientPlayNetworking.send(new AbilityC2SPacket());
-                        return;
-                    }
-
-                    // while (abilityBind.wasPressed()) {
-                    onAbilityKeyPressed(client);
-                    // }
-
-                    if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)) {
-                        if (targetBody == null)
-                            return;
-                        ClientPlayNetworking.send(new VultureEatC2SPacket(targetBody.getUUID()));
-                        return;
-                    } else if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BROADCASTER)) {
-                        if (!isPlayerInAdventureMode(client.player))
-                            return;
-                        client.setScreen(new BroadcasterScreen());
-                        return;
-                    }
+                // 优先处理炸弹客，避免被 onAbilityKeyPressed 干扰
+                if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BOMBER)) {
                     ClientPlayNetworking.send(new AbilityC2SPacket());
-                });
+                    return;
+                }
+
+                // while (abilityBind.wasPressed()) {
+                onAbilityKeyPressed(client);
+                // }
+
+                if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)) {
+                    if (targetBody == null)
+                        return;
+                    ClientPlayNetworking.send(new VultureEatC2SPacket(targetBody.getUUID()));
+                    return;
+                } else if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BROADCASTER)) {
+                    if (!isPlayerInAdventureMode(client.player))
+                        return;
+                    client.setScreen(new BroadcasterScreen());
+                    return;
+                }
+                ClientPlayNetworking.send(new AbilityC2SPacket());
 
             }
         });
