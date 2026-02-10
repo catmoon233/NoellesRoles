@@ -257,10 +257,10 @@ public class Noellesroles implements ModInitializer {
             }
             return false;
         });
-        TMM.canPushableBy.add(entity -> {
+        TMM.cantPushableBy.add(entity -> {
             return !(entity instanceof PuppeteerBodyEntity);
         });
-        TMM.canPushableBy.add(entity -> {
+        TMM.cantPushableBy.add(entity -> {
             if (entity instanceof ServerPlayer serverPlayer) {
                 InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
                         .get(serverPlayer);
@@ -268,7 +268,7 @@ public class Noellesroles implements ModInitializer {
             }
             return true;
         });
-        TMM.canPushableBy.add(
+        TMM.cantPushableBy.add(
                 entity -> {
                     if (entity instanceof ServerPlayer serverPlayer) {
                         GhostPlayerComponent ghostPlayerComponent = GhostPlayerComponent.KEY.get(serverPlayer);
@@ -279,7 +279,7 @@ public class Noellesroles implements ModInitializer {
         TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
         });
-        TMM.canPushableBy.add(entity -> {
+        TMM.cantPushableBy.add(entity -> {
             return !(entity instanceof NoteEntity);
         });
         TMM.canDropItem.addAll(List.of(
