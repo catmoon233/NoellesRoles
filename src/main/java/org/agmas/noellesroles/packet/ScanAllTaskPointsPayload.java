@@ -1,14 +1,7 @@
 package org.agmas.noellesroles.packet;
 
 import java.util.HashMap;
-import java.util.UUID;
-
 import org.agmas.noellesroles.Noellesroles;
-
-import com.google.gson.reflect.TypeToken;
-
-import dev.doctor4t.trainmurdermystery.data.MapConfig;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -27,20 +20,12 @@ public record ScanAllTaskPointsPayload(HashMap<BlockPos, Integer> taskBlocks) im
     }
 
     public void write(FriendlyByteBuf buf) {
-        buf.writeUtf(MapConfig.gson.toJson(this.taskBlocks()));
+        buf.writeUtf(new TaskBlocksInfos(this.taskBlocks()).getStringBuf());
     }
 
     public static ScanAllTaskPointsPayload read(FriendlyByteBuf buf) {
         String data = buf.readUtf();
-        java.lang.reflect.Type type = new TypeToken<HashMap<BlockPos, Integer>>() {
-        }.getType();
-        HashMap<BlockPos, Integer> returnData = new HashMap<>();
-        try {
-            returnData = MapConfig.gson.fromJson(data, type);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ScanAllTaskPointsPayload(returnData);
+        return new ScanAllTaskPointsPayload(new TaskBlocksInfos(data).getTaskBlockInfosMap());
     }
 
     static {

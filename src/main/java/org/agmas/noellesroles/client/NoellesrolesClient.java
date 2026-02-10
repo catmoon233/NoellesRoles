@@ -127,7 +127,7 @@ public class NoellesrolesClient implements ClientModInitializer {
         taskInstinct = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.noellesroles.taskinstinct",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, "category.trainmurdermystery.keybinds"));
         ClientPlayNetworking.registerGlobalReceiver(ScanAllTaskPointsPayload.ID, (payload, context) -> {
-            Noellesroles.LOGGER.info("Schedule 'scan points' event in 5s!");
+            Noellesroles.LOGGER.info("Recieved Tasks Points!");
             NoellesrolesClient.taskBlocks.clear();
             NoellesrolesClient.taskBlocks.putAll(payload.taskBlocks());
             // NoellesrolesClient.scanTaskPointsCountDown = 100;
