@@ -46,12 +46,18 @@ import net.minecraft.world.item.ItemStack;
 public class RoleUtils {
     public static void customWinnerWin(ServerLevel serverWorld, GameFunctions.WinStatus WinStatus,
             @Nullable String winnerId, @Nullable OptionalInt winnerColor) {
+        var roundComponent = GameRoundEndComponent.KEY.get(serverWorld);
         if (winnerId != null) {
-            GameFunctions.CustomWinnerID = winnerId;
+            if (roundComponent != null) {
+                roundComponent.CustomWinnerID = winnerId;
+            }
         }
         if (winnerColor != null) {
-            if (!winnerColor.isEmpty())
-                GameFunctions.CustomWinnerColor = winnerColor.getAsInt();
+            if (!winnerColor.isEmpty()) {
+                if (roundComponent != null) {
+                    roundComponent.CustomWinnerColor = winnerColor.getAsInt();
+                }
+            }
         }
         GameRoundEndComponent.KEY.get(serverWorld).setRoundEndData(serverWorld.players(),
                 WinStatus);

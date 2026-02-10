@@ -4,40 +4,38 @@ import java.awt.Color;
 import java.util.OptionalDouble;
 
 import org.agmas.noellesroles.Noellesroles;
-import dev.doctor4t.trainmurdermystery.item.CocktailItem;
-import dev.doctor4t.trainmurdermystery.block.FoodPlatterBlock;
-import dev.doctor4t.trainmurdermystery.block.SprinklerBlock;
-import dev.doctor4t.trainmurdermystery.block.TrimmedBedBlock;
-import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
-import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
-import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LecternBlock;
-import net.minecraft.world.level.block.entity.LecternBlockEntity;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.component.DataComponents;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
+import dev.doctor4t.trainmurdermystery.block.FoodPlatterBlock;
+import dev.doctor4t.trainmurdermystery.block.SprinklerBlock;
+import dev.doctor4t.trainmurdermystery.block.TrimmedBedBlock;
+import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
+import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
+import dev.doctor4t.trainmurdermystery.item.CocktailItem;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LecternBlock;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -103,7 +101,6 @@ public class TaskBlockOverlayRenderer {
                     } else if (blockState.getBlock() instanceof LecternBlock) {
                         if (blockState.getValue(LecternBlock.HAS_BOOK)) {
                             NoellesrolesClient.taskBlocks.put(blockPos6, 6);
-
                         }
                     } else if (blockState.getBlock() instanceof SprinklerBlock) {
                         NoellesrolesClient.taskBlocks.put(blockPos6, 3);
@@ -125,13 +122,9 @@ public class TaskBlockOverlayRenderer {
         // true);
     }
 
-    public static final RenderType ALWAYS_VISIBLE_THICK_LINES = RenderType.create(
-            "always_visible_thick_lines",
+    public static final RenderType ALWAYS_VISIBLE_THICK_LINES = RenderType.create("always_visible_thick_lines",
             DefaultVertexFormat.POSITION_COLOR_NORMAL,
-            VertexFormat.Mode.LINES,
-            256,
-            false,
-            false,
+            VertexFormat.Mode.LINES, 256, false, false,
             RenderType.CompositeState.builder()
                     .setShaderState(RenderStateShard.RENDERTYPE_LINES_SHADER)
                     .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(4.0))) // 线宽4.0
@@ -282,9 +275,10 @@ public class TaskBlockOverlayRenderer {
                                 true, 2f);
                     break;
                 case 6:
-                    TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
-                            new Color(255, 127, 39), 0.5f,
-                            true, 2f);
+                    if (shouldDisplay[type])
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
+                                new Color(255, 127, 39), 0.5f,
+                                true, 2f);
                     break;
                 default:
                     break;
