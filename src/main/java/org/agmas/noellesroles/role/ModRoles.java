@@ -5,6 +5,8 @@ import dev.doctor4t.trainmurdermystery.api.NoramlRole;
 import dev.doctor4t.trainmurdermystery.api.NormalRole;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -842,6 +844,11 @@ public class ModRoles {
 
         // 游侠
         Harpymodloader.setRoleMaximum(ELF_ID, 1);
+
+        PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
+        BartenderPlayerComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
+        PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
+
     }
 
     // ==================== 工具方法 ====================

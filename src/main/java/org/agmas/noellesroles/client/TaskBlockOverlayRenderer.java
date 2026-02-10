@@ -156,26 +156,26 @@ public class TaskBlockOverlayRenderer {
             switch (type) { // 1: 食物 2: 水 3: 洗澡 4: 床 5: 跑步机 6: 讲台
                 case 1:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, Color.PINK, 0.5f, true, 2f);
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, Color.GREEN, 1f, true, 2f);
                     break;
                 case 2:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(153, 217, 234), 0.5f,
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(0, 255, 220), 1f,
                                 true, 2f);
                     break;
                 case 3:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(141, 234, 189), 0.5f,
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(141, 234, 189), 1f,
                                 true, 2f);
                     break;
                 case 4:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(234, 88, 88), 0.5f,
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(234, 88, 88), 1f,
                                 true, 2f);
                     break;
                 case 5:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(0, 0, 0), 0.5f,
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(255, 242, 0), 0.5f,
                                 true, 2f);
                     break;
                 case 6:

@@ -200,7 +200,7 @@ public class Noellesroles implements ModInitializer {
         // 加载配置
         NoellesRolesConfig.HANDLER.load();
         RicesRoleRhapsody.onInitialize1();
-
+        
         // 初始化系统组件
         NRSounds.initialize();
         registerMaxRoleCount();
