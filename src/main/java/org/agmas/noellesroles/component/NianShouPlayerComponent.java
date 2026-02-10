@@ -195,11 +195,15 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     private void checkFirecrackers() {
-        // 检查年兽5格半径内的鞭炮实体数量
+        // 检查年兽周围x和z轴5格、y轴3格内的鞭炮实体数量
         if (player.level() instanceof ServerLevel serverLevel) {
             int firecrackerCount = 0;
             for (var entity : serverLevel.getEntities(TMMEntities.FIRECRACKER, entity -> true)) {
-                if (entity.distanceTo(player) <= 5) {
+                // x和z轴5格，y轴3格
+                double dx = entity.getX() - player.getX();
+                double dz = entity.getZ() - player.getZ();
+                double dy = entity.getY() - player.getY();
+                if (dx * dx + dz * dz <= 25 && Math.abs(dy) <= 3) {
                     firecrackerCount++;
                 }
             }
