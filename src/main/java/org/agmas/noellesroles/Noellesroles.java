@@ -330,7 +330,6 @@ public class Noellesroles implements ModInitializer {
         VANNILA_ROLES.add(TMMRoles.VIGILANTE);
         VANNILA_ROLES.add(TMMRoles.CIVILIAN);
         VANNILA_ROLES.add(TMMRoles.LOOSE_END);
-
         VANNILA_ROLE_IDS.add(TMMRoles.LOOSE_END.identifier());
         VANNILA_ROLE_IDS.add(TMMRoles.VIGILANTE.identifier());
         VANNILA_ROLE_IDS.add(TMMRoles.CIVILIAN.identifier());
@@ -971,17 +970,47 @@ public class Noellesroles implements ModInitializer {
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
 
         GameInitializeEvent.EVENT.register((serverLevel, gameWorldComponent, players) -> {
+            int players_count = serverLevel.getServer().getPlayerCount();
             // 动态大小
             // 年兽角色：5%概率生成
-            if (Math.random() < 0.5) {
+            Random random = new Random();
+            if (random.nextInt(0, 100) < 50) {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
             }
-            if (Math.random() < 0.2) {
+            if (random.nextInt(0, 100) < 20) {
                 Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 0);
+            }
+            if (players_count >= 10) {
+                Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 0);
+            }
+            // 特殊警卫数量
+            {
+                int allSpecialPoliceCount = 0;
+
+                if (players_count >= 24) {
+                    allSpecialPoliceCount = 3;
+                } else if (players_count >= 18) {
+                    allSpecialPoliceCount = 2;
+                } else if (players_count >= 12) {
+                    allSpecialPoliceCount = 1;
+                } else {
+                    allSpecialPoliceCount = 0;
+                }
+                int PATROLLER_COUNT = random.nextInt(0, allSpecialPoliceCount + 1);
+                if (PATROLLER_COUNT > allSpecialPoliceCount) {
+                    PATROLLER_COUNT = allSpecialPoliceCount;
+                }
+                int ELF_COUNT = allSpecialPoliceCount - PATROLLER_COUNT;
+                if (ELF_COUNT < 0)
+                    ELF_COUNT = 0;
+                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, PATROLLER_COUNT);
+                Harpymodloader.setRoleMaximum(ModRoles.ELF, ELF_COUNT);
             }
         });
     }
@@ -1073,23 +1102,7 @@ public class Noellesroles implements ModInitializer {
             }
             return false;
         });
-        ServerTickEvents.END_SERVER_TICK.register(((server) -> {
-            if (server.getPlayerCount() >= 10) {
-                Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 0);
-            }
-            if (server.getPlayerCount() >= 24) {
-                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 1);
-                Harpymodloader.setRoleMaximum(ModRoles.ELF, 1);
-            } else if (server.getPlayerCount() >= 12) {
-                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 1);
-                Harpymodloader.setRoleMaximum(ModRoles.ELF, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
-                Harpymodloader.setRoleMaximum(ModRoles.ELF, 0);
-            }
-        }));
+
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
                 player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
