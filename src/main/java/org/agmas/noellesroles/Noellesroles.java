@@ -54,6 +54,7 @@ import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
 import org.agmas.harpymodloader.Harpymodloader;
+import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.GameInitializeEvent;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
@@ -249,38 +250,61 @@ public class Noellesroles implements ModInitializer {
             return false;
         });
         TMM.canCollide.add(a -> {
-            final var gameWorldComponent = GameWorldComponent.KEY.get(a.level());
-            if (gameWorldComponent.isRole(a, ModRoles.GHOST)) {
-                if (a.hasEffect(MobEffects.INVISIBILITY)) {
-                    return true;
-                }
+            if (a.hasEffect(MobEffects.INVISIBILITY)) {
+                return true;
             }
             return false;
         });
         TMM.cantPushableBy.add(entity -> {
-            return !(entity instanceof PuppeteerBodyEntity);
+            if (entity instanceof PuppeteerBodyEntity) {
+                return true;
+            }
+            return false;
         });
         TMM.cantPushableBy.add(entity -> {
-            if (entity instanceof ServerPlayer serverPlayer) {
-                InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
-                        .get(serverPlayer);
-                return !insaneKillerPlayerComponent.isActive;
+            if (entity instanceof Player serverPlayer) {
+                if (serverPlayer.hasEffect(MobEffects.INVISIBILITY)) {
+                    return true;
+                } else {
+                    var modifiers = WorldModifierComponent.KEY.get(serverPlayer.level());
+                    if (modifiers.isModifier(serverPlayer.getUUID(), SEModifiers.FEATHER)) {
+                        return true;
+                    }
+                    var gameComp = GameWorldComponent.KEY.get(serverPlayer.level());
+                    if (gameComp != null) {
+                        if (gameComp.isRole(serverPlayer,
+                                ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                            InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
+                                    .get(serverPlayer);
+                            if (insaneKillerPlayerComponent.isActive) {
+                                return true;
+                            }
+                        }
+                    }
+
+                }
             }
-            return true;
+            return false;
         });
         TMM.cantPushableBy.add(
                 entity -> {
                     if (entity instanceof ServerPlayer serverPlayer) {
-                        GhostPlayerComponent ghostPlayerComponent = GhostPlayerComponent.KEY.get(serverPlayer);
-                        return !ghostPlayerComponent.isActive;
+                        var gameComp = GameWorldComponent.KEY.get(serverPlayer.level());
+                        if (gameComp != null) {
+                            if (gameComp.isRole(serverPlayer, ModRoles.GHOST)) {
+                                GhostPlayerComponent ghostPlayerComponent = GhostPlayerComponent.KEY.get(serverPlayer);
+                                return ghostPlayerComponent.isActive;
+                            }
+                        }
+
                     }
-                    return true;
+                    return false;
                 });
         TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
         });
         TMM.cantPushableBy.add(entity -> {
-            return !(entity instanceof NoteEntity);
+            return (entity instanceof NoteEntity);
         });
         TMM.canDropItem.addAll(List.of(
                 "exposure:stacked_photographs",
@@ -990,7 +1014,7 @@ public class Noellesroles implements ModInitializer {
                 killer.addEffect(new MobEffectInstance(
                         MobEffects.MOVEMENT_SPEED, // ID
                         1, // 持续时间（tick）
-                    1, // 等级（0 = 速度 I）
+                        1, // 等级（0 = 速度 I）
                         false, // ambient（环境效果，如信标）
                         false, // showParticles（显示粒子）
                         false // showIcon（显示图标）
