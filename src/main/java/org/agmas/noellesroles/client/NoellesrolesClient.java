@@ -125,11 +125,12 @@ public class NoellesrolesClient implements ClientModInitializer {
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".ability",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
         taskInstinct = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.noellesroles.taskinstinct",
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "category.trainmurdermystery.keybinds"));
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, "category.trainmurdermystery.keybinds"));
         ClientPlayNetworking.registerGlobalReceiver(ScanAllTaskPointsPayload.ID, (payload, context) -> {
             Noellesroles.LOGGER.info("Schedule 'scan points' event in 5s!");
             NoellesrolesClient.taskBlocks.clear();
-            NoellesrolesClient.scanTaskPointsCountDown = 100;
+            NoellesrolesClient.taskBlocks.putAll(payload.taskBlocks());
+            // NoellesrolesClient.scanTaskPointsCountDown = 100;
         });
         ClientPlayNetworking.registerGlobalReceiver(BroadcastMessageS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
@@ -245,13 +246,6 @@ public class NoellesrolesClient implements ClientModInitializer {
                                 ++playerBodyEntity.tickCount;
                         });
 
-            }
-            if (scanTaskPointsCountDown > 0) {
-                scanTaskPointsCountDown--;
-                if (scanTaskPointsCountDown == 0) {
-                    scanTaskPointsCountDown = -1;
-                    TaskBlockOverlayRenderer.scanAllTaskBlocks();
-                }
             }
             if (roleGuessNoteClientBind.consumeClick()) {
                 client.execute(() -> {

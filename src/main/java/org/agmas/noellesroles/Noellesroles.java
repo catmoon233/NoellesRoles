@@ -50,7 +50,6 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import pro.fazeclan.river.stupid_express.BuyableShopEntry;
 import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
@@ -80,6 +79,7 @@ import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.repack.HSRSounds;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
+import org.agmas.noellesroles.utils.MapScanner;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
@@ -963,6 +963,7 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+        MapScanner.registerMapScanEvent();
         CustomWinnerClass.registerCustomWinners();
         OnTeammateKilledTeammate.EVENT.register((victim, killer, isInnocent, deathReason) -> {
             if (GameFunctions.isPlayerAliveAndSurvival(killer)) {
@@ -989,7 +990,7 @@ public class Noellesroles implements ModInitializer {
                 killer.addEffect(new MobEffectInstance(
                         MobEffects.MOVEMENT_SPEED, // ID
                         1, // 持续时间（tick）
-                        1, // 等级（0 = 速度 I）
+                    1, // 等级（0 = 速度 I）
                         false, // ambient（环境效果，如信标）
                         false, // showParticles（显示粒子）
                         false // showIcon（显示图标）
@@ -1251,7 +1252,6 @@ public class Noellesroles implements ModInitializer {
         // });
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             serverLevel.players().forEach(player -> {
-                ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload());
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
                 if (gameWorldComponent != null) {
                     if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {

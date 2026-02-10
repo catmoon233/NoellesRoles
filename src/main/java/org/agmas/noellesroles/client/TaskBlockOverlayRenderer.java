@@ -3,124 +3,28 @@ package org.agmas.noellesroles.client;
 import java.awt.Color;
 import java.util.OptionalDouble;
 
-import org.agmas.noellesroles.Noellesroles;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
-import dev.doctor4t.trainmurdermystery.block.FoodPlatterBlock;
-import dev.doctor4t.trainmurdermystery.block.SprinklerBlock;
-import dev.doctor4t.trainmurdermystery.block.TrimmedBedBlock;
-import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
-import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
-import dev.doctor4t.trainmurdermystery.item.CocktailItem;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LecternBlock;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class TaskBlockOverlayRenderer {
     // 创建带厚度的永远不被遮挡线框
-    public static void scanAllTaskBlocks() {
-        Noellesroles.LOGGER.info("Start to scan points!");
-        NoellesrolesClient.scanTaskPointsCountDown = -1;
-        if (Minecraft.getInstance() == null)
-            return;
-        if (Minecraft.getInstance().level == null)
-            return;
-        if (Minecraft.getInstance().player == null)
-            return;
-        var game = TMMClient.gameComponent;
-        if (game == null || !game.isRunning()) {
-            NoellesrolesClient.scanTaskPointsCountDown = -1;
-            return;
-        }
-        ClientLevel localLevel = Minecraft.getInstance().level;
-        NoellesrolesClient.taskBlocks.clear();
-        var areas = AreasWorldComponent.KEY.get(Minecraft.getInstance().level);
-        BlockPos backupMinPos = BlockPos.containing(areas.getResetTemplateArea().getMinPosition());
-        BlockPos backupMaxPos = BlockPos.containing(areas.getResetTemplateArea().getMaxPosition());
-        BoundingBox backupTrainBox = BoundingBox.fromCorners(backupMinPos, backupMaxPos);
-        BlockPos trainMinPos = BlockPos.containing(areas.getResetPasteArea().getMinPosition());
-        BlockPos trainMaxPos = trainMinPos.offset(backupTrainBox.getLength());
-        BoundingBox trainBox = BoundingBox.fromCorners(trainMinPos, trainMaxPos);
-        int blockCounts = 0;
-        for (int k = trainBox.minZ(); k <= trainBox.maxZ(); k++) {
-            for (int l = trainBox.minY(); l <= trainBox.maxY(); l++) {
-                for (int m = trainBox.minX(); m <= trainBox.maxX(); m++) {
-                    BlockPos blockPos6 = new BlockPos(m, l, k);
-                    if (!localLevel.isLoaded(blockPos6))
-                        continue;
-                    var blockState = localLevel.getBlockState(blockPos6);
-                    if (blockState.is(Blocks.AIR))
-                        continue;
-                    blockCounts++;
-
-                    if (blockState.is(Blocks.BLACK_CONCRETE)) {
-                        NoellesrolesClient.taskBlocks.put(blockPos6, 5);
-                    } else if (blockState.getBlock() instanceof TrimmedBedBlock) {
-                        NoellesrolesClient.taskBlocks.put(blockPos6, 4);
-                        // 暂时忽略
-                    } else if (blockState.getBlock() instanceof FoodPlatterBlock) {
-                        if (localLevel.getBlockEntity(blockPos6) instanceof BeveragePlateBlockEntity entity) {
-                            var items = entity.getStoredItems();
-                            if (items.size() > 0) {
-                                ItemStack item_0 = items.get(0);
-                                Item item_ = item_0.getItem();
-                                if ((item_ instanceof CocktailItem)) {
-                                    NoellesrolesClient.taskBlocks.put(blockPos6, 2);
-                                } else {
-                                    FoodProperties foodPro = item_0.get(DataComponents.FOOD);
-                                    if (foodPro != null) {
-                                        NoellesrolesClient.taskBlocks.put(blockPos6, 1);
-                                    }
-                                }
-                            }
-
-                        }
-                    } else if (blockState.getBlock() instanceof LecternBlock) {
-                        if (blockState.getValue(LecternBlock.HAS_BOOK)) {
-                            NoellesrolesClient.taskBlocks.put(blockPos6, 6);
-                        }
-                    } else if (blockState.getBlock() instanceof SprinklerBlock) {
-                        NoellesrolesClient.taskBlocks.put(blockPos6, 3);
-                    }
-                }
-            }
-        }
-        if (blockCounts <= 0) {
-            Noellesroles.LOGGER.warn("Failed to scan blocks. Schedule another 'scan points' event in 5s!");
-            NoellesrolesClient.scanTaskPointsCountDown = 100;
-        } else {
-            Noellesroles.LOGGER.info("Successed scanned task points!");
-        }
-        // Minecraft.getInstance().player.displayClientMessage(
-        // Component
-        // .translatable("msg.noellesroles.taskpoint.available",
-        // Component.keybind("key.noellesroles.taskinstinct"))
-        // .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
-        // true);
-    }
 
     public static final RenderType ALWAYS_VISIBLE_THICK_LINES = RenderType.create("always_visible_thick_lines",
             DefaultVertexFormat.POSITION_COLOR_NORMAL,
