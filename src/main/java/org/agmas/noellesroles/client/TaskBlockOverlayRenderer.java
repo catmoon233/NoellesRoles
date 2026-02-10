@@ -64,10 +64,9 @@ public class TaskBlockOverlayRenderer {
         double offsetZ = blockPos.getZ() - cameraPos.z;
         matrices.translate(offsetX, offsetY, offsetZ);
         // 设置高亮颜色和线宽
-        float red = color.getRed();
-        float green = color.getGreen();
-        float blue = color.getBlue();
-
+        float red = (float)color.getRed() / 255;
+        float green = (float)color.getGreen() / 255;
+        float blue = (float)color.getBlue() / 255;
         // 获取顶点消费者提供者
         MultiBufferSource vertexConsumers = context.consumers();
         // 获取线条渲染层
@@ -82,7 +81,7 @@ public class TaskBlockOverlayRenderer {
                 shape,
                 0, 0, 0,
                 red, green, blue, alpha,
-                false);
+                colorize);
         // 结束渲染
 
         matrices.popPose();
@@ -160,7 +159,7 @@ public class TaskBlockOverlayRenderer {
                     break;
                 case 2:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(0, 255, 220), 1f,
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(234, 88, 88), 1f,
                                 true, 2f);
                     break;
                 case 3:
@@ -170,18 +169,18 @@ public class TaskBlockOverlayRenderer {
                     break;
                 case 4:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(234, 88, 88), 1f,
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(0, 255, 220), 1f,
                                 true, 2f);
                     break;
                 case 5:
                     if (shouldDisplay[type])
-                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(255, 242, 0), 0.5f,
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(255, 242, 0), 1f,
                                 true, 2f);
                     break;
                 case 6:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
-                                new Color(255, 127, 39), 0.5f,
+                                new Color(255, 127, 39), 1f,
                                 true, 2f);
                     break;
                 default:
