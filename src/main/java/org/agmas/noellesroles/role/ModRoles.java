@@ -99,9 +99,9 @@ public class ModRoles {
     public static final ResourceLocation SINGER_ID = Noellesroles.id("singer");
     public static final ResourceLocation PSYCHOLOGIST_ID = Noellesroles.id("psychologist");
     public static final ResourceLocation PHOTOGRAPHER_ID = Noellesroles.id("photographer");
+    public static ResourceLocation ELF_ID = Noellesroles.id("elf");
 
     // 杀手阵营角色 ID
-    public static ResourceLocation ELF_ID = Noellesroles.id("elf");
     public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
     public static ResourceLocation PHANTOM_ID = Noellesroles.id("phantom");
     public static ResourceLocation SWAPPER_ID = Noellesroles.id("swapper");
