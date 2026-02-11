@@ -195,17 +195,25 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     private void checkFirecrackers() {
-        // 检查年兽5格半径内的鞭炮实体数量
+        // 检查年兽周围x和z轴5格、y轴±1格内的鞭炮实体数量
         if (player.level() instanceof ServerLevel serverLevel) {
             int firecrackerCount = 0;
             for (var entity : serverLevel.getEntities(TMMEntities.FIRECRACKER, entity -> true)) {
-                if (entity.distanceTo(player) <= 5) {
+                // x和z轴5格，y轴±1格
+                double dx = entity.getX() - player.getX();
+                double dz = entity.getZ() - player.getZ();
+                double dy = entity.getY() - player.getY();
+                if (dx * dx + dz * dz <= 25 && Math.abs(dy) <= 1) {
                     firecrackerCount++;
                 }
             }
 
-            // 如果有12个或更多鞭炮，年兽死亡（除岁成功）
-            if (firecrackerCount >= 12) {
+            // 计算所需的鞭炮数量：总人数的三分之二向上取整
+            int totalPlayers = serverLevel.players().size();
+            int requiredFirecrackers = (int) Math.ceil(totalPlayers * 2.0 / 3.0);
+
+            // 如果鞭炮数量达到要求，年兽死亡（除岁成功）
+            if (firecrackerCount >= requiredFirecrackers) {
                 if (player instanceof ServerPlayer) {
                     // 发送死亡消息
                     for (Player p : player.level().players()) {
