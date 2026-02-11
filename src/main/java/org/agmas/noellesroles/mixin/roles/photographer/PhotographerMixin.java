@@ -44,11 +44,13 @@ public class PhotographerMixin {
                                             Component.translatable("message.noellesroles.photographer.blindness"),
                                             true);
                                 }
-                                if (serverPlayer1.hasEffect(MobEffects.INVISIBILITY)){
-                                    serverPlayer1.addEffect(new MobEffectInstance(MobEffects.GLOWING, 20 *3, 0, true, false, true));
+                                if (isBoundTargetVisible(serverPlayer1, serverPlayer)){
+                                    if (serverPlayer1.hasEffect(MobEffects.INVISIBILITY)){
+                                        serverPlayer1.addEffect(new MobEffectInstance(MobEffects.GLOWING, 20 *3, 0, true, false, true));
 
+                                    }
+                                    serverPlayer1.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 20 *3, 0, true, false, true));
                                 }
-                                serverPlayer1.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 20 *3, 0, true, false, true));
                             }
                         }
                     }
