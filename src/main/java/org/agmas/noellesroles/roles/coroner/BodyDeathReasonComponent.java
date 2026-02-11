@@ -1,13 +1,17 @@
 package org.agmas.noellesroles.roles.coroner;
 
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -15,7 +19,9 @@ import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 public class BodyDeathReasonComponent implements RoleComponent, ServerTickingComponent {
-    public static final ComponentKey<BodyDeathReasonComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "body_death_reason"), BodyDeathReasonComponent.class);
+    public static final ComponentKey<BodyDeathReasonComponent> KEY = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "body_death_reason"),
+            BodyDeathReasonComponent.class);
     public ResourceLocation deathReason = GameConstants.DeathReasons.GENERIC;
     public ResourceLocation playerRole = TMMRoles.CIVILIAN.identifier();
     public boolean vultured = false;
@@ -24,6 +30,11 @@ public class BodyDeathReasonComponent implements RoleComponent, ServerTickingCom
     @Override
     public void reset() {
         this.sync();
+    }
+
+    @Override
+    public boolean shouldSyncWith(ServerPlayer sp) {
+        return true;
     }
 
     @Override

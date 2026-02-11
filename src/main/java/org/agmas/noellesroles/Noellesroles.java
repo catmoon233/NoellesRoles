@@ -1,5 +1,6 @@
 package org.agmas.noellesroles;
 
+import dev.doctor4t.trainmurdermystery.DeathInfo;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -91,6 +92,7 @@ import org.slf4j.LoggerFactory;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
@@ -200,7 +202,7 @@ public class Noellesroles implements ModInitializer {
         // 加载配置
         NoellesRolesConfig.HANDLER.load();
         RicesRoleRhapsody.onInitialize1();
-        
+
         // 初始化系统组件
         NRSounds.initialize();
         registerMaxRoleCount();
@@ -1016,6 +1018,13 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+        TMM.canStickArmor.add((deathInfo -> {
+            if (deathInfo.deathReason().getPath().equals("ignited")) {
+                // 纵火犯
+                return true;
+            }
+            return false;
+        }));
         MapScanner.registerMapScanEvent();
         CustomWinnerClass.registerCustomWinners();
         OnTeammateKilledTeammate.EVENT.register((victim, killer, isInnocent, deathReason) -> {
