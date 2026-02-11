@@ -6,9 +6,11 @@ import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block.FoodPlatterBlock;
+import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block.SprinklerBlock;
 import dev.doctor4t.trainmurdermystery.block.TrimmedBedBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
+import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.event.OnTrainAreaHaveReseted;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -23,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LecternBlock;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 public class MapScanner {
@@ -67,6 +70,12 @@ public class MapScanner {
                     } else if (blockState.getBlock() instanceof TrimmedBedBlock) {
                         GameFunctions.taskBlocks.put(blockPos6, 4);
                         // 暂时忽略
+                    } else if (blockState.getBlock() instanceof SmallDoorBlock
+                            && blockState.getValue(SmallDoorBlock.HALF).equals(DoubleBlockHalf.LOWER)) {
+                        if (localLevel.getBlockEntity(blockPos6) instanceof SmallDoorBlockEntity entity) {
+                            if (entity.getKeyName() != null && !entity.getKeyName().isEmpty())
+                                GameFunctions.taskBlocks.put(blockPos6, 7);
+                        }
                     } else if (blockState.getBlock() instanceof FoodPlatterBlock) {
                         if (localLevel.getBlockEntity(blockPos6) instanceof BeveragePlateBlockEntity entity) {
                             var items = entity.getStoredItems();

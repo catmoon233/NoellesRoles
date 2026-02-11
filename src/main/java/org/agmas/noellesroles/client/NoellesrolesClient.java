@@ -69,12 +69,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
 import walksy.crosshairaddons.CrosshairAddons;
@@ -109,6 +111,7 @@ public class NoellesrolesClient implements ClientModInitializer {
      */
     public static HashMap<BlockPos, Integer> taskBlocks = new HashMap<>();
     public static int scanTaskPointsCountDown = -1;
+    public static String myRoomNumber = null;
 
     @Override
     public void onInitializeClient() {
@@ -129,8 +132,15 @@ public class NoellesrolesClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(ScanAllTaskPointsPayload.ID, (payload, context) -> {
             Noellesroles.LOGGER.info("Recieved Tasks Points!");
             NoellesrolesClient.taskBlocks.clear();
-            NoellesrolesClient.taskBlocks.putAll(payload.taskBlocks());
-            // NoellesrolesClient.scanTaskPointsCountDown = 100;
+            var tempArr = payload.taskBlocks();
+            TaskBlockOverlayRenderer.RoomDoorPositions.clear();
+            for (var set : tempArr.entrySet()) {
+                if (set.getValue() == 7) {
+                    TaskBlockOverlayRenderer.RoomDoorPositions.add(set.getKey());
+                } else {
+                    NoellesrolesClient.taskBlocks.put(set.getKey(), set.getValue());
+                }
+            }
         });
         ClientPlayNetworking.registerGlobalReceiver(BroadcastMessageS2CPacket.ID, (payload, context) -> {
             final var client = context.client();

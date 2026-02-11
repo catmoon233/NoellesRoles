@@ -1025,6 +1025,14 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+        TMM.cantSendReplay.add(player -> {
+            DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(player);
+            if (component != null) {
+                if (component.hasPenalty())
+                    return true;
+            }
+            return false;
+        });
         TMM.canStickArmor.add((deathInfo -> {
             String deathReasonPath = deathInfo.deathReason().getPath();
             if (deathReasonPath.equals("ignited")) {
