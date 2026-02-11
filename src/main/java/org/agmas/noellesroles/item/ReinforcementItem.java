@@ -127,14 +127,7 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                                 LockEntityManager.getInstance().removeLockEntity(lowerPos.above(), lockEntity);
                                 player.addItem(itemStack);
                                 // 取消锁门：包括临近的门
-                                Pair<DoorBlockEntity, DoorBlockEntity> nearByDoors = BlockUtils.getNeighbourDoor(doorEntity, world);
-                                if (nearByDoors.first != null) {
-                                    LockEntityManager.setDoorLocked(world, nearByDoors.first, true);
-                                }
-                                if (nearByDoors.second != null) {
-                                    LockEntityManager.setDoorLocked(world, nearByDoors.second, true);
-                                }
-                                LockEntityManager.setDoorLocked(world, doorEntity, true);
+                                LockEntityManager.lockNearByDoors(doorEntity, world, false);
                             }
                             return InteractionResult.SUCCESS;
                         }

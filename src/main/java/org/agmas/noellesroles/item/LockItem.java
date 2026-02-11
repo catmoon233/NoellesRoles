@@ -27,10 +27,11 @@ import java.util.List;
 
 /**
  * 门锁
+ * <p>
  * - 可以锁门来影响撬锁器的功能
  * - 可以被钥匙和万能钥匙打开，对撬棍无效
  * - 锁的强度由长度决定
- *
+ * </p>
  * TODO: 一扇门是否可以放置多个锁（暂时允许多个锁）
  */
 public class LockItem extends Item implements AdventureUsable {
@@ -111,14 +112,7 @@ public class LockItem extends Item implements AdventureUsable {
                     player.getItemInHand(context.getHand()).shrink(1);
                 }
                 // 锁门：包括临近的门
-                Pair<DoorBlockEntity, DoorBlockEntity> nearByDoors = BlockUtils.getNeighbourDoor(door, world);
-                if (nearByDoors.first != null) {
-                    LockEntityManager.setDoorLocked(world, nearByDoors.first, true);
-                }
-                if (nearByDoors.second != null) {
-                    LockEntityManager.setDoorLocked(world, nearByDoors.second, true);
-                }
-                LockEntityManager.setDoorLocked(world, door, true);
+                LockEntityManager.lockNearByDoors(door, world, true);
                 return InteractionResult.SUCCESS;
             }
         }

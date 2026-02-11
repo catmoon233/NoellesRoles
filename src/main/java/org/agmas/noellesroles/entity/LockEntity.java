@@ -88,6 +88,7 @@ public class LockEntity extends Entity {
         this.resistance = resistance;
     }
 
+    // TODO : 该序列每次使用并不是固定的，得修一下
     private ArrayList<Integer> series;
     // 锁的长度 ：必须大于1
     private int length;

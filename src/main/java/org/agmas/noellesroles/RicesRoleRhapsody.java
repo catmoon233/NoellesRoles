@@ -2,6 +2,7 @@ package org.agmas.noellesroles;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
@@ -19,8 +20,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.*;
@@ -28,7 +32,9 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.screen.DetectiveInspectScreenHandler;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
 import org.agmas.noellesroles.screen.PostmanScreenHandler;
+import org.agmas.noellesroles.utils.BlockUtils;
 import org.agmas.noellesroles.utils.LotteryManager;
+import org.agmas.noellesroles.utils.Pair;
 
 import java.util.ArrayList;
 
@@ -262,6 +268,14 @@ public class RicesRoleRhapsody implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(LOCK_GAME_PACKET, (payload, context) -> {
             ServerPlayer player = context.player();
             ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
+            boolean isLockPick = false;
+            for(var item : LockEntityManager.getInstance().getCanBeUsedToUnLock())
+            {
+                if (lockPick.is(item)) {
+                    isLockPick = true;
+                    break;
+                }
+            }
             if (payload.result()) {
                 context.player().displayClientMessage(
                         Component.translatable("message.lock.unlock").withStyle(ChatFormatting.GREEN), true);
@@ -270,7 +284,15 @@ public class RicesRoleRhapsody implements ModInitializer {
                     context.player().playNotifySound(SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.5f, 2f);
                 });
                 LockEntityManager.getInstance().removeLockEntity(payload.pos(), payload.entityId());
-            } else if (lockPick.getItem() == TMMItems.LOCKPICK) {
+                // 把锁附近的门解锁（如果还有锁则不会成功解锁）
+                Level world = context.player().level();
+                BlockEntity blockEntity = world.getBlockEntity(payload.pos().below());
+                if(blockEntity instanceof DoorBlockEntity door)
+                {
+                    LockEntityManager.lockNearByDoors(door, world, false);
+                }
+
+            } else if (isLockPick) {
                 context.server().execute(() -> {
                     context.player().playNotifySound(SoundEvents.ANVIL_DESTROY, SoundSource.BLOCKS, 0.5f, 1f);
                 });

@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -39,13 +40,17 @@ public class LockMixin {
             CallbackInfoReturnable<InteractionResult> cir) {
         // 用于小游戏结束后查询锁的位置
         BlockPos lockPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos;
-        boolean canBeAffectedByLock =
-                // 如果该物品会被锁影响，就继续加|| xxx 即可，然后在下面的if语句里具体操作
+        boolean canBeAffectedByLock = false;
+                // 如果该物品会被锁影响，就在LockEntityManager构造函数的列表添加即可，然后在下面的if语句里具体操作
                 // NOTE: 如果只在这里添加不在底下if处理，会导致锁把该物品屏蔽，该物品将对带锁的门毫无效果
-                player.getMainHandItem().is(TMMItems.LOCKPICK)
-                        || player.getMainHandItem().is(ModItems.MASTER_KEY_P)
-                        || player.getMainHandItem().is(ModItems.MASTER_KEY)
-                        || player.getMainHandItem().is(TMMItems.KEY);
+        for(var item : LockEntityManager.getInstance().getCanBeAffectedItems())
+        {
+            if(player.getMainHandItem().is(item))
+            {
+                canBeAffectedByLock = true;
+                break;
+            }
+        }
         if (canBeAffectedByLock) {
             // 当当前门上无锁时，检查附近门的情况：实现锁对附近门的影响
             if (LockEntityManager.getInstance().getLockEntity(lockPos) == null) {
@@ -75,9 +80,16 @@ public class LockMixin {
 
             if (LockEntityManager.getInstance().getLockEntity(lockPos) != null) {
                 // 根据手中物品决定锁的影响
-                if (       player.getMainHandItem().is(TMMItems.LOCKPICK)
-                        || player.getMainHandItem().is(ModItems.MASTER_KEY_P)
-                ) {
+                boolean canUnLock = false;
+                for(var item : LockEntityManager.getInstance().getCanBeUsedToUnLock())
+                {
+                    if(player.getMainHandItem().is(item))
+                    {
+                        canUnLock = true;
+                        break;
+                    }
+                }
+                if (canUnLock) {
                     // 当手持撬锁器且该门上锁时：进入撬锁小游戏
                     player.displayClientMessage(
                             Component.translatable("message.lock.game.start").withStyle(ChatFormatting.AQUA), true);
