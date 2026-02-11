@@ -80,7 +80,12 @@ public class InitModRolesMax {
                     allSpecialPoliceCount = 0;
                 }
                 if (allSpecialPoliceCount > 0) {
-                    int PATROLLER_COUNT = random.nextInt(1, allSpecialPoliceCount);
+                    int PATROLLER_COUNT = 1;
+                    if (allSpecialPoliceCount > 2)
+                        PATROLLER_COUNT = random.nextInt(1, allSpecialPoliceCount);
+                    else if (allSpecialPoliceCount >= 1) {
+                        PATROLLER_COUNT = random.nextInt(0, allSpecialPoliceCount + 1);
+                    }
                     if (PATROLLER_COUNT > allSpecialPoliceCount) {
                         PATROLLER_COUNT = allSpecialPoliceCount;
                     }
