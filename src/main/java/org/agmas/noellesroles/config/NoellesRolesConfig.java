@@ -23,9 +23,12 @@ public class NoellesRolesConfig {
     @SerialEntry(comment = "Allows the shitpost roles to retain their disable/enable state after a server restart")
     public boolean shitpostRoles = false;
 
+    @SerialEntry(comment = "Modifier - The chance of Refugee")
+    public int chanceOfModifierRefugee = 10;
+
     @SerialEntry(comment = "Modifier - The chance of Split Personality")
     public int chanceOfModifierSplitPersonality = 10;
-    
+
     @SerialEntry(comment = "Starting cooldown (in ticks)")
     public int generalCooldownTicks = GameConstants.getInTicks(0, 30);
 

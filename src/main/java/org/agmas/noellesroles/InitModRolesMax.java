@@ -11,6 +11,7 @@ import pro.fazeclan.river.stupid_express.StupidExpress;
 
 public class InitModRolesMax {
     public static int SPLIT_PERSONALITY_CHANCE = 10; // 10 in 100
+    public static int REFUGEE_CHANCE = 10; // 10 in 100
 
     public static void registerStatics() {
         Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
@@ -100,7 +101,12 @@ public class InitModRolesMax {
 
     public static void initModifiersCount(int players) {
         Random random = new Random();
-        /// LOVERS
+        // LOVERS
+        REFUGEE_CHANCE = NoellesRolesConfig.HANDLER.instance().chanceOfModifierRefugee;
+        if (REFUGEE_CHANCE < 0) {
+            REFUGEE_CHANCE = 0;
+        }
+        //
         if (players >= 12 && random.nextInt(0, 100) <= 10) {
             StupidExpress.LOGGER.info("Modifier [Lovers] enabled in this round!");
             Harpymodloader.MODIFIER_MAX.put(StupidExpress.id("lovers"), 1);
@@ -109,7 +115,7 @@ public class InitModRolesMax {
         }
 
         /// REFUGEE
-        if (players >= 12 && random.nextInt(0, 100) <= 10) {
+        if (players >= 12 && random.nextInt(0, 100) <= REFUGEE_CHANCE) {
             StupidExpress.LOGGER.info("Modifier [Refugee] enabled in this round!");
             Harpymodloader.MODIFIER_MAX.put(StupidExpress.id("refugee"), 1);
         } else {
@@ -187,6 +193,5 @@ public class InitModRolesMax {
         } else {
             Harpymodloader.MODIFIER_MAX.put(StupidExpress.id("split_personality"), 0);
         }
-
     }
 }
