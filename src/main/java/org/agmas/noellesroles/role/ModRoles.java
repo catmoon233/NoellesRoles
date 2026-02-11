@@ -846,7 +846,6 @@ public class ModRoles {
         Harpymodloader.setRoleMaximum(ELF_ID, 1);
 
         //巡警
-
         Harpymodloader.setRoleMaximum(PATROLLER_ID, 1);
 
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
