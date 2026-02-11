@@ -1,6 +1,5 @@
 package org.agmas.noellesroles;
 
-import dev.doctor4t.trainmurdermystery.DeathInfo;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -57,7 +56,6 @@ import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
-import org.agmas.harpymodloader.events.GameInitializeEvent;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.modded_murder.RoleAssignmentManager;
 import org.agmas.noellesroles.commands.*;
@@ -92,7 +90,6 @@ import org.slf4j.LoggerFactory;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;

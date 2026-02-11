@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
@@ -68,8 +69,9 @@ public class InsaneKillerPlayerComponent
             isActive = true;
 
             // 发送激活的消息提示
-            player.displayClientMessage(Component.translatable("message.noellesroles.insane_killer.ability_activated").withStyle(ChatFormatting.GREEN), true);
-            // 
+            player.displayClientMessage(Component.translatable("message.noellesroles.insane_killer.ability_activated")
+                    .withStyle(ChatFormatting.GREEN), true);
+            //
             // 播放激活的音效
             // player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
             // SoundEvents.ENDERMAN_TELEPORT, net.minecraft.sounds.SoundSource.PLAYERS,
@@ -91,6 +93,11 @@ public class InsaneKillerPlayerComponent
     }
 
     @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return true;
+    }
+
+    @Override
     public void serverTick() {
         if (!GameWorldComponent.KEY.get(player.level()).isRole(player,
                 ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES))
@@ -100,7 +107,7 @@ public class InsaneKillerPlayerComponent
             // if (cooldown == 0){
             //
             // }
-            if (cooldown % 20 == 0)
+            if (cooldown % 40 == 0)
                 sync();
         }
     }
@@ -119,10 +126,11 @@ public class InsaneKillerPlayerComponent
         // target = tag.contains("target") ? tag.getUUID("target") : null;
     }
 
-
     @Override
     public void clientTick() {
-
+        if (cooldown > 1) {
+            cooldown--;
+        }
     }
 
     // @Override
