@@ -52,7 +52,9 @@
     "roles.thief.ThiefsHonorMixin",
     "roles.veteran.VeteranKnifeLeftClickMixin",
     "roles.veteran.VeteranKnifeMixin",
-    "roles.voodoo.VoodooVooMixin"
+    "roles.voodoo.VoodooVooMixin",
+    "ShitExposureMixin",
+    "ShitExposurePatreonMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -103,6 +105,7 @@
     "client.morphling.MorphlingRendererMixin",
     "client.morphling.MorphlingRoleNameRendererMixin",
     "client.morphling.MorphlingScreenMixin",
+    "client.nianshou.NianShouHudMixin",
     "client.phantom.PhantomHudMixin",
     "client.phantom.PhantomRattatoulieMixin",
     "client.puppeteer.PuppeteerBodyGunTargetMixin",

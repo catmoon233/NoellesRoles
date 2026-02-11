@@ -1,6 +1,8 @@
 package org.agmas.noellesroles.mixin.client.manipulator;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -21,6 +23,12 @@ public abstract class KeyBindingMixin {
 
     @Unique
     private boolean shouldSuppressKey() {
+        if (TMM.isLobby)
+            return false;
+        if (Minecraft.getInstance() == null)
+            return false;
+        if (Minecraft.getInstance().player == null)
+            return false;
         if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRunning() && TMMClient.isPlayerAliveAndInSurvival() ) {
             final var isControlling = InControlCCA.KEY.get(Minecraft.getInstance().player);
             if (isControlling.isControlling) {

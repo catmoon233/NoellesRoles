@@ -49,8 +49,7 @@ public class MintCandiesItem extends Item {
         
         // 开始使用（吃）
         user.startUsingItem(hand);
-        final var playerShopComponent = PlayerShopComponent.KEY.get(user);
-        playerShopComponent.setBalance(playerShopComponent.balance +15);
+
         return InteractionResultHolder.consume(itemStack);
     }
     
@@ -64,7 +63,8 @@ public class MintCandiesItem extends Item {
                 float newMood = Math.min(1.0f, currentMood + SANITY_RESTORE_AMOUNT);
                 moodComponent.setMood(newMood);
                 moodComponent.sync();
-                
+                final var playerShopComponent = PlayerShopComponent.KEY.get(player);
+                playerShopComponent.setBalance(playerShopComponent.balance +15);
                 // 播放吃东西的音效
                 world.playSound(null, player.blockPosition(),
                         SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, 1.0F);

@@ -23,16 +23,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public class ExecutionerPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
-    public static final ComponentKey<ExecutionerPlayerComponent> KEY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "executioner"), ExecutionerPlayerComponent.class);
+    public static final ComponentKey<ExecutionerPlayerComponent> KEY = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "executioner"),
+            ExecutionerPlayerComponent.class);
     private final Player player;
     public UUID target;
     public boolean won = false;
     public boolean targetSelected = false;
     public boolean shopUnlocked = false;
+
     @Override
     public Player getPlayer() {
         return player;
     }
+
     /**
      * 重置组件状态
      */
@@ -55,7 +59,7 @@ public class ExecutionerPlayerComponent implements RoleComponent, ServerTickingC
         this.target = null;
         this.targetSelected = false;
         this.shopUnlocked = false;
-        //assignRandomTarget();
+        // assignRandomTarget();
     }
 
     public void sync() {
@@ -64,19 +68,25 @@ public class ExecutionerPlayerComponent implements RoleComponent, ServerTickingC
 
     public void serverTick() {
         // 如果目标已经死亡且executioner尚未获胜，解锁商店并重置目标
-        if (target==null){
+        if (target == null) {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
-            if (gameWorldComponent == null)return;
-            if (!gameWorldComponent.isRunning())return;
-            if (!gameWorldComponent.isRole(player, ModRoles.EXECUTIONER)) return;
+            if (gameWorldComponent == null)
+                return;
+            if (!gameWorldComponent.isRunning())
+                return;
+            if (!gameWorldComponent.isRole(player, ModRoles.EXECUTIONER))
+                return;
             assignRandomTarget(); // 分配新目标
 
         }
         if (target != null && !won) {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
-            if (gameWorldComponent == null)return;
-            if (!gameWorldComponent.isRunning())return;
-            if (!gameWorldComponent.isRole(player, ModRoles.EXECUTIONER)) return;
+            if (gameWorldComponent == null)
+                return;
+            if (!gameWorldComponent.isRunning())
+                return;
+            if (!gameWorldComponent.isRole(player, ModRoles.EXECUTIONER))
+                return;
 
             Player targetPlayer = player.level().getPlayerByUUID(target);
             if (targetPlayer == null || GameFunctions.isPlayerEliminated(targetPlayer)) {
@@ -98,16 +108,17 @@ public class ExecutionerPlayerComponent implements RoleComponent, ServerTickingC
         if (NoellesRolesConfig.HANDLER.instance().executionerCanSelectTarget) {
             return;
         }
-        
+
         // 如果已经有目标或者已经获胜，则不需要分配新目标
         if (target != null || won) {
             return;
         }
-        
+
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
-        if (gameWorldComponent== null)return;
+        if (gameWorldComponent == null)
+            return;
         List<Player> eligibleTargets = new ArrayList<>();
-        
+
         // 获取所有存活的平民玩家
         for (Player p : player.level().players()) {
             if (p.getUUID().equals(player.getUUID())) {
@@ -117,11 +128,11 @@ public class ExecutionerPlayerComponent implements RoleComponent, ServerTickingC
                 continue; // 只考虑存活玩家
             }
             final var role = gameWorldComponent.getRole(p);
-            if (role!=null&& role.isInnocent()) { // 只考虑平民阵营
+            if (role != null && role.isInnocent() && !role.isNeutrals()) { // 只考虑平民阵营
                 eligibleTargets.add(p);
             }
         }
-        
+
         // 随机选择一个目标
         if (!eligibleTargets.isEmpty()) {
             Collections.shuffle(eligibleTargets);
@@ -141,7 +152,7 @@ public class ExecutionerPlayerComponent implements RoleComponent, ServerTickingC
         if (!NoellesRolesConfig.HANDLER.instance().executionerCanSelectTarget) {
             return;
         }
-        
+
         this.target = target;
         this.targetSelected = true;
         this.sync();

@@ -28,44 +28,50 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
 
     public void paranoidEvent(MicrophonePacketEvent event) {
         VoicechatServerApi api = event.getVoicechat();
-        ServerPlayer players = ((ServerPlayer) event.getSenderConnection().getPlayer().getPlayer());
-        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(players.level());
-        // if (players.interactionManager.getGameMode().equals(GameMode.SPECTATOR)) {
-        players.level().players().forEach((p) -> {
-
-            if (p != players) {
-                if (GameFunctions.isPlayerAliveAndSurvival(players)) {
-                    Role role = gameWorldComponent.getRole(players);
-                    if (role != null) {
-                        if (role.identifier().getPath().equals(ModRoles.NOISEMAKER.identifier().getPath())) {
-                            double rangeMultiplier = 1.25;
-                            if (players.getActiveEffectsMap().containsKey(MobEffects.LUCK)) {
-                                rangeMultiplier = 6;
-                            }
-                            if (players.distanceTo(p) <= api.getVoiceChatDistance() * rangeMultiplier) {
-                                VoicechatConnection con = api.getConnectionOf(p.getUUID());
-                                api.sendLocationalSoundPacketTo(con, event.getPacket().locationalSoundPacketBuilder()
-                                        .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
-                                        .distance((float) api.getVoiceChatDistance())
-                                        .build());
+        var connection = event.getSenderConnection();
+        if (connection != null && connection.isInstalled() && connection.isConnected()) {
+            var vcplayer = connection.getPlayer();
+            if (vcplayer != null) {
+                var vctplayer = vcplayer.getPlayer();
+                if (vctplayer != null) {
+                    var player = (ServerPlayer) vctplayer;
+                    GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+                    if (gameWorldComponent != null) {
+                        if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                            Role role = gameWorldComponent.getRole(player);
+                            if (role != null) {
+                                if (role.identifier().getPath()
+                                        .equals(ModRoles.NOISEMAKER.identifier().getPath())) {
+                                    player.level().players().forEach((p) -> {
+                                        if (p.getUUID() != player.getUUID()) {
+                                            double rangeMultiplier = 1.25;
+                                            if (player.getActiveEffectsMap().containsKey(MobEffects.LUCK)) {
+                                                rangeMultiplier = 6;
+                                            }
+                                            if (player.distanceTo(p) <= api.getVoiceChatDistance() * rangeMultiplier) {
+                                                VoicechatConnection con = api.getConnectionOf(p.getUUID());
+                                                if (con != null && con.isInstalled() && con.isConnected()) {
+                                                    api.sendLocationalSoundPacketTo(con, event.getPacket()
+                                                            .locationalSoundPacketBuilder()
+                                                            .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
+                                                            .distance((float) api.getVoiceChatDistance())
+                                                            .build());
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
                 }
             }
-            // if (gameWorldComponent.isRole(p,
-            // Noellesroles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)
-            // && GameFunctions.isPlayerAliveAndSurvival(p)) {
-            // if (players.distanceTo(p) <= api.getVoiceChatDistance()) {
-            // VoicechatConnection con = api.getConnectionOf(p.getUuid());
-            // api.sendLocationalSoundPacketTo(con,
-            // event.getPacket().locationalSoundPacketBuilder()
-            // .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
-            // .distance((float)api.getVoiceChatDistance())
-            // .build());
-            // }
-            // }
-        });
+        }
+        // ServerPlayer players = ((ServerPlayer)
+        // event.getSenderConnection().getPlayer().getPlayer());
+
+        // if (players.interactionManager.getGameMode().equals(GameMode.SPECTATOR)) {
+
         // }
     }
 

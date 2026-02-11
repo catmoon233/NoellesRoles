@@ -21,6 +21,7 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.client.NoellesrolesClient;
@@ -60,6 +61,16 @@ public abstract class CoronerHudMixin {
                 // 死亡惩罚
                 boolean hasPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player).hasPenalty();
 
+                final var worldModifierComponent = WorldModifierComponent.KEY
+                        .get(player.level());
+                if (worldModifierComponent != null) {
+                    if (worldModifierComponent.isModifier(player, SEModifiers.SPLIT_PERSONALITY)) {
+                        var splitComponent = SplitPersonalityComponent.KEY.get(player);
+                        if (splitComponent != null && !splitComponent.isDeath()) {
+                            hasPenalty = true;
+                        }
+                    }
+                }
                 PlayerMoodComponent moodComponent = (PlayerMoodComponent) PlayerMoodComponent.KEY
                         .get(Minecraft.getInstance().player);
                 if (moodComponent.isLowerThanMid() && TMMClient.isPlayerAliveAndInSurvival()) {
@@ -92,6 +103,18 @@ public abstract class CoronerHudMixin {
                 boolean hasPenalty = false;
                 if (deathPenalty != null)
                     hasPenalty = deathPenalty.hasPenalty();
+
+                final var worldModifierComponent = WorldModifierComponent.KEY
+                        .get(player.level());
+                if (worldModifierComponent != null) {
+                    if (worldModifierComponent.isModifier(player, SEModifiers.SPLIT_PERSONALITY)) {
+                        var splitComponent = SplitPersonalityComponent.KEY.get(player);
+                        if (splitComponent != null && !splitComponent.isDeath()) {
+                            hasPenalty = true;
+                        }
+                    }
+                }
+                
                 context.pose().pushPose();
                 context.pose().translate((float) context.guiWidth() / 2.0F, (float) context.guiHeight() / 2.0F + 6.0F,
                         0.0F);
@@ -123,7 +146,7 @@ public abstract class CoronerHudMixin {
                     name = Component.literal("abcdefghijklmnopqrstuvwxyzaa").withStyle(ChatFormatting.OBFUSCATED);
                 }
                 if (hasPenalty) {
-                    // name = Component.translatable("message.noellesroles.penalty.limit.death");
+                    name = Component.translatable("message.noellesroles.penalty.limit.death");
                 }
                 context.drawString(renderer, name, -renderer.width(name) / 2, 32, CommonColors.RED);
                 Role foundRole = TMMRoles.CIVILIAN;
@@ -139,7 +162,7 @@ public abstract class CoronerHudMixin {
                                     .translatable("announcement.role." + bodyDeathReasonComponent.playerRole.getPath())
                                     .withColor(foundRole.color()));
                     if (hasPenalty) {
-                        // roleInfo = Component.translatable("message.noellesroles.penalty.limit.role");
+                        roleInfo = Component.translatable("message.noellesroles.penalty.limit.role");
                     }
                     context.drawString(renderer, roleInfo, -renderer.width(roleInfo) / 2, 48, CommonColors.WHITE);
                 }

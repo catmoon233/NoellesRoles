@@ -20,6 +20,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class RecorderScreen extends Screen {
     // 搜索框
     EditBox searchWidget = null;
     String searchContent = null;
+    private RecorderPlayerComponent recorderPlayerComponent = null;
 
     // 角色列表
     private List<Role> roles = new ArrayList<>();
@@ -62,14 +64,25 @@ public class RecorderScreen extends Screen {
     private Button nextPageButton;
     private int totalPages = 0;
 
-    public RecorderScreen() {
+    public RecorderScreen(Player player) {
         super(Component.translatable("screen.noellesroles.recorder.title"));
+        if (player != null) {
+            var recorderC = RecorderPlayerComponent.KEY.get(player);
+            if (recorderC != null) {
+                recorderPlayerComponent = recorderC;
+            } else {
+                // onClose();
+            }
+        }
     }
 
     @Override
     protected void init() {
         super.init();
-
+        if (recorderPlayerComponent == null) {
+            onClose();
+            return;
+        }
         // 清空旧的 widget
         playerWidgets.clear();
         roleWidgets.clear();
@@ -206,9 +219,10 @@ public class RecorderScreen extends Screen {
                     skin = info.getSkin().texture();
                 }
             }
-
+            boolean hasGuessed = false;
+            hasGuessed = recorderPlayerComponent.hasGuessed(uuid);
             RecorderPlayerWidget widget = new RecorderPlayerWidget(
-                    this, x, y, widgetSize, uuid, name, skin, i);
+                    this, x, y, widgetSize, uuid, name, skin, i, hasGuessed);
             playerWidgets.add(widget);
             addRenderableWidget(widget);
         }

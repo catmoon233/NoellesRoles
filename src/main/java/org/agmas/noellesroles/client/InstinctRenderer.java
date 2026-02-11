@@ -109,8 +109,9 @@ public class InstinctRenderer {
                 if (!hasInstinct)
                     return -2;
 
+                if (self.isSpectator())
+                    return -1; // 旁观默认高亮
                 // 直觉看不到旁观
-
                 if ((target_player).isSpectator())
                     return -2;
                 // 需要开启直觉
@@ -120,7 +121,9 @@ public class InstinctRenderer {
                         && TMMClient.isPlayerAliveAndInSurvival()) {
                     return -2;
                 }
-
+                if (gameWorldComponent.isRole(target_player, ModRoles.NIAN_SHOU)) {
+                    return (Color.GREEN.getRGB());
+                }
                 if (gameWorldComponent.isRole(self, ModRoles.RECORDER)) {
                     if (target instanceof Player targetPlayer) {
                         if (targetPlayer == self)

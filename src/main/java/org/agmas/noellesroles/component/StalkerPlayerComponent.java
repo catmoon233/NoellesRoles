@@ -150,6 +150,11 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
         this.player = player;
     }
 
+    @Override
+    public boolean shouldSyncWith(ServerPlayer player) {
+        return this.player == player;
+    }
+
     /**
      * 重置组件状态
      * 在游戏开始时或角色分配时调用

@@ -1,8 +1,17 @@
 {
-	"block.cargo_box.close": {
+	"noellesroles.gamber_died": {
 		"sounds": [
 			"noellesroles:gamber_died"
 		],
 		"subtitle": "subtitles.gamber_died"
+	},
+	"noellesroles.gongxifacai": {
+		"sounds": [
+			{
+				"name": "noellesroles:gongxifacai",
+				"stream": true
+			}
+		],
+		"subtitle": "subtitles.gongxifacai"
 	}
 }

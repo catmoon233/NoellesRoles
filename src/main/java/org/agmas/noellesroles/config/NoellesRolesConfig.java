@@ -8,12 +8,12 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
-
 public class NoellesRolesConfig {
-    public static ConfigClassHandler<NoellesRolesConfig> HANDLER = ConfigClassHandler.createBuilder(NoellesRolesConfig.class)
+    public static ConfigClassHandler<NoellesRolesConfig> HANDLER = ConfigClassHandler
+            .createBuilder(NoellesRolesConfig.class)
             .id(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(FabricLoader.getInstance().getConfigDir().resolve( Noellesroles.MOD_ID + ".json5"))
+                    .setPath(FabricLoader.getInstance().getConfigDir().resolve(Noellesroles.MOD_ID + ".json5"))
                     .setJson5(true)
                     .build())
             .build();
@@ -23,8 +23,14 @@ public class NoellesRolesConfig {
     @SerialEntry(comment = "Allows the shitpost roles to retain their disable/enable state after a server restart")
     public boolean shitpostRoles = false;
 
+    @SerialEntry(comment = "Modifier - The chance of Refugee")
+    public int chanceOfModifierRefugee = 10;
+
+    @SerialEntry(comment = "Modifier - The chance of Split Personality")
+    public int chanceOfModifierSplitPersonality = 10;
+
     @SerialEntry(comment = "Starting cooldown (in ticks)")
-    public int generalCooldownTicks = GameConstants.getInTicks(0,30);
+    public int generalCooldownTicks = GameConstants.getInTicks(0, 30);
 
     @SerialEntry(comment = "Enable client blood render")
     public boolean enableClientBlood = true;
@@ -92,17 +98,17 @@ public class NoellesRolesConfig {
     @SerialEntry(comment = "Morphling - Morph cooldown in seconds")
     public int morphlingMorphCooldown = 20;
 
-//    @SerialEntry(comment = "Recaller - Maximum recall distance in blocks")
-//    public int recallerMaxDistance = 50;
-//
-//    @SerialEntry(comment = "Vulture - Bodies required to win")
-//    public int vultureBodiesRequired = 2;
-//
-//    @SerialEntry(comment = "Jester - Time to complete jest in seconds")
-//    public int jesterJestTime = 60;
-//
-//    @SerialEntry(comment = "Jester - Maximum psycho ticks before death")
-//    public int jesterMaxPsychoTicks = 44;
+    // @SerialEntry(comment = "Recaller - Maximum recall distance in blocks")
+    // public int recallerMaxDistance = 50;
+    //
+    // @SerialEntry(comment = "Vulture - Bodies required to win")
+    // public int vultureBodiesRequired = 2;
+    //
+    // @SerialEntry(comment = "Jester - Time to complete jest in seconds")
+    // public int jesterJestTime = 60;
+    //
+    // @SerialEntry(comment = "Jester - Maximum psycho ticks before death")
+    // public int jesterMaxPsychoTicks = 44;
 
     @SerialEntry(comment = "Recaller - Recall mark cooldown in seconds")
     public int recallerMarkCooldown = 10;

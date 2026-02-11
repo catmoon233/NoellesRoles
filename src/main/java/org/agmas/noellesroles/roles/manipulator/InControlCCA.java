@@ -92,10 +92,12 @@ public class InControlCCA implements RoleComponent, ServerTickingComponent {
         if (this.controller != null) {
             if ((player instanceof ServerPlayer sp)) {
                 var controller_p = sp.level().getPlayerByUUID(this.controller);
-                var controllerComponent = ManipulatorPlayerComponent.KEY.get(controller_p);
-                if (controllerComponent != null) {
-                    controllerComponent.stopControl(isTimeout);
-                    this.controller = null;
+                if (controller_p != null) {
+                    var controllerComponent = ManipulatorPlayerComponent.KEY.get(controller_p);
+                    if (controllerComponent != null) {
+                        controllerComponent.stopControl(isTimeout);
+                        this.controller = null;
+                    }
                 }
             }
         }
@@ -113,7 +115,7 @@ public class InControlCCA implements RoleComponent, ServerTickingComponent {
         }
         if (isControlling) {
             if (controlTimer > 0) {
-                if (!player.hasEffect(MobEffects.UNLUCK)){
+                if (!player.hasEffect(MobEffects.UNLUCK)) {
                     player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 1, 0, true, false, true));
                 }
                 --controlTimer;
