@@ -710,7 +710,7 @@
   "info.screen.roleid.nianshou": "中立陣營\n你需要做任務維持san值，擁有1.5倍的體力，在殺手透視中為好人。\n被動-神出鬼沒：當你處於黑暗環境中時可獲得一個護盾試劑(一局僅觸發一次)和速度二，可以在商店中購買關燈\n被動-除歲：當你存在於場上時，所有人獲得4個鞭炮，如果年獸周圍(5格半徑)有(2/3總人數)個鞭炮則年獸死亡。\n主動-散財：你每完成2個任務會獲得1個紅包，對他人使用技能發放紅包可使對方在15s後收到提示並獲得100金幣。\n被動-恭喜發財：當遊戲剩餘5分鐘時，全場存活的玩家獲得100金幣並回滿san值。\n勝利條件：若遊戲結算時年獸存活(賭徒/記錄員獲勝除外)，則年獸勝利。",
   "announcement.goals.nianshou": "你循著年味而來，遠離鞭炮並努力活到最後！",
   "announcement.win.nianshou": "恭喜發財！年獸勝利！",
-  "game.win.nianshou": "恭喜發財！年獸存活到了最後並取得了勝利！",
+  "game.win.nian_shou": "恭喜發財！年獸存活到了最後並取得了勝利！",
   "message.noellesroles.nianshou.firecrackers_distributed": "年獸在場！所有玩家獲得4個鞭炮！",
   "message.noellesroles.nianshou.red_packet_earned": "已完成2個任務，你獲得1個紅包！",
   "message.noellesroles.nianshou.no_target": "請將準星對準一名玩家！",

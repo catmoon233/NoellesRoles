@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,14 +26,15 @@ import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 public class MapScanner {
-    public static void registerMapScanEvent(){
-        OnTrainAreaHaveReseted.EVENT.register((serverLevel)->{
+    public static void registerMapScanEvent() {
+        OnTrainAreaHaveReseted.EVENT.register((serverLevel) -> {
             scanAllTaskBlocks(serverLevel);
-            for(var player : serverLevel.players()){
-                ServerPlayNetworking.send(player,new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
+            for (var player : serverLevel.players()) {
+                ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
             }
         });
     }
+
     public static void scanAllTaskBlocks(ServerLevel serverLevel) {
         TMM.LOGGER.info("Start to scan points!");
         ServerLevel localLevel = serverLevel;
@@ -52,12 +54,16 @@ public class MapScanner {
                 for (int m = trainBox.minX(); m <= trainBox.maxX(); m++) {
                     BlockPos blockPos6 = new BlockPos(m, l, k);
                     var blockState = localLevel.getBlockState(blockPos6);
-                    if (blockState.is(Blocks.AIR))
+                    if (blockState.is(BlockTags.AIR))
                         continue;
                     // blockCounts++;
 
                     if (blockState.is(Blocks.BLACK_CONCRETE)) {
-                        GameFunctions.taskBlocks.put(blockPos6, 5);
+                        BlockPos blockPos7 = new BlockPos(m, l + 1, k);
+                        var blockState2 = localLevel.getBlockState(blockPos7);
+                        if (blockState2.is(BlockTags.WOOL_CARPETS) || blockState2.is(BlockTags.AIR)) {
+                            GameFunctions.taskBlocks.put(blockPos6, 5);
+                        }
                     } else if (blockState.getBlock() instanceof TrimmedBedBlock) {
                         GameFunctions.taskBlocks.put(blockPos6, 4);
                         // 暂时忽略

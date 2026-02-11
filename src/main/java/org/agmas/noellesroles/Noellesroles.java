@@ -1026,8 +1026,13 @@ public class Noellesroles implements ModInitializer {
 
     public void registerEvents() {
         TMM.canStickArmor.add((deathInfo -> {
-            if (deathInfo.deathReason().getPath().equals("ignited")) {
+            String deathReasonPath = deathInfo.deathReason().getPath();
+            if (deathReasonPath.equals("ignited")) {
                 // 纵火犯
+                return true;
+            }
+            if (deathReasonPath.equals("shot_innocent")) {
+                // 误杀平民
                 return true;
             }
             return false;
