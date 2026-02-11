@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerNoteComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
@@ -24,6 +25,8 @@ public class DecServerJoinPlayer {
     @Inject(method = "placeNewPlayer", at = @At("TAIL"))
     public void placeNewPlayer(Connection connection, ServerPlayer serverPlayer,
             CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
+        if (TMM.isLobby)
+            return;
         var modifierComponent = WorldModifierComponent.KEY.get(serverPlayer.level());
         var pl = modifierComponent.modifiers.get(serverPlayer.getUUID());
         if (pl != null) {
@@ -39,7 +42,7 @@ public class DecServerJoinPlayer {
         // ResetPlayerEvent.EVENT.invoker().resetPlayer(serverPlayer);
         ConfigWorldComponent.KEY.get(serverPlayer.level()).sync();
         WorldModifierComponent.KEY.get(serverPlayer.level()).sync();
-        
+
     }
 
 }

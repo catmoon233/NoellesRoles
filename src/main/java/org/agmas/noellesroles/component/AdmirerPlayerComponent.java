@@ -7,6 +7,8 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
@@ -222,14 +224,19 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
 
     private void checkBoundTarget() {
         Player boundTarget = getBoundTarget();
-        if (boundTarget == null || !GameFunctions.isPlayerAliveAndSurvival(boundTarget)) {
-            if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.displayClientMessage(
-                        Component.translatable("message.noellesroles.admirer.target_died")
-                                .withStyle(ChatFormatting.RED),
-                        false);
+        var gameCp = GameWorldComponent.KEY.get(this.player);
+        if (gameCp != null && gameCp.isRunning()) {
+            if (GameFunctions.isPlayerAliveAndSurvival(this.player)) {
+                if (boundTarget == null || !GameFunctions.isPlayerAliveAndSurvival(boundTarget)) {
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        serverPlayer.displayClientMessage(
+                                Component.translatable("message.noellesroles.admirer.target_died")
+                                        .withStyle(ChatFormatting.RED),
+                                false);
+                    }
+                    bindRandomTarget();
+                }
             }
-            bindRandomTarget();
         }
     }
 
