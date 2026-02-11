@@ -948,86 +948,8 @@ public class Noellesroles implements ModInitializer {
     }
 
     private void registerMaxRoleCount() {
-        Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
-        Harpymodloader.setRoleMaximum(ModRoles.MANIPULATOR, 0);
-        Harpymodloader.setRoleMaximum(ModRoles.EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
-        Harpymodloader.setRoleMaximum(ModRoles.VULTURE_ID, NoellesRolesConfig.HANDLER.instance().vultureMax);
-        Harpymodloader.setRoleMaximum(ModRoles.JESTER_ID, NoellesRolesConfig.HANDLER.instance().jesterMax);
-        Harpymodloader.setRoleMaximum(ModRoles.MORPHLING_ID, NoellesRolesConfig.HANDLER.instance().morphlingMax);
-        Harpymodloader.setRoleMaximum(ModRoles.BARTENDER_ID, NoellesRolesConfig.HANDLER.instance().bartenderMax);
-        Harpymodloader.setRoleMaximum(ModRoles.NOISEMAKER_ID, NoellesRolesConfig.HANDLER.instance().noisemakerMax);
-        Harpymodloader.setRoleMaximum(ModRoles.PHANTOM_ID, NoellesRolesConfig.HANDLER.instance().phantomMax);
-        Harpymodloader.setRoleMaximum(ModRoles.AWESOME_BINGLUS_ID,
-                NoellesRolesConfig.HANDLER.instance().awesomeBinglusMax);
-        Harpymodloader.setRoleMaximum(ModRoles.SWAPPER_ID, NoellesRolesConfig.HANDLER.instance().swapperMax);
-        Harpymodloader.setRoleMaximum(ModRoles.VOODOO_ID, NoellesRolesConfig.HANDLER.instance().voodooMax);
-        Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, NoellesRolesConfig.HANDLER.instance().coronerMax);
-        Harpymodloader.setRoleMaximum(ModRoles.RECALLER_ID, NoellesRolesConfig.HANDLER.instance().recallerMax);
-        Harpymodloader.setRoleMaximum(ModRoles.BROADCASTER_ID, NoellesRolesConfig.HANDLER.instance().broadcasterMax);
-        Harpymodloader.setRoleMaximum(ModRoles.GAMBLER_ID, NoellesRolesConfig.HANDLER.instance().gamblerMax);
-        Harpymodloader.setRoleMaximum(ModRoles.GLITCH_ROBOT_ID, NoellesRolesConfig.HANDLER.instance().glitchRobotMax);
-        Harpymodloader.setRoleMaximum(ModRoles.GHOST_ID, NoellesRolesConfig.HANDLER.instance().ghostMax);
-        // Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 0);
-        Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
-        Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
-
-        GameInitializeEvent.EVENT.register((serverLevel, gameWorldComponent, players) -> {
-            int players_count = serverLevel.getServer().getPlayerCount();
-            // 动态大小
-            // 年兽角色：5%概率生成
-            Random random = new Random();
-
-            if (random.nextInt(0, 100) < 50) {
-                Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
-            }
-            if (random.nextInt(0, 100) < 20) {
-                Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 0);
-            }
-            if (players_count >= 10) {
-                Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 0);
-            }
-            // 秃鹫数量
-            if (players_count >= 8) {
-                Harpymodloader.setRoleMaximum(ModRoles.VULTURE, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.VULTURE, 0);
-            }
-            // 特殊警卫数量
-            {
-                int allSpecialPoliceCount = 0;
-
-                if (players_count >= 24) {
-                    allSpecialPoliceCount = 3;
-                } else if (players_count >= 18) {
-                    allSpecialPoliceCount = 2;
-                } else if (players_count >= 12) {
-                    allSpecialPoliceCount = 1;
-                } else {
-                    allSpecialPoliceCount = 0;
-                }
-                if (allSpecialPoliceCount > 0) {
-                    int PATROLLER_COUNT = random.nextInt(1, allSpecialPoliceCount);
-                    if (PATROLLER_COUNT > allSpecialPoliceCount) {
-                        PATROLLER_COUNT = allSpecialPoliceCount;
-                    }
-                    int ELF_COUNT = allSpecialPoliceCount - PATROLLER_COUNT;
-                    if (ELF_COUNT < 0)
-                        ELF_COUNT = 0;
-                    Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, PATROLLER_COUNT);
-                    Harpymodloader.setRoleMaximum(ModRoles.ELF, ELF_COUNT);
-                } else {
-                    Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
-                    Harpymodloader.setRoleMaximum(ModRoles.ELF, 0);
-                }
-
-            }
-        });
+        InitModRolesMax.registerStatics();
+        InitModRolesMax.registerDynamic();
     }
 
     public void registerEvents() {
