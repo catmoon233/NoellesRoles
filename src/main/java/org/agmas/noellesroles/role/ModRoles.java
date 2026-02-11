@@ -845,6 +845,9 @@ public class ModRoles {
         // 游侠
         Harpymodloader.setRoleMaximum(ELF_ID, 1);
 
+        //巡警
+        Harpymodloader.setRoleMaximum(PATROLLER_ID, 1);
+
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
         BartenderPlayerComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
