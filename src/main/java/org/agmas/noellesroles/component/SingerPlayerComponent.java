@@ -272,7 +272,7 @@ public class SingerPlayerComponent implements RoleComponent, ServerTickingCompon
                 target.displayClientMessage(
                         Component.translatable("message.noellesroles.singer.music_heard")
                                 .withStyle(ChatFormatting.LIGHT_PURPLE),
-                        false);
+                        true);
             // 给予速度 I 效果（持续2.5秒 = 50 tick，确保连续覆盖）
             switch (musicType) {
                 case 1:
