@@ -868,7 +868,13 @@ public class Noellesroles implements ModInitializer {
             ShopContent.customEntries.put(
                     ModRoles.NIAN_SHOU_ID, NIAN_SHOU_SHOP);
         }
-
+        // 警长商店
+        {
+            List<ShopEntry> entries = new ArrayList<>();
+            entries.add(new ShopEntry(TMMItems.BODY_BAG.getDefaultInstance(), 150, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(
+                    TMMRoles.VIGILANTE.identifier(), entries);
+        }
         // 巡警商店
         {
             ShopContent.customEntries.put(
