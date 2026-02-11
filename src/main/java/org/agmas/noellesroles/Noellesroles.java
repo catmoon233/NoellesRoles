@@ -976,6 +976,7 @@ public class Noellesroles implements ModInitializer {
             // 动态大小
             // 年兽角色：5%概率生成
             Random random = new Random();
+
             if (random.nextInt(0, 100) < 50) {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
             } else {
@@ -990,6 +991,12 @@ public class Noellesroles implements ModInitializer {
                 Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.RECORDER, 0);
+            }
+            // 秃鹫数量
+            if (players_count >= 8) {
+                Harpymodloader.setRoleMaximum(ModRoles.VULTURE, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.VULTURE, 0);
             }
             // 特殊警卫数量
             {
@@ -1250,11 +1257,6 @@ public class Noellesroles implements ModInitializer {
             SmokeAreaManager.tick();
             HallucinationAreaManager.tick();
 
-            if (server.getPlayerList().getPlayerCount() >= 8) {
-                Harpymodloader.setRoleMaximum(ModRoles.VULTURE, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.VULTURE, 0);
-            }
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(server.overworld());
             if (gameWorldComponent.isRunning()) {
                 var all_players = server.getPlayerList().getPlayers();
