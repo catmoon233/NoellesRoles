@@ -52,7 +52,9 @@
     "roles.thief.ThiefsHonorMixin",
     "roles.veteran.VeteranKnifeLeftClickMixin",
     "roles.veteran.VeteranKnifeMixin",
-    "roles.voodoo.VoodooVooMixin"
+    "roles.voodoo.VoodooVooMixin",
+    "ShitExposureMixin",
+    "ShitExposurePatreonMixin"
   ],
   "injectors": {
     "defaultRequire": 1
