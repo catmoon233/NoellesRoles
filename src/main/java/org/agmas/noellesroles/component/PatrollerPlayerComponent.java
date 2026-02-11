@@ -58,7 +58,7 @@ public class PatrollerPlayerComponent implements RoleComponent, ServerTickingCom
         if (this.hasTriggered)
             return;
         if (player instanceof ServerPlayer serverPlayer) {
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer);
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.level());
             if (gameWorldComponent != null) {
                 if (gameWorldComponent.isRole(serverPlayer, ModRoles.PATROLLER)) {
                     serverPlayer.addItem(new ItemStack(ModItems.PATROLLER_REVOLVER));
