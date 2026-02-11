@@ -307,9 +307,9 @@ public class NoellesrolesClient implements ClientModInitializer {
                     return;
                 }
 
-                // while (abilityBind.wasPressed()) {
-                onAbilityKeyPressed(client);
-                // }
+                if (onAbilityKeyPressed(client)) {
+                    return;
+                }
 
                 if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)) {
                     if (targetBody == null)
@@ -323,7 +323,6 @@ public class NoellesrolesClient implements ClientModInitializer {
                     return;
                 }
                 ClientPlayNetworking.send(new AbilityC2SPacket());
-
             }
         });
 

@@ -150,15 +150,17 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
 
     /**
      * 技能按键被按下时的处理
+     * 
+     * @return boolean 是否取消后续检测
      */
-    public static void onAbilityKeyPressed(Minecraft client) {
+    public static boolean onAbilityKeyPressed(Minecraft client) {
         if (client.player == null)
-            return;
+            return true;
         // 获取游戏世界组件
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.player.level());
-        if(gameWorld.isRole(client.player,ModRoles.NIAN_SHOU)){
+        if (gameWorld.isRole(client.player, ModRoles.NIAN_SHOU)) {
             ClientPlayNetworking.send(new AbilityC2SPacket());
-            return;
+            return true;
         }
         // 获取玩家的技能组件
         @SuppressWarnings("unused")
@@ -167,7 +169,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                 PuppeteerPlayerComponent.KEY.get(client.player).isActivePuppeteer()) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             PuppeteerPlayerComponent puppeteerComp = PuppeteerPlayerComponent.KEY.get(client.player);
 
@@ -181,7 +183,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                         net.minecraft.network.chat.Component.translatable("message.noellesroles.puppeteer.collect_more",
                                 puppeteerComp.collectedBodies, threshold),
                         true);
-                return;
+                return true;
             }
 
             // 阶段二：使用假人技能
@@ -200,8 +202,9 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                     .translatable("message.noellesroles.puppeteer.no_puppets"),
                             true);
                 }
+                return true;
             }
-            return;
+            return false;
         }
         // ==================== 傀儡师：优先检测操控假人状态 ====================
         // 必须放在所有角色之前，因为傀儡师操控假人时角色会临时变成其他杀手
@@ -210,18 +213,18 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
         if (puppeteerCompEarly.isControllingPuppet) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             // 正在操控假人，按G返回本体
             ClientPlayNetworking.send(new PuppeteerC2SPacket(PuppeteerC2SPacket.Action.RETURN_TO_BODY));
-            return;
+            return true;
         }
 
         // ==================== 拳击手：激活钢筋铁骨技能 ====================
         if (gameWorld.isRole(client.player, ModRoles.BOXER)) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             BoxerPlayerComponent boxerComponent = BoxerPlayerComponent.KEY.get(client.player);
             // 检查技能是否可用（客户端显示提示）
@@ -235,25 +238,25 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                 String.format("%.1f", boxerComponent.getCooldownSeconds())),
                         true);
             }
-            return;
+            return true;
         }
 
         // ==================== 失控机器人：眼镜 ====================
         if (gameWorld.isRole(client.player, ModRoles.GLITCH_ROBOT)) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
             if (!client.player.getSlot(103).get().is(ModItems.NIGHT_VISION_GLASSES)) {
                 client.player.displayClientMessage(
                         Component.translatable("info.glitch_robot.noglasses_on_head").withStyle(ChatFormatting.RED),
                         true);
-                return;
+                return true;
 
             }
             if (!RoleUtils.isPlayerHasFreeSlot(client.player)) {
                 client.player.displayClientMessage(
                         Component.translatable("message.hotbar.full").withStyle(ChatFormatting.RED), true);
-                return;
+                return true;
 
             }
             // 发送网络包到服务端激活技能
@@ -261,14 +264,14 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             if (!client.player.getSlot(103).get().is(ModItems.NIGHT_VISION_GLASSES)) {
                 client.player.removeEffect(MobEffects.NIGHT_VISION);
             }
-            return;
+            return true;
         }
 
         // ==================== 运动员：激活疾跑技能 ====================
         if (gameWorld.isRole(client.player, ModRoles.ATHLETE)) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             AthletePlayerComponent athleteComponent = AthletePlayerComponent.KEY.get(client.player);
             // 检查技能是否可用（客户端显示提示）
@@ -282,7 +285,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                 String.format("%.1f", athleteComponent.getCooldownSeconds())),
                         true);
             }
-            return;
+            return true;
         }
 
         // ==================== 慕恋者：窥视积能量 ====================
@@ -296,7 +299,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             } else {
                 ClientPlayNetworking.send(new AdmirerGazeC2SPacket(false));
             }
-            return;
+            return true;
         }
 
         // ==================== 跟踪者：窥视和突进 ====================
@@ -313,7 +316,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                 }
             }
             // 三阶段突进由鼠标右键控制，这里不处理
-            return;
+            return true;
         }
 
         // ==================== 私家侦探：审查玩家物品栏 ====================
@@ -328,13 +331,13 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                             .send(new org.agmas.noellesroles.packet.DetectiveC2SPacket(targetPlayer.getUUID()));
                 }
             }
-            return;
+            return true;
         }
 
         // ==================== 设陷者：放置灾厄印记陷阱 ====================
         if (gameWorld.isRole(client.player, ModRoles.TRAPPER)) {
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             TrapperPlayerComponent trapperComponent = TrapperPlayerComponent.KEY.get(client.player);
             if (trapperComponent.canPlaceTrap()) {
@@ -345,14 +348,14 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                 String.format("%.1f", trapperComponent.getRechargeSeconds())),
                         true);
             }
-            return;
+            return true;
         }
 
         // ==================== 明星：聚光灯技能 ====================
         if (gameWorld.isRole(client.player, ModRoles.STAR)) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             StarPlayerComponent starComponent = StarPlayerComponent.KEY.get(client.player);
             // 检查技能是否可用
@@ -366,7 +369,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                 String.format("%.0f", starComponent.getCooldownSeconds())),
                         true);
             }
-            return;
+            return true;
         }
 
         // // ==================== 歌手：播放音乐技能 已变为物品栏购买 ====================
@@ -398,7 +401,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
         if (gameWorld.isRole(client.player, ModRoles.PSYCHOLOGIST)) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             PsychologistPlayerComponent psychComponent = PsychologistPlayerComponent.KEY.get(client.player);
 
@@ -406,7 +409,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             if (psychComponent.isHealing) {
                 // 发送空UUID取消治疗
                 psychComponent.stopHealing("message.noellesroles.psychologist.cancelled");
-                return;
+                return true;
             }
 
             // 检查技能是否可用
@@ -425,7 +428,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                     .translatable("message.noellesroles.psychologist.not_full_san"),
                             true);
                 }
-                return;
+                return true;
             }
 
             // 使用准星检测目标玩家
@@ -443,12 +446,12 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                 .translatable("message.noellesroles.psychologist.no_target"),
                         true);
             }
-            return;
+            return true;
         }
         if (gameWorld.isRole(client.player,
                 ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(client.player);
             if (component.cooldown <= 0) {
@@ -464,13 +467,13 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                                 component.cooldown / 20),
                         true);
             }
-            return;
+            return true;
         }
 
         // 监察员：标记目标
         if (gameWorld.isRole(client.player, ModRoles.MONITOR)) {
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
-                return;
+                return true;
 
             MonitorPlayerComponent monitorComponent = MonitorPlayerComponent.KEY.get(client.player);
 
@@ -480,7 +483,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                         net.minecraft.network.chat.Component.translatable("message.noellesroles.monitor.cooldown",
                                 String.format("%.1f", monitorComponent.getCooldownSeconds())),
                         true);
-                return;
+                return true;
             }
 
             net.minecraft.world.phys.HitResult hitResult = client.hitResult;
@@ -494,18 +497,18 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                         net.minecraft.network.chat.Component.translatable("message.noellesroles.monitor.no_target"),
                         true);
             }
-            return;
+            return true;
         }
         // 赌徒：打开GUI
         if (gameWorld.isRole(client.player, ModRoles.GAMBLER)) {
             client.setScreen(new GamblerScreen(client.player));
-            return;
+            return true;
         }
 
         // 大嗓门：更大的说话
         if (gameWorld.isRole(client.player, ModRoles.NOISEMAKER)) {
             ClientPlayNetworking.send(new AbilityC2SPacket());
-            return;
+            return true;
         }
 
         // if (abilityComponent.cooldown > 0) {
@@ -521,6 +524,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
 
         // 默认：发送通用技能包
         // ClientPlayNetworking.send(new AbilityC2SPacket());
+        return false;
     }
 
     /**

@@ -1011,15 +1011,21 @@ public class Noellesroles implements ModInitializer {
                 } else {
                     allSpecialPoliceCount = 0;
                 }
-                int PATROLLER_COUNT = random.nextInt(0, allSpecialPoliceCount + 1);
-                if (PATROLLER_COUNT > allSpecialPoliceCount) {
-                    PATROLLER_COUNT = allSpecialPoliceCount;
+                if (allSpecialPoliceCount > 0) {
+                    int PATROLLER_COUNT = random.nextInt(1, allSpecialPoliceCount);
+                    if (PATROLLER_COUNT > allSpecialPoliceCount) {
+                        PATROLLER_COUNT = allSpecialPoliceCount;
+                    }
+                    int ELF_COUNT = allSpecialPoliceCount - PATROLLER_COUNT;
+                    if (ELF_COUNT < 0)
+                        ELF_COUNT = 0;
+                    Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, PATROLLER_COUNT);
+                    Harpymodloader.setRoleMaximum(ModRoles.ELF, ELF_COUNT);
+                } else {
+                    Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
+                    Harpymodloader.setRoleMaximum(ModRoles.ELF, 0);
                 }
-                int ELF_COUNT = allSpecialPoliceCount - PATROLLER_COUNT;
-                if (ELF_COUNT < 0)
-                    ELF_COUNT = 0;
-                Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, PATROLLER_COUNT);
-                Harpymodloader.setRoleMaximum(ModRoles.ELF, ELF_COUNT);
+
             }
         });
     }
