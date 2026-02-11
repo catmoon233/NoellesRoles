@@ -34,8 +34,6 @@ public abstract class InsaneKillerRenderMixin
     protected void setupRotations(AbstractClientPlayer abstractClientPlayer, float f, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, CallbackInfo ci) {
         if (abstractClientPlayer.isSpectator())
             return;
-
-
         InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(abstractClientPlayer);
         if (component.isActive) {
 
