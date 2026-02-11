@@ -25,6 +25,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import org.agmas.noellesroles.utils.BlockUtils;
+import org.agmas.noellesroles.utils.Pair;
 
 /**
  * 加固门道具
@@ -124,6 +126,15 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                                 }
                                 LockEntityManager.getInstance().removeLockEntity(lowerPos.above(), lockEntity);
                                 player.addItem(itemStack);
+                                // 取消锁门：包括临近的门
+                                Pair<DoorBlockEntity, DoorBlockEntity> nearByDoors = BlockUtils.getNeighbourDoor(doorEntity, world);
+                                if (nearByDoors.first != null) {
+                                    LockEntityManager.setDoorLocked(world, nearByDoors.first, true);
+                                }
+                                if (nearByDoors.second != null) {
+                                    LockEntityManager.setDoorLocked(world, nearByDoors.second, true);
+                                }
+                                LockEntityManager.setDoorLocked(world, doorEntity, true);
                             }
                             return InteractionResult.SUCCESS;
                         }

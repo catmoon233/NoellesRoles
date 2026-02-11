@@ -64,19 +64,6 @@ public class LotteryManager {
         }
     }
 
-    /**
-     * 奖池数据对
-     * - 太多Pair类了不知道用哪个，那就哪个都不要了
-     */
-    public static class Pair<T, U> {
-        public Pair(T first, U second) {
-            this.first = first;
-            this.second = second;
-        }
-        public T first;
-        public U second;
-    }
-
     private LotteryManager(){
         lootPool = new ArrayList<>();
         initPool();

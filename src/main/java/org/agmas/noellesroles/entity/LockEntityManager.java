@@ -1,7 +1,10 @@
 package org.agmas.noellesroles.entity;
 
+import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -129,6 +132,66 @@ public class LockEntityManager {
         }
     }
 
+    /**
+     * 获取附近锁实体的位置
+     * <p>
+     *     - 优先查找当前位置（应为门的上半部分位置）是否有锁实体，没有的话再查找左右两边
+     * </p>
+     * @param checkPos  检查点位置
+     * @param world     当前世界
+     * @return 最近锁实体的位置
+     */
+    public BlockPos getNearByLockPos(BlockPos checkPos, Level world) {
+        BlockPos ans = null;
+        if(this.getLockEntity(checkPos) != null)
+        {
+            ans = checkPos;
+        }
+        else if (world.getBlockEntity(checkPos.below()) instanceof DoorBlockEntity entity) {
+            switch (entity.getFacing()) {
+                case NORTH:
+                case SOUTH:
+                    if (this.getLockEntity(checkPos.east()) != null)
+                        ans = checkPos.east();
+                    else if (this.getLockEntity(checkPos.west()) != null) {
+                        ans = checkPos.west();
+                    }
+                    break;
+                case EAST:
+                case WEST:
+                    if (this.getLockEntity(checkPos.north()) != null)
+                        ans = checkPos.north();
+                    else if (this.getLockEntity(checkPos.south()) != null) {
+                        ans = checkPos.south();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 使锁能锁门
+     * <p>
+     *     - 如果进行上锁，则会直接上锁：使乘客钥匙无效
+     *     - 如果解锁时门上仍然有锁则无法解锁
+     * </p>
+     */
+    public static void setDoorLocked(Level world, DoorBlockEntity doorEntity, boolean trapped) {
+        String currentKeyName = doorEntity.getKeyName();
+        if (currentKeyName == null) currentKeyName = "";
+
+        if (trapped) {
+            doorEntity.setKeyName(currentKeyName + "locked:");
+        } else {
+            if (LockEntityManager.getInstance().getLockEntity(
+                    LockEntityManager.getInstance().getNearByLockPos(doorEntity.getBlockPos().above(), world)) == null) {
+                doorEntity.setKeyName(currentKeyName.replace("locked:", ""));
+            }
+        }
+    }
     private static final LockEntityManager instance = new LockEntityManager();
     // 使用位置与锁列表对应：每个格子可以匹配多个锁实体
     private static final Map<Vec3i, Stack<LockEntity>> lockEntities = new HashMap<>();
