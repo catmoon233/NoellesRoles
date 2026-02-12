@@ -77,11 +77,19 @@ public class LockItem extends Item implements AdventureUsable {
             // 检查门是否已被破坏
             if (door.isBlasted()) {
                 if (!world.isClientSide) {
-                    player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_broken")
+                    player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_broken_lock")
                             .withStyle(ChatFormatting.RED), true);
                 }
                 return InteractionResult.FAIL;
             }
+            if(LockEntityManager.isDoorLocked(door)){
+                if (!world.isClientSide) {
+                    player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_locked")
+                            .withStyle(ChatFormatting.RED), true);
+                }
+                return InteractionResult.FAIL;
+            }
+
             // 判定玩家点击的方向：只允许在门的正反面点击
             Direction clickedFace = context.getClickedFace();
             Direction doorFacing = door.getFacing();
@@ -91,7 +99,6 @@ public class LockItem extends Item implements AdventureUsable {
 
             world.playSound(null, context.getClickedPos(), TMMSounds.BLOCK_DOOR_LOCKED, SoundSource.BLOCKS, 1f, 1f);
             player.swing(InteractionHand.MAIN_HAND, true);
-
             // 将锁添加到世界中
             if (!world.isClientSide) {
                 LockEntity lockEntity = new LockEntity(ModEntities.LOCK_ENTITY, world, length);

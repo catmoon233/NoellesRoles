@@ -195,7 +195,7 @@ public class LockEntityManager {
             currentKeyName = "";
 
         if (trapped) {
-            doorEntity.setKeyName(currentKeyName + "locked:");
+            doorEntity.setKeyName("locked:" + currentKeyName);
         } else {
             if (LockEntityManager.getInstance().getLockEntity(
                     LockEntityManager.getInstance().getNearByLockPos(doorEntity.getBlockPos().above(),
@@ -203,6 +203,16 @@ public class LockEntityManager {
                 doorEntity.setKeyName(currentKeyName.replace("locked:", ""));
             }
         }
+    }
+
+    /**
+     * 门是否已经上锁
+     * 
+     * @param door    当前门实体
+     */
+    public static boolean isDoorLocked(DoorBlockEntity door) {
+        // 锁门：包括临近的门
+        return door.getKeyName().contains("locked:");
     }
 
     /**

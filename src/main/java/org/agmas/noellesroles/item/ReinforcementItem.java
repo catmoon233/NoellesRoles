@@ -25,8 +25,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import org.agmas.noellesroles.utils.BlockUtils;
-import org.agmas.noellesroles.utils.Pair;
 
 /**
  * 加固门道具
@@ -197,7 +195,7 @@ public class ReinforcementItem extends Item implements AdventureUsable {
      */
     public static boolean isDoorReinforced(DoorBlockEntity doorEntity) {
         String keyName = doorEntity.getKeyName();
-        return keyName != null && keyName.startsWith("reinforced:");
+        return keyName != null && keyName.contains("reinforced:");
     }
     
     /**
