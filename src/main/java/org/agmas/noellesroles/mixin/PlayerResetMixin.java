@@ -36,7 +36,7 @@ public abstract class PlayerResetMixin {
     @Inject(method = "resetPlayer", at = @At("TAIL"))
     private static void clearAllComponentsOnReset(ServerPlayer player, CallbackInfo ci) {
         // 清除跟踪者组件状态
-        // clearAllComponents(player);
+        clearAllComponents(player);
         if (ModComponents.DEFIBRILLATOR.get(player) != null) {
             ModComponents.DEFIBRILLATOR.get(player).clear();
         }
@@ -68,11 +68,11 @@ public abstract class PlayerResetMixin {
         manipulatorComp.clear();
         // 清除惩罚组件状态
         DeathPenaltyComponent deathPenalty = ModComponents.DEATH_PENALTY.get(player);
-        deathPenalty.clearAll();
+        deathPenalty.clear();
 
         // 清除慕恋者组件状态
         AdmirerPlayerComponent admirerComp = ModComponents.ADMIRER.get(player);
-        admirerComp.clearAll();
+        admirerComp.clear();
 
         // 清除其他自定义组件状态
         NoellesRolesAbilityPlayerComponent abilityComp = ModComponents.ABILITY.get(player);
