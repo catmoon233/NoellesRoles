@@ -151,6 +151,7 @@
   "item.noellesroles.sheriff_gun_maintenance": "枪械保养工具",
   "item.noellesroles.sheriff_gun_maintenance.tooltip": "右键使用来维护你的手枪\n恢复手枪耐久度并重置冷却时间\n使用后获得150金币",
   "message.broadcaster.broadcast": "%s 广播：%s",
+  "message.noellesroles.fuck_death_send":"你不能在死后发送消息",
   "message.broadcaster.example_message": "小心！杀手就在附近！",
   "message.broadcaster.insufficient_funds": "金钱不足（需要100）",
   "screen.broadcaster.cancel": "取消",

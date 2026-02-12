@@ -1863,7 +1863,12 @@ public class Noellesroles implements ModInitializer {
                             .get(context.player());
                     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(context.player().level());
                     PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
-
+                    if (!GameFunctions.isPlayerAliveAndSurvival(context.player())) {
+                        context.player().displayClientMessage(
+                                Component.translatable("message.noellesroles.fuck_death_send"),
+                                true);
+                        return;
+                    }
                     if (gameWorldComponent.isRole(context.player(), ModRoles.BROADCASTER)) {
 
                         BroadcasterPlayerComponent comp = BroadcasterPlayerComponent.KEY.get(context.player());
