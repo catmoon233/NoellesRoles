@@ -4,7 +4,9 @@ import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
-import  org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.role.ModRoles;
+
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
@@ -13,6 +15,7 @@ import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -35,7 +38,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
  * - 蹲下右键已加固/有警报的门（工程师专属）：取下对应道具
  */
 public class ReinforcementItem extends Item implements AdventureUsable {
-    
+
     public ReinforcementItem(Properties settings) {
         super(settings);
     }
@@ -46,16 +49,17 @@ public class ReinforcementItem extends Item implements AdventureUsable {
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = world.getBlockState(pos);
-        
-        if (player == null) return InteractionResult.PASS;
-        
+
+        if (player == null)
+            return InteractionResult.PASS;
+
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(world);
         boolean isEngineer = gameWorld.isRole(player, ModRoles.ENGINEER);
-        
+
         // 检查是否为门方块
         if (state.getBlock() instanceof SmallDoorBlock) {
             BlockPos lowerPos = state.getValue(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
-            
+
             if (world.getBlockEntity(lowerPos) instanceof SmallDoorBlockEntity doorEntity) {
                 // 蹲下右键：工程师专属功能 - 解除卡住状态或取下道具
                 if (player.isShiftKeyDown()) {
@@ -63,44 +67,48 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                     if (doorEntity.isJammed()) {
                         // 解除卡住
                         doorEntity.setJammed(0);
-                        
+
                         if (!world.isClientSide) {
                             world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
-                                SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 1.0f, 1.2f);
+                                    SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 1.0f, 1.2f);
                             player.displayClientMessage(Component.translatable("message.noellesroles.engineer.unjammed")
-                                .withStyle(ChatFormatting.GREEN), true);
+                                    .withStyle(ChatFormatting.GREEN), true);
                         }
-                        
+
                         // 不消耗物品
                         return InteractionResult.SUCCESS;
                     }
-                    
+
                     // 工程师专属：取下门上的道具
                     if (isEngineer) {
                         // 检查是否有加固
                         if (isDoorReinforced(doorEntity)) {
                             setDoorReinforced(doorEntity, false);
-                            
+
                             if (!world.isClientSide) {
                                 world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
-                                    SoundEvents.ANVIL_HIT, SoundSource.BLOCKS, 0.5f, 1.2f);
-                                player.displayClientMessage(Component.translatable("message.noellesroles.engineer.removed_reinforcement")
-                                    .withStyle(ChatFormatting.GREEN), true);
+                                        SoundEvents.ANVIL_HIT, SoundSource.BLOCKS, 0.5f, 1.2f);
+                                player.displayClientMessage(
+                                        Component.translatable("message.noellesroles.engineer.removed_reinforcement")
+                                                .withStyle(ChatFormatting.GREEN),
+                                        true);
                                 // 返还加固物品
                                 player.addItem(new ItemStack(ModItems.REINFORCEMENT));
                             }
                             return InteractionResult.SUCCESS;
                         }
-                        
+
                         // 检查是否有警报陷阱
                         if (AlarmTrapItem.hasDoorAlarmTrap(doorEntity)) {
                             AlarmTrapItem.setDoorAlarmTrap(doorEntity, false);
-                            
+
                             if (!world.isClientSide) {
                                 world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
-                                    SoundEvents.TRIPWIRE_DETACH, SoundSource.BLOCKS, 0.7f, 1.2f);
-                                player.displayClientMessage(Component.translatable("message.noellesroles.engineer.removed_alarm")
-                                    .withStyle(ChatFormatting.GREEN), true);
+                                        SoundEvents.TRIPWIRE_DETACH, SoundSource.BLOCKS, 0.7f, 1.2f);
+                                player.displayClientMessage(
+                                        Component.translatable("message.noellesroles.engineer.removed_alarm")
+                                                .withStyle(ChatFormatting.GREEN),
+                                        true);
                                 // 返还警报陷阱物品
                                 player.addItem(new ItemStack(ModItems.ALARM_TRAP));
                             }
@@ -108,17 +116,18 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                         }
 
                         // 检查门是否有锁
-                        if (LockEntityManager.getInstance().getLockEntity(lowerPos.above()) != null)
-                        {
+                        if (LockEntityManager.getInstance().getLockEntity(lowerPos.above()) != null) {
                             if (!world.isClientSide) {
                                 world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
                                         TMMSounds.BLOCK_DOOR_LOCKED, SoundSource.BLOCKS, 0.7f, 1.2f);
-                                player.displayClientMessage(Component.translatable("message.noellesroles.engineer.removed_lock")
-                                        .withStyle(ChatFormatting.GREEN), true);
+                                player.displayClientMessage(
+                                        Component.translatable("message.noellesroles.engineer.removed_lock")
+                                                .withStyle(ChatFormatting.GREEN),
+                                        true);
                                 LockEntity lockEntity = LockEntityManager.getInstance().getLockEntity(lowerPos.above());
                                 // 返还锁物品
                                 ItemStack itemStack = new ItemStack(ModItems.LOCK_ITEM);
-                                if(itemStack.getItem() instanceof LockItem lockItem){
+                                if (itemStack.getItem() instanceof LockItem lockItem) {
                                     lockItem.setLength(lockEntity.getLength());
                                     lockItem.setResistance(lockEntity.getResistance());
                                 }
@@ -129,66 +138,75 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                             }
                             return InteractionResult.SUCCESS;
                         }
-                        
+
                         // 没有可取下的道具
                         if (!world.isClientSide) {
-                            player.displayClientMessage(Component.translatable("message.noellesroles.engineer.nothing_to_remove")
-                                .withStyle(ChatFormatting.YELLOW), true);
+                            player.displayClientMessage(
+                                    Component.translatable("message.noellesroles.engineer.nothing_to_remove")
+                                            .withStyle(ChatFormatting.YELLOW),
+                                    true);
                         }
                         return InteractionResult.FAIL;
                     } else {
                         // 非工程师蹲下右键时
                         if (!world.isClientSide) {
-                            player.displayClientMessage(Component.translatable("message.noellesroles.engineer.not_jammed")
-                                .withStyle(ChatFormatting.YELLOW), true);
+                            player.displayClientMessage(
+                                    Component.translatable("message.noellesroles.engineer.not_jammed")
+                                            .withStyle(ChatFormatting.YELLOW),
+                                    true);
                         }
                         return InteractionResult.FAIL;
                     }
                 }
-                
+
                 // 普通右键：加固门
                 // 门已被撬棍破坏，无法加固
                 if (doorEntity.isBlasted()) {
                     if (!world.isClientSide) {
-                        player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_broken")
-                            .withStyle(ChatFormatting.RED), true);
+                        player.displayClientMessage(
+                                Component.translatable("message.noellesroles.engineer.already_broken")
+                                        .withStyle(ChatFormatting.RED),
+                                true);
                     }
                     return InteractionResult.FAIL;
                 }
-                
+
                 // 检查门是否已被加固
                 if (isDoorReinforced(doorEntity)) {
                     if (!world.isClientSide) {
-                        player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_reinforced")
-                            .withStyle(ChatFormatting.YELLOW), true);
+                        player.displayClientMessage(
+                                Component.translatable("message.noellesroles.engineer.already_reinforced")
+                                        .withStyle(ChatFormatting.YELLOW),
+                                true);
                     }
                     return InteractionResult.FAIL;
                 }
-                
+
                 // 加固门
                 setDoorReinforced(doorEntity, true);
-
+                TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
+                        BuiltInRegistries.ITEM.getKey(this));
                 // 只在客户端播放声音
                 if (world.isClientSide) {
                     world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
-                        SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.5f, 1.5f);
+                            SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.5f, 1.5f);
                 } else {
                     player.displayClientMessage(Component.translatable("message.noellesroles.engineer.reinforced")
-                        .withStyle(ChatFormatting.GREEN), true);
+                            .withStyle(ChatFormatting.GREEN), true);
                 }
-                
+
                 // 消耗物品
                 if (!player.isCreative()) {
                     context.getItemInHand().shrink(1);
                 }
-                
+
                 return InteractionResult.SUCCESS;
             }
         }
-        
+
         return InteractionResult.PASS;
     }
-    
+
     /**
      * 检查门是否已被加固
      * 我们使用 keyName 字段来存储加固状态（如果以 "reinforced:" 开头则表示已加固）
@@ -197,7 +215,7 @@ public class ReinforcementItem extends Item implements AdventureUsable {
         String keyName = doorEntity.getKeyName();
         return keyName != null && keyName.contains("reinforced:");
     }
-    
+
     /**
      * 设置门的加固状态
      */
@@ -213,9 +231,10 @@ public class ReinforcementItem extends Item implements AdventureUsable {
             }
         }
     }
-    
+
     /**
      * 消耗一次加固（被撬棍使用时调用）
+     * 
      * @return true 如果成功消耗了加固（门不会被破坏），false 如果没有加固
      */
     public static boolean consumeReinforcement(DoorBlockEntity doorEntity) {
@@ -225,10 +244,10 @@ public class ReinforcementItem extends Item implements AdventureUsable {
         }
         return false;
     }
-    
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         tooltip.add(Component.translatable("item.noellesroles.reinforcement.tooltip")
-            .withStyle(ChatFormatting.GRAY));
+                .withStyle(ChatFormatting.GRAY));
     }
 }
