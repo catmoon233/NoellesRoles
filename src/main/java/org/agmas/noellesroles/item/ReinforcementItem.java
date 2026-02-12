@@ -188,8 +188,8 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                 if (world instanceof ServerLevel ) {
                     TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
                             BuiltInRegistries.ITEM.getKey(this));
-                    // 只在客户端播放声音
                 }
+                // 只在客户端播放声音
                 if (world.isClientSide) {
                     world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
                             SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.5f, 1.5f);
