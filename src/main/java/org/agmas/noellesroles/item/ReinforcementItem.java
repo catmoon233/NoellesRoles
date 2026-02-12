@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
+import net.minecraft.server.level.ServerLevel;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
@@ -184,8 +185,10 @@ public class ReinforcementItem extends Item implements AdventureUsable {
 
                 // 加固门
                 setDoorReinforced(doorEntity, true);
-                TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
-                        BuiltInRegistries.ITEM.getKey(this));
+                if (world instanceof ServerLevel ) {
+                    TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
+                            BuiltInRegistries.ITEM.getKey(this));
+                }
                 // 只在客户端播放声音
                 if (world.isClientSide) {
                     world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
