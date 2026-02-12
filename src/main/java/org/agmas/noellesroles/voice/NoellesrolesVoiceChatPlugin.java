@@ -44,9 +44,9 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
                                         .equals(ModRoles.NOISEMAKER.identifier().getPath())) {
                                     player.level().players().forEach((p) -> {
                                         if (p.getUUID() != player.getUUID()) {
-                                            double rangeMultiplier = 1.25;
+                                            double rangeMultiplier = 2;
                                             if (player.getActiveEffectsMap().containsKey(MobEffects.LUCK)) {
-                                                rangeMultiplier = 6;
+                                                rangeMultiplier = 8;
                                             }
                                             if (player.distanceTo(p) <= api.getVoiceChatDistance() * rangeMultiplier) {
                                                 VoicechatConnection con = api.getConnectionOf(p.getUUID());

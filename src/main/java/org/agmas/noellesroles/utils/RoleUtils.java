@@ -98,8 +98,8 @@ public class RoleUtils {
         }
     }
 
-    public static void RemoveAllEffects(Player entity) {
-        entity.getActiveEffectsMap().clear();
+    public static boolean RemoveAllEffects(Player entity) {
+        return entity.removeAllEffects();
     }
 
     public static boolean isPlayerHasFreeSlot(@NotNull Player player) {
