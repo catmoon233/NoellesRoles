@@ -110,7 +110,7 @@ public abstract class PlayerResetMixin {
 
         // 清除傀儡师组件状态
         PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(player);
-        puppeteerComp.clearAll();
+        puppeteerComp.clear();
 
         // 清除记录员组件状态
         RecorderPlayerComponent recorderComp = ModComponents.RECORDER.get(player);
