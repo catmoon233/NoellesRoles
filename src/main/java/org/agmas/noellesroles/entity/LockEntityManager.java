@@ -1,12 +1,18 @@
 package org.agmas.noellesroles.entity;
 
+import dev.architectury.platform.Mod;
+import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.utils.BlockUtils;
+import org.agmas.noellesroles.utils.Pair;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * 锁实体管理器单例
@@ -17,6 +23,15 @@ import java.util.Stack;
  */
 public class LockEntityManager {
     private LockEntityManager() {
+        // 在此处添加锁实体影响的物品
+        canBeAffectedItems.add(TMMItems.KEY);
+        canBeAffectedItems.add(TMMItems.LOCKPICK);
+        canBeAffectedItems.add(ModItems.MASTER_KEY);
+        canBeAffectedItems.add(ModItems.MASTER_KEY_P);
+        // 在此处添加可以撬锁的物品
+        canBeUsedToUnLock.add(TMMItems.LOCKPICK);
+        canBeUsedToUnLock.add(ModItems.MASTER_KEY_P);
+
     };
 
     public static LockEntityManager getInstance() {
@@ -129,7 +144,97 @@ public class LockEntityManager {
         }
     }
 
+    /**
+     * 获取附近锁实体的位置
+     * <p>
+     *     - 优先查找当前位置（应为门的上半部分位置）是否有锁实体，没有的话再查找左右两边
+     * </p>
+     * @param checkPos  检查点位置
+     * @param world     当前世界
+     * @return 最近锁实体的位置
+     */
+    public BlockPos getNearByLockPos(BlockPos checkPos, Level world) {
+        BlockPos ans = null;
+        if(this.getLockEntity(checkPos) != null)
+        {
+            ans = checkPos;
+        }
+        else if (world.getBlockEntity(checkPos.below()) instanceof DoorBlockEntity entity) {
+            switch (entity.getFacing()) {
+                case NORTH:
+                case SOUTH:
+                    if (this.getLockEntity(checkPos.east()) != null)
+                        ans = checkPos.east();
+                    else if (this.getLockEntity(checkPos.west()) != null) {
+                        ans = checkPos.west();
+                    }
+                    break;
+                case EAST:
+                case WEST:
+                    if (this.getLockEntity(checkPos.north()) != null)
+                        ans = checkPos.north();
+                    else if (this.getLockEntity(checkPos.south()) != null) {
+                        ans = checkPos.south();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 使锁能锁门
+     * <p>
+     *     - 如果进行上锁，则会直接上锁：使乘客钥匙无效
+     *     - 如果解锁时门上仍然有锁则无法解锁
+     * </p>
+     */
+    public static void setDoorLocked(Level world, DoorBlockEntity doorEntity, boolean trapped) {
+        String currentKeyName = doorEntity.getKeyName();
+        if (currentKeyName == null) currentKeyName = "";
+
+        if (trapped) {
+            doorEntity.setKeyName(currentKeyName + "locked:");
+        } else {
+            if (LockEntityManager.getInstance().getLockEntity(
+                    LockEntityManager.getInstance().getNearByLockPos(doorEntity.getBlockPos().above(), world)) == null) {
+                doorEntity.setKeyName(currentKeyName.replace("locked:", ""));
+            }
+        }
+    }
+
+    /**
+     * 锁门及左右的门
+     * @param door      当前门实体
+     * @param world     当前世界
+     * @param trapped   是否锁门
+     */
+    public static void lockNearByDoors(DoorBlockEntity door, Level world, boolean trapped)
+    {
+        // 锁门：包括临近的门
+        Pair<DoorBlockEntity, DoorBlockEntity> nearByDoors = BlockUtils.getNeighbourDoor(door, world);
+        if (nearByDoors.first != null) {
+            LockEntityManager.setDoorLocked(world, nearByDoors.first, trapped);
+        }
+        if (nearByDoors.second != null) {
+            LockEntityManager.setDoorLocked(world, nearByDoors.second, trapped);
+        }
+        LockEntityManager.setDoorLocked(world, door, trapped);
+    }
+
+    public ArrayList<Item> getCanBeAffectedItems()
+    {
+        return canBeAffectedItems;
+    }
+    public ArrayList<Item> getCanBeUsedToUnLock()
+    {
+        return canBeUsedToUnLock;
+    }
     private static final LockEntityManager instance = new LockEntityManager();
     // 使用位置与锁列表对应：每个格子可以匹配多个锁实体
     private static final Map<Vec3i, Stack<LockEntity>> lockEntities = new HashMap<>();
+    private final ArrayList<Item> canBeAffectedItems = new ArrayList<>();
+    private final ArrayList<Item> canBeUsedToUnLock = new ArrayList<>();
 }

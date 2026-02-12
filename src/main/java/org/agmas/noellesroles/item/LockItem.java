@@ -1,20 +1,14 @@
 package org.agmas.noellesroles.item;
 
-import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
-import dev.doctor4t.trainmurdermystery.game.GameConstants;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.index.TMMEntities;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,15 +20,18 @@ import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
+import org.agmas.noellesroles.utils.BlockUtils;
+import org.agmas.noellesroles.utils.Pair;
 
 import java.util.List;
 
 /**
  * 门锁
+ * <p>
  * - 可以锁门来影响撬锁器的功能
  * - 可以被钥匙和万能钥匙打开，对撬棍无效
  * - 锁的强度由长度决定
- *
+ * </p>
  * TODO: 一扇门是否可以放置多个锁（暂时允许多个锁）
  */
 public class LockItem extends Item implements AdventureUsable {
@@ -76,8 +73,16 @@ public class LockItem extends Item implements AdventureUsable {
         if (!(entity instanceof DoorBlockEntity))
             entity = world.getBlockEntity(context.getClickedPos().below());
         Player player = context.getPlayer();
-        if (entity instanceof DoorBlockEntity door && !door.isBlasted() && player != null) {
-            // 判定玩家点击的方向：只运行在门的正反面点击
+        if (entity instanceof DoorBlockEntity door && player != null) {
+            // 检查门是否已被破坏
+            if (door.isBlasted()) {
+                if (!world.isClientSide) {
+                    player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_broken")
+                            .withStyle(ChatFormatting.RED), true);
+                }
+                return InteractionResult.FAIL;
+            }
+            // 判定玩家点击的方向：只允许在门的正反面点击
             Direction clickedFace = context.getClickedFace();
             Direction doorFacing = door.getFacing();
             if (clickedFace != doorFacing && clickedFace != doorFacing.getOpposite()) {
@@ -106,7 +111,8 @@ public class LockItem extends Item implements AdventureUsable {
                     // 添加锁成功且非创造模式：消耗门锁
                     player.getItemInHand(context.getHand()).shrink(1);
                 }
-
+                // 锁门：包括临近的门
+                LockEntityManager.lockNearByDoors(door, world, true);
                 return InteractionResult.SUCCESS;
             }
         }
