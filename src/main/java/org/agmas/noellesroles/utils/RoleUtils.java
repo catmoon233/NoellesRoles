@@ -98,6 +98,10 @@ public class RoleUtils {
         }
     }
 
+    public static void RemoveAllEffects(Player entity) {
+        entity.getActiveEffectsMap().clear();
+    }
+
     public static boolean isPlayerHasFreeSlot(@NotNull Player player) {
         for (int i = 0; i < 9; ++i) {
             ItemStack stack = player.getInventory().getItem(i);

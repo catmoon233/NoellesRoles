@@ -7,6 +7,7 @@ import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -59,6 +60,10 @@ public abstract class PlayerResetMixin {
     }
 
     private static void clearAllComponents(ServerPlayer player) {
+        RoleUtils.RemoveAllPlayerAttributes(player);
+        RoleUtils.RemoveAllEffects(player);
+
+
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
         InControlCCA inControlCCA = InControlCCA.KEY.get(player);
