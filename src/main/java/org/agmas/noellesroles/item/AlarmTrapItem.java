@@ -74,9 +74,12 @@ public class AlarmTrapItem extends Item implements AdventureUsable {
 
                 // 放置警报陷阱
                 setDoorAlarmTrap(doorEntity, true);
-                TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
-                        BuiltInRegistries.ITEM.getKey(this));
+
+
                 if (!world.isClientSide) {
+                    TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
+                            BuiltInRegistries.ITEM.getKey(this));
+
                     world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
                             SoundEvents.TRIPWIRE_ATTACH, SoundSource.BLOCKS, 0.7f, 1.2f);
                     player.displayClientMessage(Component.translatable("message.noellesroles.engineer.trap_placed")
