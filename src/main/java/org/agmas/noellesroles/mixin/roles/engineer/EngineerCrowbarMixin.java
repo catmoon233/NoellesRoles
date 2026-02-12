@@ -57,7 +57,7 @@ public class EngineerCrowbarMixin {
                 
                 // 仍然消耗冷却时间
                 if (!player.isCreative()) {
-                    player.getCooldowns().addCooldown(context.getItemInHand().getItem(), 600);
+                    player.getCooldowns().addCooldown(context.getItemInHand().getItem(), 1200);
                 }
                 
                 // 取消原版行为（门不会被破坏）
