@@ -114,7 +114,7 @@ public class AlarmTrapItem extends Item implements AdventureUsable {
 
         if (trapped) {
             if (!hasDoorAlarmTrap(doorEntity)) {
-                doorEntity.setKeyName(currentKeyName + "alarmed:");
+                doorEntity.setKeyName("alarmed:" + currentKeyName);
             }
         } else {
             if (hasDoorAlarmTrap(doorEntity)) {
