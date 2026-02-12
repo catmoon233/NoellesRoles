@@ -10,6 +10,8 @@
     "EntityClear",
     "MasterKeyDoorMixin",
     "PlayerResetMixin",
+    "ShitExposureMixin",
+    "ShitExposurePatreonMixin",
     "SpawnMixin",
     "accessor.PlayerPoisonComponentAccessor",
     "roles.ConspiratorPlayerMixin",
@@ -19,6 +21,7 @@
     "roles.broadcaster.BroadcasterDeathMixin",
     "roles.coroner.CoronerAddDeathReasonMixin",
     "roles.elf.ArrowMixin",
+    "roles.elf.BowMixin",
     "roles.engineer.EngineerCrowbarMixin",
     "roles.engineer.LockMixin",
     "roles.executioner.ExecutionerConfirmMixin",
@@ -52,9 +55,7 @@
     "roles.thief.ThiefsHonorMixin",
     "roles.veteran.VeteranKnifeLeftClickMixin",
     "roles.veteran.VeteranKnifeMixin",
-    "roles.voodoo.VoodooVooMixin",
-    "ShitExposureMixin",
-    "ShitExposurePatreonMixin"
+    "roles.voodoo.VoodooVooMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -63,7 +64,6 @@
     "client.AvengerHudMixin",
     "client.BomberHudMixin",
     "client.BoxerHudMixin",
-    "client.morphling.SPClientTick",
     "client.ConspiratorHudMixin",
     "client.DetectiveHudMixin",
     "client.EngineerHudMixin",
@@ -105,6 +105,7 @@
     "client.morphling.MorphlingRendererMixin",
     "client.morphling.MorphlingRoleNameRendererMixin",
     "client.morphling.MorphlingScreenMixin",
+    "client.morphling.SPClientTick",
     "client.nianshou.NianShouHudMixin",
     "client.phantom.PhantomHudMixin",
     "client.phantom.PhantomRattatoulieMixin",
