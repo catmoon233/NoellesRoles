@@ -74,8 +74,8 @@ public class EngineerCrowbarMixin {
                     BlockPos lockEntityPos = (LockEntityManager.getInstance()
                             .getNearByLockPos(door.getBlockPos().above(), world));
                     if (lockEntityPos != null) {
-                        LockEntityManager.setDoorLocked(world, door, false);
                         LockEntityManager.getInstance().removeLockEntity(lockEntityPos);
+                        LockEntityManager.setDoorLocked(world, door, false);
                     }
                 }
             }
