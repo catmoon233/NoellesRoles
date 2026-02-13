@@ -121,9 +121,6 @@ public class InstinctRenderer {
                         && TMMClient.isPlayerAliveAndInSurvival()) {
                     return -2;
                 }
-                if (gameWorldComponent.isRole(target_player, ModRoles.NIAN_SHOU)) {
-                    return (Color.GREEN.getRGB());
-                }
                 if (gameWorldComponent.isRole(self, ModRoles.RECORDER)) {
                     if (target instanceof Player targetPlayer) {
                         if (targetPlayer == self)
@@ -176,7 +173,9 @@ public class InstinctRenderer {
                         && TMMClient.isPlayerAliveAndInSurvival()) {
                     return (ModRoles.POSTMAN.color());
                 }
-
+                if (gameWorldComponent.isRole(target_player, ModRoles.NIAN_SHOU)) {
+                    return (Color.GREEN.getRGB());
+                }
             }
 
             return -1;
