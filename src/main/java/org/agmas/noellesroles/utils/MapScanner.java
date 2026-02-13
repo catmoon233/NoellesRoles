@@ -6,8 +6,10 @@ import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block.FoodPlatterBlock;
+import dev.doctor4t.trainmurdermystery.block.MountableBlock;
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block.SprinklerBlock;
+import dev.doctor4t.trainmurdermystery.block.ToiletBlock;
 import dev.doctor4t.trainmurdermystery.block.TrimmedBedBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
@@ -60,8 +62,9 @@ public class MapScanner {
                     if (blockState.is(BlockTags.AIR))
                         continue;
                     // blockCounts++;
-
-                    if (blockState.is(Blocks.BLACK_CONCRETE)) {
+                    if (blockState.is(Blocks.NOTE_BLOCK)) {
+                        GameFunctions.taskBlocks.put(blockPos6, 10);
+                    } else if (blockState.is(Blocks.BLACK_CONCRETE)) {
                         BlockPos blockPos7 = new BlockPos(m, l + 1, k);
                         var blockState2 = localLevel.getBlockState(blockPos7);
                         if (blockState2.is(BlockTags.WOOL_CARPETS) || blockState2.is(BlockTags.AIR)) {
@@ -69,7 +72,10 @@ public class MapScanner {
                         }
                     } else if (blockState.getBlock() instanceof TrimmedBedBlock) {
                         GameFunctions.taskBlocks.put(blockPos6, 4);
-                        // 暂时忽略
+                    } else if (blockState.getBlock() instanceof ToiletBlock) {
+                        GameFunctions.taskBlocks.put(blockPos6, 8);
+                    } else if (blockState.getBlock() instanceof MountableBlock) {
+                        GameFunctions.taskBlocks.put(blockPos6, 9);
                     } else if (blockState.getBlock() instanceof SmallDoorBlock
                             && blockState.getValue(SmallDoorBlock.HALF).equals(DoubleBlockHalf.LOWER)) {
                         if (localLevel.getBlockEntity(blockPos6) instanceof SmallDoorBlockEntity entity) {
