@@ -60,7 +60,7 @@ public abstract class MonitorHudMixin {
         int textWidth = getFont().width(text);
 
         // 右下角显示，留出一些边距
-        int x = screenWidth - 10;
+        int x = screenWidth - 20;
         int y = screenHeight - 30;
         if (target != null) {
             var player = client.level.getPlayerByUUID(target);
