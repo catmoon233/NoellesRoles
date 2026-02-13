@@ -3,11 +3,14 @@ package org.agmas.noellesroles.mixin.client;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.client.Minecraft;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+
+import java.util.UUID;
 
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
@@ -28,7 +31,8 @@ public abstract class MonitorHudMixin {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null)
             return;
-        if(client.player.isSpectator()) return;
+        if (client.player.isSpectator())
+            return;
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
         if (!gameWorld.isRole(client.player, ModRoles.MONITOR))
@@ -37,6 +41,7 @@ public abstract class MonitorHudMixin {
             return;
 
         MonitorPlayerComponent monitorComponent = MonitorPlayerComponent.KEY.get(client.player);
+        UUID target = monitorComponent.markedTarget;
 
         Component text;
         int color;
@@ -55,9 +60,22 @@ public abstract class MonitorHudMixin {
         int textWidth = getFont().width(text);
 
         // 右下角显示，留出一些边距
-        int x = screenWidth - textWidth - 10;
-        int y = screenHeight - 20;
+        int x = screenWidth - 10;
+        int y = screenHeight - 30;
+        if (target != null) {
+            var player = client.level.getPlayerByUUID(target);
+            var player_text = Component.translatable("gui.noellesroles.monitor.target_not_found")
+                    .withStyle(ChatFormatting.YELLOW);
+            if (player != null) {
+                Component display_player = player.getDisplayName();
+                player_text = Component
+                        .translatable("gui.noellesroles.monitor.target",
+                                Component.literal("").append(display_player).withStyle(ChatFormatting.GOLD))
+                        .withStyle(ChatFormatting.AQUA);
+            }
+            context.drawString(getFont(), player_text, x - getFont().width(player_text), y - 20, 0xffffff);
 
-        context.drawString(getFont(), text, x, y, color);
+        }
+        context.drawString(getFont(), text, x - textWidth, y, color);
     }
 }
