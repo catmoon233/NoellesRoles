@@ -189,10 +189,13 @@ public class TaskBlockOverlayRenderer {
                         break;
                     case TOILET:
                         shouldDisplay[8] = true;
+                        break;
                     case CHAIR:
                         shouldDisplay[9] = true;
+                        break;
                     case NOTE_BLOCK:
                         shouldDisplay[10] = true;
+                        break;
                     default:
                         break;
 
