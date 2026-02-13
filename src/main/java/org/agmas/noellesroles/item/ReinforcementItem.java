@@ -185,7 +185,7 @@ public class ReinforcementItem extends Item implements AdventureUsable {
 
                 // 加固门
                 setDoorReinforced(doorEntity, true);
-                if (world instanceof ServerLevel ) {
+                if (world instanceof ServerLevel) {
                     TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
                             BuiltInRegistries.ITEM.getKey(this));
                 }
