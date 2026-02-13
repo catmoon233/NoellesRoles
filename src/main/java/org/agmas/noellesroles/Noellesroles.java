@@ -857,7 +857,7 @@ public class Noellesroles implements ModInitializer {
         // 退伍军人商店
         {
             VETERAN_SHOP.add(new ShopEntry(
-                    ModItems.SP_KNIFE.getDefaultInstance(),
+                    TMMItems.KNIFE.getDefaultInstance(),
                     250,
                     ShopEntry.Type.WEAPON));
             ShopContent.customEntries.put(

@@ -1018,7 +1018,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             veteranComponent.reset();
 
             // 给予一把刀
-            player.addItem(new ItemStack(ModItems.SP_KNIFE));
+            player.addItem(new ItemStack(TMMItems.KNIFE));
         }
 
         // ==================== 歌手角色处理 ====================
