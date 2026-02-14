@@ -54,7 +54,7 @@ public class LootCommand {
             return 1;
         }
         catch (Exception e) {
-            Noellesroles.LOGGER.error("Failed to send checkPacket\n", e);
+            Noellesroles.LOGGER.error("[LootSys] Failed to send checkPacket\n", e);
             return 0;
         }
     }

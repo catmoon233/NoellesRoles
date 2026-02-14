@@ -16,7 +16,7 @@ public class LootInfoScreen extends AbstractPixelScreen {
     @Override
     protected void init(){
         super.init();
-
+        // TODO : 完善前端UI
         startBtnPosX = centerX - startBtnSizeX / 2;
         startBtnPosY = centerY - startBtnSizeY / 2;
 
