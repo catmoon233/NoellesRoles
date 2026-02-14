@@ -181,7 +181,7 @@
   "announcement.role.illusionist": "Illusionist",
   "announcement.goals.illusionist": "Use illusion bottles to disrupt enemies' vision!",
   "item.noellesroles.hallucination_bottle": "Illusion Bottle",
-  "message.noellesroles.loot.limit": "Lottery chance is not enough",
+  "message.noellesroles.loot.limit": "Lottery chance is not enough Or PoolId : %d is not found",
   "screen.noellesroles.conspirator.prev_page": "Previous Page",
   "screen.noellesroles.conspirator.next_page": "Next Page",
   "screen.noellesroles.conspirator.page_info": "Page %s / %s",

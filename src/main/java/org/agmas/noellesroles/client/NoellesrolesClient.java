@@ -32,14 +32,17 @@ import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
-import org.agmas.noellesroles.packet.LootInfoScreenS2CPacket;
-import org.agmas.noellesroles.packet.LootResultS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
 import org.agmas.noellesroles.packet.OpenIntroPayload;
 import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.lottery.LotteryManager;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
 
@@ -69,14 +72,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
 import walksy.crosshairaddons.CrosshairAddons;
@@ -230,17 +231,42 @@ public class NoellesrolesClient implements ClientModInitializer {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
-                    client.setScreen(new LootScreen(payload.ansID()));
+                    client.setScreen(new LootScreen(payload.poolID(), payload.quality(), payload.ansID()));
                 }
             });
         });
-        // 注册抽奖界面网络包处理：接收服务器奖池信息并显示界面
-        ClientPlayNetworking.registerGlobalReceiver(LootInfoScreenS2CPacket.ID, (payload, context) -> {
+        // 检查卡池信息是否缺失，如果不缺失则打开卡池界面，否则请求
+        ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoCheckS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
-                if (client.player != null) {
-                    client.setScreen(new LootInfoScreen());
+                List<Integer> requestPoolIDs = new ArrayList<>();
+                for(Integer poolID : payload.poolIDs())
+                {
+                    if (LotteryManager.getInstance().getLotteryPool(poolID) == null)
+                        requestPoolIDs.add(poolID);
                 }
+                if(requestPoolIDs.isEmpty() && client.player != null)
+                        client.setScreen(new LootInfoScreen());
+                else
+                {
+                    // 缺失卡池信息，向服务器请求缺失的卡池信息
+                    ClientPlayNetworking.send(new LootPoolsInfoRequestC2SPacket(requestPoolIDs));
+                }
+            });
+        });
+        // 注册抽奖界面网络包处理：接收并保存服务器卡池信息并显示界面
+        ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoS2CPacket.ID, (payload, context) -> {
+            List<LotteryManager.LotteryPool> missingPools = new ArrayList<>();
+            for (LotteryManager.LotteryPool lotteryPool : payload.pools()) {
+                if (LotteryManager.getInstance().getLotteryPool(lotteryPool.getPoolID()) == null)
+                    LotteryManager.getInstance().addLotteryPool(lotteryPool);
+                else
+                    LotteryManager.getInstance().setLotteryPoolByID(lotteryPool.getPoolID(), lotteryPool);
+            }
+            final var client = context.client();
+            client.execute(() -> {
+                if(client.player != null)
+                    client.setScreen(new LootInfoScreen());
             });
         });
 

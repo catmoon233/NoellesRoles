@@ -50,6 +50,9 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.entity.EntityTypeTest;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
 import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
@@ -948,7 +951,8 @@ public class Noellesroles implements ModInitializer {
 
         // 注册抽奖网络包
         PayloadTypeRegistry.playS2C().register(LootResultS2CPacket.ID, LootResultS2CPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(LootInfoScreenS2CPacket.ID, LootInfoScreenS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(LootPoolsInfoCheckS2CPacket.ID, LootPoolsInfoCheckS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(LootPoolsInfoS2CPacket.ID, LootPoolsInfoS2CPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {
