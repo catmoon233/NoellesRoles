@@ -144,7 +144,9 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
         ItemStack offHand = client.player.getItemInHand(InteractionHand.OFF_HAND);
 
         if (mainHand.is(ModItems.CONSPIRACY_PAGE) || offHand.is(ModItems.CONSPIRACY_PAGE)) {
-            client.setScreen(new ConspiratorScreen());
+            client.execute(() -> {
+                client.setScreen(new ConspiratorScreen());
+            });
         }
     }
 
@@ -501,7 +503,9 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
         }
         // 赌徒：打开GUI
         if (gameWorld.isRole(client.player, ModRoles.GAMBLER)) {
-            client.setScreen(new GamblerScreen(client.player));
+            client.execute(() -> {
+                client.setScreen(new GamblerScreen(client.player));
+            });
             return true;
         }
 

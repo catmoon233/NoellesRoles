@@ -240,15 +240,13 @@ public class NoellesrolesClient implements ClientModInitializer {
             final var client = context.client();
             client.execute(() -> {
                 List<Integer> requestPoolIDs = new ArrayList<>();
-                for(Integer poolID : payload.poolIDs())
-                {
+                for (Integer poolID : payload.poolIDs()) {
                     if (LotteryManager.getInstance().getLotteryPool(poolID) == null)
                         requestPoolIDs.add(poolID);
                 }
-                if(requestPoolIDs.isEmpty() && client.player != null)
-                        client.setScreen(new LootInfoScreen());
-                else
-                {
+                if (requestPoolIDs.isEmpty() && client.player != null)
+                    client.setScreen(new LootInfoScreen());
+                else {
                     // 缺失卡池信息，向服务器请求缺失的卡池信息
                     ClientPlayNetworking.send(new LootPoolsInfoRequestC2SPacket(requestPoolIDs));
                 }
@@ -265,7 +263,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             }
             final var client = context.client();
             client.execute(() -> {
-                if(client.player != null)
+                if (client.player != null)
                     client.setScreen(new LootInfoScreen());
             });
         });
@@ -349,7 +347,9 @@ public class NoellesrolesClient implements ClientModInitializer {
                 } else if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BROADCASTER)) {
                     if (!isPlayerInAdventureMode(client.player))
                         return;
-                    client.setScreen(new BroadcasterScreen());
+                    client.execute(() -> {
+                        client.setScreen(new BroadcasterScreen());
+                    });
                     return;
                 }
                 ClientPlayNetworking.send(new AbilityC2SPacket());
