@@ -9,6 +9,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
+
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PatrollerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
@@ -21,29 +24,46 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_ANGLE;
 import static org.agmas.noellesroles.component.AdmirerPlayerComponent.GAZE_DISTANCE;
 
+import org.agmas.harpymodloader.component.WorldModifierComponent;
+
 @Mixin(GameFunctions.class)
 public class PatrollerKillMixin {
 
     @Inject(method = "killPlayer(Lnet/minecraft/world/entity/player/Player;ZLnet/minecraft/world/entity/player/Player;Lnet/minecraft/resources/ResourceLocation;)V", at = @At("HEAD"))
-    private static void onKillPlayer(Player victim, boolean spawnBody, Player killer, ResourceLocation deathReason, CallbackInfo ci) {
-        if (victim == null || victim.level().isClientSide()) return;
+    private static void onKillPlayer(Player victim, boolean spawnBody, Player killer, ResourceLocation deathReason,
+            CallbackInfo ci) {
+        if (victim == null || victim.level().isClientSide())
+            return;
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(victim.level());
-        if (gameWorld == null || !gameWorld.isRunning()) return;
+        WorldModifierComponent modifierComponent = WorldModifierComponent.KEY.get(victim.level());
+        if (gameWorld == null || !gameWorld.isRunning())
+            return;
 
         // 遍历所有玩家，查找附近的巡警
         for (Player player : victim.level().players()) {
             // 排除受害者自己（虽然巡警死了也不能触发能力，但以防万一）
-            if (player.equals(victim)) continue;
-
-            // 检查是否存活
-            if (!GameFunctions.isPlayerAliveAndSurvival(player)) continue;
-
+            if (player.equals(victim))
+                continue;
             // 检查是否是巡警
-            if (!gameWorld.isRole(player, ModRoles.PATROLLER)) continue;
+            if (!gameWorld.isRole(player, ModRoles.PATROLLER))
+                continue;
+            
+            // 检查是否存活
+            if (modifierComponent != null && modifierComponent.isModifier(player, SEModifiers.SPLIT_PERSONALITY)) {
+                var splc = SplitPersonalityComponent.KEY.get(player);
+                if (splc != null) {
+                    if (splc.isDeath())
+                        continue;
+                }
+            } else {
+                if (!GameFunctions.isPlayerAliveAndSurvival(player))
+                    continue;
+            }
 
             // 检查距离（50格内）
-            if (player.distanceToSqr(victim) > 50 * 50 || !isBoundTargetVisible(victim, player)) continue;
+            if (player.distanceToSqr(victim) > 50 * 50 || !isBoundTargetVisible(victim, player))
+                continue;
 
             if (player.hasLineOfSight(victim)) {
                 PatrollerPlayerComponent patrollerComponent = ModComponents.PATROLLER.get(player);
