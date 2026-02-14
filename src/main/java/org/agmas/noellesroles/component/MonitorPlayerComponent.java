@@ -1,9 +1,12 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
@@ -92,6 +95,17 @@ public class MonitorPlayerComponent implements RoleComponent, ServerTickingCompo
                 if (targetPlayer == null || !GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
                     // 目标不存在或已死亡，清除标记
                     this.markedTarget = null;
+                    Component targetPlayerName = Component.translatable("gui.noellesroles.monitor.unknown");
+                    if (targetPlayer != null) {
+                        targetPlayerName = targetPlayer.getDisplayName();
+                    }
+                    this.player.displayClientMessage(
+                            Component
+                                    .translatable("gui.noellesroles.monitor.target_died",
+                                            Component.literal("").append(targetPlayerName)
+                                                    .withStyle(ChatFormatting.GOLD))
+                                    .withStyle(ChatFormatting.RED),
+                            true);
                     this.sync();
                 }
             }

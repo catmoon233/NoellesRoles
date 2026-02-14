@@ -109,6 +109,10 @@ public class NoellesrolesClient implements ClientModInitializer {
      * 4: 床
      * 5: 跑步机
      * 6: 讲台
+     * 7: 门
+     * 8: 马桶
+     * 9: 椅子（包括马桶）
+     * 10: 音符盒
      */
     public static HashMap<BlockPos, Integer> taskBlocks = new HashMap<>();
     public static int scanTaskPointsCountDown = -1;

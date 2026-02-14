@@ -297,7 +297,7 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
                                             .translatable("message.noellesroles.conspirator.killed",
                                                     targetInfo.targetName)
                                             .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
-                                    false);
+                                    true);
                         }
                     }
 

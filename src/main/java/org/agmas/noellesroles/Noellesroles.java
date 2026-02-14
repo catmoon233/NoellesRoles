@@ -82,6 +82,7 @@ import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.repack.HSRSounds;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
+import org.agmas.noellesroles.utils.EntityClearUtils;
 import org.agmas.noellesroles.utils.MapScanner;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
@@ -859,7 +860,7 @@ public class Noellesroles implements ModInitializer {
         // 退伍军人商店
         {
             VETERAN_SHOP.add(new ShopEntry(
-                    ModItems.SP_KNIFE.getDefaultInstance(),
+                    TMMItems.KNIFE.getDefaultInstance(),
                     250,
                     ShopEntry.Type.WEAPON));
             ShopContent.customEntries.put(
@@ -960,6 +961,7 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+        EntityClearUtils.registerResetEvent();
         TMM.cantSendReplay.add(player -> {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(player);
             if (component != null) {
@@ -1865,7 +1867,12 @@ public class Noellesroles implements ModInitializer {
                             .get(context.player());
                     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(context.player().level());
                     PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
-
+                    if (!GameFunctions.isPlayerAliveAndSurvival(context.player())) {
+                        context.player().displayClientMessage(
+                                Component.translatable("message.noellesroles.fuck_death_send"),
+                                true);
+                        return;
+                    }
                     if (gameWorldComponent.isRole(context.player(), ModRoles.BROADCASTER)) {
 
                         BroadcasterPlayerComponent comp = BroadcasterPlayerComponent.KEY.get(context.player());

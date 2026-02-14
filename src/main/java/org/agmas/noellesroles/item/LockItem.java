@@ -1,10 +1,12 @@
 package org.agmas.noellesroles.item;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -77,11 +79,21 @@ public class LockItem extends Item implements AdventureUsable {
             // 检查门是否已被破坏
             if (door.isBlasted()) {
                 if (!world.isClientSide) {
-                    player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_broken")
+                    player.displayClientMessage(
+                            Component.translatable("message.noellesroles.engineer.already_broken_lock")
+                                    .withStyle(ChatFormatting.RED),
+                            true);
+                }
+                return InteractionResult.FAIL;
+            }
+            if (LockEntityManager.isDoorLocked(door)) {
+                if (!world.isClientSide) {
+                    player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_locked")
                             .withStyle(ChatFormatting.RED), true);
                 }
                 return InteractionResult.FAIL;
             }
+
             // 判定玩家点击的方向：只允许在门的正反面点击
             Direction clickedFace = context.getClickedFace();
             Direction doorFacing = door.getFacing();
@@ -91,7 +103,6 @@ public class LockItem extends Item implements AdventureUsable {
 
             world.playSound(null, context.getClickedPos(), TMMSounds.BLOCK_DOOR_LOCKED, SoundSource.BLOCKS, 1f, 1f);
             player.swing(InteractionHand.MAIN_HAND, true);
-
             // 将锁添加到世界中
             if (!world.isClientSide) {
                 LockEntity lockEntity = new LockEntity(ModEntities.LOCK_ENTITY, world, length);
@@ -105,8 +116,8 @@ public class LockItem extends Item implements AdventureUsable {
                 if (!player.isCreative()) {
                     // 回放记录
                     // if (TMM.REPLAY_MANAGER != null) {
-                    // TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
-                    // BuiltInRegistries.ITEM.getKey(this));
+                    TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
+                            BuiltInRegistries.ITEM.getKey(this));
                     // }
                     // 添加锁成功且非创造模式：消耗门锁
                     player.getItemInHand(context.getHand()).shrink(1);

@@ -7,6 +7,7 @@ import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,7 +37,7 @@ public abstract class PlayerResetMixin {
     @Inject(method = "resetPlayer", at = @At("TAIL"))
     private static void clearAllComponentsOnReset(ServerPlayer player, CallbackInfo ci) {
         // 清除跟踪者组件状态
-        // clearAllComponents(player);
+        clearAllComponents(player);
         if (ModComponents.DEFIBRILLATOR.get(player) != null) {
             ModComponents.DEFIBRILLATOR.get(player).clear();
         }
@@ -59,6 +60,10 @@ public abstract class PlayerResetMixin {
     }
 
     private static void clearAllComponents(ServerPlayer player) {
+        RoleUtils.RemoveAllPlayerAttributes(player);
+        RoleUtils.RemoveAllEffects(player);
+
+
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
         InControlCCA inControlCCA = InControlCCA.KEY.get(player);
@@ -68,11 +73,11 @@ public abstract class PlayerResetMixin {
         manipulatorComp.clear();
         // 清除惩罚组件状态
         DeathPenaltyComponent deathPenalty = ModComponents.DEATH_PENALTY.get(player);
-        deathPenalty.clearAll();
+        deathPenalty.clear();
 
         // 清除慕恋者组件状态
         AdmirerPlayerComponent admirerComp = ModComponents.ADMIRER.get(player);
-        admirerComp.clearAll();
+        admirerComp.clear();
 
         // 清除其他自定义组件状态
         NoellesRolesAbilityPlayerComponent abilityComp = ModComponents.ABILITY.get(player);
@@ -110,7 +115,7 @@ public abstract class PlayerResetMixin {
 
         // 清除傀儡师组件状态
         PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(player);
-        puppeteerComp.clearAll();
+        puppeteerComp.clear();
 
         // 清除记录员组件状态
         RecorderPlayerComponent recorderComp = ModComponents.RECORDER.get(player);
