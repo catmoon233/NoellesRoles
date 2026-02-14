@@ -8,6 +8,7 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.role.ModRoles;
 
 import pro.fazeclan.river.stupid_express.StupidExpress;
+import pro.fazeclan.river.stupid_express.constants.SERoles;
 
 public class InitModRolesMax {
     public static int SPLIT_PERSONALITY_CHANCE = 10; // 10 in 100
@@ -65,6 +66,12 @@ public class InitModRolesMax {
                 Harpymodloader.setRoleMaximum(ModRoles.VULTURE, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.VULTURE, 0);
+            }
+            // 纵火犯数量
+            if (players_count >= 12) {
+                Harpymodloader.setRoleMaximum(SERoles.ARSONIST, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(SERoles.ARSONIST, 0);
             }
             // 特殊警卫数量
             {
