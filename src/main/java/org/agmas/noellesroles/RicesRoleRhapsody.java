@@ -7,7 +7,6 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -20,7 +19,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -28,15 +26,19 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.*;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootRequestC2SPacket;
+import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.screen.DetectiveInspectScreenHandler;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
 import org.agmas.noellesroles.screen.PostmanScreenHandler;
-import org.agmas.noellesroles.utils.BlockUtils;
-import org.agmas.noellesroles.utils.LotteryManager;
 import org.agmas.noellesroles.utils.Pair;
+import org.agmas.noellesroles.utils.lottery.LotteryManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.agmas.noellesroles.Noellesroles.LOGGER;
 import static org.agmas.noellesroles.Noellesroles.MOD_ID;
@@ -76,6 +78,7 @@ public class RicesRoleRhapsody implements ModInitializer {
 
     public static final CustomPacketPayload.Type<LockGameC2Packet> LOCK_GAME_PACKET = LockGameC2Packet.ID;
     public static final CustomPacketPayload.Type<LootRequestC2SPacket> LOOT_REQUIRE_PACKET = LootRequestC2SPacket.ID;
+    public static final CustomPacketPayload.Type<LootPoolsInfoRequestC2SPacket> LOOT_POOLS_INFO_REQUEST_PACKET = LootPoolsInfoRequestC2SPacket.ID;
 
     @Override
     public void onInitialize() {
@@ -261,6 +264,8 @@ public class RicesRoleRhapsody implements ModInitializer {
         // 注册撬锁小游戏完成包
         PayloadTypeRegistry.playC2S().register(LockGameC2Packet.ID, LockGameC2Packet.CODEC);
 
+        // 注册卡池信息请求包
+        PayloadTypeRegistry.playC2S().register(LootPoolsInfoRequestC2SPacket.ID, LootPoolsInfoRequestC2SPacket.CODEC);
         // 注册抽奖请求包
         PayloadTypeRegistry.playC2S().register(LootRequestC2SPacket.ID, LootRequestC2SPacket.CODEC);
 
@@ -809,24 +814,36 @@ public class RicesRoleRhapsody implements ModInitializer {
             }
         });
 
+        // 处理卡池信息请求包：返回缺失的卡池
+        ServerPlayNetworking.registerGlobalReceiver(LOOT_POOLS_INFO_REQUEST_PACKET, (payload, context) -> {
+            List<LotteryManager.LotteryPool> missingPools = new ArrayList<>();
+            for (int poolID : payload.poolIds())
+            {
+                LotteryManager.LotteryPool lotteryPool = LotteryManager.getInstance().getLotteryPool(poolID);
+                if(lotteryPool != null)
+                    missingPools.add(lotteryPool);
+            }
+            ServerPlayNetworking.send(context.player(), new LootPoolsInfoS2CPacket(missingPools));
+        });
+
         // 处理抽奖请求包
         ServerPlayNetworking.registerGlobalReceiver(LOOT_REQUIRE_PACKET, (payload, context)->{
            ServerPlayer player = context.player();
             if (player == null)
                 return;
-            if(LotteryManager.getInstance().canRoll(player))
+            if(LotteryManager.getInstance().getLotteryPool(payload.poolID()) != null && LotteryManager.getInstance().canRoll(player))
             {
-                int rollID = LotteryManager.getInstance().rollOnce(player);
-                if(rollID != -1)
+                Pair<Integer, Integer> rollID = LotteryManager.getInstance().getLotteryPool(payload.poolID()).rollOnce(player);
+                if(rollID.first != -1)
                 {
-                    ServerPlayNetworking.send(player, new LootResultS2CPacket(rollID));
-                    // 抽一次减一次
+                    ServerPlayNetworking.send(player, new LootResultS2CPacket(payload.poolID(), rollID.first, rollID.second));
+                    // 抽一次减一次抽奖机会
                     LotteryManager.getInstance().addOrDegreeLotteryChance(player, -1);
                 }
             }
             else {
-                // 抽奖次数 = 0 限制
-                player.sendSystemMessage(Component.translatable("message.noellesroles.loot.limit"));
+                // 抽奖次数 = 0 或 卡池是否存在 限制
+                player.sendSystemMessage(Component.translatable("message.noellesroles.loot.limit", payload.poolID()));
             }
         });
     }

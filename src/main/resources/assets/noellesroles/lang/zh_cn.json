@@ -182,7 +182,7 @@
   "announcement.role.illusionist": "迷幻师",
   "announcement.goals.illusionist": "使用迷幻瓶扰乱敌人的视野！",
   "item.noellesroles.hallucination_bottle": "迷幻瓶",
-  "message.noellesroles.loot.limit": "抽奖次数不足",
+  "message.noellesroles.loot.limit": "抽奖次数不足或者抽奖 id : %d不存在",
   "screen.noellesroles.conspirator.prev_page": "上一页",
   "screen.noellesroles.conspirator.next_page": "下一页",
   "screen.noellesroles.conspirator.page_info": "第 %s / %s 页",

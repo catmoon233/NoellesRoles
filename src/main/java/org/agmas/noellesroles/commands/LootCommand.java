@@ -8,11 +8,9 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import org.agmas.noellesroles.packet.LootInfoScreenS2CPacket;
-import org.agmas.noellesroles.packet.LootResultS2CPacket;
-import org.agmas.noellesroles.utils.LotteryManager;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
+import org.agmas.noellesroles.utils.lottery.LotteryManager;
 
 import java.util.Collection;
 
@@ -48,7 +46,9 @@ public class LootCommand {
         if (player == null)
             return 0;
         // 发送抽奖信息包
-        ServerPlayNetworking.send(player, new LootInfoScreenS2CPacket());
+        ServerPlayNetworking.send(player, new LootPoolsInfoCheckS2CPacket(
+                LotteryManager.getInstance().getPoolIDs()
+        ));
         return 1;
     }
     protected static int addOrDegreeChance(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

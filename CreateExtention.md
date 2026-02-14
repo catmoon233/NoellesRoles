@@ -44,7 +44,7 @@
 
 ### 定义网络包
 
-在packet下创建___C2Packets.java类继承CustomPacketPayload作为网络包包含：
+在packet下创建___C2Packets.java(或S2C)类继承CustomPacketPayload作为网络包包含：
 
 - 网络包的唯一标识符ResourcesLocatiom
 - 网络包类型标识符
@@ -54,8 +54,15 @@
 
 ### 注册网络包
 
+对于C2S网络包
+
 - 在模组初始化调用registerPackets函数中注册网络包
-- 随后对该网络包进行处理
+- 并且对该网络包进行处理
+
+对于S2C网络包
+
+- 在registerPackets1中进行注册
+- 在Client主类中进行处理
 
 ## 创建GUI
 

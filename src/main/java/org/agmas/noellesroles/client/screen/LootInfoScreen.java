@@ -3,7 +3,7 @@ package org.agmas.noellesroles.client.screen;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import org.agmas.noellesroles.packet.LootRequestC2SPacket;
+import org.agmas.noellesroles.packet.Loot.LootRequestC2SPacket;
 
 /**
  * 抽奖信息页
@@ -23,8 +23,9 @@ public class LootInfoScreen extends AbstractPixelScreen {
          startBtn = Button.builder(
                         Component.translatable("screen.noellesroles.loot.lootBtn"), // 按钮文本
                         (buttonWidget) -> {
+                            // TODO : 选择卡池
                             // 发送抽奖请求
-                            ClientPlayNetworking.send(new LootRequestC2SPacket());
+                            ClientPlayNetworking.send(new LootRequestC2SPacket(1));
                             this.onClose();
                         }
                 )
