@@ -131,7 +131,7 @@ public class ModRoles {
             new NormalRole(ELF_ID, new Color(106, 255, 179).getRGB(),
                     true, false, Role.MoodType.REAL,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), false))
-            .setVigilanteTeam(true).setCanSeeCoin(true);
+            .setVigilanteTeam(true).setCanSeeCoin(true).setCanPickUpRevolver(false);
     public static Role JESTER = TMMRoles
             .registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
                     false, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
