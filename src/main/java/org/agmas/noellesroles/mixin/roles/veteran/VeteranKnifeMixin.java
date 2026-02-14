@@ -61,10 +61,6 @@ public abstract class VeteranKnifeMixin {
 
         // 移除玩家手中的刀
         removeKnifeFromPlayer(killer);
-        if (gameWorld.isInnocent(victim)) {
-            GameFunctions.killPlayer(killer, true, killer, TMM.id("shot_innocent"));
-
-        }
     }
 
     private static void removeSPKnifeFromPlayer(Player player) {
