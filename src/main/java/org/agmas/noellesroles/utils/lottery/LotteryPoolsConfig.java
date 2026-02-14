@@ -6,63 +6,63 @@ public class LotteryPoolsConfig {
     public static class PoolConfig{
         public static class QualityListItemConfig {
             public Double getProbability() {
-                return probability;
+                return Probability;
             }
             public void setProbability(Double probability) {
-                this.probability = probability;
+                this.Probability = probability;
             }
-            public List<String> getQualityListConfig() {
-                return qualityListConfig;
+            public List<String> getItemList() {
+                return ItemList;
             }
-            public void setQualityListConfig(List<String> qualityListConfig) {
-                this.qualityListConfig = qualityListConfig;
+            public void setItemList(List<String> itemList) {
+                this.ItemList = itemList;
             }
             /** 该品质的概率 */
-            private Double probability;
+            private Double Probability;
             /** 该品质的物品列表 */
-            private List<String> qualityListConfig;
+            private List<String> ItemList;
         }
         public int getPoolID() {
-            return poolID;
+            return PoolID;
         }
         public void setPoolID(int poolID) {
-            this.poolID = poolID;
+            this.PoolID = poolID;
         }
         public void setEnable(boolean enable) {
-            this.enable = enable;
+            this.Enable = enable;
         }
         public boolean isEnable() {
-            return enable;
+            return Enable;
         }
-        public String getName() {
-            return name;
+        public String getPoolName() {
+            return PoolName;
         }
-        public void setName(String name) {
-            this.name = name;
+        public void setPoolName(String poolName) {
+            this.PoolName = poolName;
         }
-        public String getType() {
-            return type;
+        public String getPoolType() {
+            return PoolType;
         }
-        public void setType(String type) {
-            this.type = type;
+        public void setPoolType(String poolType) {
+            this.PoolType = poolType;
         }
-        public List<QualityListItemConfig> getQualityListGroupConfig() {
-            return qualityListGroupConfig;
+        public List<QualityListItemConfig> getQualityListGroup() {
+            return QualityListGroup;
         }
-        public void setQualityListGroupConfig(List<QualityListItemConfig> qualityListGroupConfig) {
-            this.qualityListGroupConfig = qualityListGroupConfig;
+        public void setQualityListGroup(List<QualityListItemConfig> qualityListGroup) {
+            this.QualityListGroup = qualityListGroup;
         }
-        private int poolID;
-        private boolean enable;
-        private String name;
-        private String type;
-        private List<QualityListItemConfig> qualityListGroupConfig;
+        private int PoolID;
+        private boolean Enable;
+        private String PoolName;
+        private String PoolType;
+        private List<QualityListItemConfig> QualityListGroup;
     }
     public List<PoolConfig> getPools() {
-        return pools;
+        return Pools;
     }
     public void setPools(List<PoolConfig> pools) {
-        this.pools = pools;
+        this.Pools = pools;
     }
-    private List<PoolConfig> pools;
+    private List<PoolConfig> Pools;
 }

@@ -11,7 +11,7 @@ import java.util.List;
 
 public record LootPoolsInfoRequestC2SPacket(List<Integer> poolIds) implements CustomPacketPayload {
     public static final ResourceLocation LOOT_POOLS_INFO_REQUEST_PAYLOAD_ID =
-            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot");
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot_pools_info_request");
     public static final Type<LootPoolsInfoRequestC2SPacket> ID = new CustomPacketPayload.Type<>(LOOT_POOLS_INFO_REQUEST_PAYLOAD_ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, LootPoolsInfoRequestC2SPacket> CODEC;
     @Override

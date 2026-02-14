@@ -26,7 +26,7 @@ public class LotteryManager {
             for(LotteryPoolsConfig.PoolConfig.QualityListItemConfig qualityListItemConfig : qualityListGroupConfigs)
             {
                 this.qualityListGroupConfigs.add(
-                        new Pair<>(qualityListItemConfig.getProbability(), qualityListItemConfig.getQualityListConfig())
+                        new Pair<>(qualityListItemConfig.getProbability(), qualityListItemConfig.getItemList())
                 );
             }
         }
@@ -64,7 +64,7 @@ public class LotteryManager {
                     return new Pair<>(resultQuality, resultIdx);
                 }
             }
-            Noellesroles.LOGGER.warn("玩家UUID:" + player.getUUID() + "抽奖失败");
+            Noellesroles.LOGGER.warn("[LootSys] 玩家UUID:" + player.getUUID() + "抽奖失败");
             return new Pair<>(-1, -1);
         }
         public int getPoolID() {
@@ -85,62 +85,12 @@ public class LotteryManager {
 
         /**
          * 各品质卡池内容及其概率
-         * - 品质为由低到高，概率为从高到低
          * <p>
-         *  TODO : 在抽卡动画中对结果附近的抽取进行加权（提升抽卡在金附近停下的概率，然鹅实际结果早已确定），提升抽卡期待和体验（就差一点了，过金运气不差）
+         * - 品质为由低到高，概率为从高到低
          * </p>
          */
         private final List<Pair<Double, List<String>>> qualityListGroupConfigs;
     }
-//    /**
-//     * 临时可抽奖项目管理器
-//     * TODO : 需要使用正确的可抽奖管理器管理
-//     */
-//    public static class TempLootAbleItemManager{
-//        // TODO: 作为皮肤查询使用，当皮肤系统建成后移动到皮肤管理器中
-//        private static final ResourceLocation[] skinList = {
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/lock.png"),
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/bomb.png"),
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/note.png"),
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/sp_knife.png"),
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/item/master_key.png"),
-//        };
-//        // 皮肤品质映射
-//        private static final int[] skinQualityList = {
-//                4,
-//                3,
-//                0,
-//                2,
-//                1,
-//        };
-//        private static final ResourceLocation[] qualityList = {
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/common_skin.png"),
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/uncommon_skin.png"),
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/rare_skin.png"),
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/epic_skin.png"),
-//                ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/legendary_skin.png"),
-//        };
-//        // TODO : 这几个函数就是获取抽奖源的正确函数，当实装到皮肤系统中时需要替换这几个函数
-//        public static ResourceLocation getSkinResourceLocation(int index){
-//            return skinList[index];
-//        }
-//        public static ResourceLocation getQualityResourceLocation(int index){
-//            return qualityList[index];
-//        }
-//        public static int getSkinQuality(int index){
-//            return skinQualityList[index];
-//        }
-//        public static int getSkinListLen() {
-//            return skinList.length;
-//        }
-//        public static int getQualityListLen() {
-//            return qualityList.length;
-//        }
-//        public static int getSkinQualityListLen() {
-//            return skinQualityList.length;
-//        }
-//    }
-
 
     public ResourceLocation getQualityBgResourceLocation(int index) {
         return qualityBgList[index];
@@ -217,7 +167,7 @@ public class LotteryManager {
         LotteryPoolsConfig lotteryPoolsConfig = LotteryPoolsConfigParser.parse(configPath);
         if(lotteryPoolsConfig == null || lotteryPoolsConfig.getPools().isEmpty())
         {
-            Noellesroles.LOGGER.error("No valid pool configuration found.");
+            Noellesroles.LOGGER.error("[LootSys] No valid pool configuration found.Path:{}", configPath);
             return;
         }
         for (LotteryPoolsConfig.PoolConfig poolConfig : lotteryPoolsConfig.getPools())
@@ -226,46 +176,48 @@ public class LotteryManager {
             try{
                 if(!poolConfig.isEnable())
                     continue;
-                if(poolConfig.getName() == null || poolConfig.getName().isEmpty())
+                if(poolConfig.getPoolName() == null || poolConfig.getPoolName().isEmpty())
                 {
-                    Noellesroles.LOGGER.error("Pool name is null or empty.");
+                    Noellesroles.LOGGER.error("[LootSys] Pool name is null or empty.");
                     continue;
                 }
-                if(poolConfig.getType() == null || poolConfig.getType().isEmpty())
+                if(poolConfig.getPoolType() == null || poolConfig.getPoolType().isEmpty())
                 {
-                    Noellesroles.LOGGER.error("Pool type is null or empty.");
+                    Noellesroles.LOGGER.error("[LootSys] Pool type is null or empty.");
                     continue;
                 }
                 Double sumProbability = 0.0;
-                for(LotteryPoolsConfig.PoolConfig.QualityListItemConfig qualityListItemConfig : poolConfig.getQualityListGroupConfig())
+                for(LotteryPoolsConfig.PoolConfig.QualityListItemConfig qualityListItemConfig : poolConfig.getQualityListGroup())
                 {
-                    if(qualityListItemConfig.getQualityListConfig() == null || qualityListItemConfig.getQualityListConfig().isEmpty())
+                    if(qualityListItemConfig.getItemList() == null || qualityListItemConfig.getItemList().isEmpty())
                     {
-                        Noellesroles.LOGGER.error("Quality list is null or empty.");
+                        Noellesroles.LOGGER.error("[LootSys] Quality list is null or empty.");
                         continue;
                     }
                     if(qualityListItemConfig.getProbability() == null || qualityListItemConfig.getProbability() <= 0)
                     {
-                        Noellesroles.LOGGER.error("Quality list probability is null or <= 0.");
+                        Noellesroles.LOGGER.error("[LootSys] Quality list probability is null or <= 0.");
                         continue;
                     }
                     sumProbability += qualityListItemConfig.getProbability();
                 }
-                if(sumProbability != 1)
+                if(sumProbability < 0.999 || sumProbability > 1.001)
                 {
-                    Noellesroles.LOGGER.error("Quality list probability sum is not equal to 1.");
+                    Noellesroles.LOGGER.error("[LootSys] Quality list probability sum({}) is not equal to 1.", sumProbability);
                     continue;
                 }
                 LotteryPool pool = new LotteryPool(
-                        poolConfig.getPoolID(), poolConfig.getName(), poolConfig.getType(),
-                        poolConfig.getQualityListGroupConfig());
-                Noellesroles.LOGGER.info("Loaded pool:ID:{},Name{},Type{}", pool.poolID, pool.name, pool.type);
+                        poolConfig.getPoolID(), poolConfig.getPoolName(), poolConfig.getPoolType(),
+                        poolConfig.getQualityListGroup());
+                // 将卡池添加进列表
+                this.lotteryPoolList.add(pool);
+                Noellesroles.LOGGER.info("[LootSys] Loaded pool:ID:{},Name{},Type{}", pool.poolID, pool.name, pool.type);
             }
             catch (Exception e){
-                Noellesroles.LOGGER.error("Failed to parse pool config : {}", poolConfig.getName(), e);
+                Noellesroles.LOGGER.error("[LootSys] Failed to parse pool config : {}", poolConfig.getPoolName(), e);
             }
         }
-        Noellesroles.LOGGER.info("Loaded {} pools.", lotteryPoolList.size());
+        Noellesroles.LOGGER.info("[LootSys] Loaded {} pools.", lotteryPoolList.size());
     }
 
     private LotteryManager(){

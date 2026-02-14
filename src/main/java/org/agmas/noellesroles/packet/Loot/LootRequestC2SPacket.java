@@ -17,7 +17,7 @@ import org.agmas.noellesroles.Noellesroles;
  */
 public record LootRequestC2SPacket(int poolID) implements CustomPacketPayload {
     public static final ResourceLocation LOOT_REQUEST_PAYLOAD_ID =
-            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot");
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot_request");
     public static final Type<LootRequestC2SPacket> ID = new CustomPacketPayload.Type<>(LOOT_REQUEST_PAYLOAD_ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, LootRequestC2SPacket> CODEC;
     @Override

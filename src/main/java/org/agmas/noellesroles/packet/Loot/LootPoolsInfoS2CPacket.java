@@ -14,7 +14,7 @@ import java.util.List;
 
 public record LootPoolsInfoS2CPacket(List<LotteryManager.LotteryPool> pools) implements CustomPacketPayload{
     public static final ResourceLocation LOOT_RESULT_PAYLOAD_ID =
-            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot");
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot_pools_info");
     public static final CustomPacketPayload.Type<LootPoolsInfoS2CPacket> ID = new Type<>(LOOT_RESULT_PAYLOAD_ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, LootPoolsInfoS2CPacket> CODEC;
     @Override

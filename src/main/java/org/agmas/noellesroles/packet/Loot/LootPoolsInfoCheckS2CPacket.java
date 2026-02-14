@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.Noellesroles;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public record LootPoolsInfoCheckS2CPacket(List<Integer> poolIDs) implements CustomPacketPayload {
     public static ResourceLocation LOOT_POOLS_INFO_CHECK_PAYLOAD_ID =
-            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot_screen");
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "loot_check_pools");
     public static final Type<LootPoolsInfoCheckS2CPacket> ID = new Type<>(LOOT_POOLS_INFO_CHECK_PAYLOAD_ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, LootPoolsInfoCheckS2CPacket> CODEC;
 
@@ -28,17 +29,24 @@ public record LootPoolsInfoCheckS2CPacket(List<Integer> poolIDs) implements Cust
         return ID;
     }
 
-    public void write(FriendlyByteBuf buf) {
-        buf.writeCollection(poolIDs, FriendlyByteBuf::writeInt);
+    public void write(RegistryFriendlyByteBuf buf) {
+        buf.writeInt(poolIDs.size());
+        for (Integer poolID : poolIDs) {
+            buf.writeInt(poolID);
+        }
     }
 
-    public static LootPoolsInfoCheckS2CPacket read(FriendlyByteBuf buf) {
+    public static LootPoolsInfoCheckS2CPacket read(RegistryFriendlyByteBuf buf) {
+        List<Integer> poolIDs = new ArrayList<>();
+        int poolSize = buf.readInt();
+        for (int i = 0; i < poolSize; ++i) {
+            poolIDs.add(buf.readInt());
+        }
         return new LootPoolsInfoCheckS2CPacket(
-                buf.readList(FriendlyByteBuf::readInt)
+                poolIDs
         );
     }
     static {
         CODEC = StreamCodec.ofMember(LootPoolsInfoCheckS2CPacket::write, LootPoolsInfoCheckS2CPacket::read);
     }
-
 }

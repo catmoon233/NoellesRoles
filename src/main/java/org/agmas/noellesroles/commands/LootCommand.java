@@ -8,7 +8,9 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
 import org.agmas.noellesroles.utils.lottery.LotteryManager;
 
@@ -42,14 +44,19 @@ public class LootCommand {
 
     /** 打开抽奖界面*/
     protected static int openLootScreen(CommandContext<CommandSourceStack> context) {
-        ServerPlayer player = context.getSource().getPlayer();
-        if (player == null)
+        try {
+            ServerPlayer player = context.getSource().getPlayer();
+            if (player == null)
+                return 0;
+            ServerPlayNetworking.send(player, new LootPoolsInfoCheckS2CPacket(
+                    LotteryManager.getInstance().getPoolIDs()
+            ));
+            return 1;
+        }
+        catch (Exception e) {
+            Noellesroles.LOGGER.error("Failed to send checkPacket\n", e);
             return 0;
-        // 发送抽奖信息包
-        ServerPlayNetworking.send(player, new LootPoolsInfoCheckS2CPacket(
-                LotteryManager.getInstance().getPoolIDs()
-        ));
-        return 1;
+        }
     }
     protected static int addOrDegreeChance(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<? extends ServerPlayer> players = EntityArgument.getPlayers(context, "targets");

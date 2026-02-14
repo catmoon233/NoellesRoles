@@ -832,6 +832,11 @@ public class RicesRoleRhapsody implements ModInitializer {
            ServerPlayer player = context.player();
             if (player == null)
                 return;
+            List<Integer> poolIDs = LotteryManager.getInstance().getPoolIDs();
+            for (int poolID : poolIDs)
+            {
+                player.sendSystemMessage(Component.literal("ID:"+poolID));
+            }
             if(LotteryManager.getInstance().getLotteryPool(payload.poolID()) != null && LotteryManager.getInstance().canRoll(player))
             {
                 Pair<Integer, Integer> rollID = LotteryManager.getInstance().getLotteryPool(payload.poolID()).rollOnce(player);
