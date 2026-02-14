@@ -568,10 +568,10 @@ public class Noellesroles implements ModInitializer {
                 ShopEntry.Type.TOOL));
 
         // 巡警商店
-        // 左轮手枪 - 300金币
+        // 左轮手枪 - 400金币
         PATROLLER_SHOP.add(new ShopEntry(
                 TMMItems.REVOLVER.getDefaultInstance(),
-                300,
+                400,
                 ShopEntry.Type.WEAPON));
         BOMBER_SHOP.add(new ShopEntry(
                 TMMItems.LOCKPICK.getDefaultInstance(),
