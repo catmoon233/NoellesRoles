@@ -230,7 +230,11 @@ public class ReinforcementItem extends Item implements AdventureUsable {
             }
         } else {
             if (isDoorReinforced(doorEntity) && currentKeyName != null) {
-                doorEntity.setKeyName(currentKeyName.substring(11)); // 移除 "reinforced:" 前缀
+                // 只移除 "reinforced:" 前缀，而不是前11个字符
+                int index = currentKeyName.indexOf("reinforced:");
+                if (index != -1) {
+                    doorEntity.setKeyName(currentKeyName.substring(0, index) + currentKeyName.substring(index + 11));
+                }
             }
         }
     }
