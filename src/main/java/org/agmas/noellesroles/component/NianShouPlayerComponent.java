@@ -144,12 +144,12 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     private void checkDarkness() {
-        // 检查是否在黑暗环境下（光照等级 < 3）
+        // 检查是否在黑暗环境下（光照等级 <= 6）
         int lightLevel = player.level().getRawBrightness(player.blockPosition(),
                 net.minecraft.world.level.LightLayer.BLOCK.ordinal());
         // Noellesroles.LOGGER.info("LightLevel:" + lightLevel);
         var blackOut = WorldBlackoutComponent.KEY.maybeGet(player.level()).orElse(null);
-        if (lightLevel <= 3 || (blackOut!=null && blackOut.isBlackoutActive())) {
+        if (lightLevel <= 6 || (blackOut!=null && blackOut.isBlackoutActive())) {
             if (!inDarkness) {
                 // 刚进入黑暗
                 inDarkness = true;
@@ -177,7 +177,7 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                     // 给予速度二效果（10秒 = 200 ticks）
                     sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                             net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED,
-                            200, // 10秒
+                            220, // 11秒
                             1 // 速度等级2
                     ));
                     sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(
