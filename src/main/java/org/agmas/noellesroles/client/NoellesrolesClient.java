@@ -81,6 +81,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
 import walksy.crosshairaddons.CrosshairAddons;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 
 public class NoellesrolesClient implements ClientModInitializer {
 
@@ -170,7 +172,19 @@ public class NoellesrolesClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(BreakArmorPayload.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
-                if (client.player != null) {
+                if (client.player != null && client.level != null) {
+                    // 播放护盾破碎声音
+                    client.level.playLocalSound(
+                        payload.x(),
+                        payload.y(),
+                        payload.z(),
+                        SoundEvents.SHIELD_BREAK,
+                        SoundSource.PLAYERS,
+                        1.0F,
+                        1.0F,
+                        false
+                    );
+                    // 处理准星效果
                     CrosshairAddons.getStateManager().handleBreakPacket(payload.x(), payload.y(), payload.z());
                 }
             });
