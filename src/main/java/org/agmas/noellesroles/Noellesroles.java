@@ -1200,7 +1200,18 @@ public class Noellesroles implements ModInitializer {
                 player.addItem(SEItems.JERRY_CAN.getDefaultInstance().copy());
                 player.addItem(SEItems.LIGHTER.getDefaultInstance().copy());
             }
-
+            if (role.equals(ModRoles.NIAN_SHOU)) {
+                var comc = NianShouPlayerComponent.KEY.maybeGet(player).orElse(null);
+                if (comc != null) {
+                    comc.reset();
+                }
+            }
+            if (role.equals(ModRoles.PUPPETEER)) {
+                var comc = PuppeteerPlayerComponent.KEY.maybeGet(player).orElse(null);
+                if (comc != null) {
+                    comc.reset();
+                }
+            }
         });
         ServerTickEvents.END_SERVER_TICK.register(((server) -> {
             // 更新烟雾区域和迷幻区域
