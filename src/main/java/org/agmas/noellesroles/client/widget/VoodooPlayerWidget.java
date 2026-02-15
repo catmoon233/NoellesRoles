@@ -72,9 +72,9 @@ public class VoodooPlayerWidget extends Button {
             }
 
             if (target.equals(targetUUID)) {
-
-                context.renderTooltip(textRenderer, Component.literal("选择"),
-                        this.getX() - 4 - textRenderer.width("选择") / 2, this.getY() - 9);
+                var text = Component.translatable("widget.general.select");
+                context.renderTooltip(textRenderer, text,
+                        this.getX() - 4 - textRenderer.width(text) / 2, this.getY() - 9);
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
             }
         }
@@ -88,8 +88,9 @@ public class VoodooPlayerWidget extends Button {
             }
 
             if (target.equals(targetUUID)) {
-                context.renderTooltip(textRenderer, Component.literal("Selected"),
-                        this.getX() - 4 - textRenderer.width("Selected") / 2, this.getY() - 9);
+                var text = Component.translatable("widget.general.selected");
+                context.renderTooltip(textRenderer, text,
+                        this.getX() - 4 - textRenderer.width(text) / 2, this.getY() - 9);
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
             }
             context.setColor(1f, 1f, 1f, 1f);

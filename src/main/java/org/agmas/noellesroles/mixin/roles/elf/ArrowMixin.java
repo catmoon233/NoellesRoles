@@ -80,7 +80,9 @@ public class ArrowMixin {
                             new AABB(hitPos).inflate(8));
                     // 输出附近玩家数量
                     serverPlayer.sendSystemMessage(
-                            Component.literal("附近玩家数量：" + nearbyPlayers.size()).withStyle(ChatFormatting.GREEN), true);
+                            Component.translatable("message.arrow.near_by_players", nearbyPlayers.size())
+                                    .withStyle(ChatFormatting.GREEN),
+                            true);
                     arrow1.discard();
                 }
             }

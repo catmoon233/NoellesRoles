@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.roles.avengerKill;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -69,7 +70,9 @@ public abstract class AvengerKillMixin {
                 String victimName = victim.getName().getString();
                 String killerName = killer != null ? killer.getName().getString() : "未知";
 
-                player.displayClientMessage(Component.literal("你绑定的目标 " + victimName + " 被 " + killerName + " 杀死了"),
+                player.displayClientMessage(
+                        Component.translatable("message.avenger.target_died", victimName, killerName)
+                                .withStyle(ChatFormatting.GOLD),
                         true);
                 Noellesroles.LOGGER.info("复仇者 {} 绑定的目标 {} 被 {} 杀死，激活复仇者能力", playerName, victimName, killerName);
             }

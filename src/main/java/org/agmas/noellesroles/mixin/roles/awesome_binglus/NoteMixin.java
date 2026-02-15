@@ -28,22 +28,26 @@ public abstract class NoteMixin extends Item {
         super(properties);
     }
 
-//    private static HitResult getTarget(Player user) {
-//        return ProjectileUtil.getHitResultOnViewVector(user, entity -> entity instanceof Player player && GameFunctions.isPlayerAliveAndSurvival(player), 4f);
-//    }
+    // private static HitResult getTarget(Player user) {
+    // return ProjectileUtil.getHitResultOnViewVector(user, entity -> entity
+    // instanceof Player player && GameFunctions.isPlayerAliveAndSurvival(player),
+    // 4f);
+    // }
 
     @Override
-    public InteractionResult interactLivingEntity(ItemStack itemStack, Player player, LivingEntity livingEntity, InteractionHand interactionHand) {
-        if (player instanceof ServerPlayer serverPlayer){
+    public InteractionResult interactLivingEntity(ItemStack itemStack, Player player, LivingEntity livingEntity,
+            InteractionHand interactionHand) {
+        if (player instanceof ServerPlayer serverPlayer) {
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(serverPlayer.level());
             if (gameWorld.isRole(player, ModRoles.AWESOME_BINGLUS)) {
                 final var playerShopComponent = PlayerShopComponent.KEY.get(serverPlayer);
-                if (playerShopComponent.balance >= 75){
+                if (playerShopComponent.balance >= 75) {
                     playerShopComponent.setBalance(playerShopComponent.balance - 75);
                     if (player != null && !player.isShiftKeyDown()) {
-                        PlayerNoteComponent component = (PlayerNoteComponent)PlayerNoteComponent.KEY.get(player);
+                        PlayerNoteComponent component = (PlayerNoteComponent) PlayerNoteComponent.KEY.get(player);
                         if (!component.written) {
-                            player.displayClientMessage(Component.literal("我应该先写下点东西").withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)), true);
+                            player.displayClientMessage(Component.translatable("message.note.write_sth")
+                                    .withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)), true);
                             return InteractionResult.PASS;
                         } else {
                             Level world = player.level();
@@ -52,20 +56,22 @@ public abstract class NoteMixin extends Item {
                             } else {
                                 NoteEntity note = (NoteEntity) TMMEntities.NOTE.create(world);
                                 note.setAttached(ModRoles.ENTITY_NOTE_MAKER, livingEntity.getUUID().toString());
-                                if (note == null) {
-                                    return InteractionResult.PASS;
-                                } else {
+                                {
                                     note.setYRot(livingEntity.getYHeadRot());
-                                    note.setPos(livingEntity.getX(), livingEntity.getY()+1, livingEntity.getZ());
+                                    note.setPos(livingEntity.getX(), livingEntity.getY() + 1, livingEntity.getZ());
 
                                     note.setDirection(Direction.EAST);
                                     note.setLines(component.text);
-                                    player.displayClientMessage(Component.literal("你花费75\uE781将一张便签贴到了"+livingEntity.getName().getString()+"的背上").withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)), true);
+                                    player.displayClientMessage(
+                                            Component.translatable("message.note.put_back", livingEntity.getName())
+                                                    .withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)),
+                                            true);
 
                                     world.addFreshEntity(note);
                                     if (!player.isCreative()) {
                                         if (TMM.REPLAY_MANAGER != null) {
-                                            TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(), BuiltInRegistries.ITEM.getKey(itemStack.getItem()));
+                                            TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
+                                                    BuiltInRegistries.ITEM.getKey(itemStack.getItem()));
                                         }
 
                                         itemStack.shrink(1);
@@ -76,8 +82,9 @@ public abstract class NoteMixin extends Item {
                             }
                         }
                     }
-                }else {
-                    player.displayClientMessage(Component.literal("你没有足够的钱 - 需要75\uE781来将便签放到人身上").withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)), true);
+                } else {
+                    player.displayClientMessage(Component.translatable("message.note.not_enough_money")
+                            .withColor(Mth.hsvToRgb(0.0F, 1.0F, 0.6F)), true);
                 }
             }
         }

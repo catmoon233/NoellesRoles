@@ -61,7 +61,7 @@ public class ManipulatorBodyEntity extends LivingEntity {
                 this.skinProfile = serverPlayer.getGameProfile();
             }
 
-            this.setCustomName(Component.literal(owner.getName().getString() + " 的本体"));
+            this.setCustomName(Component.translatable("entity.manipulator_body.name", owner.getName()));
             this.setCustomNameVisible(false);
         }
     }
@@ -130,7 +130,7 @@ public class ManipulatorBodyEntity extends LivingEntity {
             Player owner = getOwner();
             if (owner != null) {
                 ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(owner);
-//                manipulatorComp.onBodyDeath();
+                // manipulatorComp.onBodyDeath();
             }
         }
 
@@ -144,7 +144,7 @@ public class ManipulatorBodyEntity extends LivingEntity {
         Player owner = getOwner();
         if (owner != null) {
             ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(owner);
-//            manipulatorComp.onBodyDeath();
+            // manipulatorComp.onBodyDeath();
         }
     }
 

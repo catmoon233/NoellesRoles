@@ -5,6 +5,7 @@ import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventory
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -41,10 +42,10 @@ public class MorphlingPlayerWidget extends Button{
         this.screen = screen;
         this.disguiseTarget = disguiseTarget;
         if (disguiseTarget.getGameMode() != GameType.ADVENTURE){
-            setDisplayText(Component.literal("\u00a74已死亡"));
+            setDisplayText(Component.translatable("hud.general.dead").withStyle(ChatFormatting.DARK_RED));
         }else {
             if (TMMClient.gameComponent!=null && TMMClient.gameComponent.getRole(disguiseTarget.getProfile().getId()) != null && TMMClient.gameComponent.getRole(disguiseTarget.getProfile().getId()).canUseKiller()){
-                setDisplayText(Component.literal("\u00a76杀手同伙"));
+                setDisplayText(Component.translatable("hud.general.killer_friend").withStyle(ChatFormatting.GOLD));
             }
         }
     }
@@ -109,7 +110,7 @@ public class MorphlingPlayerWidget extends Button{
         Font font = Minecraft.getInstance().font;
         int maxWidth = 50; // 最大宽度
         int lineHeight = font.lineHeight + 1; // 行高
-        int yOffset = 20; // 距离widget的垂直偏移
+        int yOffset = 4; // 距离widget的垂直偏移
         
         // 如果缓存为空，重新计算分行
         if (cachedLines.isEmpty()) {
