@@ -9,6 +9,7 @@ import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerScre
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.setupItemCallbacks;
 import static org.agmas.noellesroles.component.InsaneKillerPlayerComponent.playerBodyEntities;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ import dev.doctor4t.ratatouille.util.TextUtils;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
+import dev.doctor4t.trainmurdermystery.client.StaminaRenderer;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
@@ -61,6 +63,7 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.network.BreakArmorPayload;
+import dev.doctor4t.trainmurdermystery.network.TriggerScreenEdgeEffectPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -179,6 +182,9 @@ public class NoellesrolesClient implements ClientModInitializer {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null && client.level != null) {
+                    // 屏幕效果
+                    StaminaRenderer.triggerScreenEdgeEffect(Color.ORANGE.getRGB());
+
                     // 播放护盾破碎声音
                     client.player.displayClientMessage(
                             Component.translatable("message.bartender.armor_broke").withStyle(ChatFormatting.RED),

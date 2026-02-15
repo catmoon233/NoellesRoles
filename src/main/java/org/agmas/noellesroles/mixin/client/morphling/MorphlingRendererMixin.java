@@ -5,13 +5,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import org.agmas.noellesroles.ConfigWorldComponent;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.NoellesrolesClient;
@@ -30,7 +27,6 @@ import java.util.UUID;
 
 @Mixin(PlayerRenderer.class)
 public abstract class MorphlingRendererMixin {
-
 
     @Shadow public abstract ResourceLocation getTextureLocation(AbstractClientPlayer abstractClientPlayerEntity);
     

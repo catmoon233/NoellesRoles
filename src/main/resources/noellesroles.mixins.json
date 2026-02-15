@@ -43,7 +43,6 @@
     "roles.jester.JesterJestMixin",
     "roles.manipulator.PlayerControlMixin",
     "roles.manipulator.PlayerDeathMixin",
-    "roles.morphling.MorphlingReseterMixin",
     "roles.noisemaker.NoisemakerKillMixin",
     "roles.patroller.PatrollerKillMixin",
     "roles.photographer.PhotographerMixin",

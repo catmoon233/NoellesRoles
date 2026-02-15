@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.roles.morphling;
 
-import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -18,7 +17,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameType;
 
 public class MorphlingPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     public static final ComponentKey<MorphlingPlayerComponent> KEY = ComponentRegistry.getOrCreate(
@@ -66,11 +64,11 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
             if (this.morphTicks > 0) {
                 if (disguise != null) {
                     if (player.level().getPlayerByUUID(disguise) != null) {
-                        if (((ServerPlayer) player.level().getPlayerByUUID(disguise)).gameMode
-                                .getGameModeForPlayer() == GameType.SPECTATOR) {
-                            stopMorph();
-                            return;
-                        }
+                        // if (((ServerPlayer) player.level().getPlayerByUUID(disguise)).gameMode
+                        // .getGameModeForPlayer() == GameType.SPECTATOR) {
+                        // stopMorph();
+                        // return;
+                        // }
                     } else {
                         stopMorph();
                         return;
@@ -86,12 +84,12 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
             } else if (this.morphTicks < 0) {
                 this.morphTicks++;
                 if (this.morphTicks == 0) {
-                    KEY.syncWith((ServerPlayer) player, (ComponentProvider) player,this,this);
+                    KEY.syncWith((ServerPlayer) player, (ComponentProvider) player, this, this);
                 }
             }
 
             if (tickR % 20 == 0) {
-                KEY.syncWith((ServerPlayer) player, (ComponentProvider) player,this,this);
+                KEY.syncWith((ServerPlayer) player, (ComponentProvider) player, this, this);
             }
         }
     }
@@ -99,21 +97,13 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
     public boolean startMorph(UUID id) {
         setMorphTicks(GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphDuration));
         disguise = id;
-        TMM.SERVER.getPlayerList().getPlayers().forEach(
-                serverPlayer -> {
-                    KEY.syncWith((ServerPlayer) serverPlayer, (ComponentProvider) player,this,this);
-                });
-
+        this.sync();
         return true;
     }
 
     public void stopMorph() {
         this.morphTicks = -GameConstants.getInTicks(0, NoellesRolesConfig.HANDLER.instance().morphlingMorphCooldown);
-        TMM.SERVER.getPlayerList().getPlayers().forEach(
-                serverPlayer -> {
-                    KEY.syncWith((ServerPlayer) serverPlayer, (ComponentProvider) player,this,this);
-                });
-
+        this.sync();
     }
 
     public int getMorphTicks() {
