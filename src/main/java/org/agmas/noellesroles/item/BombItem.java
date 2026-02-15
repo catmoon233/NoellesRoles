@@ -79,7 +79,7 @@ public class BombItem extends Item {
                 target -> {
                     if (GameWorldComponent.KEY.get(serverLevel).isRole(target, ModRoles.BOMBER)){
                         PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(target);
-                        playerShopComponent.setBalance(75 + playerShopComponent.balance);
+                        playerShopComponent.setBalance(90 + playerShopComponent.balance);
                         playerShopComponent.sync();
                     }
                 }
