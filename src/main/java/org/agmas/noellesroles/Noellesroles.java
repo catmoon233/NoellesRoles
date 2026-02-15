@@ -41,6 +41,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
@@ -53,6 +55,8 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
+
+import pro.fazeclan.river.stupid_express.StupidExpress;
 import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
@@ -100,6 +104,8 @@ import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
 
 public class Noellesroles implements ModInitializer {
     // public static Style RESETSTYLE = Style.EMPTY;
+    private static AttributeModifier noJumpingAttribute = new AttributeModifier(
+            Noellesroles.id("no_jumping"), -1.0f, AttributeModifier.Operation.ADD_VALUE);
 
     public static final String MOD_ID = "noellesroles";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -1262,6 +1268,12 @@ public class Noellesroles implements ModInitializer {
         // });
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             serverLevel.players().forEach(player -> {
+                if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                    // NO JUMPING! For everyone who hasn't permissions
+                    if (!player.hasPermissions(2)) {
+                        player.getAttribute(Attributes.JUMP_STRENGTH).addOrReplacePermanentModifier(noJumpingAttribute);
+                    }
+                }
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
                 if (gameWorldComponent != null) {
                     if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {

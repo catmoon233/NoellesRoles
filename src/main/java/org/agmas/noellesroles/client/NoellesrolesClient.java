@@ -126,7 +126,7 @@ public class NoellesrolesClient implements ClientModInitializer {
     public void onInitializeClient() {
         // 注册HUD渲染
         ClientHudRenderer.registerRenderersEvent();
-        
+
         WorldRenderEvents.AFTER_TRANSLUCENT.register((renderContext) -> {
             TaskBlockOverlayRenderer.render(renderContext);
         });
@@ -174,18 +174,15 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
-        
+
         ClientPlayNetworking.registerGlobalReceiver(BreakArmorPayload.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null && client.level != null) {
                     // 播放护盾破碎声音
-                    if (TMMClient.gameComponent != null
-                            && TMMClient.gameComponent.isRole(client.player, ModRoles.BARTENDER)) {
-                        client.player.displayClientMessage(
-                                Component.translatable("message.bartender.armor_broke").withStyle(ChatFormatting.RED),
-                                true);
-                    }
+                    client.player.displayClientMessage(
+                            Component.translatable("message.bartender.armor_broke").withStyle(ChatFormatting.RED),
+                            true);
                     client.level.playLocalSound(
                             payload.x(),
                             payload.y(),

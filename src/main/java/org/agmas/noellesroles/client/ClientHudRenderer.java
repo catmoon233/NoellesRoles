@@ -33,7 +33,7 @@ public class ClientHudRenderer {
                 int xOffset = screenWidth - 10; // 距离右边缘
                 var text = Component.translatable("hud.bartender.has_armor", comc.getArmor())
                         .withStyle(ChatFormatting.GOLD);
-                guiGraphics.drawString(font, text, screenHeight, xOffset, yOffset);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
             }
         });
     }
