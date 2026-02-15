@@ -549,7 +549,7 @@
   "message.noellesroles.puppeteer.ability_cooldown": "傀儡技能冷却中，还需 %s 秒",
   "message.noellesroles.puppeteer.returned_to_body": "已返回本体。",
   "message.noellesroles.puppeteer.collect_more": "还需要收集更多尸体！（%d/%d）",
-  "message.noellesroles.puppeteer.returned_to_body_tip": "潜行并按 G 返回本体",
+  "message.noellesroles.puppeteer.returned_to_body_tip": "潜行按 G 返回本体",
   "==================== 操纵师角色 ====================": "",
   "announcement.role.manipulator": "操纵师",
   "announcement.goals.manipulator": "操控别人的心智，并寻找机会击杀掉所有违抗你的人！",
