@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class AttendantHandler {
 
-    public static int area_distance = 10;
+    public static int area_distance = 5;
 
     public static void openLight(ServerPlayer player) {
         int lightCount = 0;

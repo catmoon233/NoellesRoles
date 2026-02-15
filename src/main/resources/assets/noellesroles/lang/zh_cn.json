@@ -664,7 +664,7 @@
   "message.noellesroles.attendant.cooldown": "技能冷却中，剩余 %s 秒",
   "message.noellesroles.attendant.active": "你强行打开了周围的 %s 盏灯",
   "hud.noellesroles.attendant.cooldown": "技能冷却中，剩余 %s 秒",
-  "hud.noellesroles.attendant.available": "按下 %s 打开你周围%s格的灯！",
+  "hud.noellesroles.attendant.available": "按下 %s 打开你周围半径%s格的灯！",
   "announcement.goals.attendant": "利用自己的乘务员钥匙和手电筒，为身处黑暗中的平民提供帮助。\n主动-开灯：能强行在关灯时打开附近10格的灯，冷却时间60s。",
   "gui.noellesroles.ghost.during": "隐身中，剩余 %ss",
   "gui.noellesroles.ghost.cooldown": "隐身冷却中，剩余 %ss",

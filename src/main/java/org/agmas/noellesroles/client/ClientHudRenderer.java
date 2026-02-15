@@ -56,7 +56,7 @@ public class ClientHudRenderer {
                             Component.keybind("key.noellesroles.ability"), AttendantHandler.area_distance)
                             .withStyle(ChatFormatting.GOLD));
                 } else {
-                    text.append(Component.translatable("hud.noellesroles.attendant.cooldown", comc.cooldown)
+                    text.append(Component.translatable("hud.noellesroles.attendant.cooldown", (comc.cooldown / 20))
                             .withStyle(ChatFormatting.RED));
                 }
 
