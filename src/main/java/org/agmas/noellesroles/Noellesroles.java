@@ -1209,7 +1209,8 @@ public class Noellesroles implements ModInitializer {
             if (role.equals(ModRoles.PUPPETEER)) {
                 var comc = PuppeteerPlayerComponent.KEY.maybeGet(player).orElse(null);
                 if (comc != null) {
-                    comc.reset();
+                    if (!comc.isActivePuppeteer())
+                        comc.reset();
                 }
             }
         });

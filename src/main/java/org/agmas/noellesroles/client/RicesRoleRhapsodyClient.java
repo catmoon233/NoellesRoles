@@ -167,7 +167,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
         // 获取玩家的技能组件
         @SuppressWarnings("unused")
         NoellesRolesAbilityPlayerComponent abilityComponent = NoellesRolesAbilityPlayerComponent.KEY.get(client.player);
-        if (gameWorld.isRole(client.player, ModRoles.PUPPETEER) ||
+        if (gameWorld.isRole(client.player, ModRoles.PUPPETEER) &&
                 PuppeteerPlayerComponent.KEY.get(client.player).isActivePuppeteer()) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
@@ -206,13 +206,14 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
                 }
                 return true;
             }
+
             return false;
         }
         // ==================== 傀儡师：优先检测操控假人状态 ====================
         // 必须放在所有角色之前，因为傀儡师操控假人时角色会临时变成其他杀手
         // 如果不优先检测，假人角色的按键处理会拦截G键
-        PuppeteerPlayerComponent puppeteerCompEarly = PuppeteerPlayerComponent.KEY.get(client.player);
-        if (puppeteerCompEarly.isControllingPuppet) {
+        PuppeteerPlayerComponent puppeteerComp = PuppeteerPlayerComponent.KEY.get(client.player);
+        if (puppeteerComp.isControllingPuppet && client.player.isShiftKeyDown()) {
             // 检查玩家是否存活
             if (!GameFunctions.isPlayerAliveAndSurvival(client.player))
                 return true;
@@ -221,7 +222,6 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             ClientPlayNetworking.send(new PuppeteerC2SPacket(PuppeteerC2SPacket.Action.RETURN_TO_BODY));
             return true;
         }
-
         // ==================== 拳击手：激活钢筋铁骨技能 ====================
         if (gameWorld.isRole(client.player, ModRoles.BOXER)) {
             // 检查玩家是否存活

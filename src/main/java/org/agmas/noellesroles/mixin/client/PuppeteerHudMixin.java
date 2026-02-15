@@ -111,7 +111,7 @@ public abstract class PuppeteerHudMixin {
                 context.drawString(textRenderer, controlText, baseX, baseY, 0xFFFF00);
 
                 // 显示返回本体提示
-                Component returnHint = Component.literal("按 G 返回本体")
+                Component returnHint = Component.translatable("message.noellesroles.puppeteer.returned_to_body_tip")
                     .withStyle(ChatFormatting.GOLD);
                 context.drawString(textRenderer, returnHint, baseX, baseY + 12, 0xFFA500);
             } else {

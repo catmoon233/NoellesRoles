@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMEntities;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -143,17 +144,20 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     private void checkDarkness() {
-        // 检查是否在黑暗环境下（光照等级 < 2）
+        // 检查是否在黑暗环境下（光照等级 < 3）
         int lightLevel = player.level().getRawBrightness(player.blockPosition(),
                 net.minecraft.world.level.LightLayer.BLOCK.ordinal());
-
-        if (lightLevel < 2) {
+        // Noellesroles.LOGGER.info("LightLevel:" + lightLevel);
+        var blackOut = WorldBlackoutComponent.KEY.maybeGet(player.level()).orElse(null);
+        if (lightLevel <= 3 || (blackOut!=null && blackOut.isBlackoutActive())) {
             if (!inDarkness) {
                 // 刚进入黑暗
                 inDarkness = true;
+                // Noellesroles.LOGGER.info("Trigger darkness");
 
                 // 进入黑暗时，给予护盾试剂（一局一次）
                 if (!darknessShieldTriggered) {
+
                     darknessShieldTriggered = true;
                     player.getInventory().add(new ItemStack(TMMItems.DEFENSE_VIAL));
 
@@ -174,6 +178,11 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                     sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                             net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED,
                             200, // 10秒
+                            1 // 速度等级2
+                    ));
+                    sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                            net.minecraft.world.effect.MobEffects.NIGHT_VISION,
+                            400, // 20秒
                             1 // 速度等级2
                     ));
                     sp.displayClientMessage(

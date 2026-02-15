@@ -119,6 +119,10 @@ public class GlitchRobotPlayerComponent implements RoleComponent, ServerTickingC
 
     @Override
     public void clientTick() {
+        var gameComp = GameWorldComponent.KEY.maybeGet(player.level()).orElse(null);
+        if (gameComp == null || !gameComp.isRole(player, ModRoles.GLITCH_ROBOT)) {
+            return;
+        }
         if (!player.getSlot(103).get().is(ModItems.NIGHT_VISION_GLASSES))
             player.removeEffect(MobEffects.NIGHT_VISION);
     }
