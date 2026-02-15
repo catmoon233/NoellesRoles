@@ -59,12 +59,14 @@ import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.network.BreakArmorPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
@@ -122,6 +124,9 @@ public class NoellesrolesClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        // 注册HUD渲染
+        ClientHudRenderer.registerRenderersEvent();
+        
         WorldRenderEvents.AFTER_TRANSLUCENT.register((renderContext) -> {
             TaskBlockOverlayRenderer.render(renderContext);
         });
@@ -169,21 +174,27 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+        
         ClientPlayNetworking.registerGlobalReceiver(BreakArmorPayload.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null && client.level != null) {
                     // 播放护盾破碎声音
+                    if (TMMClient.gameComponent != null
+                            && TMMClient.gameComponent.isRole(client.player, ModRoles.BARTENDER)) {
+                        client.player.displayClientMessage(
+                                Component.translatable("message.bartender.armor_broke").withStyle(ChatFormatting.RED),
+                                true);
+                    }
                     client.level.playLocalSound(
-                        payload.x(),
-                        payload.y(),
-                        payload.z(),
-                        SoundEvents.SHIELD_BREAK,
-                        SoundSource.PLAYERS,
-                        1.0F,
-                        1.0F,
-                        false
-                    );
+                            payload.x(),
+                            payload.y(),
+                            payload.z(),
+                            TMMSounds.ITEM_PSYCHO_ARMOUR,
+                            SoundSource.MASTER,
+                            1.0F,
+                            1.0F,
+                            false);
                     // 处理准星效果
                     CrosshairAddons.getStateManager().handleBreakPacket(payload.x(), payload.y(), payload.z());
                 }
