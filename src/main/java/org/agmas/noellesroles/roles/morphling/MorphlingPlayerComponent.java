@@ -66,11 +66,9 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
             if (this.morphTicks > 0) {
                 if (disguise != null) {
                     if (player.level().getPlayerByUUID(disguise) != null) {
-                        if (((ServerPlayer) player.level().getPlayerByUUID(disguise)).gameMode
-                                .getGameModeForPlayer() == GameType.SPECTATOR) {
-                            stopMorph();
-                            return;
-                        }
+
+
+
                     } else {
                         stopMorph();
                         return;
