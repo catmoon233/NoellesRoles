@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.Noellesroles;
@@ -144,12 +145,12 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     private void checkDarkness() {
-        // 检查是否在黑暗环境下（光照等级 <= 4）
+        // 检查是否在黑暗环境下（光照等级 <= 5）
         int lightLevel = player.level().getRawBrightness(player.blockPosition(),
                 net.minecraft.world.level.LightLayer.BLOCK.ordinal());
         // Noellesroles.LOGGER.info("LightLevel:" + lightLevel);
         var blackOut = WorldBlackoutComponent.KEY.maybeGet(player.level()).orElse(null);
-        if (lightLevel <= 4 || (blackOut!=null && blackOut.isBlackoutActive())) {
+        if (lightLevel <= 5 || (blackOut != null && blackOut.isBlackoutActive())) {
             if (!inDarkness) {
                 // 刚进入黑暗
                 inDarkness = true;
@@ -198,6 +199,8 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
         } else {
             if (inDarkness) {
                 // 离开黑暗环境
+                player.removeEffect(MobEffects.NIGHT_VISION);
+                player.removeEffect(MobEffects.MOVEMENT_SPEED);
                 inDarkness = false;
                 speedEffectCooldown = 0;
             }
