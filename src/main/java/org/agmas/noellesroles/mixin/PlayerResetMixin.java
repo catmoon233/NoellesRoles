@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.mixin;
 
+import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
 import org.agmas.noellesroles.component.*;
@@ -63,6 +64,9 @@ public abstract class PlayerResetMixin {
         RoleUtils.RemoveAllPlayerAttributes(player);
         RoleUtils.RemoveAllEffects(player);
 
+
+        BartenderPlayerComponent barComc = BartenderPlayerComponent.KEY.get(player);
+        barComc.reset();
 
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
