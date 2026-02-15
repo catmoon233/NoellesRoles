@@ -7,6 +7,7 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
@@ -385,12 +386,6 @@ public class Noellesroles implements ModInitializer {
         looseItems.add(() -> TMMItems.KNIFE.getDefaultInstance());
         looseItems.add(() -> TMMItems.DEFENSE_VIAL.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(TMMRoles.LOOSE_END, looseItems);
-
-        // // 强盗初始物品
-        // List<Supplier<ItemStack>> banditItems = new ArrayList<>();
-        // banditItems.add(() -> HSRItems.BANDIT_REVOLVER.getDefaultInstance());
-        // banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
-        // // INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
 
         // 乘务员初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
@@ -1897,7 +1892,6 @@ public class Noellesroles implements ModInitializer {
                         return;
                     }
                     if (gameWorldComponent.isRole(context.player(), ModRoles.BROADCASTER)) {
-
                         BroadcasterPlayerComponent comp = BroadcasterPlayerComponent.KEY.get(context.player());
                         String message = payload.message();
                         boolean onlySave = payload.onlySave();
@@ -1968,6 +1962,18 @@ public class Noellesroles implements ModInitializer {
                                 .withStyle(ChatFormatting.GREEN),
                         true);
                 context.player().removeEffect(MobEffects.NIGHT_VISION);
+                return;
+            }
+            if (gameWorldComponent.isRole(context.player(), ModRoles.ATTENDANT)) {
+                if (abilityPlayerComponent.cooldown > 0) {
+                    context.player().displayClientMessage(Component.translatable(
+                            "message.noellesroles.attendant.cooldown", abilityPlayerComponent.cooldown / 20)
+                            .withStyle(ChatFormatting.RED), true);
+                    return;
+                }
+                
+                abilityPlayerComponent.setCooldown(60 * 20);
+                AttendantHandler.openLight(context.player());
                 return;
             }
             if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
@@ -2073,7 +2079,7 @@ public class Noellesroles implements ModInitializer {
                 nianShouComponent.useRedPacket();
 
                 // 添加延迟发放计时器
-                if (target instanceof ServerPlayer targetSP) {
+                if (target instanceof ServerPlayer) {
                     ConfigWorldComponent configWorld = ConfigWorldComponent.KEY.get(target.level());
                     configWorld.addRedPacketTimer(target.getUUID());
 

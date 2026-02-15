@@ -1,6 +1,9 @@
 package org.agmas.noellesroles.client;
 
 import java.awt.Color;
+
+import org.agmas.noellesroles.AttendantHandler;
+import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 
 import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
@@ -13,6 +16,7 @@ import net.minecraft.network.chat.Component;
 public class ClientHudRenderer {
 
     public static void registerRenderersEvent() {
+
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             // 渲染酒保的提示
             var client = Minecraft.getInstance();
@@ -34,6 +38,30 @@ public class ClientHudRenderer {
                 var text = Component.translatable("hud.bartender.has_armor", comc.getArmor())
                         .withStyle(ChatFormatting.GOLD);
                 guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
+                return;
+            }
+
+            if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRole(client.player, ModRoles.ATTENDANT)) {
+                var comc = NoellesRolesAbilityPlayerComponent.KEY.maybeGet(client.player).orElse(null);
+                if (comc == null)
+                    return;
+                int screenWidth = guiGraphics.guiWidth();
+                int screenHeight = guiGraphics.guiHeight();
+                var font = client.font;
+                int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+                int xOffset = screenWidth - 10; // 距离右边缘
+                var text = Component.literal("");
+                if (comc.cooldown <= 0) {
+                    text.append(Component.translatable("hud.noellesroles.attendant.available",
+                            Component.keybind("key.noellesroles.ability"), AttendantHandler.area_distance)
+                            .withStyle(ChatFormatting.GOLD));
+                } else {
+                    text.append(Component.translatable("hud.noellesroles.attendant.cooldown", comc.cooldown)
+                            .withStyle(ChatFormatting.RED));
+                }
+
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
+                return;
             }
         });
     }
