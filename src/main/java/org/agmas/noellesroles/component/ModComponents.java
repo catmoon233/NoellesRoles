@@ -43,6 +43,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
 
         // ==================== 组件键定义 ====================
         // 所有 ComponentKey 集中在这里定义，确保在 CCA 初始化时正确注册
+        public static final ComponentKey<AwesomePlayerComponent> AWESOME = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "awesome"),
+                        AwesomePlayerComponent.class);
 
         public static final ComponentKey<NoellesRolesAbilityPlayerComponent> ABILITY = ComponentRegistry.getOrCreate(
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "ability"),
@@ -171,6 +174,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
 
                 // 注册通用技能组件 - 附加到玩家实体
                 // RespawnCopyStrategy.NEVER_COPY 表示玩家重生时不保留数据（游戏开始时会重新初始化）
+                registry.beginRegistration(Player.class, AWESOME)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(AwesomePlayerComponent::new);
                 registry.beginRegistration(Player.class, ABILITY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(NoellesRolesAbilityPlayerComponent::new);
@@ -285,7 +291,7 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(ExecutionerPlayerComponent::new);
                 registry.beginRegistration(Player.class, RecallerPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(RecallerPlayerComponent::new);
-                                
+
                 registry.beginRegistration(Player.class, NoiseMakerPlayerComponent.KEY)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(NoiseMakerPlayerComponent::new);
                 registry.beginRegistration(Player.class, GhostPlayerComponent.KEY)

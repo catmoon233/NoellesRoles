@@ -1068,7 +1068,7 @@ public class Noellesroles implements ModInitializer {
             }
             return false;
         });
-
+        AwesomePlayerComponent.registerEvents();
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
                 player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
@@ -1937,6 +1937,7 @@ public class Noellesroles implements ModInitializer {
 
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.ABILITY_PACKET, (payload, context) -> {
             // 通用技能服务端处理
+
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                     .get(context.player());
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
