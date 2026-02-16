@@ -317,10 +317,12 @@ public class NoellesrolesClient implements ClientModInitializer {
                 if (TMMClient.gameComponent != null && client.player != null) {
                     if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS)) {
                         for (var p : client.player.level().players()) {
-                            if (p.distanceTo(client.player) <= 5) {
-                                var aweC = AwesomePlayerComponent.KEY.maybeGet(p).orElse(null);
-                                if (aweC != null) {
-                                    AwesomeClientHandler.renderParticleOfPlayer(client, p, aweC);
+                            if (GameFunctions.isPlayerAliveAndSurvival(p)) {
+                                if (p.distanceTo(client.player) <= 5) {
+                                    var aweC = AwesomePlayerComponent.KEY.maybeGet(p).orElse(null);
+                                    if (aweC != null) {
+                                        AwesomeClientHandler.renderParticleOfPlayer(client, p, aweC);
+                                    }
                                 }
                             }
                         }

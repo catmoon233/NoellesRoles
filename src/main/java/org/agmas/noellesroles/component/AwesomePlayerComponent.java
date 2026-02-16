@@ -11,6 +11,7 @@ import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerDeath;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
@@ -58,13 +59,16 @@ public class AwesomePlayerComponent implements RoleComponent, ServerTickingCompo
         OnPlayerDeath.EVENT.register((victim, resourceLocation) -> {
             var players = victim.level().players();
             for (var player : players) {
-                if (player.distanceToSqr(victim) <= 25) {
-                    AwesomePlayerComponent component = AwesomePlayerComponent.KEY.maybeGet(player).orElse(null);
-                    if (component != null) {
-                        component.setNearByDeathTime(nearByDeathTimeRecordTime); // 30s
-                        // component.sync();
+                if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                    if (player.distanceToSqr(victim) <= 25) {
+                        AwesomePlayerComponent component = AwesomePlayerComponent.KEY.maybeGet(player).orElse(null);
+                        if (component != null) {
+                            component.setNearByDeathTime(nearByDeathTimeRecordTime); // 30s
+                            // component.sync();
+                        }
                     }
                 }
+
             }
         });
     }
