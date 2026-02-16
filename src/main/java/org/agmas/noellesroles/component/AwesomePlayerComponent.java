@@ -41,6 +41,11 @@ public class AwesomePlayerComponent implements RoleComponent, ServerTickingCompo
 
     // 该玩家上次附近玩家死亡效果
     public int nearByDeathTime = 0;
+    public static final int nearByDeathTimeRecordTime = 30 * 20;// 30s
+
+    public int nearByDeathTime() {
+        return nearByDeathTime;
+    }
 
     /**
      * 构造函数
@@ -56,7 +61,7 @@ public class AwesomePlayerComponent implements RoleComponent, ServerTickingCompo
                 if (player.distanceTo(victim) <= 5) {
                     AwesomePlayerComponent component = AwesomePlayerComponent.KEY.maybeGet(player).orElse(null);
                     if (component != null) {
-                        component.setNearByDeathTime(30 * 20); // 30s
+                        component.setNearByDeathTime(nearByDeathTimeRecordTime); // 30s
                         component.sync();
                     }
                 }
