@@ -1276,7 +1276,6 @@ public class Noellesroles implements ModInitializer {
                         player.getAttribute(Attributes.JUMP_STRENGTH).addOrReplacePermanentModifier(noJumpingAttribute);
                     }
                 }
-                player.playNotifySound(NRSounds.HARPY_WELCOME, SoundSource.MASTER, 2f, 1f);
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
                 if (gameWorldComponent != null) {
                     if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {

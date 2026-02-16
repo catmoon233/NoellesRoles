@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.NRSounds;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.event.MutableComponentResult;
@@ -60,6 +61,7 @@ import dev.doctor4t.trainmurdermystery.client.StaminaRenderer;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.event.OnRoundStartWelcomeTimmer;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -280,6 +282,11 @@ public class NoellesrolesClient implements ClientModInitializer {
                     ClientPlayNetworking.send(new LootPoolsInfoRequestC2SPacket(requestPoolIDs));
                 }
             });
+        });
+        OnRoundStartWelcomeTimmer.EVENT.register((player, timer) -> {
+            if(timer == 1){
+                player.level().playLocalSound(player, NRSounds.HARPY_WELCOME, SoundSource.AMBIENT, 1f, 1f);
+            }
         });
         // 注册抽奖界面网络包处理：接收并保存服务器卡池信息并显示界面
         ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoS2CPacket.ID, (payload, context) -> {
