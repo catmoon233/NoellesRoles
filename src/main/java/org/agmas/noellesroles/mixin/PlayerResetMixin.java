@@ -78,6 +78,9 @@ public abstract class PlayerResetMixin {
         BartenderPlayerComponent barComc = BartenderPlayerComponent.KEY.get(player);
         barComc.reset();
 
+        AwesomePlayerComponent awesomeComp = ModComponents.AWESOME.get(player);
+        awesomeComp.reset();
+        
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
         InControlCCA inControlCCA = InControlCCA.KEY.get(player);
