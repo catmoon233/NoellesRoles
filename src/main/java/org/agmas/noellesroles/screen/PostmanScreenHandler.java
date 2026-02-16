@@ -1,7 +1,10 @@
 package org.agmas.noellesroles.screen;
 
+import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PostmanPlayerComponent;
+
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
 
 import java.util.UUID;
 
@@ -14,6 +17,8 @@ import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import pro.fazeclan.river.stupid_express.constants.SEItems;
 
 /**
  * 邮差传递界面的 ScreenHandler
@@ -191,6 +196,34 @@ public class PostmanScreenHandler extends AbstractContainerMenu {
         @Override
         public boolean mayPlace(ItemStack stack) {
             // 任何玩家都可以放入物品
+            if (stack.is(ModItems.DELIVERY_BOX))
+                return false;
+            if (stack.is(Items.BOW))
+                return false;
+            if (stack.is(Items.CROSSBOW))
+                return false;
+            if (stack.is(Items.ARROW))
+                return false;
+            if (stack.is(Items.TIPPED_ARROW))
+                return false;
+            if (stack.is(Items.SPECTRAL_ARROW))
+                return false;
+            if (stack.is(SEItems.JERRY_CAN))
+                return false;
+            if (stack.is(SEItems.LIGHTER))
+                return false;
+            if (stack.is(TMMItems.BAT))
+                return false;
+            if (stack.is(TMMItems.LETTER))
+                return false;
+            if (stack.is(ModItems.LETTER_ITEM))
+                return false;
+            if (stack.is(ModItems.BOMB))
+                return false;
+            if (stack.is(ModItems.WRITTEN_NOTE))
+                return false;
+            if (stack.is(ModItems.CONSPIRACY_PAGE))
+                return false;
             return true;
         }
 

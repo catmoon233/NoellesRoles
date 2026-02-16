@@ -625,7 +625,7 @@
   "==================== 补充翻译键 ====================": "",
   "请你下次不要用literal，写翻译键求你了好不好！！！/(ㄒoㄒ)/~~": "",
   "hud.general.dead": "已死亡",
-  "hud.general.put_item": "放入物品",
+  "screen.general.put_item": "放入物品",
   "hud.general.killer_friend": "杀手同伙",
   "widget.general.select": "选择",
   "widget.general.selected": "已选择",
