@@ -2,6 +2,7 @@ package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -42,7 +43,8 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
         this.target2 = t2;
         this.isSwapping = true;
         this.swapTimer = 50; // 2.5秒 = 50 ticks
-        NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY.get(this.player);
+        NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY
+                .get(this.player);
         if (abilityPlayerComponent != null) {
             if (!abilityPlayerComponent.canUseAbility()) {
                 return;
@@ -58,7 +60,12 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
 
         Player player1 = player.level().getPlayerByUUID(target1);
         Player player2 = player.level().getPlayerByUUID(target2);
-
+        if (!GameFunctions.isPlayerAliveAndSurvival(player1)) {
+            return;
+        }
+        if (!GameFunctions.isPlayerAliveAndSurvival(player2)) {
+            return;
+        }
         if (player1 != null && player2 != null) {
             Vec3 pos1 = player1.position();
             Vec3 pos2 = player2.position();
@@ -76,7 +83,8 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
             player2.displayClientMessage(Component.translatable("message.noellesroles.swapper.swapped"), true);
 
             // 设置冷却
-            NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+            NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY
+                    .get(player);
             abilityPlayerComponent.cooldown = GameConstants.getInTicks(0,
                     NoellesRolesConfig.HANDLER.instance().swapperSwapCooldown);
             abilityPlayerComponent.sync();
