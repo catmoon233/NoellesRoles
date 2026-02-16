@@ -759,6 +759,7 @@
   "message.noellesroles.nianshou.death_by_firecrackers": "年兽 %s 被鞭炮驱散了！",
   "message.noellesroles.nianshou.gongxi_facai_reward": "恭喜发财！你获得100金币并回满san值！",
   "subtitles.gongxifacai": "恭喜发财",
+  "subtitles.harpy_welcome": "哈比航班信息播报",
   "hud.noellesroles.nianshou.red_packets": "红包数量：%s",
   "msg.noellesroles.taskpoint.available": "任务点透视已可用。按下 %s 开启或关闭。",
   "message.tip.for_taskpoint": "按下 %s 可切换任务点透视"

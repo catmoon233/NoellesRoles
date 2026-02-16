@@ -962,6 +962,7 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+
         ConspiratorKilledPlayer.registerEvents();
         EntityClearUtils.registerResetEvent();
         TMM.cantSendReplay.add(player -> {
@@ -1081,7 +1082,11 @@ public class Noellesroles implements ModInitializer {
                 player.addItem(TMMItems.REVOLVER.getDefaultInstance().copy());
                 return;
             }
-
+            if (role.identifier().equals(ModRoles.ATTENDANT.identifier())) {
+                if (player instanceof ServerPlayer sp)
+                    TMM.SendRoomInfoToPlayer(sp);
+                return;
+            }
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                     .get(player);
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
@@ -1271,6 +1276,7 @@ public class Noellesroles implements ModInitializer {
                         player.getAttribute(Attributes.JUMP_STRENGTH).addOrReplacePermanentModifier(noJumpingAttribute);
                     }
                 }
+                player.playNotifySound(NRSounds.HARPY_WELCOME, SoundSource.MASTER, 2f, 1f);
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
                 if (gameWorldComponent != null) {
                     if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {
@@ -1975,7 +1981,7 @@ public class Noellesroles implements ModInitializer {
                             .withStyle(ChatFormatting.RED), true);
                     return;
                 }
-                
+
                 abilityPlayerComponent.setCooldown(60 * 20);
                 AttendantHandler.openLight(context.player());
                 return;
