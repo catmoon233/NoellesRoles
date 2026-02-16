@@ -24,7 +24,7 @@ public class AwesomeClientHandler {
                                                 / (float) AwesomePlayerComponent.nearByDeathTimeRecordTime)) + 0.2f);
                 client.level.addParticle(
                                 greenDust, true,
-                                p.getX(), p.getY() + 0.1, p.getZ(), // 在玩家脚下稍上方
+                                p.getX(), p.getY() + 2.0, p.getZ(), // 在玩家头上稍上方
                                 0, 0, 0 // 速度为0
                 );
         }
