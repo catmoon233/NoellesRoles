@@ -14,7 +14,6 @@
     "ShitExposurePatreonMixin",
     "SpawnMixin",
     "accessor.PlayerPoisonComponentAccessor",
-    "roles.ConspiratorPlayerMixin",
     "roles.avengerKill.AvengerKillMixin",
     "roles.awesome_binglus.NoteEntityMixin",
     "roles.awesome_binglus.NoteMixin",

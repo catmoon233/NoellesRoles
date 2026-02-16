@@ -72,6 +72,7 @@ import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
@@ -961,6 +962,7 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+        ConspiratorKilledPlayer.registerEvents();
         EntityClearUtils.registerResetEvent();
         TMM.cantSendReplay.add(player -> {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(player);
@@ -1069,6 +1071,7 @@ public class Noellesroles implements ModInitializer {
             return false;
         });
         AwesomePlayerComponent.registerEvents();
+        TrueKillerFinder.registerEvents();
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
                 player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
