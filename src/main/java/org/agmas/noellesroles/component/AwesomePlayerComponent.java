@@ -58,11 +58,11 @@ public class AwesomePlayerComponent implements RoleComponent, ServerTickingCompo
         OnPlayerDeath.EVENT.register((victim, resourceLocation) -> {
             var players = victim.level().players();
             for (var player : players) {
-                if (player.distanceTo(victim) <= 5) {
+                if (player.distanceToSqr(victim) <= 25) {
                     AwesomePlayerComponent component = AwesomePlayerComponent.KEY.maybeGet(player).orElse(null);
                     if (component != null) {
                         component.setNearByDeathTime(nearByDeathTimeRecordTime); // 30s
-                        component.sync();
+                        // component.sync();
                     }
                 }
             }
@@ -107,7 +107,7 @@ public class AwesomePlayerComponent implements RoleComponent, ServerTickingCompo
      * 同步到客户端
      */
     public void sync() {
-        ModComponents.ABILITY.sync(this.player);
+        ModComponents.AWESOME.sync(this.player);
     }
 
     // ==================== Tick 处理 ====================
