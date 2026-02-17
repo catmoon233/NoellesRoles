@@ -200,7 +200,11 @@ public class LockEntityManager {
             if (LockEntityManager.getInstance().getLockEntity(
                     LockEntityManager.getInstance().getNearByLockPos(doorEntity.getBlockPos().above(),
                             world)) == null) {
-                doorEntity.setKeyName(currentKeyName.replace("locked:", ""));
+                // 只移除 "locked:" 前缀，而不是所有出现的 "locked:"
+                int index = currentKeyName.indexOf("locked:");
+                if (index != -1) {
+                    doorEntity.setKeyName(currentKeyName.substring(0, index) + currentKeyName.substring(index + 7));
+                }
             }
         }
     }

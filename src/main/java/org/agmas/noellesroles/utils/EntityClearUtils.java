@@ -22,10 +22,10 @@ public class EntityClearUtils {
         LockEntityManager.getInstance().resetLockEntities();
         try {
 
-            // 清除玩家属性
-            for (var pl : world.players()) {
-                RoleUtils.RemoveAllPlayerAttributes(pl);
-            }
+            // // 清除玩家属性
+            // for (var pl : world.players()) {
+            //     RoleUtils.RemoveAllPlayerAttributes(pl);
+            // }
 
             // 收集需要删除的实体列表，避免在遍历过程中修改集合
             java.util.List<net.minecraft.world.entity.Entity> entitiesToRemove = new java.util.ArrayList<>();

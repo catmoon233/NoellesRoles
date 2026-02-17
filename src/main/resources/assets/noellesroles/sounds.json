@@ -13,5 +13,14 @@
 			}
 		],
 		"subtitle": "subtitles.gongxifacai"
+	},
+	"noellesroles.harpy_welcome": {
+		"sounds": [
+			{
+				"name": "noellesroles:harpy_welcome",
+				"stream": true
+			}
+		],
+		"subtitle": "subtitles.harpy_welcome"
 	}
 }

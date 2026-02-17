@@ -1,15 +1,11 @@
 package org.agmas.noellesroles.item;
 
-import java.util.Date;
-
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
@@ -32,7 +28,7 @@ public class NightGlassesItem extends ArmorItem {
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int i, boolean bl) {
         if (entity instanceof Player pl) {
             ItemStack headItem = pl.getSlot(103).get();
-            if (headItem.equals(itemStack)) {
+            if (headItem.equals(itemStack) && itemStack.is(org.agmas.noellesroles.ModItems.NIGHT_VISION_GLASSES)) {
                 this.tick++;
                 if (this.tick >= 20) {
                     this.tick = 0;

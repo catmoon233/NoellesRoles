@@ -121,7 +121,11 @@ public class AlarmTrapItem extends Item implements AdventureUsable {
             }
         } else {
             if (hasDoorAlarmTrap(doorEntity)) {
-                doorEntity.setKeyName(currentKeyName.replace("alarmed:", ""));
+                // 只移除 "alarmed:" 前缀，而不是前8个字符
+                int index = currentKeyName.indexOf("alarmed:");
+                if (index != -1) {
+                    doorEntity.setKeyName(currentKeyName.substring(0, index) + currentKeyName.substring(index + 8));
+                }
             }
         }
     }

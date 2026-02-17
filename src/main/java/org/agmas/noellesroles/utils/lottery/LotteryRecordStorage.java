@@ -1,4 +1,4 @@
-package org.agmas.noellesroles.utils;
+package org.agmas.noellesroles.utils.lottery;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +38,7 @@ public class LotteryRecordStorage {
         try {
             Files.createDirectories(playerDataDir);
         } catch (IOException e) {
-            // TODO : [error]打印创建玩家数据目录异常信息日志
+            Noellesroles.LOGGER.error("Failed to create player data directory.\n{}", String.valueOf(e));
         }
     }
     public static LotteryRecordStorage getInstance() {
@@ -66,16 +66,16 @@ public class LotteryRecordStorage {
 
             dirtyPlayers.remove(playerId);
 
-            // TODO : [info]打印保存玩家数据信息日志
+            Noellesroles.LOGGER.info("Saved player data for player {}", playerId);
         } catch (IOException e) {
-            // TODO : [error]打印写入异常信息日志:包含玩家id
+            Noellesroles.LOGGER.error("Failed to save player data for player {}\n{}", playerId, String.valueOf(e));
         }
     }
     /** 保存所有脏数据*/
     public void saveAllDirtyPlayersData() {
         if(dirtyPlayers.isEmpty())
             return;
-        // TODO : [info]打印开始保存所有脏玩家数据日志
+        Noellesroles.LOGGER.info("Start saving all dirty player data. Num:{}",dirtyPlayers.size());
         int completeNum = 0;
         int failNum = 0;
         for (UUID playerId : dirtyPlayers) {
@@ -85,10 +85,10 @@ public class LotteryRecordStorage {
             }
             catch (Exception e){
                 ++failNum;
-                // TODO : [error]打印写入异常信息日志:包含失败玩家id
+                Noellesroles.LOGGER.error("Failed to save player data for player {}\n{}", playerId, String.valueOf(e));
             }
         }
-        // TODO : [info]打印保存玩家数据信息日志:包含成功数和失败数
+        Noellesroles.LOGGER.info("Saved all dirty player data. Complete:{}, Fail:{}",completeNum,failNum);
     }
     protected LotteryRecordData loadLotteryDataFromFile(UUID playerUuid) {
         Path file = getPlayerDataFilePath(playerUuid);
@@ -97,12 +97,12 @@ public class LotteryRecordStorage {
         try {
             CompoundTag tag = NbtIo.read(file);
             if(tag == null){
-                // TODO : [warn]打印对应玩家id的文件缺失信息日志
+                Noellesroles.LOGGER.warn("Player data file is missing. Player:{}",playerUuid);
                 return null;
             }
             return LotteryRecordData.fromNbt(tag);
         } catch (IOException e) {
-            //TODO : [error]打印读取异常信息日志
+            Noellesroles.LOGGER.error("Failed to load player data for player {}\n{}", playerUuid, String.valueOf(e));
             return null;
         }
     }
@@ -134,6 +134,9 @@ public class LotteryRecordStorage {
     }
     public void markPlayerDirty(UUID playerId){
         dirtyPlayers.add(playerId);
+    }
+    public Path getLotteryDataDir() {
+        return lotteryDataDir;
     }
 
     protected static final LotteryRecordStorage instance = new LotteryRecordStorage();

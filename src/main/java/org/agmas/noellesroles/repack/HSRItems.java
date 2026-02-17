@@ -11,7 +11,6 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.repack.items.AntidoteItem;
 import org.agmas.noellesroles.repack.items.BanditRevolverItem;
 import org.agmas.noellesroles.repack.items.CatalystItem;
-import org.agmas.noellesroles.repack.items.MasterKeyItem;
 import org.agmas.noellesroles.repack.items.ToxinItem;
 
 public class HSRItems {

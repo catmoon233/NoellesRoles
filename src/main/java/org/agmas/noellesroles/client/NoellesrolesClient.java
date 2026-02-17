@@ -9,6 +9,7 @@ import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerScre
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.setupItemCallbacks;
 import static org.agmas.noellesroles.component.InsaneKillerPlayerComponent.playerBodyEntities;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.NRSounds;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.event.MutableComponentResult;
@@ -27,19 +29,24 @@ import org.agmas.noellesroles.client.screen.LockGameScreen;
 import org.agmas.noellesroles.client.screen.LootInfoScreen;
 import org.agmas.noellesroles.client.screen.LootScreen;
 import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
+import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
-import org.agmas.noellesroles.packet.LootInfoScreenS2CPacket;
-import org.agmas.noellesroles.packet.LootResultS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
 import org.agmas.noellesroles.packet.OpenIntroPayload;
 import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.awesome_binglus.AwesomeClientHandler;
+import org.agmas.noellesroles.utils.lottery.LotteryManager;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
 
@@ -50,18 +57,23 @@ import dev.doctor4t.ratatouille.util.TextUtils;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
+import dev.doctor4t.trainmurdermystery.client.StaminaRenderer;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.event.OnRoundStartWelcomeTimmer;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.network.BreakArmorPayload;
+import dev.doctor4t.trainmurdermystery.network.TriggerScreenEdgeEffectPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
@@ -69,17 +81,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
 import walksy.crosshairaddons.CrosshairAddons;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 
 public class NoellesrolesClient implements ClientModInitializer {
 
@@ -93,7 +105,6 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static Player targetFakeBody;
     public static Player hudTarget;
     public static boolean isTaskInstinctEnabled = false;
-
     public static Map<UUID, UUID> SHUFFLED_PLAYER_ENTRIES_CACHE = Maps.newHashMap();
     public static Component currentBroadcastMessage = null;
     public static int broadcastMessageTicks = 0;
@@ -108,6 +119,10 @@ public class NoellesrolesClient implements ClientModInitializer {
      * 4: 床
      * 5: 跑步机
      * 6: 讲台
+     * 7: 门
+     * 8: 马桶
+     * 9: 椅子（包括马桶）
+     * 10: 音符盒
      */
     public static HashMap<BlockPos, Integer> taskBlocks = new HashMap<>();
     public static int scanTaskPointsCountDown = -1;
@@ -115,6 +130,9 @@ public class NoellesrolesClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        // 注册HUD渲染
+        ClientHudRenderer.registerRenderersEvent();
+
         WorldRenderEvents.AFTER_TRANSLUCENT.register((renderContext) -> {
             TaskBlockOverlayRenderer.render(renderContext);
         });
@@ -162,10 +180,28 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+
         ClientPlayNetworking.registerGlobalReceiver(BreakArmorPayload.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
-                if (client.player != null) {
+                if (client.player != null && client.level != null) {
+                    // 屏幕效果
+                    StaminaRenderer.triggerScreenEdgeEffect(Color.ORANGE.getRGB());
+
+                    // 播放护盾破碎声音
+                    client.player.displayClientMessage(
+                            Component.translatable("message.bartender.armor_broke").withStyle(ChatFormatting.RED),
+                            true);
+                    client.level.playLocalSound(
+                            payload.x(),
+                            payload.y(),
+                            payload.z(),
+                            TMMSounds.ITEM_PSYCHO_ARMOUR,
+                            SoundSource.MASTER,
+                            1.0F,
+                            1.0F,
+                            false);
+                    // 处理准星效果
                     CrosshairAddons.getStateManager().handleBreakPacket(payload.x(), payload.y(), payload.z());
                 }
             });
@@ -226,17 +262,45 @@ public class NoellesrolesClient implements ClientModInitializer {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
-                    client.setScreen(new LootScreen(payload.ansID()));
+                    client.setScreen(new LootScreen(payload.poolID(), payload.quality(), payload.ansID()));
                 }
             });
         });
-        // 注册抽奖界面网络包处理：接收服务器奖池信息并显示界面
-        ClientPlayNetworking.registerGlobalReceiver(LootInfoScreenS2CPacket.ID, (payload, context) -> {
+        // 检查卡池信息是否缺失，如果不缺失则打开卡池界面，否则请求
+        ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoCheckS2CPacket.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
-                if (client.player != null) {
-                    client.setScreen(new LootInfoScreen());
+                List<Integer> requestPoolIDs = new ArrayList<>();
+                for (Integer poolID : payload.poolIDs()) {
+                    if (LotteryManager.getInstance().getLotteryPool(poolID) == null)
+                        requestPoolIDs.add(poolID);
                 }
+                if (requestPoolIDs.isEmpty() && client.player != null)
+                    client.setScreen(new LootInfoScreen());
+                else {
+                    // 缺失卡池信息，向服务器请求缺失的卡池信息
+                    ClientPlayNetworking.send(new LootPoolsInfoRequestC2SPacket(requestPoolIDs));
+                }
+            });
+        });
+        OnRoundStartWelcomeTimmer.EVENT.register((player, timer) -> {
+            if(timer == 1){
+                player.level().playLocalSound(player, NRSounds.HARPY_WELCOME, SoundSource.AMBIENT, 1f, 1f);
+            }
+        });
+        // 注册抽奖界面网络包处理：接收并保存服务器卡池信息并显示界面
+        ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoS2CPacket.ID, (payload, context) -> {
+            List<LotteryManager.LotteryPool> missingPools = new ArrayList<>();
+            for (LotteryManager.LotteryPool lotteryPool : payload.pools()) {
+                if (LotteryManager.getInstance().getLotteryPool(lotteryPool.getPoolID()) == null)
+                    LotteryManager.getInstance().addLotteryPool(lotteryPool);
+                else
+                    LotteryManager.getInstance().setLotteryPoolByID(lotteryPool.getPoolID(), lotteryPool);
+            }
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null)
+                    client.setScreen(new LootInfoScreen());
             });
         });
 
@@ -255,7 +319,22 @@ public class NoellesrolesClient implements ClientModInitializer {
                             if (playerBodyEntity.getPlayerUuid().equals(uuid))
                                 ++playerBodyEntity.tickCount;
                         });
-
+            }
+            if (client.level != null && client.level.getGameTime() % 20 == 0) {
+                if (TMMClient.gameComponent != null && client.player != null) {
+                    if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS)) {
+                        for (var p : client.player.level().players()) {
+                            if (GameFunctions.isPlayerAliveAndSurvival(p)) {
+                                if (p.distanceTo(client.player) <= 5) {
+                                    var aweC = AwesomePlayerComponent.KEY.maybeGet(p).orElse(null);
+                                    if (aweC != null) {
+                                        AwesomeClientHandler.renderParticleOfPlayer(client, p, aweC);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
             if (roleGuessNoteClientBind.consumeClick()) {
                 client.execute(() -> {
@@ -319,11 +398,14 @@ public class NoellesrolesClient implements ClientModInitializer {
                 } else if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BROADCASTER)) {
                     if (!isPlayerInAdventureMode(client.player))
                         return;
-                    client.setScreen(new BroadcasterScreen());
+                    client.execute(() -> {
+                        client.setScreen(new BroadcasterScreen());
+                    });
                     return;
                 }
                 ClientPlayNetworking.send(new AbilityC2SPacket());
             }
+
         });
 
         ItemTooltipCallback.EVENT.register(((itemStack, tooltipContext, tooltipType, list) -> {

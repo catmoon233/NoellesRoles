@@ -509,9 +509,6 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
         // 恢复本体物品栏
         loadInventory(originalInventory);
 
-        // 保存当前假人角色（用于清除）
-        Role previousPuppetRole = puppetRole;
-
         // 清除假人状态，但保留收集的尸体信息
         isControllingPuppet = false;
         puppetControlTimer = 0;
@@ -526,7 +523,7 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
 
         // 触发角色分配事件 - 这会通知所有模组的监听器清除之前的角色状态
         // 其他扩展模组（如 NoellesRoles）会在 onRoleAssigned 中检测角色变化并自动清除组件
-        ModdedRoleAssigned.EVENT.invoker().assignModdedRole(player, ModRoles.PUPPETEER);
+        RoleUtils.changeRole(player, ModRoles.PUPPETEER);
         playerShop.setBalance(balance);
         playerShop.sync();
         // 设置技能冷却

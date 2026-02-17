@@ -7,6 +7,7 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
@@ -41,6 +42,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
@@ -50,6 +53,10 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.entity.EntityTypeTest;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
+import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
+
 import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
@@ -65,6 +72,7 @@ import org.agmas.noellesroles.repack.BanditRevolverShootPayload;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
@@ -97,6 +105,8 @@ import static org.agmas.noellesroles.RicesRoleRhapsody.findAttackerWithWeapon;
 
 public class Noellesroles implements ModInitializer {
     // public static Style RESETSTYLE = Style.EMPTY;
+    private static AttributeModifier noJumpingAttribute = new AttributeModifier(
+            Noellesroles.id("no_jumping"), -1.0f, AttributeModifier.Operation.ADD_VALUE);
 
     public static final String MOD_ID = "noellesroles";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -378,12 +388,6 @@ public class Noellesroles implements ModInitializer {
         looseItems.add(() -> TMMItems.DEFENSE_VIAL.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(TMMRoles.LOOSE_END, looseItems);
 
-        // // 强盗初始物品
-        // List<Supplier<ItemStack>> banditItems = new ArrayList<>();
-        // banditItems.add(() -> HSRItems.BANDIT_REVOLVER.getDefaultInstance());
-        // banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
-        // // INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
-
         // 乘务员初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
         // 乘务员钥匙
@@ -449,7 +453,7 @@ public class Noellesroles implements ModInitializer {
                 ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), TMMConfig.firecrackerPrice,
                 ShopEntry.Type.TOOL));
-        柜子区的商店.add(new ShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 60, ShopEntry.Type.TOOL));
+        柜子区的商店.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 80, ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(TMMItems.BODY_BAG.getDefaultInstance(), TMMConfig.bodyBagPrice, ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), TMMConfig.grenadePrice, ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), TMMConfig.blackoutPrice, ShopEntry.Type.TOOL) {
@@ -568,10 +572,10 @@ public class Noellesroles implements ModInitializer {
                 ShopEntry.Type.TOOL));
 
         // 巡警商店
-        // 左轮手枪 - 300金币
+        // 左轮手枪 - 325金币
         PATROLLER_SHOP.add(new ShopEntry(
                 TMMItems.REVOLVER.getDefaultInstance(),
-                300,
+                325,
                 ShopEntry.Type.WEAPON));
         BOMBER_SHOP.add(new ShopEntry(
                 TMMItems.LOCKPICK.getDefaultInstance(),
@@ -651,7 +655,7 @@ public class Noellesroles implements ModInitializer {
         {
             // 游侠商店
             var shopEntries = new ArrayList<ShopEntry>();
-            shopEntries.add(new ShopEntry(Items.CROSSBOW.getDefaultInstance(), 250, ShopEntry.Type.WEAPON) {
+            shopEntries.add(new ShopEntry(Items.CROSSBOW.getDefaultInstance(), 300, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
                     int itemCount = 0;
@@ -672,7 +676,7 @@ public class Noellesroles implements ModInitializer {
             PoisonArrow.set(DataComponents.ITEM_NAME, Component.translatable("item.poison_arrow.name"));
             PoisonArrow.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.POISON));
             PoisonArrow.set(DataComponents.MAX_STACK_SIZE, 1);
-            shopEntries.add(new ShopEntry(PoisonArrow, 75, ShopEntry.Type.WEAPON) {
+            shopEntries.add(new ShopEntry(PoisonArrow, 100, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
                     int itemCount = 0;
@@ -857,7 +861,7 @@ public class Noellesroles implements ModInitializer {
         // 退伍军人商店
         {
             VETERAN_SHOP.add(new ShopEntry(
-                    ModItems.SP_KNIFE.getDefaultInstance(),
+                    TMMItems.KNIFE.getDefaultInstance(),
                     250,
                     ShopEntry.Type.WEAPON));
             ShopContent.customEntries.put(
@@ -948,7 +952,8 @@ public class Noellesroles implements ModInitializer {
 
         // 注册抽奖网络包
         PayloadTypeRegistry.playS2C().register(LootResultS2CPacket.ID, LootResultS2CPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(LootInfoScreenS2CPacket.ID, LootInfoScreenS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(LootPoolsInfoCheckS2CPacket.ID, LootPoolsInfoCheckS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(LootPoolsInfoS2CPacket.ID, LootPoolsInfoS2CPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {
@@ -957,6 +962,8 @@ public class Noellesroles implements ModInitializer {
     }
 
     public void registerEvents() {
+
+        ConspiratorKilledPlayer.registerEvents();
         EntityClearUtils.registerResetEvent();
         TMM.cantSendReplay.add(player -> {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(player);
@@ -1064,7 +1071,8 @@ public class Noellesroles implements ModInitializer {
             }
             return false;
         });
-
+        AwesomePlayerComponent.registerEvents();
+        TrueKillerFinder.registerEvents();
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
                 player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
@@ -1074,7 +1082,11 @@ public class Noellesroles implements ModInitializer {
                 player.addItem(TMMItems.REVOLVER.getDefaultInstance().copy());
                 return;
             }
-
+            if (role.identifier().equals(ModRoles.ATTENDANT.identifier())) {
+                if (player instanceof ServerPlayer sp)
+                    TMM.SendRoomInfoToPlayer(sp);
+                return;
+            }
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                     .get(player);
             abilityPlayerComponent.cooldown = NoellesRolesConfig.HANDLER.instance().generalCooldownTicks;
@@ -1196,7 +1208,19 @@ public class Noellesroles implements ModInitializer {
                 player.addItem(SEItems.JERRY_CAN.getDefaultInstance().copy());
                 player.addItem(SEItems.LIGHTER.getDefaultInstance().copy());
             }
-
+            if (role.equals(ModRoles.NIAN_SHOU)) {
+                var comc = NianShouPlayerComponent.KEY.maybeGet(player).orElse(null);
+                if (comc != null) {
+                    comc.reset();
+                }
+            }
+            if (role.equals(ModRoles.PUPPETEER)) {
+                var comc = PuppeteerPlayerComponent.KEY.maybeGet(player).orElse(null);
+                if (comc != null) {
+                    if (!comc.isActivePuppeteer())
+                        comc.reset();
+                }
+            }
         });
         ServerTickEvents.END_SERVER_TICK.register(((server) -> {
             // 更新烟雾区域和迷幻区域
@@ -1246,6 +1270,12 @@ public class Noellesroles implements ModInitializer {
         // });
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             serverLevel.players().forEach(player -> {
+                if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                    // NO JUMPING! For everyone who hasn't permissions
+                    if (!player.hasPermissions(2)) {
+                        player.getAttribute(Attributes.JUMP_STRENGTH).addOrReplacePermanentModifier(noJumpingAttribute);
+                    }
+                }
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
                 if (gameWorldComponent != null) {
                     if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {
@@ -1870,7 +1900,6 @@ public class Noellesroles implements ModInitializer {
                         return;
                     }
                     if (gameWorldComponent.isRole(context.player(), ModRoles.BROADCASTER)) {
-
                         BroadcasterPlayerComponent comp = BroadcasterPlayerComponent.KEY.get(context.player());
                         String message = payload.message();
                         boolean onlySave = payload.onlySave();
@@ -1916,6 +1945,7 @@ public class Noellesroles implements ModInitializer {
 
         ServerPlayNetworking.registerGlobalReceiver(Noellesroles.ABILITY_PACKET, (payload, context) -> {
             // 通用技能服务端处理
+
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                     .get(context.player());
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
@@ -1941,6 +1971,18 @@ public class Noellesroles implements ModInitializer {
                                 .withStyle(ChatFormatting.GREEN),
                         true);
                 context.player().removeEffect(MobEffects.NIGHT_VISION);
+                return;
+            }
+            if (gameWorldComponent.isRole(context.player(), ModRoles.ATTENDANT)) {
+                if (abilityPlayerComponent.cooldown > 0) {
+                    context.player().displayClientMessage(Component.translatable(
+                            "message.noellesroles.attendant.cooldown", abilityPlayerComponent.cooldown / 20)
+                            .withStyle(ChatFormatting.RED), true);
+                    return;
+                }
+
+                abilityPlayerComponent.setCooldown(60 * 20);
+                AttendantHandler.openLight(context.player());
                 return;
             }
             if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
@@ -2046,7 +2088,7 @@ public class Noellesroles implements ModInitializer {
                 nianShouComponent.useRedPacket();
 
                 // 添加延迟发放计时器
-                if (target instanceof ServerPlayer targetSP) {
+                if (target instanceof ServerPlayer) {
                     ConfigWorldComponent configWorld = ConfigWorldComponent.KEY.get(target.level());
                     configWorld.addRedPacketTimer(target.getUUID());
 

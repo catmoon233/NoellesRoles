@@ -6,6 +6,7 @@ import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -60,27 +61,26 @@ public abstract class VeteranKnifeMixin {
 
         // 移除玩家手中的刀
         removeKnifeFromPlayer(killer);
-        if (gameWorld.isInnocent(victim)) {
-            GameFunctions.killPlayer(killer, true, killer, TMM.id("shot_innocent"));
-
-        }
     }
 
     private static void removeSPKnifeFromPlayer(Player player) {
         // 先检查主手
         ItemStack mainHand = player.getMainHandItem();
         if (mainHand.is(ModItems.SP_KNIFE)) {
-            mainHand.setCount(0);
-            return;
+            player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        }
+        if (mainHand.is(TMMItems.KNIFE)) {
+            player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
 
         // 再检查副手
         ItemStack offHand = player.getOffhandItem();
         if (offHand.is(ModItems.SP_KNIFE)) {
-            offHand.setCount(0);
-            return;
+            player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
-
+        if (offHand.is(TMMItems.KNIFE)) {
+            player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        }
         // // 最后遍历背包移除刀
         // for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
         // ItemStack stack = player.getInventory().getItem(i);

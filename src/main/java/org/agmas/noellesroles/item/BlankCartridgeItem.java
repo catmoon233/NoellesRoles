@@ -49,7 +49,8 @@ public class BlankCartridgeItem extends Item {
         SlipperyGhostPlayerComponent ghostComp = ModComponents.SLIPPERY_GHOST.get(user);
         if (ghostComp.isBlankCartridgeOnCooldown()) {
             user.displayClientMessage(
-                    Component.literal("空包弹冷却中！剩余 " + ghostComp.getBlankCartridgeCooldownSeconds() + " 秒")
+                    Component
+                            .translatable("item.blank_cartridge.cooldown", ghostComp.getBlankCartridgeCooldownSeconds())
                             .withStyle(ChatFormatting.RED),
                     true);
             return InteractionResult.FAIL;
@@ -84,11 +85,15 @@ public class BlankCartridgeItem extends Item {
                     SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 0.5F);
 
             // 通知目标
-            target.displayClientMessage(Component.literal("你的枪械被空包弹干扰，进入冷却状态！").withStyle(ChatFormatting.RED), true);
+            target.displayClientMessage(
+                    Component.translatable("item.blank_cartridge.effect.active.other").withStyle(ChatFormatting.RED),
+                    true);
 
             // 通知使用者
-            user.displayClientMessage(Component.literal("成功使 " + target.getName().getString() + " 的枪械进入冷却！")
-                    .withStyle(ChatFormatting.GREEN), true);
+            user.displayClientMessage(
+                    Component.translatable("item.blank_cartridge.effect.active.info", target.getName())
+                            .withStyle(ChatFormatting.GREEN),
+                    true);
 
             // 消耗物品
             stack.consume(1, user);
@@ -99,7 +104,9 @@ public class BlankCartridgeItem extends Item {
             return InteractionResult.SUCCESS;
         } else {
             // 目标没有枪械
-            user.displayClientMessage(Component.literal("目标没有持有枪械！").withStyle(ChatFormatting.YELLOW), true);
+            user.displayClientMessage(
+                    Component.translatable("item.blank_cartridge.failed.no_gun.info").withStyle(ChatFormatting.YELLOW),
+                    true);
             return InteractionResult.FAIL;
         }
     }

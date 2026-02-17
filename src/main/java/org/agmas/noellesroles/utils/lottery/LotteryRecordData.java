@@ -1,4 +1,4 @@
-package org.agmas.noellesroles.utils;
+package org.agmas.noellesroles.utils.lottery;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,25 +15,35 @@ import java.util.UUID;
 public class LotteryRecordData{
     // 抽奖记录项目
     public static class LotteryItemData {
-        protected LotteryItemData(int id, long timeStamp) {
-            this.id = id;
+        protected LotteryItemData(int poolId, int quality, String name, long timeStamp) {
+            this.poolId = poolId;
+            this.quality = quality;
+            this.name = name;
             this.timeStamp = timeStamp;
         }
         public static LotteryItemData fromNbt(CompoundTag tag) {
             return new LotteryItemData(
-                    tag.getInt("Result ID"),
+                    tag.getInt("Result PoolID"),
+                    tag.getInt("Result Quality"),
+                    tag.getString("Result Name"),
                     tag.getLong("Time Stamp")
             );
         }
         /** NBT 化*/
         public CompoundTag toNbt() {
             CompoundTag tag = new CompoundTag();
-            tag.putInt("Result ID", id);
+            tag.putInt("Result PoolID", poolId);
+            tag.putInt("Result Quality", quality);
+            tag.putString("Result Name", name);
             tag.putLong("Time Stamp", timeStamp);
             return tag;
         }
-        // 抽到的项目 ID
-        protected final int id;
+        /** 抽到的物品卡池 id */
+        protected final int poolId;
+        /** 抽到的物品品质 */
+        protected final int quality;
+        /** 抽到的物品名称 */
+        protected final String name;
         protected final long timeStamp;
     }
     protected LotteryRecordData(int lotteryChance, UUID playerUuid, ArrayList<LotteryItemData> lotteryItems) {

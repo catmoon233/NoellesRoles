@@ -3,11 +3,10 @@ package org.agmas.noellesroles.client.screen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec2;
@@ -18,8 +17,10 @@ import org.agmas.noellesroles.client.widget.TextureWidget;
 import org.agmas.noellesroles.client.widget.TimerWidget;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.agmas.noellesroles.utils.LotteryManager;
+import org.agmas.noellesroles.utils.Pair;
+import org.agmas.noellesroles.utils.lottery.LotteryManager;
 //import com.mojang.blaze3d.vertex.VertexConsumer;
 //import com.mojang.math.Axis;
 //import org.joml.Matrix4f;
@@ -34,29 +35,46 @@ public class LootScreen extends AbstractPixelScreen {
 //    private float rotationY = 45;
 //    private float lidAngle = 0;
 
-    private final float deltaScale = .3f;// 最终缩放增量比例
+    /** 最终缩放增量比例 */
+    private final float deltaScale = .3f;
     // 随机的过卡次数：目标卡片位置会在最大和最小中roll一个随机值
     private final int minCardNum = 30;
     private final int maxCardNum = 80;
     private final int lastCardNum = 3;
-    private final int accelerationCardNum = 15;// 加速经过的卡片数
-    private final int slowDownCardNum = 40;// 减速经过的卡片数
-    private final int cardSize = 18;// 卡片大小
+    /** 加速经过的卡片数 */
+    private final int accelerationCardNum = 15;
+    /** 减速经过的卡片数 */
+    private final int slowDownCardNum = 40;
+    /** 卡片大小 */
+    private final int cardSize = 18;
     private final int cardInterval = 2;
-    private final int ansID;// 目标物品 id
-    private final int baseDuration = 30;// 卡片从右到左的时间
+    /** 卡片从右到左的时间 */
+    private final int baseDuration = 30;
+    /** 物品池 id */
+    private final int poolId;
+    private final Pair<Integer, Integer> trueQualityAndId;
     private final ArrayList<Card> cards = new ArrayList<>();
     private final ArrayList<AbstractAnimation> animations = new ArrayList<>();
-    private LootSpeedController speedController;// 速度控制器：用于使用动画控制所有卡片移动
-    private RandomSource randomSource;// 随机数源
-    private TimerWidget timerWidget;// 定时器：用于抽卡结束之后缩放
-    private boolean isLooting = true;// 是否正在抽卡
-    private int endCardIdx = 20;// 最终卡片所在索引
-    private int totalPixels;// 显示的总像素数
-    private int curEndIdx = 0;// 当前移除卡片所在索引
-    private int curStartIdx = 0;// 当前显示卡片所在索引
-    private int accelerationTime = 0;// 加速时间
-    private int slowDownTime = 0;// 减速时间
+    /** 速度控制器：用于使用动画控制所有卡片移动 */
+    private LootSpeedController speedController;
+    /** 随机数源 */
+    private RandomSource randomSource;
+    /* 定时器：用于抽卡结束之后缩放 */
+    private TimerWidget timerWidget;
+    /** 是否正在抽卡 */
+    private boolean isLooting = true;
+    /** 最终卡片所在索引 */
+    private int endCardIdx = 20;
+    /** 显示的总像素数 */
+    private int totalPixels;
+    /** 当前移除卡片所在索引 */
+    private int curEndIdx = 0;
+    /** 当前显示卡片所在索引 */
+    private int curStartIdx = 0;
+    /** 加速时间 */
+    private int accelerationTime = 0;
+    /** 减速时间 */
+    private int slowDownTime = 0;
 
     // TODO : 使卡片能适配物品大小，以及卡片框边距适配
     public static class Card extends AbstractWidget
@@ -65,17 +83,23 @@ public class LootScreen extends AbstractPixelScreen {
         protected TextureWidget skinBG;
         protected TextureWidget skin;
         protected boolean isSelected = false;// 是否被选中过：首次选中播放音效
-        public Card(int x, int y, int id, int pixelSize) {
-            this(x, y, 16, 16, id, pixelSize);
+        public Card(int x, int y, int poolID, Pair<Integer, Integer> qualityAndId, int pixelSize) {
+            this(x, y, 16, 16, poolID, qualityAndId, pixelSize);
         }
-        public Card(int x, int y, int w, int h, int id, int pixelSize) {
+        public Card(int x, int y, int w, int h, int poolID, Pair<Integer, Integer> qualityAndId, int pixelSize) {
             super(x, y, w, h, Component.empty());
-            skinBG = new TextureWidget(x, y, w, h, w, h,
-                    LotteryManager.TempLootAbleItemManager.getQualityResourceLocation(
-                            LotteryManager.TempLootAbleItemManager.getSkinQuality(id)));
+            skinBG = new TextureWidget(x, y, w, h, w, h,LotteryManager.getInstance().getQualityBgResourceLocation(qualityAndId.first));
             skin = new TextureWidget(x + pixelSize, y + pixelSize,
                     w - 2 * pixelSize, h - 2 * pixelSize, w - 2 * pixelSize, h - 2 * pixelSize,
-                    LotteryManager.TempLootAbleItemManager.getSkinResourceLocation(id));
+                    LotteryManager.getInstance().getLotteryPool(poolID)
+                        .getQualityListGroupConfigs().get(qualityAndId.first).second.get(qualityAndId.second).equals("coin") ?
+                        ResourceLocation.fromNamespaceAndPath("trainmurdermystery", "textures/font/coin.png") :
+                        ResourceLocation.fromNamespaceAndPath("trainmurdermystery",
+                                "textures/item/" +
+                                        LotteryManager.getInstance().getLotteryPool(poolID)
+                                                .getQualityListGroupConfigs().get(qualityAndId.first).second.get(qualityAndId.second)
+                                        + ".png")
+            );
         }
 
         @Override
@@ -147,9 +171,10 @@ public class LootScreen extends AbstractPixelScreen {
         protected float deltaTime = 0;
     }
 
-    public LootScreen(int ansID) {
+    public LootScreen(int poolId, int quality, int ansID) {
         super(Component.empty());
-        this.ansID = ansID;
+        this.poolId = poolId;
+        this.trueQualityAndId = new Pair<>(quality, ansID);
     }
     @Override
     protected void init()
@@ -173,12 +198,48 @@ public class LootScreen extends AbstractPixelScreen {
         // 提前备好所需卡片
         for(int i = 0; i <= endCardIdx + lastCardNum; ++i)
         {
+            LotteryManager.LotteryPool lotteryPool = LotteryManager.getInstance().getLotteryPool(this.poolId);
+            List<Pair<Double, List<String>>> qualityListGroupConfigs = lotteryPool.getQualityListGroupConfigs();
+            // 根据卡池来抽取随机皮肤，并随距离结果的远近改变抽取概率
+            // 设最大额外概率和(即为额外+卡池概率)为0.8f（左右邻居概率大小），且在最近4张快速递增（左右各4张）
+            Pair<Integer, Integer> result = new Pair<>(0,0);
+            final int maxExtraProbDistance = 5;
+            double level = 0.0d;
+            boolean isExtraResult = false;
+            if(endCardIdx != i && Math.abs(endCardIdx - i) <= maxExtraProbDistance)
+            {
+                // 为了方便计算，会先进行一次额外的是否出金的抽取（使用额外概率）因此最终出金概率为两次出金概率的“和”概率
+                // 设第一次出金概率为x，额外出金概率和为maxExtraProbSum，卡池出金概率为poolProb，则
+                // x + (1 - x) * poolProb = maxExtraProbSum -> x = (maxExtraProbSim - poolProb) / (1 - poolProb)
+                final double curMaxExtraProbSum = (double) Math.abs(endCardIdx - i) / (double) maxExtraProbDistance * 0.8d;
+                final double curMaxExtraProb =
+                        (curMaxExtraProbSum - qualityListGroupConfigs.getLast().first) / (1 - qualityListGroupConfigs.getLast().first);
+                if(randomSource.nextInt(LotteryManager.maxGranularity) < LotteryManager.maxGranularity * curMaxExtraProb)
+                    isExtraResult = true;
+            }
+
+            // 如果额外抽取成功则采用额外结果，否则正常抽取
+            if(isExtraResult)
+            {
+                result.first = qualityListGroupConfigs.size() - 1;
+                result.second = randomSource.nextInt(qualityListGroupConfigs.getLast().second.size());
+            }
+            else
+            {
+                for (int j = 0; j < lotteryPool.getQualityListGroupConfigs().size(); ++j) {
+                    level += qualityListGroupConfigs.get(j).first;
+                    if (randomSource.nextInt(LotteryManager.maxGranularity) < level * LotteryManager.maxGranularity) {
+                        result.first = j;
+                        result.second = randomSource.nextInt(qualityListGroupConfigs.get(j).second.size());
+                        // 抽取成功，停止抽取
+                        break;
+                    }
+                }
+            }
+
             Card card = new Card(centerX + totalPixels / 2 * pixelSize, centerY - cardSize * pixelSize / 2,
-                    cardSize * pixelSize, cardSize * pixelSize,
-                    // 获取随机皮肤
-                    // TODO : 抽奖时每个略过的皮肤如果是等概率可能不好看，最好还是改为和抽取相同的改了，不过目前还没有相关接口
-                    i != endCardIdx ? randomSource.nextInt(
-                            LotteryManager.TempLootAbleItemManager.getSkinListLen()) : ansID, pixelSize);
+                    cardSize * pixelSize, cardSize * pixelSize, poolId,
+                    i != endCardIdx ? result : trueQualityAndId, pixelSize);
             card.visible = false;
             cards.add(card);
             int curLen = i * (cardSize + cardInterval) + totalPixels;
@@ -324,8 +385,10 @@ public class LootScreen extends AbstractPixelScreen {
             endCard.setPosition(centerX - endCard.getWidth() / 2, endCard.getY());
             // 抽卡结束显示
             // TODO : 需要用id查询目标文本并翻译
-            guiGraphics.drawString(this.font, Component.translatable("请输入文本"),
-                    centerX - font.width(Component.translatable("请输入文本")) / 2,
+            String itemName = LotteryManager.getInstance().getLotteryPool(poolId)
+                    .getQualityListGroupConfigs().get(trueQualityAndId.first).second.get(trueQualityAndId.second);
+            guiGraphics.drawString(this.font, Component.literal(itemName),
+                    centerX - font.width(Component.literal(itemName)) / 2,
                     height / 2 + (int)(endCard.getHeight() * (deltaScale + 1f)) / 2 + cardInterval * pixelSize,
                     0xFFFFFFFF);
         }

@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMEntities;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.Noellesroles;
@@ -143,17 +145,20 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     private void checkDarkness() {
-        // 检查是否在黑暗环境下（光照等级 < 2）
+        // 检查是否在黑暗环境下（光照等级 <= 5）
         int lightLevel = player.level().getRawBrightness(player.blockPosition(),
                 net.minecraft.world.level.LightLayer.BLOCK.ordinal());
-
-        if (lightLevel < 2) {
+        // Noellesroles.LOGGER.info("LightLevel:" + lightLevel);
+        var blackOut = WorldBlackoutComponent.KEY.maybeGet(player.level()).orElse(null);
+        if (lightLevel <= 5 || (blackOut != null && blackOut.isBlackoutActive())) {
             if (!inDarkness) {
                 // 刚进入黑暗
                 inDarkness = true;
+                // Noellesroles.LOGGER.info("Trigger darkness");
 
                 // 进入黑暗时，给予护盾试剂（一局一次）
                 if (!darknessShieldTriggered) {
+
                     darknessShieldTriggered = true;
                     player.getInventory().add(new ItemStack(TMMItems.DEFENSE_VIAL));
 
@@ -173,7 +178,12 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
                     // 给予速度二效果（10秒 = 200 ticks）
                     sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                             net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED,
-                            200, // 10秒
+                            220, // 11秒
+                            1 // 速度等级2
+                    ));
+                    sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                            net.minecraft.world.effect.MobEffects.NIGHT_VISION,
+                            400, // 20秒
                             1 // 速度等级2
                     ));
                     sp.displayClientMessage(
@@ -189,7 +199,10 @@ public class NianShouPlayerComponent implements RoleComponent, ServerTickingComp
         } else {
             if (inDarkness) {
                 // 离开黑暗环境
+                player.removeEffect(MobEffects.NIGHT_VISION);
+                player.removeEffect(MobEffects.MOVEMENT_SPEED);
                 inDarkness = false;
+                speedEffectCooldown = 0;
             }
         }
     }

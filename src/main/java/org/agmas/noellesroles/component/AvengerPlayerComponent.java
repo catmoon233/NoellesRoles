@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import pro.fazeclan.river.stupid_express.modifier.refugee.cca.RefugeeComponent;
 
 /**
  * 复仇者组件
@@ -223,12 +224,20 @@ public class AvengerPlayerComponent implements RoleComponent, ServerTickingCompo
             return;
 
         // 检测目标是否死亡
-        if (!isTargetAlive()) {
-            // 目标已死亡，激活复仇能力
-            // 注意：此时我们不知道凶手是谁，需要通过 Mixin 在死亡时记录
-            // 这里只是备用检测
-            activate(null);
+        var refugeeC = RefugeeComponent.KEY.get(player.level());
+        boolean isRefugeeAlive = false;
+        if (refugeeC.isAnyRevivals) {
+            isRefugeeAlive = true;
         }
+        if (!isRefugeeAlive) {
+            if (!isTargetAlive()) {
+                // 目标已死亡，激活复仇能力
+                // 注意：此时我们不知道凶手是谁，需要通过 Mixin 在死亡时记录
+                // 这里只是备用检测
+                activate(null);
+            }
+        }
+
     }
 
     // ==================== NBT 序列化 ====================

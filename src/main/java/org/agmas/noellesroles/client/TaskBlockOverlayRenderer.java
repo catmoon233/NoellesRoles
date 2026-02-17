@@ -13,7 +13,6 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Camera;
@@ -139,9 +138,22 @@ public class TaskBlockOverlayRenderer {
             // RoomDoorPositions
         }
         /**
-         * 1: 食物 2: 水 3: 洗澡 4: 床 5: 跑步机 6: 讲台
+         * 1: 食物
+         * 2: 水
+         * 3: 洗澡
+         * 4: 床
+         * 5: 跑步机
+         * 6: 讲台
+         * 7: 门
+         * 8: 马桶
+         * 9: 椅子（包括马桶）
+         * 10: 音符盒
          */
-        boolean shouldDisplay[] = { false, false, false, false, false, false, false, false, false, false, false };
+        boolean shouldDisplay[] = new boolean[20];
+        for (int i = 0; i < shouldDisplay.length; i++) {
+            shouldDisplay[i] = false;
+        }
+
         if (TMMClient.isPlayerSpectatingOrCreative()) {
             for (int i = 0; i < shouldDisplay.length; i++) {
                 shouldDisplay[i] = true;
@@ -174,6 +186,15 @@ public class TaskBlockOverlayRenderer {
                         break;
                     case SLEEP:
                         shouldDisplay[4] = true;
+                        break;
+                    case TOILET:
+                        shouldDisplay[8] = true;
+                        break;
+                    case CHAIR:
+                        shouldDisplay[9] = true;
+                        break;
+                    case NOTE_BLOCK:
+                        shouldDisplay[10] = true;
                         break;
                     default:
                         break;
@@ -216,6 +237,24 @@ public class TaskBlockOverlayRenderer {
                                 true, 2f);
                     break;
                 case 7:
+                    break;
+                case 8:
+                    if (shouldDisplay[type])
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
+                                new Color(255, 174, 201), 1f,
+                                true, 2f);
+                    break;
+                case 9:
+                    if (shouldDisplay[type])
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
+                                new Color(126, 255, 228), 1f,
+                                true, 2f);
+                    break;
+                case 10:
+                    if (shouldDisplay[type])
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
+                                new Color(121, 148, 255), 1f,
+                                true, 2f);
                     break;
                 default:
                     break;

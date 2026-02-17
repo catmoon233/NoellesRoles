@@ -107,15 +107,13 @@ public class PostmanHandledScreen extends AbstractContainerScreen<PostmanScreenH
         
         // 绘制目标玩家名称
         String targetName = postmanComponent.targetName;
-        Component targetText = Component.literal("正在与 ").withStyle(ChatFormatting.GRAY)
-            .append(Component.literal(targetName).withStyle(ChatFormatting.YELLOW))
-            .append(Component.literal(" 交易").withStyle(ChatFormatting.GRAY));
+        Component targetText = Component.translatable("screen.noellesroles.postman.trade_with",Component.literal(targetName).withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.GRAY);
         context.drawString(font, targetText,
             this.leftPos + this.imageWidth / 2 - font.width(targetText) / 2,
             this.topPos + 20, 0xFFFFFF, true);
         
         // 绘制槽位上方的文字说明
-        Component slotLabel = Component.literal("放入物品").withStyle(ChatFormatting.WHITE);
+        Component slotLabel = Component.translatable("screen.general.put_item").withStyle(ChatFormatting.WHITE);
         context.drawString(font, slotLabel,
             this.leftPos + 80 + 8 - font.width(slotLabel) / 2,
             this.topPos + 55, 0xAAAAAA, true);
@@ -127,11 +125,11 @@ public class PostmanHandledScreen extends AbstractContainerScreen<PostmanScreenH
         
         // 显示双方确认状态
         Component myStatus = myConfirmed ?
-            Component.literal("你: ✓ 已确认").withStyle(ChatFormatting.GREEN) :
-            Component.literal("你: ✗ 未确认").withStyle(ChatFormatting.RED);
+            Component.translatable("screen.noellesroles.postman.you_confirm").withStyle(ChatFormatting.GREEN) :
+            Component.translatable("screen.noellesroles.postman.you_not_confirm").withStyle(ChatFormatting.RED);
         Component otherStatus = otherConfirmed ?
-            Component.literal(targetName + ": ✓ 已确认").withStyle(ChatFormatting.GREEN) :
-            Component.literal(targetName + ": ✗ 未确认").withStyle(ChatFormatting.RED);
+            Component.translatable("screen.noellesroles.postman.other_confirm",targetName).withStyle(ChatFormatting.GREEN) :
+            Component.translatable("screen.noellesroles.postman.other_not_confirm",targetName).withStyle(ChatFormatting.RED);
         
         context.drawString(font, myStatus,
             this.leftPos + 10, this.topPos + 65, 0xFFFFFF, true);
@@ -172,7 +170,7 @@ public class PostmanHandledScreen extends AbstractContainerScreen<PostmanScreenH
         
         // 更新按钮文字
         if (myConfirmed) {
-            confirmButton.setMessage(Component.literal("已确认").withStyle(ChatFormatting.GRAY));
+            confirmButton.setMessage(Component.translatable("screen.noellesroles.postman.confirmed").withStyle(ChatFormatting.GRAY));
         } else {
             confirmButton.setMessage(Component.translatable("screen.noellesroles.postman.confirm"));
         }

@@ -12,16 +12,13 @@ import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -97,6 +94,28 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
     @Override
     public void clear() {
         this.reset();
+    }
+
+    /**
+     * 是否已经被猜测过并且即将死亡
+     * 
+     * @param targetUuid 目标玩家 UUID
+     */
+    public boolean hasBeenGuessedToDie(UUID targetUuid) {
+        if (!(player instanceof ServerPlayer serverPlayer))
+            return false;
+
+        Player target = serverPlayer.level().getPlayerByUUID(targetUuid);
+        if (target == null)
+            return false;
+        for (TargetInfo targetInfo : targetList) {
+            if (targetInfo.targetPlayer.equals(targetUuid)) {
+                if(targetInfo.guessCorrect && targetInfo.deathCountdown > 0){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -1,12 +1,18 @@
 package org.agmas.noellesroles.mixin;
 
+import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
+import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
+import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
+import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
+import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -63,7 +69,18 @@ public abstract class PlayerResetMixin {
         RoleUtils.RemoveAllPlayerAttributes(player);
         RoleUtils.RemoveAllEffects(player);
 
+        ((MorphlingPlayerComponent)MorphlingPlayerComponent.KEY.get(player)).reset();
+        ((VoodooPlayerComponent)VoodooPlayerComponent.KEY.get(player)).reset();
+        (RecallerPlayerComponent.KEY.get(player)).reset();
+        (VulturePlayerComponent.KEY.get(player)).reset();
+        (ExecutionerPlayerComponent.KEY.get(player)).reset();
 
+        BartenderPlayerComponent barComc = BartenderPlayerComponent.KEY.get(player);
+        barComc.reset();
+
+        AwesomePlayerComponent awesomeComp = ModComponents.AWESOME.get(player);
+        awesomeComp.reset();
+        
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
         InControlCCA inControlCCA = InControlCCA.KEY.get(player);
