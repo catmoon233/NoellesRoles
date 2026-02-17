@@ -17,7 +17,7 @@ public class TrueKillerFinder {
                 return null;
             if (!(victim instanceof ServerPlayer serverVictim))
                 return null;
-            Noellesroles.LOGGER.info("!!!");
+            // Noellesroles.LOGGER.info("!!!");
             var gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
             var poisonerC = PlayerPoisonComponent.KEY.maybeGet(victim).orElse(null);
             if (poisonerC != null) {
