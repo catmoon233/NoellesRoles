@@ -39,12 +39,12 @@ public abstract class InsaneHudMixin {
                 var text1 = Component.translatable("insane.tip.neardeath.line1").withStyle(ChatFormatting.YELLOW);
                 var text2 = Component
                         .translatable("insane.tip.neardeath.line2", insaneKillerPlayerComponent.deathState / 20)
-                        .withStyle(ChatFormatting.YELLOW);
+                        .withStyle(ChatFormatting.RED);
                 var text3 = Component.translatable("insane.tip.neardeath.line3").withStyle(ChatFormatting.GRAY);
                 context.drawString(getFont(), text1, context.guiWidth() - getFont().width(text1) - 10,
-                        context.guiHeight() - 60, java.awt.Color.YELLOW.getRGB());
-                context.drawString(getFont(), text2, context.guiWidth() - getFont().width(text2) - 10,
                         context.guiHeight() - 40, java.awt.Color.YELLOW.getRGB());
+                context.drawString(getFont(), text2, context.guiWidth() - getFont().width(text2) - 10,
+                        context.guiHeight() - 30, java.awt.Color.YELLOW.getRGB());
                 context.drawString(getFont(), text3, context.guiWidth() - getFont().width(text3) - 10,
                         context.guiHeight() - 20, java.awt.Color.YELLOW.getRGB());
             } else if (insaneKillerPlayerComponent.isActive) {

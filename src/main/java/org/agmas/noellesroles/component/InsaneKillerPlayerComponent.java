@@ -77,9 +77,11 @@ public class InsaneKillerPlayerComponent
                         .get(playerEntity);
                 if (insaneKillerPlayerComponent.getDeathState() == 0) {
                     insaneKillerPlayerComponent.deathState = 20 * 120;
+                    insaneKillerPlayerComponent.isActive = true;
                     insaneKillerPlayerComponent.sync();
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 99999, 4));
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 99999, 4));
+
                     return false;
                 }
             }
@@ -94,6 +96,8 @@ public class InsaneKillerPlayerComponent
 
     public void revive() {
         deathState = -1;
+        isActive = false;
+
         if (player instanceof ServerPlayer serverPlayer) {
             TMM.REPLAY_MANAGER.recordPlayerRevival(serverPlayer.getUUID(),
                     ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES);
