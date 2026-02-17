@@ -7,13 +7,13 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
 import dev.doctor4t.trainmurdermystery.event.OnGameTrueStarted;
+import dev.doctor4t.trainmurdermystery.event.OnPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerKilledPlayer;
 import dev.doctor4t.trainmurdermystery.event.OnTeammateKilledTeammate;
 import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
@@ -1030,7 +1030,20 @@ public class Noellesroles implements ModInitializer {
 
             return false;
         }));
-
+        OnPlayerDeath.EVENT.register((playerEntity, reason) -> {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.level());
+            if (gameWorldComponent.isRole(playerEntity,
+                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(playerEntity);
+                insaneKillerPlayerComponent.reset();
+                insaneKillerPlayerComponent.sync();
+            }
+            if (gameWorldComponent.isRole(playerEntity, ModRoles.BETTER_VIGILANTE)) {
+                final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
+                betterVigilantePlayerComponent.reset();
+                betterVigilantePlayerComponent.sync();
+            }
+        });
         AllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (identifier == GameConstants.DeathReasons.FELL_OUT_OF_TRAIN)
                 return true;
@@ -1048,18 +1061,6 @@ public class Noellesroles implements ModInitializer {
                 if (component.getPsychoTicks() > GameConstants.getInTicks(0, 44)) {
                     return false;
                 }
-            }
-
-            if (gameWorldComponent.isRole(playerEntity,
-                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
-                final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(playerEntity);
-                insaneKillerPlayerComponent.reset();
-                insaneKillerPlayerComponent.sync();
-            }
-            if (gameWorldComponent.isRole(playerEntity, ModRoles.BETTER_VIGILANTE)) {
-                final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
-                betterVigilantePlayerComponent.reset();
-                betterVigilantePlayerComponent.sync();
             }
             return true;
         }));
@@ -1338,6 +1339,10 @@ public class Noellesroles implements ModInitializer {
                 // 允许死亡，但已标记复活
             }
 
+            // onPlayerDeath(victim, deathReason);
+            return true; // 允许死亡
+        });
+        OnPlayerDeath.EVENT.register((victim, deathReason) -> {
             // 检查医生死亡 - 传递针管
             handleDoctorDeath(victim);
 
@@ -1346,9 +1351,6 @@ public class Noellesroles implements ModInitializer {
 
             // 检查故障机器人 - 死亡时生成缓慢效果云
             handleGlitchRobotDeath(victim);
-
-            // onPlayerDeath(victim, deathReason);
-            return true; // 允许死亡
         });
 
         // 服务器Tick事件 - 处理复活

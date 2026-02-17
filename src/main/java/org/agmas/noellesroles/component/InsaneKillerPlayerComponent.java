@@ -99,8 +99,8 @@ public class InsaneKillerPlayerComponent
     }
 
     public void revive() {
-        deathState = -1;
-        isActive = false;
+        this.deathState = -1;
+        this.isActive = false;
         if (player instanceof ServerPlayer sp) {
             ServerPlayNetworking.send(sp, new ToggleInsaneSkillC2SPacket(false));
         }
@@ -125,6 +125,7 @@ public class InsaneKillerPlayerComponent
     public void reset() {
         isActive = false;
         cooldown = 200;
+        // Noellesroles.LOGGER.info("Trigger insane reset");
         deathState = 0;
     }
 
@@ -142,6 +143,7 @@ public class InsaneKillerPlayerComponent
 
     @Override
     public void clear() {
+        // Noellesroles.LOGGER.info("Trigger insane clear");
         this.reset();
     }
 

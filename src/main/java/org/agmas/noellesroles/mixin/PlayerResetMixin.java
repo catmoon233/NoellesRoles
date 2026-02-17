@@ -105,6 +105,8 @@ public abstract class PlayerResetMixin {
 
         ConspiratorPlayerComponent conspiratorComp = ModComponents.CONSPIRATOR.get(player);
         conspiratorComp.clear();
+
+        // Noellesroles.LOGGER.info("resetPlayer");
         InsaneKillerPlayerComponent insaneKillerComp = ModComponents.INSANE_KILLER.get(player);
         insaneKillerComp.clear();
 
