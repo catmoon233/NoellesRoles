@@ -7,6 +7,7 @@ import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerClie
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerEntityRenderers;
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerScreens;
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.setupItemCallbacks;
+import static org.agmas.noellesroles.component.InsaneKillerPlayerComponent.isPlayerBodyEntity;
 import static org.agmas.noellesroles.component.InsaneKillerPlayerComponent.playerBodyEntities;
 
 import java.awt.Color;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.minecraft.client.CameraType;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.NRSounds;
 import org.agmas.noellesroles.Noellesroles;
@@ -32,18 +34,11 @@ import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
 import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
-import org.agmas.noellesroles.packet.AbilityC2SPacket;
-import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
-import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
+import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
-import org.agmas.noellesroles.packet.OpenIntroPayload;
-import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
-import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
-import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
-import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.awesome_binglus.AwesomeClientHandler;
 import org.agmas.noellesroles.utils.lottery.LotteryManager;
@@ -303,6 +298,27 @@ public class NoellesrolesClient implements ClientModInitializer {
                     client.setScreen(new LootInfoScreen());
             });
         });
+        ClientPlayNetworking.registerGlobalReceiver(ToggleInsaneSkillC2SPacket.ID, (payload, context) -> {
+            if (payload.toggle()){
+                Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
+            }else {
+                var abstractClientPlayer = Minecraft.getInstance().player;
+                var clientLevel = Minecraft.getInstance().level;
+                Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+                if (isPlayerBodyEntity.getOrDefault(abstractClientPlayer.getUUID(), false)) {
+//                    if (abstractClientPlayer == Minecraft.getInstance().player) {
+//                        Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+//                    }
+                    isPlayerBodyEntity.put(abstractClientPlayer.getUUID(), false);
+                    if (playerBodyEntities.containsKey(abstractClientPlayer.getUUID())) {
+                        clientLevel.removeEntity(playerBodyEntities.get(abstractClientPlayer.getUUID()).getId(), Entity.RemovalReason.DISCARDED);
+                        playerBodyEntities.remove(abstractClientPlayer.getUUID());
+
+                    }
+                }
+            }
+
+        });
 
         Listen.registerEvents();
         InvisbleHandItem.register();
@@ -311,15 +327,15 @@ public class NoellesrolesClient implements ClientModInitializer {
             if (taskInstinct.consumeClick()) {
                 isTaskInstinctEnabled = !isTaskInstinctEnabled;
             }
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - lastClientTickTime >= CLIENT_TICK_INTERVAL_MS) {
-                lastClientTickTime = currentTime;
-                playerBodyEntities.forEach(
-                        (uuid, playerBodyEntity) -> {
-                            if (playerBodyEntity.getPlayerUuid().equals(uuid))
-                                ++playerBodyEntity.tickCount;
-                        });
-            }
+//            long currentTime = System.currentTimeMillis();
+//            if (currentTime - lastClientTickTime >= CLIENT_TICK_INTERVAL_MS) {
+//                lastClientTickTime = currentTime;
+//                playerBodyEntities.forEach(
+//                        (uuid, playerBodyEntity) -> {
+//                            if (playerBodyEntity.getPlayerUuid().equals(uuid))
+//                                ++playerBodyEntity.tickCount;
+//                        });
+//            }
             if (client.level != null && client.level.getGameTime() % 20 == 0) {
                 if (TMMClient.gameComponent != null && client.player != null) {
                     if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS)) {
