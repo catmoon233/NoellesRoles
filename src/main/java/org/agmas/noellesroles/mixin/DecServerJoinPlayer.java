@@ -33,6 +33,7 @@ public class DecServerJoinPlayer {
             pl.clear();
             modifierComponent.sync();
         }
+        serverPlayer.getInventory().clearContent();
         RoleUtils.RemoveAllEffects(serverPlayer);
         RoleUtils.RemoveAllPlayerAttributes(serverPlayer);
         ((PlayerMoodComponent) PlayerMoodComponent.KEY.get(serverPlayer)).reset();
