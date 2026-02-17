@@ -118,7 +118,7 @@ public abstract class MorphlingRendererMixin {
             if (splitPersonalityComponent != null && !splitPersonalityComponent.isCurrentlyActive()) {
                 UUID mainPersonalityId = splitPersonalityComponent.getMainPersonality();
                 if (mainPersonalityId != null) {
-                    final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(mainPersonalityId));
+                    final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get((mainPersonalityId));
                     if (playerInfo == null) {
                         return original.call(instance);
                     }
@@ -130,7 +130,7 @@ public abstract class MorphlingRendererMixin {
 
             var component = MorphlingPlayerComponent.KEY.get(instance);
             if (component != null && component.getMorphTicks() > 0 && component.disguise != null) {
-                final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get(NoellesrolesClient.SHUFFLED_PLAYER_ENTRIES_CACHE.get(component.disguise));
+                final var playerInfo = TMMClient.PLAYER_ENTRIES_CACHE.get((component.disguise));
                 if (playerInfo != null) {
                     final var skin = playerInfo.getSkin();
                     if (skin != null) {
