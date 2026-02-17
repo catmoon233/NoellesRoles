@@ -71,11 +71,12 @@ public class InsaneKillerPlayerComponent
             return EventResult.pass();
         });
         AfterShieldAllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
-            if (GameWorldComponent.KEY.get(playerEntity.level()).isRole(playerEntity, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)){
+            if (GameWorldComponent.KEY.get(playerEntity.level()).isRole(playerEntity,
+                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
                 InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
                         .get(playerEntity);
                 if (insaneKillerPlayerComponent.getDeathState() == 0) {
-                    insaneKillerPlayerComponent.deathState = 20*120;
+                    insaneKillerPlayerComponent.deathState = 20 * 120;
                     insaneKillerPlayerComponent.sync();
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 99999, 4));
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 99999, 4));
@@ -113,6 +114,7 @@ public class InsaneKillerPlayerComponent
     public void reset() {
         isActive = false;
         cooldown = 200;
+        deathState = 0;
     }
 
     public boolean isUsedDeathAbility() {

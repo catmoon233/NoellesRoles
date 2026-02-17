@@ -83,9 +83,7 @@
     "noellesroles.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": "*",
-    "minecraft": "${minecraft_version}",
+    "minecraft": "1.21.1",
     "harpymodloader": "*",
     "trainmurdermystery": "*"
   }
