@@ -77,7 +77,9 @@ public class InitModRolesMax {
             {
                 int allSpecialPoliceCount = 0;
 
-                if (players_count >= 24) {
+                if (players_count >= 48) {
+                    allSpecialPoliceCount = 4;
+                } else if (players_count >= 32) {
                     allSpecialPoliceCount = 3;
                 } else if (players_count >= 18) {
                     allSpecialPoliceCount = 2;
@@ -91,7 +93,7 @@ public class InitModRolesMax {
                     if (allSpecialPoliceCount >= 2)
                         PATROLLER_COUNT = random.nextInt(1, allSpecialPoliceCount + 1);
                     else if (allSpecialPoliceCount >= 1) {
-                        PATROLLER_COUNT = random.nextInt(1, allSpecialPoliceCount + 1);
+                        PATROLLER_COUNT = 1;
                     }
                     if (PATROLLER_COUNT > allSpecialPoliceCount) {
                         PATROLLER_COUNT = allSpecialPoliceCount;
