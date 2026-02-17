@@ -1,13 +1,27 @@
 package org.agmas.noellesroles.component;
 
+import com.sighs.handheldmoon.event.handler.InteractEventHandler;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.InteractionEvent;
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.packet.ToggleInsaneSkillC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -26,6 +40,7 @@ public class InsaneKillerPlayerComponent
     private final Player player;
 
     public boolean isActive = false;
+    public int deathState = 0;
     public int cooldown = 200;
     // public UUID target = null;
     public static Map<UUID, PlayerBodyEntity> playerBodyEntities = new HashMap<>();
@@ -36,9 +51,41 @@ public class InsaneKillerPlayerComponent
         this.isActive = false;
     }
 
+    public static void registerEvent(){
+        InteractionEvent.INTERACT_ENTITY.register((player, entity, hand) -> {
+            if (!GameFunctions.isPlayerAliveAndSurvival(player))return EventResult.pass();
+            if (entity instanceof PlayerBodyEntity) {
+                if (player.distanceTo(entity) <= 3) {
+                    GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+                    if (gameWorldComponent.isRole(player, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                        InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(player);
+                        if (insaneKillerPlayerComponent.getDeathState() > 0) {
+                            insaneKillerPlayerComponent.revive();
+                        }
+                    }
+                }
+            }
+            return EventResult.pass();
+        });
+    }
     @Override
     public Player getPlayer() {
         return player;
+    }
+
+    public void revive() {
+        deathState = -1;
+        if (player instanceof  ServerPlayer serverPlayer){
+            TMM.REPLAY_MANAGER.recordPlayerRevival(serverPlayer.getUUID(), ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES);
+            serverPlayer.sendSystemMessage(Component.translatable("message.insane_killer.revive"), true);
+            serverPlayer.sendSystemMessage(Component.translatable("message.insane_killer.revive"), false);
+            serverPlayer.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 1.0f);
+            serverPlayer.playNotifySound(SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.0f);
+        }
+
+        PlayerShopComponent.KEY.get(player).addToBalance(100);
+        player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+        sync();
     }
 
     @Override
@@ -47,19 +94,32 @@ public class InsaneKillerPlayerComponent
         cooldown = 200;
     }
 
+    private boolean isUsedDeathAbility() {
+        return deathState != 0;
+    }
+    private int getDeathState() {
+        return deathState;
+    }
+    private boolean inNearDeath(){
+        return deathState > 0;
+    }
     @Override
     public void clear() {
         this.reset();
     }
 
     public void toggleAbility() {
+        if (inNearDeath() ) return;
         if (isActive) {
             isActive = false;
+            if (player instanceof ServerPlayer) {
+                ServerPlayNetworking.send((ServerPlayer) player, new ToggleInsaneSkillC2SPacket(false));
+            }
             cooldown = 45 * 20;
             // 发送取消激活的消息提示
-            player.displayClientMessage(net.minecraft.network.chat.Component
+            player.displayClientMessage(Component
                     .translatable("message.noellesroles.insane_killer.ability_deactivated")
-                    .withStyle(net.minecraft.ChatFormatting.RED), true);
+                    .withStyle(ChatFormatting.RED), true);
 
             // 播放取消激活的音效
             // player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -67,7 +127,9 @@ public class InsaneKillerPlayerComponent
             // 0.8F);
         } else {
             isActive = true;
-
+            if (player instanceof ServerPlayer) {
+                ServerPlayNetworking.send((ServerPlayer) player, new ToggleInsaneSkillC2SPacket(true));
+            }
             // 发送激活的消息提示
             player.displayClientMessage(Component.translatable("message.noellesroles.insane_killer.ability_activated")
                     .withStyle(ChatFormatting.GREEN), true);
@@ -110,12 +172,23 @@ public class InsaneKillerPlayerComponent
             if (cooldown % 40 == 0)
                 sync();
         }
+        if (deathState>0){
+            ((ServerPlayer) player).displayClientMessage(Component.translatable("message.noellesroles.insane_killer.death_state"),true);
+            deathState--;
+            if (deathState==1){
+                GameFunctions.killPlayer(player, true, null, Noellesroles.id("insane_killer_death"));
+            }
+            if (deathState % 20 == 0 || deathState==1){
+                sync();
+            }
+        }
     }
 
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putBoolean("isActive", isActive);
         tag.putInt("cooldown", cooldown);
+        tag.putInt("death_state", deathState);
         // tag.putUUID("target", target);
     }
 
@@ -123,6 +196,7 @@ public class InsaneKillerPlayerComponent
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         isActive = tag.contains("isActive") && tag.getBoolean("isActive");
         cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
+        deathState = tag.contains("death_state") ? tag.getInt("death_state") : 0;
         // target = tag.contains("target") ? tag.getUUID("target") : null;
     }
 

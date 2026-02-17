@@ -933,6 +933,7 @@ public class Noellesroles implements ModInitializer {
 
         PayloadTypeRegistry.playC2S().register(OpenIntroPayload.ID, OpenIntroPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(AbilityC2SPacket.ID, AbilityC2SPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(ToggleInsaneSkillC2SPacket.ID, ToggleInsaneSkillC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(SwapperC2SPacket.ID, SwapperC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(VultureEatC2SPacket.ID, VultureEatC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(ManipulatorC2SPacket.ID, ManipulatorC2SPacket.CODEC);
@@ -963,6 +964,7 @@ public class Noellesroles implements ModInitializer {
 
     public void registerEvents() {
 
+        InsaneKillerPlayerComponent.registerEvent();
         ConspiratorKilledPlayer.registerEvents();
         EntityClearUtils.registerResetEvent();
         TMM.cantSendReplay.add(player -> {
