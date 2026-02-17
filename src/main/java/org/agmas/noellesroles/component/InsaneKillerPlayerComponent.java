@@ -6,6 +6,8 @@ import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeath;
+import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -15,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
@@ -67,6 +70,20 @@ public class InsaneKillerPlayerComponent
             }
             return EventResult.pass();
         });
+        AfterShieldAllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
+            if (GameWorldComponent.KEY.get(playerEntity.level()).isRole(playerEntity, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)){
+                InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
+                        .get(playerEntity);
+                if (insaneKillerPlayerComponent.getDeathState() == 0) {
+                    insaneKillerPlayerComponent.deathState = 20*120;
+                    insaneKillerPlayerComponent.sync();
+                    playerEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 99999, 4));
+                    playerEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 99999, 4));
+                    return false;
+                }
+            }
+            return true;
+        }));
     }
 
     @Override
