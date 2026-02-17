@@ -22,5 +22,5 @@ public class AbstractPixelScreen extends Screen {
     }
     protected int centerX = 0;
     protected int centerY = 0;
-    protected int pixelSize = 4;// 最大（默认）像素缩放的大小
+    protected int pixelSize = 1;// 最大（默认）像素缩放的大小
 }

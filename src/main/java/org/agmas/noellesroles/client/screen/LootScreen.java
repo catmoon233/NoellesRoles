@@ -21,14 +21,9 @@ import java.util.List;
 
 import org.agmas.noellesroles.utils.Pair;
 import org.agmas.noellesroles.utils.lottery.LotteryManager;
-//import com.mojang.blaze3d.vertex.VertexConsumer;
-//import com.mojang.math.Axis;
-//import org.joml.Matrix4f;
 
 // TODO : 渲染3D方块动画
 // TODO : 像二游一样的开始界面
-// TODO : 抽取时过卡的概率：离目标近概率提升
-// TODO : 抽卡速度可能被帧率影响？然后停在中途不动了，末速度还是别为0了，最后抽到了再归零吧
 public class LootScreen extends AbstractPixelScreen {
 //    // 方块动画所需变量
 //    private float rotationX = 30;

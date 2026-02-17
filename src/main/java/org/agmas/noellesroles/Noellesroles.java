@@ -223,6 +223,7 @@ public class Noellesroles implements ModInitializer {
         SetRoleMaxCommand.register();
         ConfigCommand.register();
         LootCommand.register();
+        DisplayItemCommand.register();
 
         // 注册网络包类型
         registerPackets1();
@@ -953,6 +954,9 @@ public class Noellesroles implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(LootResultS2CPacket.ID, LootResultS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(LootPoolsInfoCheckS2CPacket.ID, LootPoolsInfoCheckS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(LootPoolsInfoS2CPacket.ID, LootPoolsInfoS2CPacket.CODEC);
+
+        // 注册物品展示 ui网络包
+        PayloadTypeRegistry.playS2C().register(DisplayItemS2CPacket.ID, DisplayItemS2CPacket.CODEC);
     }
 
     private void registerMaxRoleCount() {
