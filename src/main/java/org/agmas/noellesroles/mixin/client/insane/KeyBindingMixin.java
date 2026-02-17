@@ -32,13 +32,17 @@ public abstract class KeyBindingMixin {
                         ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
             final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(Minecraft.getInstance().player);
             if (insaneKillerPlayerComponent.isActive) {
+                if (this.same(Minecraft.getInstance().options.keyUse)) {
+                    if (insaneKillerPlayerComponent.deathState > 0)
+                        return false;
+                    return true;
+                }
                 return this.same(Minecraft.getInstance().options.keySwapOffhand) ||
                         this.same(Minecraft.getInstance().options.keyJump) ||
                         this.same(Minecraft.getInstance().options.keyTogglePerspective) ||
                         this.same(Minecraft.getInstance().options.keyDrop) ||
                         this.same(Minecraft.getInstance().options.keyAttack) ||
                         this.same(Minecraft.getInstance().options.keyShift) ||
-                        this.same(Minecraft.getInstance().options.keyUse) ||
                         this.same(Minecraft.getInstance().options.keyDrop) ||
                         this.same(Minecraft.getInstance().options.keyAdvancements);
             }

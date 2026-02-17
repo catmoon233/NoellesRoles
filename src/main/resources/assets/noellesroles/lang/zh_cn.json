@@ -765,7 +765,7 @@
   "hud.noellesroles.nianshou.red_packets": "红包数量：%s",
   "msg.noellesroles.taskpoint.available": "任务点透视已可用。按下 %s 开启或关闭。",
   "message.tip.for_taskpoint": "按下 %s 可切换任务点透视",
-  "message.insane_killer.revive": "你到达了那个地方!",
+  "message.insane_killer.revive": "你到达了那个地方！你复活了！",
   "insane.tip.neardeath.line1": "你即将死亡，请尽快爬到最近的尸体！",
   "insane.tip.neardeath.line2": "右键一个尸体即可复活。剩余时间：%s",
   "insane.tip.neardeath.line3": "只要到达那个地方...",

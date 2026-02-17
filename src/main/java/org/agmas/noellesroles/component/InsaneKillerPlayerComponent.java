@@ -7,7 +7,6 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeath;
-import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -55,7 +54,9 @@ public class InsaneKillerPlayerComponent
         InteractionEvent.INTERACT_ENTITY.register((player, entity, hand) -> {
             if (!GameFunctions.isPlayerAliveAndSurvival(player))
                 return EventResult.pass();
-            if (entity instanceof PlayerBodyEntity) {
+            if (entity instanceof PlayerBodyEntity bodydEntity) {
+                if (bodydEntity.getPlayerUuid() == player.getUUID())
+                    return EventResult.pass();
                 if (player.distanceTo(entity) <= 3) {
                     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
                     if (gameWorldComponent.isRole(player,
@@ -78,6 +79,9 @@ public class InsaneKillerPlayerComponent
                 if (insaneKillerPlayerComponent.getDeathState() == 0) {
                     insaneKillerPlayerComponent.deathState = 20 * 120;
                     insaneKillerPlayerComponent.isActive = true;
+                    if (playerEntity instanceof ServerPlayer sp) {
+                        ServerPlayNetworking.send(sp, new ToggleInsaneSkillC2SPacket(true));
+                    }
                     insaneKillerPlayerComponent.sync();
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 99999, 4));
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 99999, 4));
@@ -97,6 +101,9 @@ public class InsaneKillerPlayerComponent
     public void revive() {
         deathState = -1;
         isActive = false;
+        if (player instanceof ServerPlayer sp) {
+            ServerPlayNetworking.send(sp, new ToggleInsaneSkillC2SPacket(false));
+        }
 
         if (player instanceof ServerPlayer serverPlayer) {
             TMM.REPLAY_MANAGER.recordPlayerRevival(serverPlayer.getUUID(),
