@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.component;
 
-import com.sighs.handheldmoon.event.handler.InteractEventHandler;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.InteractionEvent;
 import dev.doctor4t.trainmurdermystery.TMM;
@@ -9,12 +8,10 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -51,14 +48,17 @@ public class InsaneKillerPlayerComponent
         this.isActive = false;
     }
 
-    public static void registerEvent(){
+    public static void registerEvent() {
         InteractionEvent.INTERACT_ENTITY.register((player, entity, hand) -> {
-            if (!GameFunctions.isPlayerAliveAndSurvival(player))return EventResult.pass();
+            if (!GameFunctions.isPlayerAliveAndSurvival(player))
+                return EventResult.pass();
             if (entity instanceof PlayerBodyEntity) {
                 if (player.distanceTo(entity) <= 3) {
                     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-                    if (gameWorldComponent.isRole(player, ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
-                        InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(player);
+                    if (gameWorldComponent.isRole(player,
+                            ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                        InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
+                                .get(player);
                         if (insaneKillerPlayerComponent.getDeathState() > 0) {
                             insaneKillerPlayerComponent.revive();
                         }
@@ -68,6 +68,7 @@ public class InsaneKillerPlayerComponent
             return EventResult.pass();
         });
     }
+
     @Override
     public Player getPlayer() {
         return player;
@@ -75,10 +76,13 @@ public class InsaneKillerPlayerComponent
 
     public void revive() {
         deathState = -1;
-        if (player instanceof  ServerPlayer serverPlayer){
-            TMM.REPLAY_MANAGER.recordPlayerRevival(serverPlayer.getUUID(), ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES);
-            serverPlayer.sendSystemMessage(Component.translatable("message.insane_killer.revive"), true);
-            serverPlayer.sendSystemMessage(Component.translatable("message.insane_killer.revive"), false);
+        if (player instanceof ServerPlayer serverPlayer) {
+            TMM.REPLAY_MANAGER.recordPlayerRevival(serverPlayer.getUUID(),
+                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES);
+            serverPlayer.sendSystemMessage(
+                    Component.translatable("message.insane_killer.revive").withStyle(ChatFormatting.GOLD), true);
+            serverPlayer.sendSystemMessage(
+                    Component.translatable("message.insane_killer.revive").withStyle(ChatFormatting.GOLD), false);
             serverPlayer.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 1.0f);
             serverPlayer.playNotifySound(SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.0f);
         }
@@ -94,22 +98,26 @@ public class InsaneKillerPlayerComponent
         cooldown = 200;
     }
 
-    private boolean isUsedDeathAbility() {
+    public boolean isUsedDeathAbility() {
         return deathState != 0;
     }
-    private int getDeathState() {
+
+    public int getDeathState() {
         return deathState;
     }
-    private boolean inNearDeath(){
+
+    public boolean inNearDeath() {
         return deathState > 0;
     }
+
     @Override
     public void clear() {
         this.reset();
     }
 
     public void toggleAbility() {
-        if (inNearDeath() ) return;
+        if (inNearDeath())
+            return;
         if (isActive) {
             isActive = false;
             if (player instanceof ServerPlayer) {
@@ -172,13 +180,12 @@ public class InsaneKillerPlayerComponent
             if (cooldown % 40 == 0)
                 sync();
         }
-        if (deathState>0){
-            ((ServerPlayer) player).displayClientMessage(Component.translatable("message.noellesroles.insane_killer.death_state"),true);
+        if (deathState > 0) {
             deathState--;
-            if (deathState==1){
+            if (deathState == 1) {
                 GameFunctions.killPlayer(player, true, null, Noellesroles.id("insane_killer_death"));
             }
-            if (deathState % 20 == 0 || deathState==1){
+            if (deathState % 40 == 0 || deathState == 1 || deathState == 0) {
                 sync();
             }
         }
@@ -204,6 +211,9 @@ public class InsaneKillerPlayerComponent
     public void clientTick() {
         if (cooldown > 1) {
             cooldown--;
+        }
+        if (deathState > 0) {
+            deathState--;
         }
     }
 
