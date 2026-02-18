@@ -8,6 +8,7 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -18,7 +19,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.packet.ToggleInsaneSkillC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
@@ -29,6 +34,7 @@ import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,34 +56,42 @@ public class InsaneKillerPlayerComponent
         this.isActive = false;
     }
 
-    public static void registerEvent() {
-        InteractionEvent.INTERACT_ENTITY.register((player, entity, hand) -> {
-            if (!GameFunctions.isPlayerAliveAndSurvival(player))
-                return EventResult.pass();
-            if (entity instanceof PlayerBodyEntity bodydEntity) {
-                if (bodydEntity.getPlayerUuid() == player.getUUID())
-                    return EventResult.pass();
-                if (player.distanceTo(entity) <= 3) {
-                    GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-                    if (gameWorldComponent.isRole(player,
-                            ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
-                        InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
-                                .get(player);
-                        if (insaneKillerPlayerComponent.getDeathState() > 0) {
-                            insaneKillerPlayerComponent.revive();
-                        }
-                    }
+    public void nearDeathTick() {
+        if (!GameFunctions.isPlayerAliveAndSurvival(player))
+            return;
+        List<Entity> entities = player.level().getEntities(player,
+                new AABB(new Vec3(-1, -1, -1), new Vec3(1, 1, 1)), (entity) -> {
+                    return entity instanceof PlayerBodyEntity;
+                });
+        if (entities == null || entities.size() <= 0) {
+            return;
+        }
+        boolean canRevive = entities.stream().anyMatch((p) -> {
+            if (p instanceof PlayerBodyEntity b) {
+                if (b.getPlayerUuid().equals(player.getUUID())) {
+                    return false;
                 }
+                if (b.distanceTo(player) <= 1.)
+                    return true;
             }
-            return EventResult.pass();
+            return false;
         });
+
+        if (canRevive) {
+            if (this.getDeathState() > 0) {
+                this.revive();
+            }
+        }
+    }
+
+    public static void registerEvent() {
         AfterShieldAllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (GameWorldComponent.KEY.get(playerEntity.level()).isRole(playerEntity,
                     ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
                 InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
                         .get(playerEntity);
                 if (insaneKillerPlayerComponent.getDeathState() == 0) {
-                    insaneKillerPlayerComponent.deathState = 20 * 120;
+                    insaneKillerPlayerComponent.deathState = 20 * 60;
                     insaneKillerPlayerComponent.isActive = true;
                     if (playerEntity instanceof ServerPlayer sp) {
                         ServerPlayNetworking.send(sp, new ToggleInsaneSkillC2SPacket(true));
@@ -213,6 +227,7 @@ public class InsaneKillerPlayerComponent
                 sync();
         }
         if (deathState > 0) {
+            nearDeathTick();
             deathState--;
             if (deathState == 1) {
                 GameFunctions.killPlayer(player, true, null, Noellesroles.id("insane_killer_death"));

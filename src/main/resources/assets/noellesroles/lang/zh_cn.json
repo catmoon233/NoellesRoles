@@ -36,7 +36,7 @@
   "info.screen.roleid.attendant": "平民阵营\n拥有一个可以使用五次的乘务员钥匙(可开启宿舍门)\n商店可购买手电筒(关灯时有奇效)、乘务员钥匙、开灯(在关灯的时候开灯)\n在瞄准玩家时可以看见玩家的房间号。\n主动-开灯：按下技能键时可以无视条件打开5格范围内的灯",
   "info.screen.roleid.swapper": "杀手阵营\n打开背包可以选择玩家然后交换两个人的位置。\n发动技能时会有2.5s延迟，期间交换者无法移动。\n被交换的玩家会收到提示。",
   "info.screen.roleid.conductor": "平民阵营\n初始获得一把万能钥匙和一个望远镜。\n望远镜可以从远处观察到玩家的名字。\n死亡时都会掉落。",
-  "info.screen.roleid.the_insane_damned_paranoid_killer": "杀手阵营\n你能看见死者频道的聊天栏。\n你可以假扮成尸体。\n假扮的尸体会被验尸官察觉，且假扮尸体期间不无敌。\n亡语杀手死后会进入假死状态。\n亡语杀手爬到另一具尸体上右键尸体即可复活。(一局限一次)",
+  "info.screen.roleid.the_insane_damned_paranoid_killer": "杀手阵营\n你能看见死者频道的聊天栏。\n你可以假扮成尸体。\n假扮的尸体会被验尸官察觉，且假扮尸体期间不无敌。\n亡语杀手死后会进入假死状态。\n亡语杀手爬到另一具尸体上即可复活。(一局限一次)",
   "info.screen.roleid.broadcaster": "平民阵营\n你开局拥有200金币，可以花费100进行一次全服广播。\n你可以随时编辑广播消息，广播消息将会被留存，直到被成功发送。\n当你死亡的时候，如果有留存的消息，它将被自动发出。\n所有玩家会得知你的死讯。\n你可以查看剩余游戏时间。",
   "info.screen.roleid.manipulator": "杀手阵营\n你可以操纵目标玩家数秒。\n被操纵的玩家无法控制自身且会向随机方向移动。",
   "info.screen.roleid.poisoner": "杀手阵营\n当你出现在杀手方时，好人方一定有一人的身份为医生。\n你可以透视中毒的玩家，能够购买毒针，并以更低的价格购买毒药和蝎子。\n毒针是远程武器(范围：12格)，瞄准目标命中玩家后，玩家会在30秒后中毒身亡，一次性用品。\n可购买一个催化剂，右键使用催化剂会使所有中毒的玩家立即死亡(包括小丑的假毒)。",
@@ -767,7 +767,7 @@
   "message.tip.for_taskpoint": "按下 %s 可切换任务点透视",
   "message.insane_killer.revive": "你到达了那个地方！你复活了！",
   "insane.tip.neardeath.line1": "你即将死亡，请尽快爬到最近的尸体！",
-  "insane.tip.neardeath.line2": "右键一个尸体即可复活。剩余时间：%s",
+  "insane.tip.neardeath.line2": "爬到最近的尸体即可复活。剩余时间：%s",
   "insane.tip.neardeath.line3": "只要到达那个地方...",
   "death_reason.noellesroles.nianshou_firecrackers": "被鞭炮驱逐"
 }

@@ -36,7 +36,7 @@ public abstract class InsaneRoleNameMixin {
                             .identifier().getPath())) {
                 var insaneComponent = InsaneKillerPlayerComponent.KEY.get(target);
                 if(insaneComponent!=null){
-                    if(insaneComponent.isActive){
+                    if(insaneComponent.isActive || insaneComponent.inNearDeath()){
                         ci.cancel();
                         return;
                     }
