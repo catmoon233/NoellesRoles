@@ -33,8 +33,6 @@ public abstract class KeyBindingMixin {
             final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(Minecraft.getInstance().player);
             if (insaneKillerPlayerComponent.isActive) {
                 if (this.same(Minecraft.getInstance().options.keyUse)) {
-                    if (insaneKillerPlayerComponent.deathState > 0)
-                        return false;
                     return true;
                 }
                 return this.same(Minecraft.getInstance().options.keySwapOffhand) ||
