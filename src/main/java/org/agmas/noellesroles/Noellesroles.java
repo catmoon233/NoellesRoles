@@ -981,6 +981,10 @@ public class Noellesroles implements ModInitializer {
                 // 纵火犯
                 return true;
             }
+            if (deathReasonPath.equals("voodoo")) {
+                // 巫毒
+                return true;
+            }
             if (deathReasonPath.equals("shot_innocent")) {
                 // 误杀平民
                 return true;
