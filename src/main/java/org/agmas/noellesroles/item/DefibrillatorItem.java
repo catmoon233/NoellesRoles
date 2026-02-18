@@ -52,7 +52,7 @@ public class DefibrillatorItem extends Item {
                         }
 
                         // 设置120秒的保护时间
-                        component.setProtection(120 * 20);
+                        component.setProtection(60 * 20);
 
                         // 通知使用者
                         player.displayClientMessage(
