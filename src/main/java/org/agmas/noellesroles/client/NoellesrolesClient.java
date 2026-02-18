@@ -279,7 +279,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             });
         });
         OnRoundStartWelcomeTimmer.EVENT.register((player, timer) -> {
-            if(timer == 1){
+            if (timer == 1) {
                 player.level().playLocalSound(player, NRSounds.HARPY_WELCOME, SoundSource.AMBIENT, 1f, 1f);
             }
         });
@@ -299,19 +299,20 @@ public class NoellesrolesClient implements ClientModInitializer {
             });
         });
         ClientPlayNetworking.registerGlobalReceiver(ToggleInsaneSkillC2SPacket.ID, (payload, context) -> {
-            if (payload.toggle()){
+            if (payload.toggle()) {
                 Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
-            }else {
+            } else {
                 var abstractClientPlayer = Minecraft.getInstance().player;
                 var clientLevel = Minecraft.getInstance().level;
                 Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
                 if (isPlayerBodyEntity.getOrDefault(abstractClientPlayer.getUUID(), false)) {
-//                    if (abstractClientPlayer == Minecraft.getInstance().player) {
-//                        Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
-//                    }
+                    // if (abstractClientPlayer == Minecraft.getInstance().player) {
+                    // Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+                    // }
                     isPlayerBodyEntity.put(abstractClientPlayer.getUUID(), false);
                     if (playerBodyEntities.containsKey(abstractClientPlayer.getUUID())) {
-                        clientLevel.removeEntity(playerBodyEntities.get(abstractClientPlayer.getUUID()).getId(), Entity.RemovalReason.DISCARDED);
+                        clientLevel.removeEntity(playerBodyEntities.get(abstractClientPlayer.getUUID()).getId(),
+                                Entity.RemovalReason.DISCARDED);
                         playerBodyEntities.remove(abstractClientPlayer.getUUID());
 
                     }
@@ -327,15 +328,17 @@ public class NoellesrolesClient implements ClientModInitializer {
             if (taskInstinct.consumeClick()) {
                 isTaskInstinctEnabled = !isTaskInstinctEnabled;
             }
-//            long currentTime = System.currentTimeMillis();
-//            if (currentTime - lastClientTickTime >= CLIENT_TICK_INTERVAL_MS) {
-//                lastClientTickTime = currentTime;
-//                playerBodyEntities.forEach(
-//                        (uuid, playerBodyEntity) -> {
-//                            if (playerBodyEntity.getPlayerUuid().equals(uuid))
-//                                ++playerBodyEntity.tickCount;
-//                        });
-//            }
+            if (client == null || client.player == null)
+                return;
+            // long currentTime = System.currentTimeMillis();
+            // if (currentTime - lastClientTickTime >= CLIENT_TICK_INTERVAL_MS) {
+            // lastClientTickTime = currentTime;
+            // playerBodyEntities.forEach(
+            // (uuid, playerBodyEntity) -> {
+            // if (playerBodyEntity.getPlayerUuid().equals(uuid))
+            // ++playerBodyEntity.tickCount;
+            // });
+            // }
             if (client.level != null && client.level.getGameTime() % 20 == 0) {
                 if (TMMClient.gameComponent != null && client.player != null) {
                     if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS)) {
@@ -369,7 +372,14 @@ public class NoellesrolesClient implements ClientModInitializer {
                     currentBroadcastMessage = null;
                 }
             }
-
+            if (client.player.isCreative()) {
+                if (abilityBind.consumeClick()) {
+                    if (TMMClient.gameComponent.isRole(client.player, ModRoles.ATTENDANT)) {
+                        ClientPlayNetworking.send(new AbilityC2SPacket());
+                    }
+                }
+                return;
+            }
             if (!isPlayerInAdventureMode(client.player))
                 return;
             insanityTime++;

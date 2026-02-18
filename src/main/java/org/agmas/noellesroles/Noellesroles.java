@@ -1984,8 +1984,8 @@ public class Noellesroles implements ModInitializer {
                             .withStyle(ChatFormatting.RED), true);
                     return;
                 }
-
-                abilityPlayerComponent.setCooldown(60 * 20);
+                if (!context.player().isCreative())
+                    abilityPlayerComponent.setCooldown(60 * 20);
                 AttendantHandler.openLight(context.player());
                 return;
             }

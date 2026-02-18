@@ -1,15 +1,15 @@
 package org.agmas.noellesroles;
 
-import carpet.utils.BlockInfo;
 import dev.doctor4t.trainmurdermystery.block.NeonPillarBlock;
 import dev.doctor4t.trainmurdermystery.block.NeonTubeBlock;
 import dev.doctor4t.trainmurdermystery.block.ToggleableFacingLightBlock;
-import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class AttendantHandler {
@@ -21,6 +21,15 @@ public class AttendantHandler {
         if (!(player.level() instanceof ServerLevel level))
             return;
         int pY = (int) Math.round(player.getY());
+        for (var p : player.getServer().getPlayerList().getPlayers()) {
+            if (p.distanceTo(player) <= 8) {
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        TMMSounds.BLOCK_LIGHT_TOGGLE,
+                        SoundSource.BLOCKS, 1F, 1F);
+            }
+
+        }
+
         int pX = (int) Math.round(player.getX());
         int pZ = (int) Math.round(player.getZ());
         int minX = pX - area_distance;
