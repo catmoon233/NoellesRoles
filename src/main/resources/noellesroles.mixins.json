@@ -118,8 +118,7 @@
     "client.voodoo.VoodooScreenMixin",
     "client.vulture.VultureEatenBodyMixin",
     "client.vulture.VultureHudMixin",
-    "roles.photographer.BlindnessEffectMixin",
-    "client.insane.InsaneRoleNameMixin"
+    "roles.photographer.BlindnessEffectMixin"
   ],
   "overwrites": {
     "requireAnnotations": true

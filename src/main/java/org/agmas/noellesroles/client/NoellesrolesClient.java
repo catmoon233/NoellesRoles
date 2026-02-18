@@ -32,6 +32,7 @@ import org.agmas.noellesroles.client.screen.LootInfoScreen;
 import org.agmas.noellesroles.client.screen.LootScreen;
 import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
 import org.agmas.noellesroles.component.AwesomePlayerComponent;
+import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.packet.*;
@@ -56,6 +57,7 @@ import dev.doctor4t.trainmurdermystery.client.StaminaRenderer;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.event.AllowNameRender;
 import dev.doctor4t.trainmurdermystery.event.OnRoundStartWelcomeTimmer;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -123,6 +125,21 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // 注册HUD渲染
+        AllowNameRender.EVENT.register((target) -> {
+            GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(target.level());
+            if (gameWorldComponent.isRole(target,
+                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+
+                var insaneComponent = InsaneKillerPlayerComponent.KEY.get(target);
+                if (insaneComponent != null) {
+                    if (insaneComponent.isActive || insaneComponent.inNearDeath()) {
+                        return false;
+                    }
+                }
+
+            }
+            return true;
+        });
         ClientHudRenderer.registerRenderersEvent();
 
         WorldRenderEvents.AFTER_TRANSLUCENT.register((renderContext) -> {

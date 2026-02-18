@@ -1,14 +1,12 @@
 package org.agmas.noellesroles.component;
 
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.common.InteractionEvent;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeath;
+import dev.doctor4t.trainmurdermystery.event.AllowNameRender;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -21,8 +19,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.packet.ToggleInsaneSkillC2SPacket;
@@ -60,12 +56,15 @@ public class InsaneKillerPlayerComponent
         if (!GameFunctions.isPlayerAliveAndSurvival(player))
             return;
         List<Entity> entities = player.level().getEntities(player,
-                new AABB(new Vec3(-1, -1, -1), new Vec3(1, 1, 1)), (entity) -> {
+                player.getBoundingBox().inflate(2), (entity) -> {
                     return entity instanceof PlayerBodyEntity;
                 });
+
         if (entities == null || entities.size() <= 0) {
             return;
         }
+        // Noellesroles.LOGGER.info("" + entities.size());
+
         boolean canRevive = entities.stream().anyMatch((p) -> {
             if (p instanceof PlayerBodyEntity b) {
                 if (b.getPlayerUuid().equals(player.getUUID())) {
@@ -85,6 +84,7 @@ public class InsaneKillerPlayerComponent
     }
 
     public static void registerEvent() {
+        
         AfterShieldAllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (GameWorldComponent.KEY.get(playerEntity.level()).isRole(playerEntity,
                     ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
@@ -99,7 +99,7 @@ public class InsaneKillerPlayerComponent
                     insaneKillerPlayerComponent.sync();
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 99999, 4));
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 99999, 4));
-
+                    // insaneKillerPlayerComponent.sync();
                     return false;
                 }
             }
@@ -115,6 +115,8 @@ public class InsaneKillerPlayerComponent
     public void revive() {
         this.deathState = -1;
         this.isActive = false;
+        // this.sync();
+
         if (player instanceof ServerPlayer sp) {
             ServerPlayNetworking.send(sp, new ToggleInsaneSkillC2SPacket(false));
         }
