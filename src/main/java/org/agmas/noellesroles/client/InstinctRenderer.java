@@ -2,6 +2,7 @@ package org.agmas.noellesroles.client;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
+import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
@@ -48,6 +49,12 @@ public class InstinctRenderer {
                 // 不开直觉，默认有
                 BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(target_player);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
+                if(gameWorldComponent.isRole(self,ModRoles.BETTER_VIGILANTE)){
+                    var betterC = BetterVigilantePlayerComponent.KEY.get(self);
+                    if(betterC.lastStandActivated){
+                        return (Color.BLUE.getRGB());
+                    }
+                }
                 if (gameWorldComponent.isRole(self, ModRoles.BARTENDER)) {
                     // LoggerFactory.getLogger("renderer").info("glowTick {}",
                     // bartenderPlayerComponent.glowTicks);
