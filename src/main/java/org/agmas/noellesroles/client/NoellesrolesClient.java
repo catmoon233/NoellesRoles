@@ -270,13 +270,14 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         // 注册抽奖界面网络包处理：接收并保存服务器卡池信息并显示界面
         ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoS2CPacket.ID, (payload, context) -> {
-            List<LotteryManager.LotteryPool> missingPools = new ArrayList<>();
             for (LotteryManager.LotteryPool lotteryPool : payload.pools()) {
                 if (LotteryManager.getInstance().getLotteryPool(lotteryPool.getPoolID()) == null)
                     LotteryManager.getInstance().addLotteryPool(lotteryPool);
                 else
                     LotteryManager.getInstance().setLotteryPoolByID(lotteryPool.getPoolID(), lotteryPool);
             }
+            // 将卡池按 id大小排序
+            LotteryManager.getInstance().sortPools();
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null)

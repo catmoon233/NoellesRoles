@@ -16,7 +16,6 @@ import java.util.List;
  *     NOTE:
  *      虽然目前为空，但是服务器有轮换卡池、up卡池，需要将卡池信息发给客户端用于显示
  * </p>
- * TODO : 发送卡池信息
  */
 public record LootPoolsInfoCheckS2CPacket(List<Integer> poolIDs) implements CustomPacketPayload {
     public static ResourceLocation LOOT_POOLS_INFO_CHECK_PAYLOAD_ID =

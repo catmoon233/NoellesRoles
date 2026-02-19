@@ -8,6 +8,67 @@ import net.minecraft.world.phys.Vec2;
  * start为(0,0)作相对运动：以控件自身为原点
  */
 public class BezierAnimation extends AbstractByAnimation {
+    /**
+     * 三阶贝塞尔动画建造者
+     * <p>
+     *     使用建造者进行构建可以更灵活地配置动画
+     * </p>
+     */
+    public static class Builder {
+        public Builder(AbstractWidget widget, Vec2 end, int durationTicks) {
+            this.widget = widget;
+            // 默认控制点0.1 0.9
+            control1 = new Vec2(end.x * 0.1f,end.y * 0.1f);
+            control2 = new Vec2(end.x * 0.9f, end.y * 0.9f);
+            this.end = end;
+            this.durationTicks = durationTicks;
+            callback =
+                    (Vec2 pos) ->
+                    {
+                        widget.setPosition((int)pos.x + widget.getX(), (int)pos.y + widget.getY());
+                    };
+        }
+        public Builder setControl1(Vec2 control1) {
+            this.control1 = control1;
+            return this;
+        }
+        public Builder setControl2(Vec2 control2) {
+            this.control2 = control2;
+            return this;
+        }
+        public Builder setControl(Vec2 control1, Vec2 control2) {
+            this.control1 = control1;
+            this.control2 = control2;
+            return this;
+        }
+        public Builder setCallback(Callback<Vec2> callback) {
+            this.callback = callback;
+            return this;
+        }
+        /** callBack 使用浮点数计算时请关闭整数误差修正 */
+        public Builder setIntErrorFix(boolean isIntErrorFixOpen) {
+            this.isIntErrorFixOpen = isIntErrorFixOpen;
+            return this;
+        }
+        public BezierAnimation build() {
+            BezierAnimation animation = new BezierAnimation(widget, control1, control2, end, durationTicks, callback);
+            if (isIntErrorFixOpen) {
+                animation.openIntErrorFix();
+            }
+            else
+                animation.closeIntErrorFix();
+            return animation;
+        }
+        protected AbstractWidget widget;
+        protected Vec2 control1, control2;
+        protected Vec2 end;
+        protected int durationTicks;
+        protected Callback<Vec2> callback;
+        protected boolean isIntErrorFixOpen = true;
+    }
+    public static Builder builder(AbstractWidget widget, Vec2 end, int durationTicks) {
+        return new Builder(widget, end, durationTicks);
+    }
     public BezierAnimation(AbstractWidget widget, Vec2 control1, Vec2 control2, Vec2 end, int duration, Callback<Vec2> callback) {
         super(widget, end, duration, callback);
         this.control1 = control1;
