@@ -40,10 +40,10 @@ public abstract class BroadcasterHudMixin {
             int screenWidth = context.guiWidth();
             int screenHeight = context.guiHeight();
             int count = NoellesrolesClient.currentBroadcastMessage.size();
-            int i = 0;
-            for (var info : NoellesrolesClient.currentBroadcastMessage) {
-                if (y >= screenHeight / 2) {
-                    Component message = Component.translatable("message.broadcast.more_message", (count - i))
+            // int i = 0;
+            for (int i = 0; i < count; i++) {
+                if (i >= 1 && (y >= (screenHeight / 2 - 40) || i >= 4) && i < count - 1) {
+                    Component message = Component.translatable("message.broadcast.more_message", (count - i - 1))
                             .withStyle(ChatFormatting.GRAY);
                     Font textRenderer = getFont();
                     int textWidth = textRenderer.width(message);
@@ -55,9 +55,10 @@ public abstract class BroadcasterHudMixin {
                             bgColor);
                     context.drawString(textRenderer, message, x, y, 0xFFFFFF);
                     y += 20;
-                    break;
+
+                    i = count - 1;
                 }
-                i++;
+                var info = NoellesrolesClient.currentBroadcastMessage.get(i);
                 Component message = info.message();
                 Font textRenderer = getFont();
                 int textWidth = textRenderer.width(message);
