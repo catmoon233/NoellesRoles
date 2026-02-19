@@ -22,6 +22,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.UUID;
+
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 
@@ -60,30 +63,39 @@ public class BombItem extends Item {
             }
 
             // Show timer in action bar
-            // player.displayClientMessage(Component.literal("Bomb: " + (timer / 20) + "s"), true);
+            // player.displayClientMessage(Component.literal("Bomb: " + (timer / 20) + "s"),
+            // true);
         } else {
             // Explode
-            explode(player, stack);
+            explode(player, stack, tag);
         }
     }
 
-    private void explode(ServerPlayer player, ItemStack stack) {
+    private void explode(ServerPlayer player, ItemStack stack, CompoundTag customTag) {
         stack.shrink(1);
         player.level().playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS,
                 2.0f, 1.0f);
         ((ServerLevel) player.level()).sendParticles(ParticleTypes.EXPLOSION, player.getX(), player.getY(),
                 player.getZ(), 1, 0, 0, 0, 0);
-        GameFunctions.killPlayer(player, true, null, Noellesroles.id("bomb_death"));
+        UUID owner = null;
+        if (customTag.contains("owner")) {
+            owner = customTag.getUUID("owner");
+        }
+        Player killer = null;
+        if (owner != null)
+            killer = player.level().getPlayerByUUID(owner);
+        if (killer == null)
+            killer = player;
+        GameFunctions.killPlayer(player, true, killer, Noellesroles.id("bomb_death"));
         ServerLevel serverLevel = player.serverLevel();
         serverLevel.players().forEach(
                 target -> {
-                    if (GameWorldComponent.KEY.get(serverLevel).isRole(target, ModRoles.BOMBER)){
+                    if (GameWorldComponent.KEY.get(serverLevel).isRole(target, ModRoles.BOMBER)) {
                         PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(target);
                         playerShopComponent.setBalance(90 + playerShopComponent.balance);
                         playerShopComponent.sync();
                     }
-                }
-        );
+                });
     }
 
     @Override
