@@ -23,6 +23,7 @@ import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
+import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -658,12 +659,7 @@ public class Noellesroles implements ModInitializer {
             shopEntries.add(new ShopEntry(Items.CROSSBOW.getDefaultInstance(), 300, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
-                    int itemCount = 0;
-                    for (var item : player.getInventory().items) {
-                        if (item.is(Items.CROSSBOW)) {
-                            itemCount++;
-                        }
-                    }
+                    int itemCount = TMMItemUtils.hasItem(player, Items.CROSSBOW);
                     if (itemCount > 0)
                         return false;
                     ItemStack item = Items.CROSSBOW.getDefaultInstance();
@@ -679,12 +675,7 @@ public class Noellesroles implements ModInitializer {
             shopEntries.add(new ShopEntry(PoisonArrow, 100, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
-                    int itemCount = 0;
-                    for (var item : player.getInventory().items) {
-                        if (item.is(Items.TIPPED_ARROW)) {
-                            itemCount++;
-                        }
-                    }
+                    int itemCount = TMMItemUtils.hasItem(player, Items.TIPPED_ARROW);
                     if (itemCount >= 2)
                         return false;
                     return RoleUtils.insertStackInFreeSlot(player, PoisonArrow.copy());
@@ -697,12 +688,7 @@ public class Noellesroles implements ModInitializer {
             shopEntries.add(new ShopEntry(SpectralArrow, 50, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
-                    int itemCount = 0;
-                    for (var item : player.getInventory().items) {
-                        if (item.is(Items.SPECTRAL_ARROW)) {
-                            itemCount++;
-                        }
-                    }
+                    int itemCount = TMMItemUtils.hasItem(player, Items.SPECTRAL_ARROW);
                     if (itemCount >= 2)
                         return false;
                     return RoleUtils.insertStackInFreeSlot(player, SpectralArrow.copy());
