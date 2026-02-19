@@ -1281,25 +1281,22 @@ public class Noellesroles implements ModInitializer {
         //
         // });
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(player -> {
-                if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                if (!gameWorldComponent.isJumpAvailable() && GameFunctions.isPlayerAliveAndSurvival(player)) {
                     // NO JUMPING! For everyone who hasn't permissions
                     if (!player.hasPermissions(2)) {
                         player.getAttribute(Attributes.JUMP_STRENGTH).addOrReplacePermanentModifier(noJumpingAttribute);
                     }
                 }
-                GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
-                if (gameWorldComponent != null) {
-                    if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {
-                        TMM.SendRoomInfoToPlayer(player);
-                        // 发送房间信息
-                    }
+                if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {
+                    TMM.SendRoomInfoToPlayer(player);
+                    // 发送房间信息
                 }
             });
 
             // 年兽除岁效果：给所有玩家分发4个鞭炮
             boolean hasNianShou = false;
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             if (gameWorldComponent != null) {
                 for (var player : serverLevel.players()) {
                     if (gameWorldComponent.isRole(player, ModRoles.NIAN_SHOU)) {
