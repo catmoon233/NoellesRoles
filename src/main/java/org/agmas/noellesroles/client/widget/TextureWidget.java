@@ -47,6 +47,9 @@ public class TextureWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float f) {
+        RenderSystem.enableBlend();
+        RenderSystem.enableDepthTest();
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
         guiGraphics.blit(TEXTURE,
                 this.getX(), this.getY(),
                 this.width, this.height,
@@ -54,6 +57,8 @@ public class TextureWidget extends AbstractWidget {
                 this.renderWidth, this.renderHeight,
                 this.textureWidth, this.textureHeight
         );
+        // 恢复颜色：不透明白色防止影响其他渲染
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
@@ -85,6 +90,9 @@ public class TextureWidget extends AbstractWidget {
     }
     public void setTEXTURE(ResourceLocation TEXTURE) {
         this.TEXTURE = TEXTURE;
+    }
+    public float getAlpha() {
+        return alpha;
     }
     protected ResourceLocation TEXTURE;
     protected int textureWidth;

@@ -25,12 +25,7 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.event.MutableComponentResult;
 import org.agmas.noellesroles.client.event.OnMessageBelowMoneyRenderer;
-import org.agmas.noellesroles.client.screen.BroadcasterScreen;
-import org.agmas.noellesroles.client.screen.GuessRoleScreen;
-import org.agmas.noellesroles.client.screen.LockGameScreen;
-import org.agmas.noellesroles.client.screen.LootInfoScreen;
-import org.agmas.noellesroles.client.screen.LootScreen;
-import org.agmas.noellesroles.client.screen.RoleIntroduceScreen;
+import org.agmas.noellesroles.client.screen.*;
 import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -299,13 +294,14 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         // 注册抽奖界面网络包处理：接收并保存服务器卡池信息并显示界面
         ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoS2CPacket.ID, (payload, context) -> {
-            List<LotteryManager.LotteryPool> missingPools = new ArrayList<>();
             for (LotteryManager.LotteryPool lotteryPool : payload.pools()) {
                 if (LotteryManager.getInstance().getLotteryPool(lotteryPool.getPoolID()) == null)
                     LotteryManager.getInstance().addLotteryPool(lotteryPool);
                 else
                     LotteryManager.getInstance().setLotteryPoolByID(lotteryPool.getPoolID(), lotteryPool);
             }
+            // 将卡池按 id大小排序
+            LotteryManager.getInstance().sortPools();
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null)
@@ -333,6 +329,16 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             }
 
+        });
+
+        // 注册打开物品展示 ui网络包处理
+        ClientPlayNetworking.registerGlobalReceiver(DisplayItemS2CPacket.ID, (payload, context) -> {
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null && !payload.itemStack().isEmpty()) {
+                    client.setScreen(new DisplayItemScreen(payload.itemStack()));
+                }
+            });
         });
 
         Listen.registerEvents();

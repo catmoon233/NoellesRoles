@@ -8,6 +8,7 @@ import org.agmas.noellesroles.utils.Pair;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -93,6 +94,10 @@ public class LotteryManager {
     }
 
     public ResourceLocation getQualityBgResourceLocation(int index) {
+        if (index < 0)
+            return qualityBgList[0];
+        else if (index >= qualityBgList.length)
+            return qualityBgList[qualityBgList.length - 1];
         return qualityBgList[index];
     }
     /** 检查玩家的抽奖次数 > 0*/
@@ -143,6 +148,10 @@ public class LotteryManager {
         }
         return null;
     }
+    public List<LotteryPool> getLotteryPools()
+    {
+        return lotteryPoolList;
+    }
     public void setLotteryPoolByID(int poolID, LotteryPool lotteryPool)
     {
         for(int i = 0; i < lotteryPoolList.size(); ++i)
@@ -153,6 +162,9 @@ public class LotteryManager {
                 return;
             }
         }
+    }
+    public void sortPools() {
+        lotteryPoolList.sort(Comparator.comparingInt(LotteryPool::getPoolID));
     }
     private void init()
     {

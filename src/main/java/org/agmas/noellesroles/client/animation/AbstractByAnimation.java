@@ -11,7 +11,7 @@ abstract public class AbstractByAnimation extends AbstractAnimation{
     public interface Callback<T> {
         void onExecute(T param);
     }
-    public AbstractByAnimation(AbstractWidget widget, Vec2 end, int duration, ConstantSpeedAnimation.Callback<Vec2> callback) {
+    public AbstractByAnimation(AbstractWidget widget, Vec2 end, int duration, Callback<Vec2> callback) {
         super(widget, duration);
         this.end = end;
         this.durationTicks = duration;
@@ -68,18 +68,20 @@ abstract public class AbstractByAnimation extends AbstractAnimation{
                         deltaErrorY > 0.5f ? 1 : deltaErrorY < -0.5f ? -1 : deltaErrorY));
         }
     }
-    public void setCallback(ConstantSpeedAnimation.Callback<Vec2> callback) {
+    public void setCallback(Callback<Vec2> callback) {
         this.callback = callback;
     }
+    /** 开启整数误差修正：使用整数时应当开启，浮点数时应当关闭 */
     public void openIntErrorFix() {
         isIntErrorFixOpen = true;
     }
+    /** 关闭整数误差修正：使用浮点数时需要关闭 */
     public void closeIntErrorFix() {
         isIntErrorFixOpen = false;
     }
 
     protected final Vec2 end;// 目标值
-    protected ConstantSpeedAnimation.Callback<Vec2> callback;
+    protected Callback<Vec2> callback;
     // 是否打开整数误差修正：用于回调修改为整数时的误差修正
     protected boolean isIntErrorFixOpen = true;
     protected float lastX = 0;
