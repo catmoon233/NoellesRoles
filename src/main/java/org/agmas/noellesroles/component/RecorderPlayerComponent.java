@@ -103,9 +103,6 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
             return;
         }
 
-        guesses.put(targetUuid, roleId);
-        ModComponents.RECORDER.sync(this.player);
-
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         Player target = player.level().getPlayerByUUID(targetUuid);
         boolean isCorrect = false;
@@ -132,6 +129,8 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         }
 
         if (isCorrect) {
+            guesses.put(targetUuid, roleId);
+            ModComponents.RECORDER.sync(this.player);
             serverPlayer.displayClientMessage(
                     Component.translatable("message.noellesroles.recorder.correct_guess")
                             .withStyle(ChatFormatting.GREEN),
