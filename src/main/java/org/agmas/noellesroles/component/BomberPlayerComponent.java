@@ -3,16 +3,19 @@ package org.agmas.noellesroles.component;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.server.commands.data.DataCommands;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+
 import org.agmas.noellesroles.ModItems;
-import org.agmas.noellesroles.Noellesroles;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 
@@ -20,6 +23,7 @@ public class BomberPlayerComponent implements RoleComponent {
     public static final int BOMB_COST = 100;
     private final Player player;
     public static final ComponentKey<BomberPlayerComponent> KEY = ModComponents.BOMBER;
+
     public BomberPlayerComponent(Player player) {
         this.player = player;
     }
@@ -43,6 +47,10 @@ public class BomberPlayerComponent implements RoleComponent {
             shopComponent.sync();
 
             ItemStack bombStack = ModItems.BOMB.getDefaultInstance();
+            CompoundTag tag = new CompoundTag();
+            tag.putUUID("owner", player.getUUID());
+            var customData = CustomData.of(tag);
+            bombStack.set(DataComponents.CUSTOM_DATA, customData);
             if (!player.getInventory().add(bombStack)) {
                 player.drop(bombStack, false);
             }

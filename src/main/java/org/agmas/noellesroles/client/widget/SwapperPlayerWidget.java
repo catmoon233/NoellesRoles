@@ -38,7 +38,6 @@ public class SwapperPlayerWidget extends Button{
             net.minecraft.client.player.AbstractClientPlayer player = Minecraft.getInstance().player;
             if (player != null && (NoellesRolesAbilityPlayerComponent.KEY.get(player)).cooldown == 0) {
                 if (player.level().getPlayerByUUID(disguiseTarget.getProfile().getId()) == null) return;
-                if (player.level().getPlayerByUUID(disguiseTarget.getProfile().getId()).isPassenger()) return;
                 if (playerChoiceOne != null) {
                     ClientPlayNetworking.send(new SwapperC2SPacket(playerChoiceOne, disguiseTarget.getProfile().getId()));
                     playerChoiceOne = null;

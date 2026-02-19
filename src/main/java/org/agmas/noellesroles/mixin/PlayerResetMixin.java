@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
@@ -26,7 +27,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
 
 /**
  * 玩家重置 Mixin
@@ -43,13 +43,13 @@ public abstract class PlayerResetMixin {
     @Inject(method = "resetPlayer", at = @At("TAIL"))
     private static void clearAllComponentsOnReset(ServerPlayer player, CallbackInfo ci) {
         // 清除跟踪者组件状态
+
         clearAllComponents(player);
         if (ModComponents.DEFIBRILLATOR.get(player) != null) {
             ModComponents.DEFIBRILLATOR.get(player).clear();
         }
         ServerPlayNetworking.send(player, new PlayerResetS2CPacket());
-        if (player.containerMenu != null)
-            player.containerMenu.setCarried(ItemStack.EMPTY);
+        TMMItemUtils.clearItem(player, (s) -> true);
     }
 
     /**
@@ -69,8 +69,8 @@ public abstract class PlayerResetMixin {
         RoleUtils.RemoveAllPlayerAttributes(player);
         RoleUtils.RemoveAllEffects(player);
 
-        ((MorphlingPlayerComponent)MorphlingPlayerComponent.KEY.get(player)).reset();
-        ((VoodooPlayerComponent)VoodooPlayerComponent.KEY.get(player)).reset();
+        ((MorphlingPlayerComponent) MorphlingPlayerComponent.KEY.get(player)).reset();
+        ((VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(player)).reset();
         (RecallerPlayerComponent.KEY.get(player)).reset();
         (VulturePlayerComponent.KEY.get(player)).reset();
         (ExecutionerPlayerComponent.KEY.get(player)).reset();
@@ -80,7 +80,7 @@ public abstract class PlayerResetMixin {
 
         AwesomePlayerComponent awesomeComp = ModComponents.AWESOME.get(player);
         awesomeComp.reset();
-        
+
         StalkerPlayerComponent stalkerComp = ModComponents.STALKER.get(player);
         stalkerComp.clearAll();
         InControlCCA inControlCCA = InControlCCA.KEY.get(player);
