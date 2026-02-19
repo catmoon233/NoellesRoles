@@ -49,6 +49,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemLore;
@@ -702,6 +703,23 @@ public class Noellesroles implements ModInitializer {
                     ModRoles.MANIPULATOR_ID, ShopContent.defaultEntries);
         }
         {
+            var SPEED_SPLASH_POITION = Items.SPLASH_POTION.getDefaultInstance();
+            var speedPotionList = List.of(new MobEffectInstance(
+                    MobEffects.MOVEMENT_SPEED,
+                    60 * 20, // 持续时间（tick）
+                    2, // 等级（0 = 速度 I）
+                    false, // ambient（环境效果，如信标）
+                    true, // showParticles（显示粒子）
+                    true // showIcon（显示图标）
+            ));
+            var speedPotionContent = new PotionContents(Optional.empty(), Optional.of(53503), speedPotionList);
+            SPEED_SPLASH_POITION.set(DataComponents.POTION_CONTENTS, speedPotionContent);
+            var shopEntries = new ArrayList<ShopEntry>();
+            shopEntries.add(new ShopEntry(SPEED_SPLASH_POITION, 275, ShopEntry.Type.WEAPON));
+            ShopContent.customEntries.put(
+                    ModRoles.ATHLETE_ID, shopEntries);
+        }
+        {
             ShopContent.customEntries.put(
                     ModRoles.EXECUTIONER_ID, 柜子区的商店);
         }
@@ -720,6 +738,7 @@ public class Noellesroles implements ModInitializer {
 
         ShopContent.customEntries.put(
                 ModRoles.SWAPPER_ID, ShopContent.defaultEntries);
+
         // ShopContent.customEntries.put(
         // POISONER_ID, ShopContent.defaultEntries
         // );
