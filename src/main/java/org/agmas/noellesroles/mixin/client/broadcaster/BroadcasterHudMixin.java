@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.mixin.client.broadcaster;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -36,10 +37,28 @@ public abstract class BroadcasterHudMixin {
                 });
             }
             int y = 20;
+            int screenWidth = context.guiWidth();
+            int screenHeight = context.guiHeight();
+            int count = NoellesrolesClient.currentBroadcastMessage.size();
+            int i = 0;
             for (var info : NoellesrolesClient.currentBroadcastMessage) {
+                i++;
+                if (y >= screenHeight / 2) {
+                    Component message = Component.translatable("message.broadcast.more_message", (count - i)).withStyle(ChatFormatting.GRAY);
+                    Font textRenderer = getFont();
+                    int textWidth = textRenderer.width(message);
+                    int x = (screenWidth - textWidth) / 2;
+                    int padding = 4;
+                    int bgColor = 0x80000000;
+                    context.fill(x - padding, y - padding, x + textWidth + padding,
+                            y + textRenderer.lineHeight + padding,
+                            bgColor);
+                    context.drawString(textRenderer, message, x, y, 0xFFFFFF);
+                    y += 20;
+                    break;
+                }
                 Component message = info.message();
                 Font textRenderer = getFont();
-                int screenWidth = context.guiWidth();
                 int textWidth = textRenderer.width(message);
                 int x = (screenWidth - textWidth) / 2;
                 int padding = 4;
