@@ -41,10 +41,7 @@ public class DecServerJoinPlayer {
         ((PlayerPoisonComponent) PlayerPoisonComponent.KEY.get(serverPlayer)).reset();
         ((PlayerPsychoComponent) PlayerPsychoComponent.KEY.get(serverPlayer)).reset();
         ((PlayerNoteComponent) PlayerNoteComponent.KEY.get(serverPlayer)).reset();
-        // ResetPlayerEvent.EVENT.invoker().resetPlayer(serverPlayer);
         ConfigWorldComponent.KEY.get(serverPlayer.level()).sync();
-        WorldModifierComponent.KEY.get(serverPlayer.level()).sync();
-
     }
 
 }
