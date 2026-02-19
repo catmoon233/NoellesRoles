@@ -222,6 +222,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                     // client.player.sendSystemMessage(Component.translatable("screen.noellesroles.guess_role.reset")
                     // .withColor(Color.ORANGE.getRGB()));
                     GuessRoleScreen.clearData();
+                    client.player.containerMenu.setCarried(ItemStack.EMPTY);
                 }
             });
         });

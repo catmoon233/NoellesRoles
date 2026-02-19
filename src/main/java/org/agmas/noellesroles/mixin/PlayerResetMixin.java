@@ -50,7 +50,7 @@ public abstract class PlayerResetMixin {
             ModComponents.DEFIBRILLATOR.get(player).clear();
         }
         ServerPlayNetworking.send(player, new PlayerResetS2CPacket());
-        TMMItemUtils.clearItem(player, (s) -> true);
+        // TMMItemUtils.clearItem(player, (s) -> true);
     }
 
     /**
