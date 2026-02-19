@@ -100,12 +100,11 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static Player hudTarget;
     public static boolean isTaskInstinctEnabled = false;
     public static Map<UUID, UUID> SHUFFLED_PLAYER_ENTRIES_CACHE = Maps.newHashMap();
-    public static Component currentBroadcastMessage = null;
-    public static int broadcastMessageTicks = 0;
+    public static ArrayList<BroadcastMessageInfo> currentBroadcastMessage = new ArrayList<>();
     public static BloodMain bloodMain = new BloodMain();
 
-    private static long lastClientTickTime = 0;
-    private static final long CLIENT_TICK_INTERVAL_MS = 50; // 1000ms / 20 ticks per second = 50ms per tick
+    public static long lastClientTickTime = 0;
+    public static final long CLIENT_TICK_INTERVAL_MS = 50; // 1000ms / 20 ticks per second = 50ms per tick
     /**
      * 1: 食物
      * 2: 水
@@ -175,9 +174,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                 if (client.player != null) {
                     // if (!isPlayerInAdventureMode(client.player))
                     // return;
-                    currentBroadcastMessage = payload.content();
-                    broadcastMessageTicks = GameConstants.getInTicks(0,
-                            NoellesRolesConfig.HANDLER.instance().broadcasterMessageDuration);
+                    ShowBroadcastMessage(payload.content());
                 }
             });
         });
@@ -300,7 +297,6 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         // 注册抽奖界面网络包处理：接收并保存服务器卡池信息并显示界面
         ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoS2CPacket.ID, (payload, context) -> {
-            List<LotteryManager.LotteryPool> missingPools = new ArrayList<>();
             for (LotteryManager.LotteryPool lotteryPool : payload.pools()) {
                 if (LotteryManager.getInstance().getLotteryPool(lotteryPool.getPoolID()) == null)
                     LotteryManager.getInstance().addLotteryPool(lotteryPool);
@@ -379,13 +375,6 @@ public class NoellesrolesClient implements ClientModInitializer {
                 client.execute(() -> {
                     client.setScreen(new RoleIntroduceScreen(client.player));
                 });
-            }
-
-            if (broadcastMessageTicks > 0) {
-                broadcastMessageTicks--;
-                if (broadcastMessageTicks <= 0) {
-                    currentBroadcastMessage = null;
-                }
             }
             if (client.player.isCreative()) {
                 if (abilityBind.consumeClick()) {
@@ -538,6 +527,16 @@ public class NoellesrolesClient implements ClientModInitializer {
 
         // 7. 注册血粒子
         bloodMain.init();
+    }
+
+    private void ShowBroadcastMessage(Component message) {
+        var client = Minecraft.getInstance();
+        if (client == null)
+            return;
+        long timer = client.level.getGameTime();
+        currentBroadcastMessage
+                .add(new BroadcastMessageInfo(message, timer + GameConstants.getInTicks(0,
+                        NoellesRolesConfig.HANDLER.instance().broadcasterMessageDuration)));
     }
 
     public void tooltipHelper(Item item, ItemStack itemStack, List<Component> list) {

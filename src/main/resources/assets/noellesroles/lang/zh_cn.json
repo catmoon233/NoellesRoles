@@ -769,5 +769,6 @@
   "insane.tip.neardeath.line1": "你即将死亡，请尽快爬到最近的尸体！",
   "insane.tip.neardeath.line2": "爬到最近的尸体即可复活。剩余时间：%s",
   "insane.tip.neardeath.line3": "只要到达那个地方...",
-  "death_reason.noellesroles.nianshou_firecrackers": "被鞭炮驱逐"
+  "death_reason.noellesroles.nianshou_firecrackers": "被鞭炮驱逐",
+  "message.split_personality.broadcast_prefix":"[双重人格] %s: %s"
 }

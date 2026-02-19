@@ -10,8 +10,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.Objects;
-
 import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.slf4j.LoggerFactory;
@@ -52,7 +50,6 @@ public class BroadcasterDeathMixin {
             } else {
                 msg = Component.translatable("message.noellesroles.broadcaster.death")
                         .withStyle(ChatFormatting.RED);
-                ;
             }
             world.players().forEach(
                     player -> {
