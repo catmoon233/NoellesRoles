@@ -27,7 +27,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
 
 /**
  * 玩家重置 Mixin
@@ -50,7 +49,7 @@ public abstract class PlayerResetMixin {
             ModComponents.DEFIBRILLATOR.get(player).clear();
         }
         ServerPlayNetworking.send(player, new PlayerResetS2CPacket());
-        // TMMItemUtils.clearItem(player, (s) -> true);
+        TMMItemUtils.clearItem(player, (s) -> true);
     }
 
     /**
