@@ -86,7 +86,6 @@ public abstract class CustomRolesRoleNameRendererMixin {
             }
         }
         if (NoellesrolesClient.hudTarget != null) {
-
             if (TMMClient.gameComponent.isRole(Minecraft.getInstance().player.getUUID(), ModRoles.ATTENDANT)) {
                 String room_name_ = "No Room";
 
