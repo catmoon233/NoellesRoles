@@ -62,6 +62,7 @@ public class NoellesRolesAbilityPlayerComponent
         this.cooldown = 0;
         this.charges = -1;
         this.maxCharges = -1;
+        this.status = -1;
         this.sync();
     }
 

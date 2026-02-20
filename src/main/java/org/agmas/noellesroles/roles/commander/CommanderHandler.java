@@ -61,14 +61,14 @@ public class CommanderHandler {
                         if (role == null)
                             return;
                         if (!GameFunctions.isPlayerAliveAndSurvival(p)) {
-                            p.displayClientMessage(message.decoratedContent(), false);
+                            p.displayClientMessage(broadcastMessage, false);
                         }
                         if (role.isNeutrals() && !role.isNeutralForKiller())
                             return;
                         if (!role.isNeutrals() && (!role.canUseKiller() || role.isInnocent()))
                             return;
                         BroadcastCommand.BroadcastMessage(p, broadcastMessage);
-                        p.displayClientMessage(message.decoratedContent(), false);
+                        p.displayClientMessage(broadcastMessage, false);
                     });
                     return false;
                 }
