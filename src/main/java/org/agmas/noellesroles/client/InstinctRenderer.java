@@ -334,8 +334,12 @@ public class InstinctRenderer {
                     }
 
                     // 默认fallback
-                    if (isKillerTeam(target_role)) {
-                        return TMMRoles.KILLER.color();
+                    if (target_role == null)
+                        return Color.WHITE.getRGB();
+                    if (target_role.canUseKiller()) {
+                        return Color.RED.getRGB();
+                    } else if (target_role.isNeutralForKiller()) {
+                        return Color.ORANGE.getRGB();
                     } else {
                         if (TMMClient.gameComponent.isRole(target_player, ModRoles.GAMBLER)) {
                             return -2;
