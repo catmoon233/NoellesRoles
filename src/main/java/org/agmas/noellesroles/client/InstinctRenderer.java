@@ -3,38 +3,138 @@ package org.agmas.noellesroles.client;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
+import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
+import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 
+import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
+import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.OnGetInstinctHighlight;
 import java.awt.Color;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
+import pro.fazeclan.river.stupid_express.StupidExpress;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+import pro.fazeclan.river.stupid_express.constants.SERoles;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
+import pro.fazeclan.river.stupid_express.role.arsonist.cca.DousedPlayerComponent;
 
 public class InstinctRenderer {
     public static void registerInstinctEvents() {
+        GameWorldComponent gameWorldComponent = TMMClient.gameComponent;
+        // 验尸官
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
             if (Minecraft.getInstance() == null)
                 return -1;
             var self = Minecraft.getInstance().player;
             if (self == null)
                 return -1;
-            GameWorldComponent gameWorldComponent = TMMClient.gameComponent;
-            WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(target.level());
-            if (gameWorldComponent == null)
+            if (!gameWorldComponent.isRole(self, ModRoles.CORONER)) {
                 return -1;
+            }
+
+            long time = self.level().getGameTime();
+            if (time % 400 >= 100) {
+                return -1;
+
+            }
+
+            if (target instanceof PlayerBodyEntity) {
+                return (ModRoles.CORONER.color());
+            }
+
+            if (target instanceof Player targetPlayer) {
+                InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(targetPlayer);
+                if (component.isActive) {
+                    return (ModRoles.CORONER.color());
+                }
+            }
+            return -1;
+        });
+        // 傀儡师
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            var client = Minecraft.getInstance();
+            if (client == null || client.player == null)
+                return -1;
+            if (target instanceof Player target_player) {
+                PuppeteerPlayerComponent selfPuppeteerComp = ModComponents.PUPPETEER.get(client.player);
+                if (selfPuppeteerComp.isControllingPuppet && TMMClient.isPlayerAliveAndInSurvival()) {
+                    int entityOffset = target_player.getId() * 7;
+                    return (getGradientColor(entityOffset));
+                }
+            }
+            return -1;
+        });
+        // 初学者
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            if (target instanceof Player targettedPlayer) {
+                if (gameWorldComponent.isRole(targettedPlayer, SERoles.INITIATE)
+                        && gameWorldComponent.isRole(Minecraft.getInstance().player, SERoles.INITIATE)) {
+                    return (SERoles.INITIATE.color());
+                }
+            }
+            return -1;
+        });
+        // 纵火犯
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            var player = Minecraft.getInstance().player;
+            if (!(target instanceof Player targettedPlayer)) {
+                return -1;
+            }
+            if (!gameWorldComponent.isRole(player, SERoles.ARSONIST)) {
+                return -1;
+            }
+            if (TMMClient.isPlayerSpectatingOrCreative()) {
+                return -1;
+            }
+            if (!TMMClient.isInstinctEnabled()) {
+                return -1;
+            }
+            var douse = DousedPlayerComponent.KEY.get(targettedPlayer);
+            if (douse.getDoused()) {
+                return (SERoles.ARSONIST.color());
+            } else {
+                return (Color.GRAY.getRGB());
+            }
+        });
+        // 失忆患者
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            if (Minecraft.getInstance() == null)
+                return -1;
+            var self = Minecraft.getInstance().player;
+            if (self == null)
+                return -1;
+            if (!(target instanceof PlayerBodyEntity)) {
+                return -1;
+            }
+            if (!gameWorldComponent.isRole(self, SERoles.AMNESIAC)) {
+                return -1;
+            }
+            if (TMMClient.isPlayerSpectatingOrCreative()) {
+                return -1;
+            }
+            return SERoles.AMNESIAC.color();
+        });
+        // 通用逻辑
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            if (Minecraft.getInstance() == null)
+                return -1;
+            var self = Minecraft.getInstance().player;
+            if (self == null)
+                return -1;
+            WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(target.level());
+            var self_role = gameWorldComponent.getRole(self);
             if (worldModifierComponent != null) {
                 if (worldModifierComponent.isModifier(self, SEModifiers.SPLIT_PERSONALITY)) {
                     if (self.isSpectator()) {
@@ -47,11 +147,12 @@ public class InstinctRenderer {
             }
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
+                var target_role = gameWorldComponent.getRole(target_player);
                 BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(target_player);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
-                if(gameWorldComponent.isRole(self,ModRoles.BETTER_VIGILANTE)){
+                if (gameWorldComponent.isRole(self, ModRoles.BETTER_VIGILANTE)) {
                     var betterC = BetterVigilantePlayerComponent.KEY.get(self);
-                    if(betterC.lastStandActivated){
+                    if (betterC.lastStandActivated) {
                         return (Color.BLUE.getRGB());
                     }
                 }
@@ -123,11 +224,12 @@ public class InstinctRenderer {
                     return -2;
                 // 需要开启直觉
 
-                // 小透明：杀手无法看到高亮
-                if (gameWorldComponent.isRole(target_player, ModRoles.GHOST) && TMMClient.isKiller()
+                // 小透明：杀手无法看到高亮（所有，包括爱慕）
+                if (gameWorldComponent.isRole(target_player, ModRoles.GHOST) && isKillerTeam(self_role)
                         && TMMClient.isPlayerAliveAndInSurvival()) {
                     return -2;
                 }
+                // 记录员
                 if (gameWorldComponent.isRole(self, ModRoles.RECORDER)) {
                     if (target instanceof Player targetPlayer) {
                         if (targetPlayer == self)
@@ -143,49 +245,137 @@ public class InstinctRenderer {
                         }
                     }
                 }
-
-                if (gameWorldComponent.isRole(target_player, ModRoles.VULTURE) && TMMClient.isKiller()
-                        && TMMClient.isPlayerAliveAndInSurvival()) {
-                    return (ModRoles.VULTURE.color());
+                // 爱慕
+                if (gameWorldComponent.isRole(self, ModRoles.ADMIRER) && TMMClient.isPlayerAliveAndInSurvival()) {
+                    return (Color.PINK.getRGB());
                 }
-
-                if (gameWorldComponent.isRole(target_player, ModRoles.EXECUTIONER) && TMMClient.isKiller()
-                        && TMMClient.isPlayerAliveAndInSurvival()) {
-                    return (ModRoles.EXECUTIONER.color());
-                }
-
-                if (gameWorldComponent.getRole(target_player.getUUID()) != null
-                        && gameWorldComponent.getRole(target_player.getUUID()) != ModRoles.GHOST) {
-                    if (gameWorldComponent.isRole(target_player, ModRoles.JESTER) && TMMClient.isKiller()
-                            && TMMClient.isPlayerAliveAndInSurvival()) {
-                        // 小透明看不到
-                        if (gameWorldComponent.isRole(target_player, ModRoles.GHOST)) {
-                            return -2;
-                        }
-                        return (Color.PINK.getRGB());
-                    }
-                }
-
+                // 小丑&LOOSE END
                 if ((gameWorldComponent.isRole(self, ModRoles.JESTER)
                         || gameWorldComponent.isRole(self, TMMRoles.LOOSE_END))
                         && TMMClient.isPlayerAliveAndInSurvival()) {
+                    if (gameWorldComponent.isRole(target_player, ModRoles.GHOST)) {
+                        return -2;
+                    }
                     return (Color.PINK.getRGB());
                 }
-
+                // 柜子区
                 if (gameWorldComponent.isRole(self, ModRoles.EXECUTIONER)
                         && TMMClient.isPlayerAliveAndInSurvival()) {
                     return (ModRoles.EXECUTIONER.color());
                 }
-                if (gameWorldComponent.isRole(self, ModRoles.POSTMAN)
-                        && TMMClient.isPlayerAliveAndInSurvival()) {
-                    return (ModRoles.POSTMAN.color());
-                }
-                if (gameWorldComponent.isRole(target_player, ModRoles.NIAN_SHOU)) {
-                    return (Color.GREEN.getRGB());
+
+                // 杀手直觉
+                if (isKillerTeam(self_role) && TMMClient.isPlayerAliveAndInSurvival()) {
+                    PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(target_player);
+                    if (puppeteerComp.isPuppeteerMarked && puppeteerComp.phase >= 1) {
+                        int entityOffset = target_player.getId() * 7;
+                        return (getGradientColor(entityOffset + 10));
+                    }
+                    if (gameWorldComponent.isRole(self, ModRoles.COMMANDER) && isKillerTeam(target_role)) {
+                        return getRoleColor(target_role);
+                    }
+                    if (gameWorldComponent.isRole(target_player, ModRoles.VULTURE)) {
+                        return (ModRoles.VULTURE.color());
+                    }
+                    if (gameWorldComponent.isRole(target_player, ModRoles.ADMIRER)) {
+                        return (ModRoles.ADMIRER.color());
+                    }
+                    if (gameWorldComponent.isRole(target_player, ModRoles.EXECUTIONER)) {
+                        return (ModRoles.EXECUTIONER.color());
+                    }
+                    if (gameWorldComponent.isRole(target_player, ModRoles.JESTER)) {
+                        return (Color.PINK.getRGB());
+                    }
+                    if (gameWorldComponent.isRole(target_player, SERoles.AMNESIAC)) {
+                        if (StupidExpress.CONFIG.rolesSection.amnesiacSection.amnesiacGlowsDifferently) {
+                            return SERoles.AMNESIAC.color();
+                        }
+                    }
+
+                    // 默认fallback
+                    if (isKillerTeam(target_role)) {
+                        return TMMRoles.KILLER.color();
+                    } else {
+                        return TMMRoles.CIVILIAN.color();
+                    }
                 }
             }
 
             return -1;
         });
+    }
+
+    private static int getRoleColor(Role target_role) {
+        if (target_role == null)
+            return TMMRoles.CIVILIAN.color();
+        return target_role.color();
+    }
+
+    private static boolean isKillerTeam(Role role) {
+        if (role == null)
+            return false;
+        if (role.canUseKiller())
+            return true;
+        if (role.canUseInstinct() && role.isNeutralForKiller())
+            return true;
+        return false;
+    }
+
+    private static final int[] GRADIENT_COLORS = {
+            new Color(255, 0, 0).getRGB(), // 红色
+            new Color(255, 85, 0).getRGB(), // 橙红
+            new Color(255, 170, 0).getRGB(), // 橙色
+            new Color(255, 255, 0).getRGB(), // 黄色
+            new Color(255, 170, 0).getRGB(), // 橙色
+            new Color(255, 85, 0).getRGB(), // 橙红
+    };
+
+    // 渐变周期（tick）
+    private static final int GRADIENT_CYCLE = 60; // 3秒一个周期
+
+    /**
+     * 获取渐变颜色
+     * 
+     * @param tickOffset 每个实体的偏移量，使不同实体颜色略有不同
+     * @return 当前渐变颜色
+     */
+    public static int getGradientColor(int tickOffset) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null)
+            return GRADIENT_COLORS[0];
+
+        long worldTime = client.level.getGameTime();
+        int cyclePosition = (int) ((worldTime + tickOffset) % GRADIENT_CYCLE);
+
+        // 计算在颜色数组中的位置
+        float progress = (float) cyclePosition / GRADIENT_CYCLE * GRADIENT_COLORS.length;
+        int colorIndex = (int) progress;
+        float blend = progress - colorIndex;
+
+        // 获取当前颜色和下一个颜色
+        int currentColor = GRADIENT_COLORS[colorIndex % GRADIENT_COLORS.length];
+        int nextColor = GRADIENT_COLORS[(colorIndex + 1) % GRADIENT_COLORS.length];
+
+        // 混合两个颜色
+        return blendColors(currentColor, nextColor, blend);
+    }
+
+    /**
+     * 混合两个颜色
+     */
+    public static int blendColors(int color1, int color2, float blend) {
+        int r1 = (color1 >> 16) & 0xFF;
+        int g1 = (color1 >> 8) & 0xFF;
+        int b1 = color1 & 0xFF;
+
+        int r2 = (color2 >> 16) & 0xFF;
+        int g2 = (color2 >> 8) & 0xFF;
+        int b2 = color2 & 0xFF;
+
+        int r = (int) (r1 + (r2 - r1) * blend);
+        int g = (int) (g1 + (g2 - g1) * blend);
+        int b = (int) (b1 + (b2 - b1) * blend);
+
+        return (r << 16) | (g << 8) | b;
     }
 }

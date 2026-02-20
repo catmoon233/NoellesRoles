@@ -733,7 +733,7 @@ public class ModRoles {
                 Role.MoodType.FAKE, // 假心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
                 true // 隐藏计分板
-        )).setComponentKey(PuppeteerPlayerComponent.KEY).setAutoReset(false).setNeutralForKiller(true);
+        )).setComponentKey(PuppeteerPlayerComponent.KEY).setAutoReset(false).setNeutralForKiller(true).setCanUseInstinct(true);
 
         // 记录员角色 - 中立阵营
         RECORDER = TMMRoles.registerRole(new NormalRole(

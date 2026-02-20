@@ -84,7 +84,6 @@
     "client.broadcaster.BroadcasterHudMixin",
     "client.conductor.MasterKeyInvisibilityMixin",
     "client.coroner.CoronerHudMixin",
-    "client.coroner.CoronerInstinctGlowMixin",
     "client.coroner.CustomRolesRoleNameRendererMixin",
     "client.detective.DetectivePassiveUiMixin",
     "client.detective.PlaySoundEventMixin",
