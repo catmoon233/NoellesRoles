@@ -220,7 +220,7 @@ public class ModRoles {
     // 中立阵营角色
     public static Role COMMANDER = TMMRoles.registerRole(
             new NormalRole(COMMANDER_ID, new Color(185, 122, 87).getRGB(),
-                    false, true, Role.MoodType.FAKE,
+                    false, false, Role.MoodType.FAKE,
                     Integer.MAX_VALUE, true))
             .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setNeutralForKiller(true)
             .setCanUseInstinct(true);

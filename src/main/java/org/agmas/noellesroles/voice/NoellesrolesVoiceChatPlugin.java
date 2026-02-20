@@ -58,9 +58,7 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
                                     }
                                 });
                             }
-                            if (gameWorldComponent.isRole(player, ModRoles.COMMANDER)) {
-                                CommanderHandler.vcparanoidEvent(gameWorldComponent, player, event);
-                            }
+                            CommanderHandler.vcparanoidEvent(gameWorldComponent, player, event);
                         }
                     }
                 }
