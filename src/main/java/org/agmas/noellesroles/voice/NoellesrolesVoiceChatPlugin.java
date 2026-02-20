@@ -6,7 +6,6 @@ import de.maxhenkel.voicechat.api.VoicechatPlugin;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
 import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
-import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,6 +13,7 @@ import net.minecraft.world.effect.MobEffects;
 
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.commander.CommanderHandler;
 
 public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
     @Override
@@ -38,29 +38,28 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
                     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
                     if (gameWorldComponent != null) {
                         if (GameFunctions.isPlayerAliveAndSurvival(player)) {
-                            Role role = gameWorldComponent.getRole(player);
-                            if (role != null) {
-                                if (role.identifier().getPath()
-                                        .equals(ModRoles.NOISEMAKER.identifier().getPath())) {
-                                    player.level().players().forEach((p) -> {
-                                        if (p.getUUID() != player.getUUID()) {
-                                            double rangeMultiplier = 2;
-                                            if (player.getActiveEffectsMap().containsKey(MobEffects.LUCK)) {
-                                                rangeMultiplier = 8;
-                                            }
-                                            if (player.distanceTo(p) <= api.getVoiceChatDistance() * rangeMultiplier) {
-                                                VoicechatConnection con = api.getConnectionOf(p.getUUID());
-                                                if (con != null && con.isInstalled() && con.isConnected()) {
-                                                    api.sendLocationalSoundPacketTo(con, event.getPacket()
-                                                            .locationalSoundPacketBuilder()
-                                                            .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
-                                                            .distance((float) api.getVoiceChatDistance())
-                                                            .build());
-                                                }
+                            if (gameWorldComponent.isRole(player, ModRoles.NOISEMAKER)) {
+                                player.level().players().forEach((p) -> {
+                                    if (p.getUUID() != player.getUUID()) {
+                                        double rangeMultiplier = 2;
+                                        if (player.getActiveEffectsMap().containsKey(MobEffects.LUCK)) {
+                                            rangeMultiplier = 8;
+                                        }
+                                        if (player.distanceTo(p) <= api.getVoiceChatDistance() * rangeMultiplier) {
+                                            VoicechatConnection con = api.getConnectionOf(p.getUUID());
+                                            if (con != null && con.isInstalled() && con.isConnected()) {
+                                                api.sendLocationalSoundPacketTo(con, event.getPacket()
+                                                        .locationalSoundPacketBuilder()
+                                                        .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
+                                                        .distance((float) api.getVoiceChatDistance())
+                                                        .build());
                                             }
                                         }
-                                    });
-                                }
+                                    }
+                                });
+                            }
+                            if (gameWorldComponent.isRole(player, ModRoles.COMMANDER)) {
+                                CommanderHandler.vcparanoidEvent(gameWorldComponent, player, event);
                             }
                         }
                     }

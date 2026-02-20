@@ -1,5 +1,7 @@
 package org.agmas.noellesroles;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import org.agmas.harpymodloader.Harpymodloader;
@@ -7,6 +9,8 @@ import org.agmas.harpymodloader.events.GameInitializeEvent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.role.ModRoles;
 
+import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import pro.fazeclan.river.stupid_express.StupidExpress;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
 
@@ -41,7 +45,28 @@ public class InitModRolesMax {
 
     public static void registerDynamic() {
         GameInitializeEvent.EVENT.register((serverLevel, gameWorldComponent, players) -> {
-            int players_count = serverLevel.getServer().getPlayerCount();
+            final int players_count = serverLevel.getServer().getPlayerCount();
+
+            {
+                // 杀手中立，仅一个
+                var neutralRoles = new ArrayList<Role>(TMMRoles.ROLES.values());
+                neutralRoles.removeIf((r) -> {
+                    if (!r.isNeutralForKiller())
+                        return true;
+                    if (r.isNeutrals())
+                        return false;
+                    return (r.isInnocent() || r.canUseKiller());
+                });
+                Collections.shuffle(neutralRoles);
+                for (var r : neutralRoles) {
+                    Harpymodloader.setRoleMaximum(r, 0);
+                }
+                int neutralForKillers = 0;
+                neutralForKillers = players_count / 10;
+                for (int i = 0; i < neutralForKillers && i < neutralRoles.size(); i++) {
+                    Harpymodloader.setRoleMaximum(neutralRoles.get(i), 1);
+                }
+            }
             // 动态大小
             // 年兽角色：5%概率生成
             Random random = new Random();

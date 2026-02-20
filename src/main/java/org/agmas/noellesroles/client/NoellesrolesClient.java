@@ -1,8 +1,6 @@
 package org.agmas.noellesroles.client;
 
-import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.handleAdmirerContinuousInput;
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.handleStalkerContinuousInput;
-import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.onAbilityKeyPressed;
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerClientEvents;
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerEntityRenderers;
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerScreens;
@@ -409,38 +407,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             handleStalkerContinuousInput(client);
 
             if (abilityBind.consumeClick()) {
-                // 慕恋者持续按键检测（窥视）
-                handleAdmirerContinuousInput(client);
-                if (Minecraft.getInstance().player == null)
-                    return;
-
-                GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
-                        .get(Minecraft.getInstance().player.level());
-
-                // 优先处理炸弹客，避免被 onAbilityKeyPressed 干扰
-                if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BOMBER)) {
-                    ClientPlayNetworking.send(new AbilityC2SPacket());
-                    return;
-                }
-
-                if (onAbilityKeyPressed(client)) {
-                    return;
-                }
-
-                if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)) {
-                    if (targetBody == null)
-                        return;
-                    ClientPlayNetworking.send(new VultureEatC2SPacket(targetBody.getUUID()));
-                    return;
-                } else if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.BROADCASTER)) {
-                    if (!isPlayerInAdventureMode(client.player))
-                        return;
-                    client.execute(() -> {
-                        client.setScreen(new BroadcasterScreen());
-                    });
-                    return;
-                }
-                ClientPlayNetworking.send(new AbilityC2SPacket());
+                ClientAbilityHandler.handler(client);
             }
 
         });
@@ -553,7 +520,7 @@ public class NoellesrolesClient implements ClientModInitializer {
         }
     }
 
-    private boolean isPlayerInAdventureMode(AbstractClientPlayer targetPlayer) {
+    public static boolean isPlayerInAdventureMode(AbstractClientPlayer targetPlayer) {
         Minecraft client = Minecraft.getInstance();
         if (client.player != null) {
             PlayerInfo entry = client.player.connection.getPlayerInfo(targetPlayer.getUUID());

@@ -5,8 +5,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import java.util.Iterator;
 
@@ -35,7 +35,7 @@ public class BroadcastCommand {
         });
     }
 
-    public static void BroadcastMessage(ServerPlayer serverPlayer, MutableComponent message) {
+    public static void BroadcastMessage(ServerPlayer serverPlayer, Component message) {
         org.agmas.noellesroles.packet.BroadcastMessageS2CPacket packet = new org.agmas.noellesroles.packet.BroadcastMessageS2CPacket(
                 message);
         net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking

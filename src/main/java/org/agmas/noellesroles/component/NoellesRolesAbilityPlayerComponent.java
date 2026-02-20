@@ -20,34 +20,39 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 技能使用次数限制
  * - 自动同步到客户端（用于 HUD 显示）
  */
-public class NoellesRolesAbilityPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
+public class NoellesRolesAbilityPlayerComponent
+        implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 
     @Override
     public Player getPlayer() {
         return player;
     }
+
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<NoellesRolesAbilityPlayerComponent> KEY = ModComponents.ABILITY;
-    
+
     // 持有该组件的玩家
     private final Player player;
-    
+
     // 技能冷却时间（tick）
     public int cooldown = 100;
-    
+
     // 技能剩余使用次数（-1 表示无限制）
     public int charges = -1;
-    
+
     // 最大使用次数（用于 HUD 显示）
     public int maxCharges = -1;
-    
+
+    // 状态
+    public int status = -1;
+
     /**
      * 构造函数
      */
     public NoellesRolesAbilityPlayerComponent(Player player) {
         this.player = player;
     }
-    
+
     /**
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
@@ -64,7 +69,7 @@ public class NoellesRolesAbilityPlayerComponent implements RoleComponent, Server
     public void clear() {
         this.reset();
     }
-    
+
     /**
      * 设置冷却时间
      * 
@@ -74,7 +79,7 @@ public class NoellesRolesAbilityPlayerComponent implements RoleComponent, Server
         this.cooldown = ticks;
         this.sync();
     }
-    
+
     /**
      * 设置技能使用次数
      * 
@@ -85,7 +90,7 @@ public class NoellesRolesAbilityPlayerComponent implements RoleComponent, Server
         this.maxCharges = charges;
         this.sync();
     }
-    
+
     /**
      * 使用一次技能
      * 
@@ -104,30 +109,30 @@ public class NoellesRolesAbilityPlayerComponent implements RoleComponent, Server
         sync();
         return true;
     }
-    
+
     /**
      * 检查技能是否可用
      */
     public boolean canUseAbility() {
         return cooldown <= 0 && (charges == -1 || charges > 0);
     }
-    
+
     /**
      * 获取冷却时间（秒）
      */
     public float getCooldownSeconds() {
         return cooldown / 20.0f;
     }
-    
+
     /**
      * 同步到客户端
      */
     public void sync() {
         ModComponents.ABILITY.sync(this.player);
     }
-    
+
     // ==================== Tick 处理 ====================
-    
+
     @Override
     public void serverTick() {
         // 服务端每 tick 减少冷却时间
@@ -139,7 +144,7 @@ public class NoellesRolesAbilityPlayerComponent implements RoleComponent, Server
             }
         }
     }
-    
+
     @Override
     public void clientTick() {
         // 客户端也进行冷却计算（用于预测显示）
@@ -147,20 +152,22 @@ public class NoellesRolesAbilityPlayerComponent implements RoleComponent, Server
             this.cooldown--;
         }
     }
-    
+
     // ==================== NBT 序列化 ====================
-    
+
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("cooldown", this.cooldown);
         tag.putInt("charges", this.charges);
         tag.putInt("maxCharges", this.maxCharges);
+        tag.putInt("status", this.status);
     }
-    
+
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
         this.charges = tag.contains("charges") ? tag.getInt("charges") : -1;
         this.maxCharges = tag.contains("maxCharges") ? tag.getInt("maxCharges") : -1;
+        this.status = tag.contains("status") ? tag.getInt("status") : -1;
     }
 }

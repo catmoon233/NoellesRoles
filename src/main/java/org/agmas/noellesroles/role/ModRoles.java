@@ -122,6 +122,7 @@ public class ModRoles {
     public static final ResourceLocation ADMIRER_ID = Noellesroles.id("admirer");
     public static final ResourceLocation PUPPETEER_ID = Noellesroles.id("puppeteer");
     public static final ResourceLocation MONITOR_ID = Noellesroles.id("monitor");
+    public static final ResourceLocation COMMANDER_ID = Noellesroles.id("commander");
     public static final ResourceLocation RECORDER_ID = Noellesroles.id("recorder");
     public static ResourceLocation VULTURE_ID = Noellesroles.id("vulture");
     public static final ResourceLocation NIAN_SHOU_ID = Noellesroles.id("nianshou");
@@ -134,7 +135,8 @@ public class ModRoles {
             .setVigilanteTeam(true).setCanSeeCoin(true).setCanPickUpRevolver(false);
     public static Role JESTER = TMMRoles
             .registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
-                    false, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
+                    false, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
+            .setNeutralForKiller(true);
     public static Role CONDUCTOR = TMMRoles
             .registerRole(new NoramlRole(CONDUCTOR_ID, new Color(184, 134, 11).getRGB(), true,
                     false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
@@ -216,10 +218,16 @@ public class ModRoles {
                     Integer.MAX_VALUE, true).setComponentKey(InsaneKillerPlayerComponent.KEY));
 
     // 中立阵营角色
+    public static Role COMMANDER = TMMRoles.registerRole(
+            new NormalRole(COMMANDER_ID, new Color(185, 122, 87).getRGB(),
+                    false, true, Role.MoodType.FAKE,
+                    Integer.MAX_VALUE, true))
+            .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setNeutralForKiller(true);
     public static Role VULTURE = TMMRoles
             .registerRole(new NoramlRole(VULTURE_ID, new Color(210, 105, 30).getRGB(), false,
                     false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true)
-                    .setComponentKey(VulturePlayerComponent.KEY));
+                    .setComponentKey(VulturePlayerComponent.KEY))
+            .setNeutralForKiller(true);
     public static Role CORONER = TMMRoles
             .registerRole(new NoramlRole(CORONER_ID, new Color(122, 122, 122).getRGB(), true,
                     false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
@@ -551,7 +559,7 @@ public class ModRoles {
                 Role.MoodType.FAKE, // 假心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
                 true // 隐藏计分板
-        ));
+        )).setNeutralForKiller(true);
 
         // 工程师角色 - 乘客阵营
         ENGINEER = TMMRoles.registerRole(new NoramlRole(
@@ -713,7 +721,7 @@ public class ModRoles {
         ADMIRER = TMMRoles.registerRole(new NoramlRole(
                 ADMIRER_ID, // 角色 ID
                 new Color(255, 192, 203).getRGB(), false, false, Role.MoodType.FAKE, Integer.MAX_VALUE,
-                true)).setComponentKey(AdmirerPlayerComponent.KEY);
+                true)).setComponentKey(AdmirerPlayerComponent.KEY).setNeutralForKiller(true);
 
         // 傀儡师角色 - 中立阵营（初始）
         PUPPETEER = TMMRoles.registerRole(new NoramlRole(
@@ -724,7 +732,7 @@ public class ModRoles {
                 Role.MoodType.FAKE, // 假心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
                 true // 隐藏计分板
-        )).setComponentKey(PuppeteerPlayerComponent.KEY).setAutoReset(false);
+        )).setComponentKey(PuppeteerPlayerComponent.KEY).setAutoReset(false).setNeutralForKiller(true);
 
         // 记录员角色 - 中立阵营
         RECORDER = TMMRoles.registerRole(new NormalRole(
@@ -845,7 +853,7 @@ public class ModRoles {
         // 游侠
         Harpymodloader.setRoleMaximum(ELF_ID, 1);
 
-        //巡警
+        // 巡警
         Harpymodloader.setRoleMaximum(PATROLLER_ID, 1);
 
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
