@@ -56,7 +56,8 @@ public class AbilityHandler {
             return;
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.COMMANDER)){
-            CommanderHandler.abilityActived();
+            CommanderHandler.tryActiveAbility(context.player());
+            return;
         } 
         if (gameWorldComponent.isRole(context.player(), ModRoles.ATTENDANT)) {
             if (abilityPlayerComponent.cooldown > 0) {

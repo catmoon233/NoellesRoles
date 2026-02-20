@@ -222,7 +222,8 @@ public class ModRoles {
             new NormalRole(COMMANDER_ID, new Color(185, 122, 87).getRGB(),
                     false, true, Role.MoodType.FAKE,
                     Integer.MAX_VALUE, true))
-            .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setNeutralForKiller(true);
+            .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setNeutralForKiller(true)
+            .setCanUseInstinct(true);
     public static Role VULTURE = TMMRoles
             .registerRole(new NoramlRole(VULTURE_ID, new Color(210, 105, 30).getRGB(), false,
                     false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true)

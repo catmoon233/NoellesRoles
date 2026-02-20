@@ -10,7 +10,6 @@ import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
-import org.agmas.harpymodloader.modded_murder.RoleAssignmentManager;
 import org.agmas.noellesroles.commands.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.blood.BloodMain;
@@ -100,18 +99,9 @@ public class Noellesroles implements ModInitializer {
         HSRItems.init();
         HSRSounds.init();
 
-        // 设置角色最大数量
-        Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
-        // 和医生一起生成
-        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 0);
-        Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
-        Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, 1);
-
         // 注册商店
         RoleShopHandler.shopRegister();
         ModEventsRegister.registerPredicate();
-        // 同时出现
-        RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
         // 设置刀击中效果
 
         // 注册血液粒子工厂

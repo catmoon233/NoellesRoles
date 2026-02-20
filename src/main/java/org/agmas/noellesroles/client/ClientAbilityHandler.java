@@ -11,7 +11,8 @@ import net.minecraft.client.Minecraft;
 
 public class ClientAbilityHandler {
 
-    public static void handler(Minecraft client) {// 慕恋者持续按键检测（窥视）
+    public static void handler(Minecraft client) {
+        // 慕恋者持续按键检测（窥视）
         RicesRoleRhapsodyClient.handleAdmirerContinuousInput(client);
         if (Minecraft.getInstance().player == null)
             return;

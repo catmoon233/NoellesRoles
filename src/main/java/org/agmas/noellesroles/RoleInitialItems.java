@@ -104,10 +104,11 @@ public class RoleInitialItems {
         recorderItems.add(() -> ModItems.WRITTEN_NOTE.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.RECORDER, recorderItems);
 
-        // 小丑初始物品
+        // 小丑 & 指挥官初始物品
         List<Supplier<ItemStack>> jesterItems = new ArrayList<>();
         jesterItems.add(() -> ModItems.FAKE_KNIFE.getDefaultInstance());
         jesterItems.add(() -> ModItems.FAKE_REVOLVER.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.COMMANDER, jesterItems);
         INITIAL_ITEMS_MAP.put(ModRoles.JESTER, jesterItems);
 
         // 列车长初始物品

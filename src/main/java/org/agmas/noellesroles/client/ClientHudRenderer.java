@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.agmas.noellesroles.AttendantHandler;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.commander.CommanderHudRender;
 
 import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.Component;
 public class ClientHudRenderer {
 
     public static void registerRenderersEvent() {
+        CommanderHudRender.register();
 
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             // 渲染酒保的提示

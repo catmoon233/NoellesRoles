@@ -275,8 +275,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             ServerPlayer player = context.player();
             ItemStack lockPick = player.getItemInHand(InteractionHand.MAIN_HAND);
             boolean isLockPick = false;
-            for(var item : LockEntityManager.getInstance().getCanBeUsedToUnLock())
-            {
+            for (var item : LockEntityManager.getInstance().getCanBeUsedToUnLock()) {
                 if (lockPick.is(item)) {
                     isLockPick = true;
                     break;
@@ -293,8 +292,7 @@ public class RicesRoleRhapsody implements ModInitializer {
                 // 把锁附近的门解锁（如果还有锁则不会成功解锁）
                 Level world = context.player().level();
                 BlockEntity blockEntity = world.getBlockEntity(payload.pos().below());
-                if(blockEntity instanceof DoorBlockEntity door)
-                {
+                if (blockEntity instanceof DoorBlockEntity door) {
                     LockEntityManager.lockNearByDoors(door, world, false);
                 }
 
@@ -345,7 +343,9 @@ public class RicesRoleRhapsody implements ModInitializer {
             // 执行猜测
             ConspiratorPlayerComponent component = ModComponents.CONSPIRATOR.get(context.player());
             boolean correct = component.makeGuess(payload.targetPlayer(), roleId);
-
+            if (correct) {
+                // 防止警告罢了
+            }
             // 消耗书页物品
             if (mainHand.is(ModItems.CONSPIRACY_PAGE)) {
                 mainHand.shrink(1);
@@ -356,8 +356,6 @@ public class RicesRoleRhapsody implements ModInitializer {
 
         // 处理邮差传递包
         ServerPlayNetworking.registerGlobalReceiver(POSTMAN_PACKET, (payload, context) -> {
-            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
-
             // 验证玩家存活
             if (!GameFunctions.isPlayerAliveAndSurvival(context.player()))
                 return;
@@ -818,31 +816,30 @@ public class RicesRoleRhapsody implements ModInitializer {
         // 处理卡池信息请求包：返回缺失的卡池
         ServerPlayNetworking.registerGlobalReceiver(LOOT_POOLS_INFO_REQUEST_PACKET, (payload, context) -> {
             List<LotteryManager.LotteryPool> missingPools = new ArrayList<>();
-            for (int poolID : payload.poolIds())
-            {
+            for (int poolID : payload.poolIds()) {
                 LotteryManager.LotteryPool lotteryPool = LotteryManager.getInstance().getLotteryPool(poolID);
-                if(lotteryPool != null)
+                if (lotteryPool != null)
                     missingPools.add(lotteryPool);
             }
             ServerPlayNetworking.send(context.player(), new LootPoolsInfoS2CPacket(missingPools));
         });
 
         // 处理抽奖请求包
-        ServerPlayNetworking.registerGlobalReceiver(LOOT_REQUIRE_PACKET, (payload, context)->{
-           ServerPlayer player = context.player();
+        ServerPlayNetworking.registerGlobalReceiver(LOOT_REQUIRE_PACKET, (payload, context) -> {
+            ServerPlayer player = context.player();
             if (player == null)
                 return;
-            if(LotteryManager.getInstance().getLotteryPool(payload.poolID()) != null && LotteryManager.getInstance().canRoll(player))
-            {
-                Pair<Integer, Integer> rollID = LotteryManager.getInstance().getLotteryPool(payload.poolID()).rollOnce(player);
-                if(rollID.first != -1)
-                {
-                    ServerPlayNetworking.send(player, new LootResultS2CPacket(payload.poolID(), rollID.first, rollID.second));
+            if (LotteryManager.getInstance().getLotteryPool(payload.poolID()) != null
+                    && LotteryManager.getInstance().canRoll(player)) {
+                Pair<Integer, Integer> rollID = LotteryManager.getInstance().getLotteryPool(payload.poolID())
+                        .rollOnce(player);
+                if (rollID.first != -1) {
+                    ServerPlayNetworking.send(player,
+                            new LootResultS2CPacket(payload.poolID(), rollID.first, rollID.second));
                     // 抽一次减一次抽奖机会
                     LotteryManager.getInstance().addOrDegreeLotteryChance(player, -1);
                 }
-            }
-            else {
+            } else {
                 // 抽奖次数 = 0 或 卡池是否存在 限制
                 player.sendSystemMessage(Component.translatable("message.noellesroles.loot.limit", payload.poolID()));
             }
@@ -879,19 +876,6 @@ public class RicesRoleRhapsody implements ModInitializer {
             }
         }
         return null;
-    }
-
-    /**
-     * 玩家死亡时的处理逻辑
-     * 注意：复仇者的激活逻辑主要在 AvengerKillMixin 中处理
-     * 这里作为备用检测，处理非正常死亡（如跌落、毒药等）
-     *
-     * @param victim      死亡的玩家
-     * @param deathReason 死亡原因
-     */
-    private static void onPlayerDeath(Player victim, ResourceLocation deathReason) {
-        // 复仇者的激活逻辑已在 AvengerKillMixin 中处理
-        // 此方法保留用于处理其他死亡相关逻辑
     }
 
     /**
@@ -942,14 +926,14 @@ public class RicesRoleRhapsody implements ModInitializer {
         // ==================== 复仇者角色处理 ====================
         if (role.equals(ModRoles.AVENGER)) {
             // 重置复仇者组件
-//            AvengerPlayerComponent avengerComponent = ModComponents.AVENGER.get(player);
-//            avengerComponent.reset();
-//
-//            // 随机绑定一个无辜玩家作为保护目标
-//            // 延迟执行以确保所有玩家都已分配角色
-//            if (player instanceof ServerPlayer serverPlayer) {
-//                serverPlayer.getServer().execute(avengerComponent::bindRandomTarget);
-//            }
+            // AvengerPlayerComponent avengerComponent = ModComponents.AVENGER.get(player);
+            // avengerComponent.reset();
+            //
+            // // 随机绑定一个无辜玩家作为保护目标
+            // // 延迟执行以确保所有玩家都已分配角色
+            // if (player instanceof ServerPlayer serverPlayer) {
+            // serverPlayer.getServer().execute(avengerComponent::bindRandomTarget);
+            // }
 
         }
 

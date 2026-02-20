@@ -1,7 +1,6 @@
 package org.agmas.noellesroles;
 
 import org.agmas.noellesroles.component.ConspiratorPlayerComponent;
-import org.agmas.noellesroles.mixin.accessor.PlayerPoisonComponentAccessor;
 import org.agmas.noellesroles.role.ModRoles;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;

@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.events.GameInitializeEvent;
+import org.agmas.harpymodloader.modded_murder.RoleAssignmentManager;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.role.ModRoles;
 
@@ -19,6 +20,17 @@ public class InitModRolesMax {
     public static int REFUGEE_CHANCE = 10; // 10 in 100
 
     public static void registerStatics() {
+
+        // 设置角色最大数量
+        Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
+        // 和医生一起生成
+        Harpymodloader.setRoleMaximum(ModRoles.DOCTOR_ID, 0);
+        Harpymodloader.setRoleMaximum(ModRoles.ATTENDANT_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.CORONER_ID, 1);
+
+        // 同时出现
+        RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
+        
         Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
         Harpymodloader.setRoleMaximum(ModRoles.MANIPULATOR, 0);
         Harpymodloader.setRoleMaximum(ModRoles.EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);

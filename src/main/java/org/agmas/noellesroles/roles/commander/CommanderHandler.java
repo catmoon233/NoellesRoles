@@ -77,9 +77,22 @@ public class CommanderHandler {
         });
     }
 
-    public static void abilityActived() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'abilityActived'");
+    public static void tryActiveAbility(ServerPlayer player) {
+        var napc = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+        if (napc.status == 1) {
+            napc.status = -1;
+            player.displayClientMessage(Component
+                    .translatable("message.commander.channel.change",
+                            Component.translatable("message.commander.channel.normal").withStyle(ChatFormatting.GREEN))
+                    .withStyle(ChatFormatting.GOLD), true);
+            napc.sync();
+        } else {
+            player.displayClientMessage(Component
+                    .translatable("message.commander.channel.change",
+                            Component.translatable("message.commander.channel.killer").withStyle(ChatFormatting.RED))
+                    .withStyle(ChatFormatting.GOLD), true);
+            napc.status = 1;
+            napc.sync();
+        }
     }
-
 }
