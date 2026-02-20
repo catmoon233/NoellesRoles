@@ -1,30 +1,20 @@
 package org.agmas.noellesroles;
 
-import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.player.Player;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
 import org.agmas.harpymodloader.Harpymodloader;
-import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.modded_murder.RoleAssignmentManager;
 import org.agmas.noellesroles.commands.*;
-import org.agmas.noellesroles.component.*;
-import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
-import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
 import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.repack.HSRSounds;
@@ -119,85 +109,7 @@ public class Noellesroles implements ModInitializer {
 
         // 注册商店
         RoleShopHandler.shopRegister();
-        TMM.canUseChatHud.add((role -> role.getIdentifier()
-                .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
-        TMM.canUseOtherPerson.add((role -> role.getIdentifier()
-                .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
-        TMM.canUseOtherPerson.add((role -> role.getIdentifier()
-                .equals(ModRoles.MANIPULATOR_ID)));
-        TMM.canCollide.add(a -> {
-            final var gameWorldComponent = GameWorldComponent.KEY.get(a.level());
-            if (gameWorldComponent.isRole(a,
-                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
-                if (InsaneKillerPlayerComponent.KEY.get(a).isActive) {
-                    return true;
-                }
-            }
-            return false;
-        });
-        TMM.canCollide.add(a -> {
-            if (a.hasEffect(MobEffects.INVISIBILITY)) {
-                return true;
-            }
-            return false;
-        });
-        TMM.cantPushableBy.add(entity -> {
-            if (entity instanceof PuppeteerBodyEntity) {
-                return true;
-            }
-            return false;
-        });
-        TMM.cantPushableBy.add(entity -> {
-            if (entity instanceof Player serverPlayer) {
-                if (serverPlayer.hasEffect(MobEffects.INVISIBILITY)) {
-                    return true;
-                } else {
-                    var modifiers = WorldModifierComponent.KEY.get(serverPlayer.level());
-                    if (modifiers.isModifier(serverPlayer.getUUID(), SEModifiers.FEATHER)) {
-                        return true;
-                    }
-                    var gameComp = GameWorldComponent.KEY.get(serverPlayer.level());
-                    if (gameComp != null) {
-                        if (gameComp.isRole(serverPlayer,
-                                ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
-                            InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
-                                    .get(serverPlayer);
-                            if (insaneKillerPlayerComponent.isActive) {
-                                return true;
-                            }
-                        }
-                    }
-
-                }
-            }
-            return false;
-        });
-        TMM.cantPushableBy.add(
-                entity -> {
-                    if (entity instanceof ServerPlayer serverPlayer) {
-                        var gameComp = GameWorldComponent.KEY.get(serverPlayer.level());
-                        if (gameComp != null) {
-                            if (gameComp.isRole(serverPlayer, ModRoles.GHOST)) {
-                                GhostPlayerComponent ghostPlayerComponent = GhostPlayerComponent.KEY.get(serverPlayer);
-                                return ghostPlayerComponent.isActive;
-                            }
-                        }
-
-                    }
-                    return false;
-                });
-        TMM.canCollideEntity.add(entity -> {
-            return entity instanceof PuppeteerBodyEntity;
-        });
-        TMM.cantPushableBy.add(entity -> {
-            return (entity instanceof NoteEntity);
-        });
-        TMM.canDropItem.addAll(List.of(
-                "exposure:stacked_photographs",
-                "exposure:album",
-                "exposure:photograph",
-                "noellesroles:mint_candies"));
-
+        ModEventsRegister.registerPredicate();
         // 同时出现
         RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
         // 设置刀击中效果

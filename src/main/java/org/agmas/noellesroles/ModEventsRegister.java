@@ -1,5 +1,8 @@
 package org.agmas.noellesroles;
 
+import java.util.List;
+
+import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.commands.BroadcastCommand;
@@ -19,12 +22,14 @@ import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
+import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.utils.EntityClearUtils;
@@ -36,6 +41,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
+import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
@@ -58,6 +64,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import pro.fazeclan.river.stupid_express.constants.SEItems;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -797,6 +804,90 @@ public class ModEventsRegister {
         // }
         // return false;
         // });
+    }
+
+    public static void registerPredicate() {
+
+        // 设置谓词
+        TMM.canUseChatHud.add((role -> role.getIdentifier()
+                .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
+        TMM.canUseOtherPerson.add((role -> role.getIdentifier()
+                .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
+        TMM.canUseOtherPerson.add((role -> role.getIdentifier()
+                .equals(ModRoles.MANIPULATOR_ID)));
+        TMM.canCollide.add(a -> {
+            final var gameWorldComponent = GameWorldComponent.KEY.get(a.level());
+            if (gameWorldComponent.isRole(a,
+                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                if (InsaneKillerPlayerComponent.KEY.get(a).isActive) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        TMM.canCollide.add(a -> {
+            if (a.hasEffect(MobEffects.INVISIBILITY)) {
+                return true;
+            }
+            return false;
+        });
+        TMM.cantPushableBy.add(entity -> {
+            if (entity instanceof PuppeteerBodyEntity) {
+                return true;
+            }
+            return false;
+        });
+        TMM.cantPushableBy.add(entity -> {
+            if (entity instanceof Player serverPlayer) {
+                if (serverPlayer.hasEffect(MobEffects.INVISIBILITY)) {
+                    return true;
+                } else {
+                    var modifiers = WorldModifierComponent.KEY.get(serverPlayer.level());
+                    if (modifiers.isModifier(serverPlayer.getUUID(), SEModifiers.FEATHER)) {
+                        return true;
+                    }
+                    var gameComp = GameWorldComponent.KEY.get(serverPlayer.level());
+                    if (gameComp != null) {
+                        if (gameComp.isRole(serverPlayer,
+                                ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                            InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
+                                    .get(serverPlayer);
+                            if (insaneKillerPlayerComponent.isActive) {
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+            }
+            return false;
+        });
+        TMM.cantPushableBy.add(
+                entity -> {
+                    if (entity instanceof ServerPlayer serverPlayer) {
+                        var gameComp = GameWorldComponent.KEY.get(serverPlayer.level());
+                        if (gameComp != null) {
+                            if (gameComp.isRole(serverPlayer, ModRoles.GHOST)) {
+                                GhostPlayerComponent ghostPlayerComponent = GhostPlayerComponent.KEY.get(serverPlayer);
+                                return ghostPlayerComponent.isActive;
+                            }
+                        }
+
+                    }
+                    return false;
+                });
+        TMM.canCollideEntity.add(entity -> {
+            return entity instanceof PuppeteerBodyEntity;
+        });
+        TMM.cantPushableBy.add(entity -> {
+            return (entity instanceof NoteEntity);
+        });
+        TMM.canDropItem.addAll(List.of(
+                "exposure:stacked_photographs",
+                "exposure:album",
+                "exposure:photograph",
+                "noellesroles:mint_candies"));
+
     }
 
 }
