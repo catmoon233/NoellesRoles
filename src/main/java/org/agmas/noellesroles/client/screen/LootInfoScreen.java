@@ -1,10 +1,12 @@
 package org.agmas.noellesroles.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +15,7 @@ import org.agmas.noellesroles.client.animation.AbstractAnimation;
 import org.agmas.noellesroles.client.animation.AnimationTimeLineManager;
 import org.agmas.noellesroles.client.animation.BezierAnimation;
 import org.agmas.noellesroles.client.widget.TextureWidget;
+import org.agmas.noellesroles.packet.Loot.LootRequestC2SPacket;
 import org.agmas.noellesroles.utils.Pair;
 import org.agmas.noellesroles.utils.lottery.LotteryManager;
 
@@ -49,7 +52,7 @@ public class LootInfoScreen extends AbstractPixelScreen {
          * </p>
          */
         private final List<TextureWidget> poolBtnTextureWidgets;
-        private final int poolID;
+        private int poolID;
         private OnRelease onRelease;
         private boolean isPressed = false;
         private int curTexIdx = 0;
@@ -135,6 +138,9 @@ public class LootInfoScreen extends AbstractPixelScreen {
         public float getAlpha() {
             return this.alpha;
         }
+        public void setPoolID(int poolID) {
+            this.poolID = poolID;
+        }
         public boolean isOnButton(int mouseX, int mouseY) {
             return mouseX >= getX() && mouseX < getX() + getWidth() && mouseY >= getY() && mouseY < getY() + getHeight();
         }
@@ -157,18 +163,38 @@ public class LootInfoScreen extends AbstractPixelScreen {
     }
     public LootInfoScreen() {
         super(Component.empty());
-        animationTimeLineManager = AnimationTimeLineManager.builder()
-                .build();
     }
     @Override
     protected void init(){
         super.init();
+        // 重置成员状态
+        initialized = false;
+        poolButtons = new ArrayList<>();
+        animationStack = new ArrayList<>();
+        animationController = new AnimationController();
+
         List<Pair<Float, AbstractAnimation>> animations = new ArrayList<>();
         int sketchX = centerX - totalWidth / 2 + poolBtnWidth + poolBtnEdgeWidth + sketchEdge / 2;
         int sketchY = centerY - totalHeight / 2 + sketchEdge;
         // 无卡池信息时的处理
         try{
             curPool = LotteryManager.getInstance().getLotteryPools().getFirst();
+            // 设置预览按钮：隐形按钮点击立绘打开预览,
+            viewPoolBtn = Button.builder(
+                            Component.empty(),
+                            buttonWidget -> {
+                                // 为何Screen中自带的 minecraft为空？
+                                Minecraft minecraft = Minecraft.getInstance();
+                                minecraft.setScreen(new ViewLotteryPoolScreen(curPool.getPoolID(), this));
+                            })
+                    .pos(sketchX, sketchY - sketchEdge / 2)
+                    .size(sketchWidth, sketchHeight)
+                    .build();
+            viewPoolBtn.setAlpha(0f);
+            viewPoolBtn.active = false;
+            // 按钮处理顺序：先加入的优先处理
+            addRenderableWidget(viewPoolBtn);
+            // 设置卡池立绘
             poolSketch = new TextureWidget(
                     sketchX,
                     sketchY,
@@ -195,6 +221,33 @@ public class LootInfoScreen extends AbstractPixelScreen {
                             (int)(initWidgetTime / AbstractAnimation.secondPerTick))
                     .setCallback((vec2)->{
                         poolSketch.setAlpha(poolSketch.getAlpha() + vec2.x);
+                    })
+                    .setIntErrorFix(false)
+                    .build()
+            ));
+            // 添加开始抽奖按钮
+            startPoolBtn = new PoolButton(
+                    curPool.getPoolID(),
+                    centerX - poolBtnWidth / 2,
+                    centerY + totalHeight / 2 + poolBtnHeight / 2,
+                    poolBtnWidth,
+                    poolBtnHeight,
+                    Component.translatable("screen.noellesroles.loot.lootBtn"),
+                    poolButton -> {
+                        // 发送抽奖请求
+                        ClientPlayNetworking.send(new LootRequestC2SPacket(curPool.getPoolID()));
+                    }
+            );
+            addRenderableWidget(startPoolBtn);
+            startPoolBtn.active = false;
+            // 添加开始按钮的显示动画
+            startPoolBtn.setAlpha(0f);
+            animations.add(new Pair<>(initBgTime, BezierAnimation.builder(
+                    startPoolBtn,
+                    new Vec2(1f, 0f),
+                    (int)(initWidgetTime / AbstractAnimation.secondPerTick))
+                    .setCallback((vec2)->{
+                        startPoolBtn.setAlpha(startPoolBtn.getAlpha() + vec2.x);
                     })
                     .setIntErrorFix(false)
                     .build()
@@ -251,8 +304,6 @@ public class LootInfoScreen extends AbstractPixelScreen {
             for (int i = 0; i < 3 && curPoolBtn != null; ++i)
                 curPoolBtn.poolBtnTextureWidgets.get(i).setTEXTURE(PoolButton.poolBtnTextures[i + 3]);
         }
-        // 发送抽奖请求
-//        ClientPlayNetworking.send(new LootRequestC2SPacket(1));
 
         animationTimeLineManager = AnimationTimeLineManager.builder()
                 .addAnimation(0f, BezierAnimation.builder(
@@ -276,6 +327,8 @@ public class LootInfoScreen extends AbstractPixelScreen {
             if (animationTimeLineManager.isFinished())
             {
                 initialized = true;
+                viewPoolBtn.active = true;
+                startPoolBtn.active = true;
                 for (PoolButton poolButton : poolButtons)
                     poolButton.active = true;
             }
@@ -306,6 +359,7 @@ public class LootInfoScreen extends AbstractPixelScreen {
         for (PoolButton poolBtn : poolButtons) {
             poolBtn.render(guiGraphics, mouseX, mouseY, delta);
         }
+        startPoolBtn.render(guiGraphics, mouseX, mouseY, delta);
     }
     public void switchToPool(int poolD) {
         if (curPool != null && poolD == curPool.getPoolID())
@@ -334,6 +388,19 @@ public class LootInfoScreen extends AbstractPixelScreen {
                                 (int)(initWidgetTime / AbstractAnimation.secondPerTick))
                         .setCallback((vec2)->{
                             poolSketch.setAlpha(poolSketch.getAlpha() + vec2.x);
+                        })
+                        .setIntErrorFix(false)
+                        .build()
+        );
+        startPoolBtn.setPoolID(poolD);
+        startPoolBtn.setAlpha(0f);
+        animationStack.add(
+                BezierAnimation.builder(
+                                startPoolBtn,
+                                new Vec2(1f, 0f),
+                                (int)(initWidgetTime / AbstractAnimation.secondPerTick))
+                        .setCallback((vec2)->{
+                            startPoolBtn.setAlpha(startPoolBtn.getAlpha() + vec2.x);
                         })
                         .setIntErrorFix(false)
                         .build()
@@ -376,11 +443,14 @@ public class LootInfoScreen extends AbstractPixelScreen {
     /** 背景初始化时间 */
     private static final float initBgTime = 0.5f;
     private static final float initWidgetTime = 1.0f;
-    private final List<PoolButton> poolButtons = new ArrayList<>();
-    private final List<AbstractAnimation> animationStack = new ArrayList<>();
-    private final AnimationController animationController = new AnimationController();
-    private AnimationTimeLineManager animationTimeLineManager;
-    private LotteryManager.LotteryPool curPool;
-    private TextureWidget poolSketch;
-    private boolean initialized = false;
+    private List<PoolButton> poolButtons = null;
+    private List<AbstractAnimation> animationStack = null;
+    private AnimationController animationController = null;
+    private Button viewPoolBtn = null;
+    private PoolButton startPoolBtn = null;
+    private AnimationTimeLineManager animationTimeLineManager = null;
+    private LotteryManager.LotteryPool curPool = null;
+    private TextureWidget poolSketch = null;
+    private boolean initialized;
 }
+
