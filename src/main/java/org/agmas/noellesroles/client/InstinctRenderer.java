@@ -20,6 +20,8 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.OnGetInstinctHighlight;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
+import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 
 import java.awt.Color;
 
@@ -309,8 +311,15 @@ public class InstinctRenderer {
                         int entityOffset = target_player.getId() * 7;
                         return (getGradientColor(entityOffset + 10));
                     }
-                    if (TMMClient.gameComponent.isRole(self, ModRoles.COMMANDER) && isKillerTeam(target_role)) {
-                        return getRoleColor(target_role);
+                    if (TMMClient.gameComponent.isRole(self, ModRoles.COMMANDER)) {
+                        if (isKillerTeam(target_role)) {
+                            return getRoleColor(target_role);
+                        }
+                        if (target_player.distanceTo(self) <= 10) {
+                            if (TMMItemUtils.hasItem(target_player, TMMItemTags.GUNS) > 0) {
+                                return new Color(76, 255, 239).getRGB();
+                            }
+                        }
                     }
                     if (TMMClient.gameComponent.isRole(target_player, ModRoles.VULTURE)) {
                         return (ModRoles.VULTURE.color());

@@ -92,7 +92,12 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
 
         }
-
+        {
+            // 指挥官的商店
+            var NECROMANCER_SHOP = new ArrayList<ShopEntry>();
+            NECROMANCER_SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
+        }
         {
             // 游侠商店
             var shopEntries = new ArrayList<ShopEntry>();
