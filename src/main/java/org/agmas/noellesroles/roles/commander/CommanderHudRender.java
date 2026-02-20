@@ -25,7 +25,7 @@ public class CommanderHudRender {
                 int screenWidth = guiGraphics.guiWidth();
                 int screenHeight = guiGraphics.guiHeight();
                 var font = client.font;
-                int yOffset = screenHeight - 14 - font.lineHeight * 2; // 右下角
+                int yOffset = screenHeight - 14 - font.lineHeight * 3; // 右下角
                 int xOffset = screenWidth - 10; // 距离右边缘
                 var channelText = Component.translatable("message.commander.channel.normal")
                         .withStyle(ChatFormatting.GREEN);
@@ -34,13 +34,19 @@ public class CommanderHudRender {
                 if (comc.status == 1) {
                     channelText = Component.translatable("message.commander.channel.killer")
                             .withStyle(ChatFormatting.RED);
+                    channelTip = Component.translatable("message.commander.channel.killer.tip2")
+                            .withStyle(ChatFormatting.WHITE);
+                    guiGraphics.drawString(font, channelTip, xOffset - font.width(channelTip),
+                            yOffset + 4 + font.lineHeight * 2,
+                            Color.WHITE.getRGB());
                     channelTip = Component.translatable("message.commander.channel.killer.tip")
                             .withStyle(ChatFormatting.WHITE);
                 }
                 var text = Component.translatable("message.commander.channel.tip", channelText)
                         .withStyle(ChatFormatting.GOLD);
                 guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
-                guiGraphics.drawString(font, channelTip, xOffset - font.width(channelTip), yOffset + 2 + font.lineHeight,
+                guiGraphics.drawString(font, channelTip, xOffset - font.width(channelTip),
+                        yOffset + 2 + font.lineHeight,
                         Color.WHITE.getRGB());
                 return;
             }

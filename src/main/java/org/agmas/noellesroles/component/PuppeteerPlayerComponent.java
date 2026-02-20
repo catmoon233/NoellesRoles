@@ -11,10 +11,11 @@ import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ import net.minecraft.world.phys.Vec3;
  * - 阶段一（收集阶段）：右键回收尸体，10秒冷却
  * - 阶段二（杀手阶段）：制造假人，操控假人
  */
-public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingComponent {
+public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     @Override
     public Player getPlayer() {
         return player;
@@ -306,7 +307,6 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
         puppetControlTimer = PUPPET_CONTROL_TIME;
         usedPuppetCount++;
 
-        
         // 设置玩家为假人角色（临时更改角色以获得杀手能力）
         RoleUtils.changeRole(player, puppetRole);
         RoleUtils.sendWelcomeAnnouncement(serverPlayer);
@@ -738,5 +738,12 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
         this.puppetInventory = NonNullList.withSize(41, ItemStack.EMPTY);
         this.usedPuppetCount = 0;
         this.sync();
+    }
+
+    @Override
+    public void clientTick() {
+        if (this.collectCooldown >= 1) {
+            this.collectCooldown--;
+        }
     }
 }

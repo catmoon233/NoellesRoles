@@ -249,7 +249,7 @@ public class InstinctRenderer {
                         }
                     }
                 }
-
+                // 需要开启直觉
                 if (!hasInstinct)
                     return -1;
                 if (GameFunctions.isPlayerSpectatingOrCreative(self))
@@ -257,8 +257,12 @@ public class InstinctRenderer {
                 // 直觉看不到旁观
                 if ((target_player).isSpectator())
                     return -2;
-                // 需要开启直觉
-
+                // 傀儡师
+                PuppeteerPlayerComponent selfPuppeteerComp = ModComponents.PUPPETEER.get(self);
+                if (selfPuppeteerComp.isPuppeteerMarked && TMMClient.isPlayerAliveAndInSurvival()
+                        && selfPuppeteerComp.phase >= 1) {
+                    return -1;
+                }
                 // 小透明：杀手无法看到高亮（所有，包括爱慕）
                 if (TMMClient.gameComponent.isRole(target_player, ModRoles.GHOST) && isKillerTeam(self_role)
                         && TMMClient.isPlayerAliveAndInSurvival()) {
@@ -301,8 +305,7 @@ public class InstinctRenderer {
 
                 // 杀手直觉
                 if (isKillerTeam(self_role) && TMMClient.isPlayerAliveAndInSurvival()) {
-                    PuppeteerPlayerComponent puppeteerComp = ModComponents.PUPPETEER.get(target_player);
-                    if (puppeteerComp.isPuppeteerMarked && puppeteerComp.phase >= 1) {
+                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.PUPPETEER)) {
                         int entityOffset = target_player.getId() * 7;
                         return (getGradientColor(entityOffset + 10));
                     }
@@ -321,6 +324,9 @@ public class InstinctRenderer {
                     if (TMMClient.gameComponent.isRole(target_player, ModRoles.JESTER)) {
                         return (Color.PINK.getRGB());
                     }
+                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.SLIPPERY_GHOST)) {
+                        return -2;
+                    }
                     if (TMMClient.gameComponent.isRole(target_player, SERoles.AMNESIAC)) {
                         if (StupidExpress.CONFIG.rolesSection.amnesiacSection.amnesiacGlowsDifferently) {
                             return SERoles.AMNESIAC.color();
@@ -331,6 +337,9 @@ public class InstinctRenderer {
                     if (isKillerTeam(target_role)) {
                         return TMMRoles.KILLER.color();
                     } else {
+                        if (TMMClient.gameComponent.isRole(target_player, ModRoles.GAMBLER)) {
+                            return -2;
+                        }
                         return TMMRoles.CIVILIAN.color();
                     }
                 }

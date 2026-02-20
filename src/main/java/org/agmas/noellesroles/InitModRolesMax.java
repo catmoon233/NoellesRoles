@@ -30,7 +30,7 @@ public class InitModRolesMax {
 
         // 同时出现
         RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
-        
+
         Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
         Harpymodloader.setRoleMaximum(ModRoles.MANIPULATOR, 0);
         Harpymodloader.setRoleMaximum(ModRoles.EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
@@ -60,21 +60,19 @@ public class InitModRolesMax {
             final int players_count = serverLevel.getServer().getPlayerCount();
 
             {
-                // 杀手中立，仅一个
+                // 杀手中立
                 var neutralRoles = new ArrayList<Role>(TMMRoles.ROLES.values());
                 neutralRoles.removeIf((r) -> {
-                    if (!r.isNeutralForKiller())
-                        return true;
-                    if (r.isNeutrals())
+                    if (r.isNeutrals() && r.isNeutralForKiller())
                         return false;
-                    return (r.isInnocent() || r.canUseKiller());
+                    return true;
                 });
                 Collections.shuffle(neutralRoles);
                 for (var r : neutralRoles) {
                     Harpymodloader.setRoleMaximum(r, 0);
                 }
                 int neutralForKillers = 0;
-                neutralForKillers = players_count / 10;
+                neutralForKillers = players_count / 8;
                 for (int i = 0; i < neutralForKillers && i < neutralRoles.size(); i++) {
                     Harpymodloader.setRoleMaximum(neutralRoles.get(i), 1);
                 }
