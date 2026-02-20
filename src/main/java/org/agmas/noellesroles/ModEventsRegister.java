@@ -34,6 +34,7 @@ import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.utils.EntityClearUtils;
 import org.agmas.noellesroles.utils.MapScanner;
+import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -263,6 +264,7 @@ public class ModEventsRegister {
         if (looseEndAlive) {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
             ServerPlayer refugeePlayer = null;
+            component.limitCameraUUID = null;
             if (victim instanceof ServerPlayer sp) {
                 for (var p : sp.getServer().getPlayerList().getPlayers()) {
                     if (GameFunctions.isPlayerAliveAndSurvival(p)) {
@@ -273,8 +275,8 @@ public class ModEventsRegister {
                     }
                 }
             }
-
-            component.limitCameraUUID = refugeePlayer.getUUID();
+            if (refugeePlayer != null)
+                component.limitCameraUUID = refugeePlayer.getUUID();
             if (component.limitCameraUUID != null) {
                 if (victim instanceof ServerPlayer sp) {
                     sp.setCamera(refugeePlayer);
@@ -450,17 +452,16 @@ public class ModEventsRegister {
             return false;
         }));
         OnPlayerDeath.EVENT.register((playerEntity, reason) -> {
+            RoleUtils.RemoveAllEffects(playerEntity);
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.level());
             if (gameWorldComponent.isRole(playerEntity,
                     ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
                 final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(playerEntity);
                 insaneKillerPlayerComponent.reset();
-                insaneKillerPlayerComponent.sync();
             }
             if (gameWorldComponent.isRole(playerEntity, ModRoles.BETTER_VIGILANTE)) {
                 final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
                 betterVigilantePlayerComponent.reset();
-                betterVigilantePlayerComponent.sync();
             }
         });
         AllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {

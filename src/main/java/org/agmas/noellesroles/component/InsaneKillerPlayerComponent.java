@@ -5,7 +5,6 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeath;
-import dev.doctor4t.trainmurdermystery.event.AllowNameRender;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -143,6 +142,7 @@ public class InsaneKillerPlayerComponent
         cooldown = 200;
         // Noellesroles.LOGGER.info("Trigger insane reset");
         deathState = 0;
+        this.sync();
     }
 
     public boolean isUsedDeathAbility() {
