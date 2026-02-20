@@ -127,8 +127,16 @@ public class DeathPenaltyComponent implements RoleComponent, ServerTickingCompon
     @Override
     public void reset() {
         this.penaltyExpiry = 0;
+        if (!player.level().isClientSide) {
+            if (limitCameraUUID != null) {
+                if (player instanceof ServerPlayer sp) {
+                    sp.setCamera(sp);
+                }
+            }
+        }
         this.limitCameraUUID = null;
         ModComponents.DEATH_PENALTY.sync(player);
+
     }
 
     @Override
@@ -148,10 +156,20 @@ public class DeathPenaltyComponent implements RoleComponent, ServerTickingCompon
 
     @Override
     public void serverTick() {
-        if (player instanceof ServerPlayer sp) {
-            if (!sp.getCamera().getUUID().equals(limitCameraUUID)) {
-                sp.setCamera(sp.level().getPlayerByUUID(limitCameraUUID));
+        if (player != null) {
+            if (player instanceof ServerPlayer sp) {
+                if (limitCameraUUID != null) {
+                    if (!sp.getCamera().getUUID().equals(limitCameraUUID)) {
+                        var target = sp.level().getPlayerByUUID(limitCameraUUID);
+                        if (target != null) {
+                            sp.setCamera(target);
+                        } else {
+                            sp.setCamera(sp);
+                        }
+                    }
+                }
             }
         }
+
     }
 }

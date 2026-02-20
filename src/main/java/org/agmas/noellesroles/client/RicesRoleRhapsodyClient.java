@@ -458,10 +458,12 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
             InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(client.player);
             if (component.cooldown <= 0) {
                 ClientPlayNetworking.send(new InsaneKillerAbilityC2SPacket());
-                if (!component.isActive) {
-                    Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
-                } else {
-                    Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+                if (!component.inNearDeath()) {
+                    if (!component.isActive) {
+                        Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                    } else {
+                        Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+                    }
                 }
             } else {
                 client.player.displayClientMessage(
