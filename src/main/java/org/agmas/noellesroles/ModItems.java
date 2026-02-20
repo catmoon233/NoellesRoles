@@ -1,15 +1,20 @@
 package org.agmas.noellesroles;
 
+import dev.doctor4t.ratatouille.util.registrar.ItemRegistrar;
 import dev.doctor4t.trainmurdermystery.api.ChargeableItemRegistry;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ItemLore;
 
@@ -28,52 +33,9 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.item.KnifeItem;
 
 public class ModItems {
-    public static void init() {
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.SMOKE_GRENADE);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.BLANK_CARTRIDGE);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.ALARM_TRAP);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.HALLUCINATION_BOTTLE);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.REINFORCEMENT);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.CONSPIRACY_PAGE);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.LETTER_ITEM);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.DEFIBRILLATOR);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.BOMB);
-        TMMItems.INVISIBLE_ITEMS.add(ModItems.WRITTEN_NOTE);
-        // TMMItems.INVISIBLE_ITEMS.add(TMMItems.KNIFE);
-
-        TMMItems.INIT_ITEMS.LETTER = LETTER_ITEM;
-        TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc = (letter, serverPlayerEntity) -> {
-            Component displayName = serverPlayerEntity.getDisplayName();
-            letter.set(DataComponents.ITEM_NAME,
-                    Component.translatable("tip.n.letter.item_name", displayName)
-                            .withStyle(ChatFormatting.AQUA));
-
-            int letterColor = 0xC5AE8B;
-            String tipString = "tip.n.letter.";
-            letter.update(DataComponents.LORE, ItemLore.EMPTY, component -> {
-                List<Component> text = new ArrayList<>();
-                UnaryOperator<Style> stylizer = style -> style.withItalic(false).withColor(letterColor);
-
-                String string = displayName != null ? displayName.getString()
-                        : serverPlayerEntity.getName().getString();
-                if (string.charAt(string.length() - 1) == '\uE780') { // remove ratty supporter icon
-                    string = string.substring(0, string.length() - 1);
-                }
-                text.add(Component
-                        .translatable(tipString + "name", string,
-                                Component.translatable(tipString + "map_name"))
-                        .withStyle(stylizer));
-                text.add(Component.translatable(tipString + "room").withStyle(stylizer));
-                var date = new LocalDateData();
-                text.add(Component.translatable(tipString + "tooltip1",
-                        Component.translatable(tipString + "date", date.getYear(),
-                                date.getMonth(), date.getDay()))
-                        .withStyle(stylizer));
-                text.add(Component.translatable(tipString + "tooltip2").withStyle(stylizer));
-                return new ItemLore(text);
-            });
-        };
-    }
+    public static ResourceKey<CreativeModeTab> MISC_CREATIVE_GROUP = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
+            Noellesroles.id("misc"));
+    public static final ItemRegistrar registrar = new ItemRegistrar(Noellesroles.MOD_ID);
 
     public static final Item LETTER_ITEM = register(
             new LetterItem((new Item.Properties()).stacksTo(1)), "letter");
@@ -230,7 +192,15 @@ public class ModItems {
     public static final Item BOMB = register(
             new BombItem(new Item.Properties().stacksTo(1)),
             "bomb");
-
+    /**
+     * 炸弹
+     * - 炸弹客专属物品
+     * - 倒计时10秒，前5秒隐形
+     * - 右键传递
+     */
+    public static final Item WHEELCHAIR = register(
+            new WheelchairItem(),
+            "wheelchair");
     /**
      * 锁
      * - 工程师专属物品
@@ -242,29 +212,82 @@ public class ModItems {
             new LockItem(6, 0.1f, new Item.Properties().stacksTo(1)),
             "lock");
 
-        static {
-                ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
-                ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());
-                ChargeableItemRegistry.register(HSRItems.ANTIDOTE, new AntidoteChargeItem());
-        }
-        // public static final Item SHERIFF_GUN_MAINTENANCE = register(
-        // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
-        // "sheriff_gun_maintenance"
-        // );
+    static {
+        ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
+        ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());
+        ChargeableItemRegistry.register(HSRItems.ANTIDOTE, new AntidoteChargeItem());
+    }
+    // public static final Item SHERIFF_GUN_MAINTENANCE = register(
+    // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
+    // "sheriff_gun_maintenance"
+    // );
     // public static final Item SHERIFF_GUN_MAINTENANCE = register(
     // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
     // "sheriff_gun_maintenance"
     // );
 
+    @SuppressWarnings("unchecked")
     public static Item register(Item item, String id) {
         // Create the identifier for the item.
-        ResourceLocation itemID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, id);
-
         // Register the item.
-        Item registeredItem = Registry.register(BuiltInRegistries.ITEM, itemID, item);
+        var registeredItem = registrar.create(id, item, new ResourceKey[] { MISC_CREATIVE_GROUP });
+        // Item registeredItem = Registry.register(BuiltInRegistries.ITEM, itemID,
+        // item);
 
         // Return the registered item!
         return registeredItem;
+    }
+
+    public static void init() {
+        registrar.registerEntries();
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, MISC_CREATIVE_GROUP, FabricItemGroup.builder()
+                .title(Component.translatable("item_group.noellesroles.misc")).icon(() -> {
+                    return new ItemStack(ModItems.WHEELCHAIR);
+                }).build());
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.SMOKE_GRENADE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.BLANK_CARTRIDGE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.ALARM_TRAP);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.HALLUCINATION_BOTTLE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.REINFORCEMENT);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.CONSPIRACY_PAGE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.LETTER_ITEM);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.DEFIBRILLATOR);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.BOMB);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.WRITTEN_NOTE);
+        // TMMItems.INVISIBLE_ITEMS.add(TMMItems.KNIFE);
+
+        TMMItems.INIT_ITEMS.LETTER = LETTER_ITEM;
+        TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc = (letter, serverPlayerEntity) -> {
+            Component displayName = serverPlayerEntity.getDisplayName();
+            letter.set(DataComponents.ITEM_NAME,
+                    Component.translatable("tip.n.letter.item_name", displayName)
+                            .withStyle(ChatFormatting.AQUA));
+
+            int letterColor = 0xC5AE8B;
+            String tipString = "tip.n.letter.";
+            letter.update(DataComponents.LORE, ItemLore.EMPTY, component -> {
+                List<Component> text = new ArrayList<>();
+                UnaryOperator<Style> stylizer = style -> style.withItalic(false).withColor(letterColor);
+
+                String string = displayName != null ? displayName.getString()
+                        : serverPlayerEntity.getName().getString();
+                if (string.charAt(string.length() - 1) == '\uE780') { // remove ratty supporter icon
+                    string = string.substring(0, string.length() - 1);
+                }
+                text.add(Component
+                        .translatable(tipString + "name", string,
+                                Component.translatable(tipString + "map_name"))
+                        .withStyle(stylizer));
+                text.add(Component.translatable(tipString + "room").withStyle(stylizer));
+                var date = new LocalDateData();
+                text.add(Component.translatable(tipString + "tooltip1",
+                        Component.translatable(tipString + "date", date.getYear(),
+                                date.getMonth(), date.getDay()))
+                        .withStyle(stylizer));
+                text.add(Component.translatable(tipString + "tooltip2").withStyle(stylizer));
+                return new ItemLore(text);
+            });
+        };
     }
 
 }

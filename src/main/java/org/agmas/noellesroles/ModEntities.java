@@ -1,5 +1,7 @@
 package org.agmas.noellesroles;
 
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
@@ -11,12 +13,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import org.agmas.noellesroles.entity.*;
 
+
 public class ModEntities {
     public static final EntityType<RoleMineEntity> ROLE_MINE_ENTITY_ENTITY_TYPE = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "cube"),
-            EntityType.Builder.of(RoleMineEntity::new, MobCategory.MISC).sized(0.75f, 0.75f).build("cube")
-    );
+            EntityType.Builder.of(RoleMineEntity::new, MobCategory.MISC).sized(0.75f, 0.75f).build("cube"));
+    public static final EntityType<WheelchairEntity> WHEELCHAIR = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            Noellesroles.id("wheelchair"),
+            EntityType.Builder.of(WheelchairEntity::new, MobCategory.MISC).sized(0.8f, 1.5f)
+                    .build("wheelchair"));
 
     @SuppressWarnings("deprecation")
     public static final EntityType<SmokeGrenadeEntity> SMOKE_GRENADE = Registry.register(
@@ -61,7 +68,8 @@ public class ModEntities {
     public static final EntityType<ManipulatorBodyEntity> MANIPULATOR_BODY = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "manipulator_body"),
-            FabricEntityTypeBuilder.<ManipulatorBodyEntity>create(MobCategory.MISC, ManipulatorBodyEntity::new)
+            FabricEntityTypeBuilder
+                    .<ManipulatorBodyEntity>create(MobCategory.MISC, ManipulatorBodyEntity::new)
                     .dimensions(EntityDimensions.fixed(0.6F, 1.8F))
                     .trackRangeBlocks(64)
                     .trackedUpdateRate(2)
@@ -84,11 +92,16 @@ public class ModEntities {
      * 注册实体属性（LivingEntity 需要）
      */
     public static void init() {
+        // 轮椅
+        FabricDefaultAttributeRegistry.register(WHEELCHAIR, WheelchairEntity.createAttributes());
+        EntityRendererRegistry.register(ModEntities.WHEELCHAIR, WheelchairEntityRenderer::new);
+        EntityModelLayerRegistry.registerModelLayer(WheelchairEntityModel.LAYER_LOCATION,
+                WheelchairEntityModel::createBodyLayer);
+
         // 注册傀儡本体实体属性（LivingEntity 必须注册属性才能生成）
         FabricDefaultAttributeRegistry.register(PUPPETEER_BODY, LivingEntity.createLivingAttributes());
         // 注册操纵师本体实体属性
         FabricDefaultAttributeRegistry.register(MANIPULATOR_BODY, LivingEntity.createLivingAttributes());
     }
-
 
 }

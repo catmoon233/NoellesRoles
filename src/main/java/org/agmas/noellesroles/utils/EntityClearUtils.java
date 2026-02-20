@@ -2,6 +2,7 @@ package org.agmas.noellesroles.utils;
 
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
+import org.agmas.noellesroles.entity.WheelchairEntity;
 
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
@@ -35,6 +36,7 @@ public class EntityClearUtils {
                         entity instanceof AreaEffectCloud ||
                         entity instanceof ItemEntity ||
                         entity instanceof PlayerBodyEntity ||
+                        entity instanceof WheelchairEntity ||
                         entity instanceof NoteEntity) {
                     entitiesToRemove.add(entity);
                 }
