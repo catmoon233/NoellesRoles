@@ -66,8 +66,10 @@ import net.minecraft.world.item.ItemStack;
 import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
+import pro.fazeclan.river.stupid_express.modifier.refugee.cca.RefugeeComponent;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -229,9 +231,16 @@ public class ModEventsRegister {
     private static void handleDeathPenalty(Player victim) {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
         boolean doctorAlive = false;
+        boolean looseEndAlive = false;
         boolean INSANE_alive = false;
         boolean CONSPIRATOR_alive = false;
         boolean limitView = false;
+        var refugeeComponent = RefugeeComponent.KEY.get(victim.level());
+        if (gameWorldComponent.getGameMode().identifier.equals(TMMGameModes.LOOSE_ENDS_ID))
+            return;
+        if (refugeeComponent.isAnyRevivals) {
+            looseEndAlive = true;
+        }
         for (Player player : victim.level().players()) {
             if (!GameFunctions.isPlayerAliveAndSurvival(player)) {
                 continue;
@@ -251,7 +260,41 @@ public class ModEventsRegister {
         if (INSANE_alive && CONSPIRATOR_alive) {
             limitView = true;
         }
-        if (limitView) {
+        if (looseEndAlive) {
+            DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
+            ServerPlayer refugeePlayer = null;
+            if (victim instanceof ServerPlayer sp) {
+                for (var p : sp.getServer().getPlayerList().getPlayers()) {
+                    if (GameFunctions.isPlayerAliveAndSurvival(p)) {
+                        if (gameWorldComponent.isRole(p, TMMRoles.LOOSE_END)) {
+                            refugeePlayer = p;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            component.limitCameraUUID = refugeePlayer.getUUID();
+            if (component.limitCameraUUID != null) {
+                if (victim instanceof ServerPlayer sp) {
+                    sp.setCamera(refugeePlayer);
+                }
+                component.setPenalty(-1);
+                victim.sendSystemMessage(
+                        Component.translatable("message.noellesroles.penalty.limit.loose_end")
+                                .withStyle(ChatFormatting.RED));
+                victim.displayClientMessage(
+                        Component.translatable("message.noellesroles.penalty.limit.loose_end")
+                                .withStyle(ChatFormatting.RED),
+                        true);
+
+                if (victim.hasPermissions(2)) {
+                    victim.sendSystemMessage(Component.translatable("message.noellesroles.admin.free_cam_hint")
+                            .withStyle(ChatFormatting.YELLOW));
+                }
+            }
+
+        } else if (limitView) {
             DeathPenaltyComponent component = ModComponents.DEATH_PENALTY.get(victim);
             component.setPenalty(-1);
             victim.sendSystemMessage(

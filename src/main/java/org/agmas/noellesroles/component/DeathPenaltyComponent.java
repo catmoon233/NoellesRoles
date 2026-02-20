@@ -2,19 +2,24 @@ package org.agmas.noellesroles.component;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.UUID;
+
 import org.agmas.noellesroles.role.ModRoles;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 
-public class DeathPenaltyComponent implements RoleComponent {
+public class DeathPenaltyComponent implements RoleComponent, ServerTickingComponent {
     private final Player player;
     public long penaltyExpiry = 0;
+    public UUID limitCameraUUID = null;
 
     public void clearAll() {
         this.reset();
@@ -30,6 +35,13 @@ public class DeathPenaltyComponent implements RoleComponent {
             }
             if (this.penaltyExpiry < 0) {
                 GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+                if (limitCameraUUID != null) {
+                    Player cameraPlayer = this.player.level().getPlayerByUUID(limitCameraUUID);
+                    if (cameraPlayer != null && GameFunctions.isPlayerAliveAndSurvival(cameraPlayer)) {
+
+                        return;
+                    }
+                }
                 boolean INSANE_alive = false;
                 boolean CONSPIRATOR_alive = false;
                 for (Player p : player.level().players()) {
@@ -115,6 +127,7 @@ public class DeathPenaltyComponent implements RoleComponent {
     @Override
     public void reset() {
         this.penaltyExpiry = 0;
+        this.limitCameraUUID = null;
         ModComponents.DEATH_PENALTY.sync(player);
     }
 
@@ -131,5 +144,14 @@ public class DeathPenaltyComponent implements RoleComponent {
     @Override
     public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putLong("penaltyExpiry", this.penaltyExpiry);
+    }
+
+    @Override
+    public void serverTick() {
+        if (player instanceof ServerPlayer sp) {
+            if (!sp.getCamera().getUUID().equals(limitCameraUUID)) {
+                sp.setCamera(sp.level().getPlayerByUUID(limitCameraUUID));
+            }
+        }
     }
 }

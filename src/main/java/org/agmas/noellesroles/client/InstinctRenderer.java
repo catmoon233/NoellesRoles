@@ -316,8 +316,14 @@ public class InstinctRenderer {
                             return getRoleColor(target_role);
                         }
                         if (target_player.distanceTo(self) <= 10) {
-                            if (TMMItemUtils.hasItem(target_player, TMMItemTags.GUNS) > 0) {
+                            if (TMMClient.gameComponent.isRole(target_player,ModRoles.PATROLLER)){
                                 return new Color(76, 255, 239).getRGB();
+                            }
+                            if (TMMClient.gameComponent.isRole(target_player,TMMRoles.VIGILANTE)){
+                                return new Color(63, 72, 204).getRGB();
+                            }
+                            if (TMMItemUtils.hasItem(target_player, TMMItemTags.GUNS) > 0) {
+                                return new Color(63, 72, 204).getRGB();
                             }
                         }
                     }
