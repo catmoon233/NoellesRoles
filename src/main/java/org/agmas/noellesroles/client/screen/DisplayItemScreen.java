@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -16,16 +17,13 @@ import org.jspecify.annotations.NonNull;
 
 
 public class DisplayItemScreen extends AbstractPixelScreen {
-    private final ItemStack displayItem;
-    private float rotationX = 180f;
-    private float rotationY = 0f;
-    private float scale = 50.0f;
-    /** 显示物品像素大小 */
-    private static final int itemSize = 16;
-
     public DisplayItemScreen(ItemStack itemStack) {
+        this(itemStack, null);
+    }
+    public DisplayItemScreen(ItemStack itemStack, Screen parent) {
         super(Component.empty());
         this.displayItem = itemStack;
+        this.parent = parent;
     }
     @Override
     protected void init() {
@@ -33,6 +31,13 @@ public class DisplayItemScreen extends AbstractPixelScreen {
         while (itemSize * (pixelSize + 1) < width) {
             ++pixelSize;
         }
+    }
+    @Override
+    public void onClose() {
+        if (parent != null && minecraft != null)
+            minecraft.setScreen(parent);
+        else
+            super.onClose();
     }
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
@@ -118,4 +123,12 @@ public class DisplayItemScreen extends AbstractPixelScreen {
                 new Vector3f(-0.2f, 1.0f, -0.3f)
         );
     }
+
+    private final Screen parent;
+    private final ItemStack displayItem;
+    private float rotationX = 180f;
+    private float rotationY = 0f;
+    private float scale = 50.0f;
+    /** 显示物品像素大小 */
+    private static final int itemSize = 16;
 }
