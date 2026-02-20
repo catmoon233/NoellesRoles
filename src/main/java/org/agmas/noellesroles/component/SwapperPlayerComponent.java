@@ -67,9 +67,10 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
             return;
         }
         if (player1 != null && player2 != null) {
+            player1.stopRiding();
+            player2.stopRiding();
             Vec3 pos1 = player1.position();
             Vec3 pos2 = player2.position();
-
             // 检查碰撞（可选，根据原逻辑）
             if (!player.level().noCollision(player1) || !player.level().noCollision(player2)) {
                 // 如果需要碰撞检查，可以在这里处理

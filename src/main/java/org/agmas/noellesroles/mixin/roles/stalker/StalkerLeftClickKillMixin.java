@@ -10,8 +10,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,6 +36,9 @@ public abstract class StalkerLeftClickKillMixin {
         if (!(target instanceof Player targetPlayer))
             return;
 
+        // 检查目标是否存活
+        if (!GameFunctions.isPlayerAliveAndSurvival(attacker))
+            return;
         // 检查目标是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(targetPlayer))
             return;

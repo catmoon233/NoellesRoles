@@ -3,6 +3,8 @@ package org.agmas.noellesroles.mixin.client;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
+
+import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,6 +53,13 @@ public abstract class InstinctMixin {
                 cir.setReturnValue(true);
                 cir.cancel();
             }
+        } else if (gameWorldComponent.isRole(player, ModRoles.BETTER_VIGILANTE)) {
+            var betterC = BetterVigilantePlayerComponent.KEY.get(player);
+            if (betterC.lastStandActivated) {
+                cir.setReturnValue(true);
+                cir.cancel();
+            }
+
         }
     }
 

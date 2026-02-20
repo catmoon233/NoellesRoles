@@ -1,16 +1,8 @@
 package org.agmas.noellesroles.mixin;
 
-import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
-import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.AreaEffectCloud;
-import net.minecraft.world.entity.item.ItemEntity;
-
-import org.agmas.noellesroles.entity.LockEntity;
-import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.utils.EntityClearUtils;
-import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

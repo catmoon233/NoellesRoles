@@ -26,6 +26,7 @@ import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -33,6 +34,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -99,6 +101,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -1284,26 +1287,51 @@ public class Noellesroles implements ModInitializer {
         // ModdedRoleAssigned.EVENT.register((player, role) -> {
         //
         // });
+        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, serverPlayer, bound) -> {
+            var spc = SplitPersonalityComponent.KEY.get(serverPlayer);
+            if (!spc.isDeath()) {
+                ServerPlayer mainP = serverPlayer.server.getPlayerList().getPlayer(spc.getMainPersonality());
+                ServerPlayer secondP = serverPlayer.server.getPlayerList().getPlayer(spc.getSecondPersonality());
+                if (mainP == null || secondP == null)
+                    return true;
+                var broadcastMessage = Component
+                        .translatable("message.split_personality.broadcast_prefix",
+                                Component.literal("").append(serverPlayer.getDisplayName())
+                                        .withStyle(ChatFormatting.AQUA),
+                                Component.literal(message.signedContent()).withStyle(ChatFormatting.WHITE))
+                        .withStyle(ChatFormatting.GOLD);
+                if (serverPlayer.isSpectator()) {
+                    BroadcastCommand
+                            .BroadcastMessage(mainP,
+                                    broadcastMessage);
+                    BroadcastCommand.BroadcastMessage(secondP, broadcastMessage);
+                } else {
+                    BroadcastCommand
+                            .BroadcastMessage(mainP,
+                                    broadcastMessage);
+                    BroadcastCommand.BroadcastMessage(secondP, broadcastMessage);
+                }
+            }
+            return true;
+        });
+
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(player -> {
-                if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                if (!gameWorldComponent.isJumpAvailable() && GameFunctions.isPlayerAliveAndSurvival(player)) {
                     // NO JUMPING! For everyone who hasn't permissions
                     if (!player.hasPermissions(2)) {
                         player.getAttribute(Attributes.JUMP_STRENGTH).addOrReplacePermanentModifier(noJumpingAttribute);
                     }
                 }
-                GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
-                if (gameWorldComponent != null) {
-                    if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {
-                        TMM.SendRoomInfoToPlayer(player);
-                        // 发送房间信息
-                    }
+                if (gameWorldComponent.isRole(player, ModRoles.ATTENDANT)) {
+                    TMM.SendRoomInfoToPlayer(player);
+                    // 发送房间信息
                 }
             });
 
             // 年兽除岁效果：给所有玩家分发4个鞭炮
             boolean hasNianShou = false;
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             if (gameWorldComponent != null) {
                 for (var player : serverLevel.players()) {
                     if (gameWorldComponent.isRole(player, ModRoles.NIAN_SHOU)) {

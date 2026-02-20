@@ -6,6 +6,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import java.util.Iterator;
 
@@ -24,17 +25,20 @@ public class BroadcastCommand {
                                         for (Iterator var2 = EntityArgument.getPlayers(commandContext, "targets")
                                                 .iterator(); var2.hasNext(); ++i) {
                                             ServerPlayer serverPlayer = (ServerPlayer) var2.next();
-
-                                            org.agmas.noellesroles.packet.BroadcastMessageS2CPacket packet = new org.agmas.noellesroles.packet.BroadcastMessageS2CPacket(
-                                                    ComponentUtils.updateForEntity(
-                                                            (CommandSourceStack) commandContext.getSource(),
-                                                            ComponentArgument.getComponent(commandContext, "message"),
-                                                            serverPlayer, 0));
-                                            net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-                                                    .send(serverPlayer, packet);
+                                            BroadcastMessage(serverPlayer, ComponentUtils.updateForEntity(
+                                                    (CommandSourceStack) commandContext.getSource(),
+                                                    ComponentArgument.getComponent(commandContext, "message"),
+                                                    serverPlayer, 0));
                                         }
                                         return i;
                                     }))));
         });
+    }
+
+    public static void BroadcastMessage(ServerPlayer serverPlayer, MutableComponent message) {
+        org.agmas.noellesroles.packet.BroadcastMessageS2CPacket packet = new org.agmas.noellesroles.packet.BroadcastMessageS2CPacket(
+                message);
+        net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+                .send(serverPlayer, packet);
     }
 }

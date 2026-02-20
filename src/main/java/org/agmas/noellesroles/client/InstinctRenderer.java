@@ -2,6 +2,7 @@ package org.agmas.noellesroles.client;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
+import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
@@ -9,6 +10,7 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -39,7 +41,7 @@ public class InstinctRenderer {
                     if (self.isSpectator()) {
                         var splitComponent = SplitPersonalityComponent.KEY.get(self);
                         if (splitComponent != null && !splitComponent.isDeath()) {
-                            return -1;
+                            return -2;
                         }
                     }
                 }
@@ -48,6 +50,12 @@ public class InstinctRenderer {
                 // 不开直觉，默认有
                 BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(target_player);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
+                if(gameWorldComponent.isRole(self,ModRoles.BETTER_VIGILANTE)){
+                    var betterC = BetterVigilantePlayerComponent.KEY.get(self);
+                    if(betterC.lastStandActivated){
+                        return (Color.BLUE.getRGB());
+                    }
+                }
                 if (gameWorldComponent.isRole(self, ModRoles.BARTENDER)) {
                     // LoggerFactory.getLogger("renderer").info("glowTick {}",
                     // bartenderPlayerComponent.glowTicks);
