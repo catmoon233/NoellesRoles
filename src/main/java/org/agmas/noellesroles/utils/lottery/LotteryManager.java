@@ -8,6 +8,7 @@ import org.agmas.noellesroles.utils.Pair;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -93,6 +94,10 @@ public class LotteryManager {
     }
 
     public ResourceLocation getQualityBgResourceLocation(int index) {
+        if (index < 0)
+            return qualityBgList[0];
+        else if (index >= qualityBgList.length)
+            return qualityBgList[qualityBgList.length - 1];
         return qualityBgList[index];
     }
     /** 检查玩家的抽奖次数 > 0*/
@@ -143,6 +148,10 @@ public class LotteryManager {
         }
         return null;
     }
+    public List<LotteryPool> getLotteryPools()
+    {
+        return lotteryPoolList;
+    }
     public void setLotteryPoolByID(int poolID, LotteryPool lotteryPool)
     {
         for(int i = 0; i < lotteryPoolList.size(); ++i)
@@ -154,6 +163,10 @@ public class LotteryManager {
             }
         }
     }
+    public void sortPools() {
+        lotteryPoolList.sort(Comparator.comparingInt(LotteryPool::getPoolID));
+    }
+    // TODO : 会优先读取本地数据，理论上没有人有本地配置因此不影响向服务器请求，但是如果本地真有配置，就会顶掉对应id的卡池，甚至有服务器不存在的卡池会导致未知情况
     private void init()
     {
         // 为了让单人测试也生效，暂时让客户端也能读取配置，并且未来可以加入本地数据存储，进行卡池信息hash值对比更新，也能减少数据传输量

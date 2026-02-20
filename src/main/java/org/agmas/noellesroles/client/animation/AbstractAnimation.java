@@ -12,7 +12,7 @@ public abstract class AbstractAnimation {
         if(isFinished)
             return;
         // deltaTime的单位为0.10秒
-        delayTime += deltaTime / 10;
+        delayTime += deltaTime / 10f;
         while (delayTime >= secondPerTick && !isFinished)
         {
             progress += 1f / (float) durationTicks;
@@ -48,8 +48,8 @@ public abstract class AbstractAnimation {
         return widget;
     }
 
+    public static final float secondPerTick = (float)1 / 20;
     protected final AbstractWidget widget;
-    protected final float secondPerTick = (float)1 / 20;
     protected float delayTime = 0f;
     protected float progress = 0f;
     protected boolean isFinished = false;
