@@ -226,7 +226,8 @@ public class RoleUtils {
     }
 
     public static MutableComponent getRoleName(ResourceLocation roleIdentifier) {
-
+        if (roleIdentifier == null)
+            return null;
         String translationKey = "announcement.role." + roleIdentifier.getPath();
         return Component.translatable(translationKey);
     }
@@ -250,10 +251,14 @@ public class RoleUtils {
     }
 
     public static Role getRole(ResourceLocation role) {
+        if (role == null)
+            return null;
         return TMMRoles.ROLES.get(role);
     }
 
     public static MutableComponent getRoleDescription(Role selectedRole) {
+        if (selectedRole == null)
+            return null;
         return Component.translatable("info.screen.roleid." + selectedRole.getIdentifier().getPath());
     }
 

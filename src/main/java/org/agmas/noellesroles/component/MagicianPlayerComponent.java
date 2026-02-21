@@ -3,11 +3,13 @@ package org.agmas.noellesroles.component;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 
 /**
  * 魔术师玩家组件
@@ -33,8 +35,23 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         this.player = player;
     }
 
+    public void sync() {
+        MagicianPlayerComponent.KEY.sync(this.player);
+    }
+
+    @Override
+    public boolean shouldSyncWith(ServerPlayer sp) {
+        if (sp == this.player)
+            return true;
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(sp.level());
+        if (gameWorldComponent.isRunning())
+            return true;
+        return false;
+    }
+
     /**
      * 启动假疯狂模式
+     * 
      * @return 是否成功启动
      */
     public boolean startFakePsycho() {
@@ -71,6 +88,7 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
     public void setDisguiseRoleId(ResourceLocation roleId) {
         this.disguiseRoleId = roleId;
         MagicianPlayerComponent.KEY.sync(this.player);
+        sync();
     }
 
     /**
@@ -111,6 +129,7 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
     public void reset() {
         fakePsychoTicks = 0;
         disguiseRoleId = null;
+        sync();
     }
 
     @Override
