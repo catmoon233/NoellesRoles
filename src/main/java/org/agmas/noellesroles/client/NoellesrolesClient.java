@@ -285,7 +285,9 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         OnRoundStartWelcomeTimmer.EVENT.register((player, timer) -> {
             if (timer == 1) {
-                player.level().playLocalSound(player, NRSounds.HARPY_WELCOME, SoundSource.AMBIENT, 1f, 1f);
+                if (NoellesRolesConfig.HANDLER.instance().welcome_voice) {
+                    player.level().playLocalSound(player, NRSounds.HARPY_WELCOME, SoundSource.AMBIENT, 1f, 1f);
+                }
             }
         });
         // 注册抽奖界面网络包处理：接收并保存服务器卡池信息并显示界面

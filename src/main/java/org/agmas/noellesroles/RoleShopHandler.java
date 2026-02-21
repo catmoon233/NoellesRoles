@@ -90,7 +90,6 @@ public class RoleShopHandler {
 
             NECROMANCER_SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
             ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
-
         }
         {
             // 指挥官的商店

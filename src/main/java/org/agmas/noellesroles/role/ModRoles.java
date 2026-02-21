@@ -126,8 +126,14 @@ public class ModRoles {
     public static final ResourceLocation RECORDER_ID = Noellesroles.id("recorder");
     public static ResourceLocation VULTURE_ID = Noellesroles.id("vulture");
     public static final ResourceLocation NIAN_SHOU_ID = Noellesroles.id("nianshou");
+    public static final ResourceLocation OLDMAN_ID = Noellesroles.id("oldman");
     // ==================== 已注册角色定义 ====================
     // 乘客阵营角色
+    public static Role OLDMAN = TMMRoles.registerRole(
+            new NormalRole(OLDMAN_ID, new Color(112, 146, 190).getRGB(),
+                    true, false, Role.MoodType.REAL,
+                    TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+            .setCanSeeCoin(true);
     public static Role ELF = TMMRoles.registerRole(
             new NormalRole(ELF_ID, new Color(106, 255, 179).getRGB(),
                     true, false, Role.MoodType.REAL,

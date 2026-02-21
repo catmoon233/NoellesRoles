@@ -5,6 +5,7 @@ import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
@@ -32,6 +33,7 @@ public class AbilityHandler {
                 .get(context.player());
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                 .get(context.player().level());
+        final ServerPlayer player = context.player();
         if (gameWorldComponent.isRole(context.player(), ModRoles.GLITCH_ROBOT)) {
 
             if (!RoleUtils.isPlayerHasFreeSlot(context.player())) {
@@ -55,10 +57,10 @@ public class AbilityHandler {
             context.player().removeEffect(MobEffects.NIGHT_VISION);
             return;
         }
-        if (gameWorldComponent.isRole(context.player(), ModRoles.COMMANDER)){
+        if (gameWorldComponent.isRole(context.player(), ModRoles.COMMANDER)) {
             CommanderHandler.tryActiveAbility(context.player());
             return;
-        } 
+        }
         if (gameWorldComponent.isRole(context.player(), ModRoles.ATTENDANT)) {
             if (abilityPlayerComponent.cooldown > 0) {
                 context.player().displayClientMessage(Component.translatable(
@@ -104,6 +106,16 @@ public class AbilityHandler {
                 recallerPlayerComponent.teleport();
             }
 
+        }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.OLDMAN)) {
+            if (player.getVehicle() != null && player.getVehicle() instanceof WheelchairEntity) {
+                player.getVehicle().discard();
+                RoleUtils.insertStackInFreeSlot(player, ModItems.WHEELCHAIR.getDefaultInstance());
+                player.stopRiding();
+                player.displayClientMessage(
+                        Component.translatable("message.oldman.get_back").withStyle(ChatFormatting.GOLD), true);
+            }
+            return;
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.PHANTOM)) {
             if (abilityPlayerComponent.cooldown <= 0) {

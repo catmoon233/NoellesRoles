@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import org.agmas.noellesroles.AttendantHandler;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
+import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHudRender;
 
@@ -18,7 +19,30 @@ public class ClientHudRenderer {
 
     public static void registerRenderersEvent() {
         CommanderHudRender.register();
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            // 渲染老人的提示
+            var client = Minecraft.getInstance();
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null || !TMMClient.gameComponent.isRole(client.player, ModRoles.OLDMAN)) {
+                return;
+            }
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+            if (client.player.getVehicle() != null && client.player.getVehicle() instanceof WheelchairEntity) {
+                var text = Component
+                        .translatable("hud.oldman.get_back", NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                        .withStyle(ChatFormatting.AQUA);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
+            }
 
+            return;
+        });
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             // 渲染酒保的提示
             var client = Minecraft.getInstance();

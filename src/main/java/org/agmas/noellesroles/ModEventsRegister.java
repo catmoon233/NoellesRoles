@@ -496,6 +496,7 @@ public class ModEventsRegister {
         });
         AwesomePlayerComponent.registerEvents();
         TrueKillerFinder.registerEvents();
+
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
                 player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
@@ -508,6 +509,17 @@ public class ModEventsRegister {
             if (role.identifier().equals(ModRoles.ATTENDANT.identifier())) {
                 if (player instanceof ServerPlayer sp)
                     TMM.SendRoomInfoToPlayer(sp);
+                return;
+            }
+            if (role.identifier().equals(ModRoles.OLDMAN.identifier())){
+                player.addEffect(new MobEffectInstance(
+                        MobEffects.MOVEMENT_SLOWDOWN, // ID
+                        -1, // 持续时间（tick）
+                        1, // 等级（0 = 速度 I）
+                        false, // ambient（环境效果，如信标）
+                        false, // showParticles（显示粒子）
+                        false // showIcon（显示图标）
+                ));
                 return;
             }
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY

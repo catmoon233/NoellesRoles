@@ -145,4 +145,10 @@ public class NoellesRolesConfig {
 
     @SerialEntry(comment = "Manipulator - Control target cooldown in seconds")
     public int manipulatorCooldown = 60;
+
+    @SerialEntry(comment = "(Client Side) Welcome Voice - Play welcome voice")
+    public boolean welcome_voice = false;
+
+    @SerialEntry(comment = "Credit info - If you wish to use this mod on your server you must change it.")
+    public String credit = "";
 }

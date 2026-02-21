@@ -353,7 +353,7 @@ public class RicesRoleRhapsody implements ModInitializer {
                 offHand.shrink(1);
             }
         });
-
+        
         // 处理邮差传递包
         ServerPlayNetworking.registerGlobalReceiver(POSTMAN_PACKET, (payload, context) -> {
             // 验证玩家存活
