@@ -498,7 +498,7 @@ public class ModEventsRegister {
                     if (GameFunctions.isPlayerAliveAndSurvival(p)
                             || (worldModifierComponent.isModifier(p, SEModifiers.SPLIT_PERSONALITY)
                                     && !SplitPersonalityComponent.KEY.get(p).isDeath())) {
-                        if(FortunetellerPlayerComponent.KEY.get(p).triggerProtect(player)){
+                        if (FortunetellerPlayerComponent.KEY.get(p).triggerProtect(player)) {
 
                             return false;
                         }
@@ -695,7 +695,9 @@ public class ModEventsRegister {
                     List<ResourceLocation> killerRoles = new ArrayList<>();
                     for (var entry : dev.doctor4t.trainmurdermystery.api.TMMRoles.ROLES.entrySet()) {
                         Role r = entry.getValue();
-                        if (r.canUseKiller() && !r.identifier().equals(dev.doctor4t.trainmurdermystery.api.TMMRoles.KILLER.identifier())
+                        if (r.canUseKiller()
+                                && !r.identifier()
+                                        .equals(dev.doctor4t.trainmurdermystery.api.TMMRoles.KILLER.identifier())
                                 && !r.identifier().equals(ModRoles.POISONER_ID)) {
                             killerRoles.add(r.identifier());
                         }
@@ -703,9 +705,9 @@ public class ModEventsRegister {
                     if (!killerRoles.isEmpty()) {
                         ResourceLocation disguiseRole = killerRoles.get(player.getRandom().nextInt(killerRoles.size()));
                         magicianComponent.setDisguiseRoleId(disguiseRole);
-                        player.sendSystemMessage(Component.translatable("message.magician.you_are_playing_as")
+                        player.displayClientMessage(Component.translatable("message.magician.you_are_playing_as")
                                 .append(Component.translatable("announcement.role." + disguiseRole.getPath()))
-                                .withStyle(ChatFormatting.GOLD));
+                                .withStyle(ChatFormatting.GOLD), true);
                     }
                 }
                 // 检查是否有指挥官，如果有则加入指挥官频道
@@ -716,7 +718,8 @@ public class ModEventsRegister {
                         });
                 if (hasCommander) {
                     // 魔术师加入指挥官频道
-                    player.sendSystemMessage(Component.translatable("message.magician.commander_present_joined_channel").withStyle(ChatFormatting.GOLD));
+                    player.sendSystemMessage(Component.translatable("message.magician.commander_present_joined_channel")
+                            .withStyle(ChatFormatting.GOLD));
                 }
             }
 

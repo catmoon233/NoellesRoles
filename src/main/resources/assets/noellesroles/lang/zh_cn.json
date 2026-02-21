@@ -796,6 +796,9 @@
   "message.fortuneteller.been_protected": "%s 为你拂去了命运的尘埃，让你得以窥见其上的真谛。",
   "message.fortuneteller.protection_active_self": "因大师点播，你躲过了这一劫难。",
   "message.fortuneteller.protection_active_role": "%s 的护盾触发了。",
+  "=========== 魔术师 ===========": "",
+  "message.magician.cosplay": "你正在扮演：%s",
+  "message.magician.you_are_playing_as": "你正在扮演：",
   "=========== 其他 ===========": "",
   "subtitles.harpy_welcome": "哈比航班信息播报",
   "hud.noellesroles.nianshou.red_packets": "红包数量：%s",
@@ -821,6 +824,5 @@
   "item.noellesroles.fake_body_bag": "假裹尸袋",
   "announcement.role.magician": "魔术师",
   "announcement.goals.magician": "用你的魔术技巧迷惑杀手，保护乘客！",
-  "message.magician.you_are_playing_as": "你正在扮演：",
-  "message.magician.commander_present_joined_channel": "指挥官在场，你已加入指挥官频道！"
+  "message.magician.commander_present_joined_channel": "指挥官在场。你可能会进入指挥官频道！"
 }

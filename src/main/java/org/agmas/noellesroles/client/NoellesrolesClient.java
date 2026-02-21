@@ -28,6 +28,7 @@ import org.agmas.noellesroles.client.event.OnMessageBelowMoneyRenderer;
 import org.agmas.noellesroles.client.screen.*;
 import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
+import org.agmas.noellesroles.component.MagicianPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.WheelchairEntity;
@@ -40,6 +41,7 @@ import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.awesome_binglus.AwesomeClientHandler;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.utils.lottery.LotteryManager;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,7 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowNameRender;
+import dev.doctor4t.trainmurdermystery.event.OnKillerCohortDisplay;
 import dev.doctor4t.trainmurdermystery.event.OnRoundStartWelcomeTimmer;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -352,27 +355,23 @@ public class NoellesrolesClient implements ClientModInitializer {
 
         Listen.registerEvents();
         InvisbleHandItem.register();
-
+        OnKillerCohortDisplay.EVENT.register((player) -> {
+            if (player == null)
+                return null;
+            if (TMMClient.gameComponent != null) {
+                if (TMMClient.gameComponent.isRole(player, ModRoles.MAGICIAN)) {
+                    return RoleUtils.getRoleName(MagicianPlayerComponent.KEY.get(player).getDisguiseRoleId());
+                }
+            }
+            return null;
+        });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (taskInstinct.consumeClick()) {
                 isTaskInstinctEnabled = !isTaskInstinctEnabled;
             }
             if (client == null || client.player == null)
                 return;
-            // long currentTime = System.currentTimeMillis();
-            // if (currentTime - lastClientTickTime >= CLIENT_TICK_INTERVAL_MS) {
-            // lastClientTickTime = currentTime;
-            // playerBodyEntities.forEach(
-            // (uuid, playerBodyEntity) -> {
-            // if (playerBodyEntity.getPlayerUuid().equals(uuid))
-            // ++playerBodyEntity.tickCount;
-            // });
-            // }
-            // if (client.player.getVehicle()!=null && client.player.getVehicle() instanceof WheelchairEntity) {
-            //     if (ClientPlayNetworking.canSend(WheelchairMoveC2SPacket.ID)) {
-            //         // ClientPlayNetworking.send(new WheelchairMoveC2SPacket(client.player.input.forwardImpulse, client.player.input.leftImpulse));
-            //     }
-            // }
+
             if (client.level != null && client.level.getGameTime() % 20 == 0) {
                 if (TMMClient.gameComponent != null && client.player != null) {
                     if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS)) {

@@ -816,7 +816,8 @@ public class ModRoles {
                 Role.MoodType.REAL, // 真实心情
                 TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
                 false // 不显示计分板
-        )).setCanPickUpRevolver(true).setComponentKey(ModComponents.MAGICIAN).setCanSeeCoin(true).setNeutralForKiller(true).setCanSeeTeammateKiller(false);
+        )).setCanPickUpRevolver(true).setComponentKey(ModComponents.MAGICIAN).setCanSeeCoin(true)
+                .setNeutralForKiller(true).setCanSeeTeammateKiller(false).setNeutrals(false);
 
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
