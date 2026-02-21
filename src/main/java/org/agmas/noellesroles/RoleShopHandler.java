@@ -66,6 +66,8 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> PATROLLER_SHOP = new ArrayList<>();
     // ==================== 年兽商店 ====================
     public static ArrayList<ShopEntry> NIAN_SHOU_SHOP = new ArrayList<>();
+    // ==================== 魔术师商店 ====================
+    public static ArrayList<ShopEntry> MAGICIAN_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -328,6 +330,13 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(
                     ModRoles.NIAN_SHOU_ID, NIAN_SHOU_SHOP);
         }
+
+        // 魔术师商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.MAGICIAN_ID, MAGICIAN_SHOP);
+        }
+
         // 警长商店
         {
             List<ShopEntry> entries = new ArrayList<>();
@@ -564,5 +573,73 @@ public class RoleShopHandler {
                 });
             }
         }
+
+        // 魔术师商店
+        // 假刀 - 50金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                ModItems.FAKE_KNIFE.getDefaultInstance(),
+                50,
+                ShopEntry.Type.WEAPON));
+
+        // 假撬棍 - 35金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                ModItems.FAKE_CROWBAR.getDefaultInstance(),
+                35,
+                ShopEntry.Type.WEAPON));
+
+        // 假开锁器 - 80金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                ModItems.FAKE_LOCKPICK.getDefaultInstance(),
+                80,
+                ShopEntry.Type.WEAPON));
+
+        // 鞭炮 - 30金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                TMMItems.FIRECRACKER.getDefaultInstance(),
+                30,
+                ShopEntry.Type.WEAPON));
+
+        // 假裹尸袋 - 100金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                ModItems.FAKE_BODY_BAG.getDefaultInstance(),
+                100,
+                ShopEntry.Type.WEAPON));
+
+        // 便签 - 100金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                TMMItems.NOTE.getDefaultInstance(),
+                100,
+                ShopEntry.Type.WEAPON));
+
+        // 假枪 - 175金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                ModItems.FAKE_REVOLVER.getDefaultInstance(),
+                175,
+                ShopEntry.Type.WEAPON));
+
+        // 假手雷 - 200金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                ModItems.FAKE_GRENADE.getDefaultInstance(),
+                200,
+                ShopEntry.Type.WEAPON));
+
+        // 假疯狂模式 - 250金币
+        MAGICIAN_SHOP.add(new ShopEntry(
+                ModItems.FAKE_PSYCHO_MODE.getDefaultInstance(),
+                250,
+                ShopEntry.Type.WEAPON) {
+            @Override
+            public boolean onBuy(@NotNull Player player) {
+                // 获得假球棒并启动假疯狂模式
+                if (!player.addItem(ModItems.FAKE_BAT.getDefaultInstance().copy())) {
+                    return false;
+                }
+                var magicianComponent = org.agmas.noellesroles.component.ModComponents.MAGICIAN.get(player);
+                if (magicianComponent != null) {
+                    magicianComponent.startFakePsycho();
+                }
+                return true;
+            }
+        });
     }
 }

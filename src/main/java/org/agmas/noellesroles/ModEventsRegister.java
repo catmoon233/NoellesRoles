@@ -1,5 +1,6 @@
 package org.agmas.noellesroles;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.agmas.harpymodloader.Harpymodloader;
@@ -13,6 +14,7 @@ import org.agmas.noellesroles.component.BoxerPlayerComponent;
 import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
+import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
@@ -667,6 +669,40 @@ public class ModEventsRegister {
                 PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(player);
                 shopComponent.setBalance(45);
                 return;
+            }
+
+            // 魔术师角色初始化
+            if (role.equals(ModRoles.MAGICIAN)) {
+                var magicianComponent = ModComponents.MAGICIAN.get(player);
+                if (magicianComponent != null) {
+                    magicianComponent.stopFakePsycho();
+                    // 随机分配一个杀手身份给魔术师（原版杀手和毒师除外）
+                    List<ResourceLocation> killerRoles = new ArrayList<>();
+                    for (var entry : dev.doctor4t.trainmurdermystery.api.TMMRoles.ROLES.entrySet()) {
+                        Role r = entry.getValue();
+                        if (r.canUseKiller() && !r.identifier().equals(dev.doctor4t.trainmurdermystery.api.TMMRoles.KILLER.identifier())
+                                && !r.identifier().equals(ModRoles.POISONER_ID)) {
+                            killerRoles.add(r.identifier());
+                        }
+                    }
+                    if (!killerRoles.isEmpty()) {
+                        ResourceLocation disguiseRole = killerRoles.get(player.getRandom().nextInt(killerRoles.size()));
+                        magicianComponent.setDisguiseRoleId(disguiseRole);
+                        player.sendSystemMessage(Component.translatable("message.magician.you_are_playing_as")
+                                .append(Component.translatable("announcement.role." + disguiseRole.getPath()))
+                                .withStyle(ChatFormatting.GOLD));
+                    }
+                }
+                // 检查是否有指挥官，如果有则加入指挥官频道
+                boolean hasCommander = player.getServer().getPlayerList().getPlayers().stream()
+                        .anyMatch(p -> {
+                            GameWorldComponent gw = GameWorldComponent.KEY.get(p.level());
+                            return gw.getRole(p).identifier().equals(ModRoles.COMMANDER_ID);
+                        });
+                if (hasCommander) {
+                    // 魔术师加入指挥官频道
+                    player.sendSystemMessage(Component.translatable("message.magician.commander_present_joined_channel").withStyle(ChatFormatting.GOLD));
+                }
             }
 
             // 纵火犯物品初始化

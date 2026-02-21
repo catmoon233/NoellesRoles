@@ -102,6 +102,7 @@ public class ModRoles {
     public static final ResourceLocation PSYCHOLOGIST_ID = Noellesroles.id("psychologist");
     public static final ResourceLocation PHOTOGRAPHER_ID = Noellesroles.id("photographer");
     public static ResourceLocation ELF_ID = Noellesroles.id("elf");
+    public static ResourceLocation MAGICIAN_ID = Noellesroles.id("magician");
 
     // 杀手阵营角色 ID
     public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
@@ -544,6 +545,17 @@ public class ModRoles {
      */
     public static Role NIAN_SHOU;
 
+    /**
+     * 魔术师角色 - 好人阵营（从模仿者移植）
+     * - 好人阵营 (isInnocent = true)
+     * - 能捡枪 (setCanPickUpRevolver(true))
+     * - 做任务维持san值
+     * - 商店购买假枪（175金币）
+     * - 商店购买假疯狂模式（250金币）：获得假球棒，穿上疯狂模式外观，不播放音乐
+     * - 如果指挥官在场，加入指挥官频道
+     */
+    public static Role MAGICIAN;
+
     // ==================== 其他变量定义 ====================
     public static ArrayList<Role> SHOW_MONEY_ROLES = new ArrayList<>();
     public static HashMap<Role, RoleAnnouncementTexts.RoleAnnouncementText> roleRoleAnnouncementTextHashMap = new HashMap<>();
@@ -795,6 +807,17 @@ public class ModRoles {
                 true // 隐藏计分板
         ).setComponentKey(NianShouPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true));
 
+        // 魔术师角色 - 好人阵营
+        MAGICIAN = TMMRoles.registerRole(new NoramlRole(
+                MAGICIAN_ID, // 角色 ID
+                new Color(255, 165, 0).getRGB(), // 橙色 - 代表魔术师的魅力
+                true, // isInnocent = 好人阵营
+                false, // canUseKiller = 无杀手能力
+                Role.MoodType.REAL, // 真实心情
+                TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+                false // 不显示计分板
+        )).setCanPickUpRevolver(true).setComponentKey(ModComponents.MAGICIAN).setCanSeeCoin(true).setNeutralForKiller(true).setCanSeeTeammateKiller(false);
+
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
         // 复仇者每局只能有 1 个
@@ -872,6 +895,9 @@ public class ModRoles {
 
         // 巡警
         Harpymodloader.setRoleMaximum(PATROLLER_ID, 1);
+
+        // 魔术师
+        Harpymodloader.setRoleMaximum(MAGICIAN_ID, 1);
 
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
         BartenderPlayerComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());

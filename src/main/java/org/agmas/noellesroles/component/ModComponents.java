@@ -164,6 +164,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
     public static final ComponentKey<NianShouPlayerComponent> NIAN_SHOU = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "nianshou"),
             NianShouPlayerComponent.class);
+    public static final ComponentKey<MagicianPlayerComponent> MAGICIAN = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "magician"),
+            MagicianPlayerComponent.class);
 
     public ModComponents() {
         // CCA 需要无参构造函数
@@ -301,6 +304,15 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(ExecutionerPlayerComponent::new);
         registry.beginRegistration(Player.class, RecallerPlayerComponent.KEY)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(RecallerPlayerComponent::new);
+        // 注册魔术师组件
+        registry.beginRegistration(Player.class, MAGICIAN)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(MagicianPlayerComponent::new);
+
+        // 注册起搏器组件
+        registry.beginRegistration(Player.class, DEFIBRILLATOR)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(DefibrillatorComponent::new);
 
         registry.beginRegistration(Player.class, NoiseMakerPlayerComponent.KEY)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY).end(NoiseMakerPlayerComponent::new);

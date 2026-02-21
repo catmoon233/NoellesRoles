@@ -6,6 +6,8 @@
   "plugin": "org.agmas.noellesroles.client.NRMixinPlugin",
   "mixins": [
     "AbstractContainerMenuMixin",
+    "MagicianKillerCountMixin",
+    "MagicianPlayerEntityMixin",
     "DecServerJoinPlayer",
     "EntityClear",
     "MasterKeyDoorMixin",
@@ -117,6 +119,8 @@
     "client.voodoo.VoodooScreenMixin",
     "client.vulture.VultureEatenBodyMixin",
     "client.vulture.VultureHudMixin",
+    "client.magician.MagicianDisguiseHudMixin",
+    "client.magician.MagicianRoleNameRendererMixin",
     "roles.photographer.BlindnessEffectMixin"
   ],
   "overwrites": {
