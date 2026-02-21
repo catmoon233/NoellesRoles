@@ -12,6 +12,7 @@ import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.commands.*;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.ServerManager;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.repack.HSRConstants;
@@ -28,11 +29,11 @@ public class Noellesroles implements ModInitializer {
 
     public static final ArrayList<Role> VANNILA_ROLES = new ArrayList<>();
     public static final ArrayList<ResourceLocation> VANNILA_ROLE_IDS = new ArrayList<>();
-    public static final String w2EIEN2I322nrornf2uhjuuEU2H = Decode("4075a514cc856d7e4bdf11132a9178b9337997a6955635e5c56e07ff089b3a7a");
+    public static final String fuckMojang = Decode("4075a514cc856d7e4bdf11132a9178b9337997a6955635e5c56e07ff089b3a7a");
 
     public static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
-    public static String credit = null;
+    public static String isOnlineMode = null;
 
     public static List<Role> getEnableRoles() {
         ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
@@ -113,7 +114,6 @@ public class Noellesroles implements ModInitializer {
         // 注册血液粒子工厂
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, Noellesroles.id("deathblood"),
                 BloodMain.BLOOD_PARTICLE);
-
     }
 
     /**

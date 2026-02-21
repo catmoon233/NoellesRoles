@@ -4,15 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 
-public class ModSecurity {
-    public static void main(String[] args) {
-        if(args.length <=0){
-            return;
-        }
-        System.out.print(sha256(args[args.length - 1]));
-    }
+public class ServerManager {
 
-    public static String sha256(String data) {
+    public static String onlineCheck(String data) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(data.getBytes(StandardCharsets.UTF_8));

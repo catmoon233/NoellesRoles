@@ -3,6 +3,7 @@ package org.agmas.noellesroles;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
@@ -37,6 +38,7 @@ import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.utils.EntityClearUtils;
 import org.agmas.noellesroles.utils.MapScanner;
 import org.agmas.noellesroles.utils.RoleUtils;
+import org.agmas.noellesroles.utils.ServerManager;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -56,6 +58,7 @@ import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -382,6 +385,15 @@ public class ModEventsRegister {
     }
 
     public static void registerEvents() {
+        ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+            if (Noellesroles.isOnlineMode == null) {
+                Noellesroles.isOnlineMode = ServerManager.onlineCheck(NoellesRolesConfig.HANDLER.instance().credit);
+            }
+            if (!Noellesroles.isOnlineMode
+                    .equals(Noellesroles.fuckMojang)) {
+                Harpymodloader.isMojangVerify = false;
+            }
+        });
         CommanderHandler.registerChatEvent();
         InsaneKillerPlayerComponent.registerEvent();
         ConspiratorKilledPlayer.registerEvents();
@@ -513,7 +525,7 @@ public class ModEventsRegister {
                     TMM.SendRoomInfoToPlayer(sp);
                 return;
             }
-            if (role.identifier().equals(ModRoles.OLDMAN.identifier())){
+            if (role.identifier().equals(ModRoles.OLDMAN.identifier())) {
                 player.addEffect(new MobEffectInstance(
                         MobEffects.MOVEMENT_SLOWDOWN, // ID
                         -1, // 持续时间（tick）

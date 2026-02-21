@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.mortuusars.exposure.util.supporter.Gilded;
-import io.github.mortuusars.exposure.util.supporter.Patreon;
 
 /**
  * 玩家重置 Mixin
