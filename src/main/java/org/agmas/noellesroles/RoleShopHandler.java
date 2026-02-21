@@ -623,10 +623,10 @@ public class RoleShopHandler {
                 200,
                 ShopEntry.Type.WEAPON));
 
-        // 假疯狂模式 - 250金币
+        // 假疯狂模式 - 325金币
         MAGICIAN_SHOP.add(new ShopEntry(
                 ModItems.FAKE_PSYCHO_MODE.getDefaultInstance(),
-                250,
+                325,
                 ShopEntry.Type.WEAPON) {
             @Override
             public boolean onBuy(@NotNull Player player) {

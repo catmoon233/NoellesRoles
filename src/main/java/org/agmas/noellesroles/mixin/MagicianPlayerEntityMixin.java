@@ -2,18 +2,22 @@ package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * 魔术师玩家实体Mixin
  * - 处理假球棒的攻击（只击退，不击杀）
+ * - 疯狂模式结束时清除假球棒
  */
 @Mixin(Player.class)
 public class MagicianPlayerEntityMixin {
@@ -62,4 +66,29 @@ public class MagicianPlayerEntityMixin {
             ci.cancel();
         }
     }
+
+    /**
+     * 拦截clearOrCountMatchingItems方法
+     * 当原版疯狂模式停止时，如果清除的是真球棒，也清除魔术师的假球棒
+     */
+    @Inject(method = "clearOrCountMatchingItems", at = @At("TAIL"))
+    private void noellesroles$clearFakeBatWhenPsychoEnds(ItemStack itemStack, int count, CallbackInfoReturnable<Integer> cir) {
+        Player player = (Player) (Object) this;
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
+
+        // 检查是否是魔术师，且正在清除真球棒（疯狂模式结束）
+        var magicianRole = TMMRoles.ROLES.get(ModRoles.MAGICIAN_ID);
+        var psychoComponent = PlayerPsychoComponent.KEY.get(player);
+        
+        if (magicianRole != null && 
+            gameWorld.isRole(player, magicianRole) &&
+            psychoComponent != null &&
+            psychoComponent.getPsychoTicks() <= 0 &&
+            itemStack.is(net.minecraft.world.item.Items.NETHERITE_SWORD)) {
+            // 真球棒是Netherite Sword，当它被清除时（疯狂模式结束），也清除假球棒
+            player.getInventory().clearOrCountMatchingItems(stack -> stack.is(ModItems.FAKE_BAT), Integer.MAX_VALUE, player.inventoryMenu.getCraftSlots());
+        }
+    }
 }
+
+

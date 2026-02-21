@@ -429,6 +429,16 @@ public class ModEventsRegister {
             if (GameFunctions.isPlayerAliveAndSurvival(killer)) {
                 if (isInnocent) {
                     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
+                    
+                    // 检查是否是疯狂模式下的魔术师，如果是则不算误杀
+                    if (gameWorldComponent.isRole(victim, ModRoles.MAGICIAN)) {
+                        var psychoComponent = PlayerPsychoComponent.KEY.get(victim);
+                        if (psychoComponent != null && psychoComponent.getPsychoTicks() > 0) {
+                            // 魔术师处于疯狂模式，不算误杀
+                            return;
+                        }
+                    }
+                    
                     if (gameWorldComponent.isRole(victim, ModRoles.VOODOO)) {
                         return;
                     }
@@ -675,7 +685,12 @@ public class ModEventsRegister {
             if (role.equals(ModRoles.MAGICIAN)) {
                 var magicianComponent = ModComponents.MAGICIAN.get(player);
                 if (magicianComponent != null) {
-                    magicianComponent.stopFakePsycho();
+                    // 停止疯狂模式（如果之前存在）
+                    var psychoComponent = PlayerPsychoComponent.KEY.get(player);
+                    if (psychoComponent != null) {
+                        psychoComponent.reset();
+                    }
+                    
                     // 随机分配一个杀手身份给魔术师（原版杀手和毒师除外）
                     List<ResourceLocation> killerRoles = new ArrayList<>();
                     for (var entry : dev.doctor4t.trainmurdermystery.api.TMMRoles.ROLES.entrySet()) {
