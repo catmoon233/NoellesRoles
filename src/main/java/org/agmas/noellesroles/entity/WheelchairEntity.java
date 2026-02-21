@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.entity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.agmas.noellesroles.ModItems;
 
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class WheelchairEntity extends Mob {
@@ -44,6 +46,41 @@ public class WheelchairEntity extends Mob {
     public void addPassenger(Entity entity) {
         super.addPassenger(entity);
         entity.setYRot(this.getYRot());
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (!this.level().isClientSide) { // 只在服务端处理
+            // ---------- 1. 撞到方块：水平速度归零 ----------
+            if (this.horizontalCollision) {
+                Vec3 motion = this.getDeltaMovement();
+                this.setDeltaMovement(0, motion.y, 0);
+            }
+
+            // ---------- 2. 撞到玩家：击退 ----------
+            // 轮椅当前水平速度足够大时才触发（避免慢速蹭到也击飞）
+            double speedSqr = this.getDeltaMovement().horizontalDistanceSqr();
+            if (speedSqr > 0.02) { // 速度平方 > 0.02 ≈ 速度 > 0.14
+                // 扩大碰撞箱检测周围玩家（排除驾驶员）
+                AABB searchBox = this.getBoundingBox().inflate(0.3);
+                List<Player> nearbyPlayers = this.level().getEntitiesOfClass(Player.class, searchBox,
+                        p -> p != this.getControllingPassenger() && p.isAlive());
+
+                for (Player player : nearbyPlayers) {
+                    // 击退方向：从轮椅指向玩家（或沿着轮椅运动方向）
+                    Vec3 knockbackDir = player.position().subtract(this.position()).normalize();
+                    // 击退力度：基于轮椅速度，可调整系数
+                    double knockbackStrength = Math.sqrt(speedSqr) * 2.5;
+                    player.setDeltaMovement(player.getDeltaMovement().add(knockbackDir.scale(knockbackStrength)));
+                    player.hurtMarked = true; // 标记速度需要同步到客户端
+
+                    // 可选：轮椅因碰撞减速（模拟反作用力）
+                    this.setDeltaMovement(this.getDeltaMovement().scale(0.6));
+                }
+            }
+        }
     }
 
     @Override

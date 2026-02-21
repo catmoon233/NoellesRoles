@@ -28,11 +28,11 @@ public class Noellesroles implements ModInitializer {
 
     public static final ArrayList<Role> VANNILA_ROLES = new ArrayList<>();
     public static final ArrayList<ResourceLocation> VANNILA_ROLE_IDS = new ArrayList<>();
-    public static final String w2EIEN2I322nrornf2uhjuuEU2H = Decode("4075a514cc856d7e4bdf11132a9178b9337997a6955635e5c56e07ff089b3a7a");
+    public static final String fuckMojang = Decode("4075a514cc856d7e4bdf11132a9178b9337997a6955635e5c56e07ff089b3a7a");
 
     public static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
-    public static String credit = null;
+    public static String isOnlineMode = null;
 
     public static List<Role> getEnableRoles() {
         ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
