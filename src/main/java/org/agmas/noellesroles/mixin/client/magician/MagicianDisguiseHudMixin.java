@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * 魔术师HUD渲染Mixin
- * - 在右下角显示"你正在扮演：xxx"
+ * - 在右下角显示"你正在扮演：xxx"（只给魔术师自己看）
  */
 @Mixin(Gui.class)
 public abstract class MagicianDisguiseHudMixin {
@@ -41,17 +41,25 @@ public abstract class MagicianDisguiseHudMixin {
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
         Role magicianRole = TMMRoles.ROLES.get(ModRoles.MAGICIAN_ID);
-        if (magicianRole == null || !gameWorld.isRole(client.player, magicianRole)) {
+        if (magicianRole == null) {
+            // 魔术师角色未注册
+            return;
+        }
+
+        if (!gameWorld.isRole(client.player, magicianRole)) {
+            // 当前玩家不是魔术师
             return;
         }
 
         var magicianComponent = ModComponents.MAGICIAN.get(client.player);
         if (magicianComponent == null) {
+            // 魔术师组件为空，这不应该发生
             return;
         }
 
         ResourceLocation disguiseId = magicianComponent.getDisguiseRoleId();
         if (disguiseId == null) {
+            // 伪装角色ID为空，游戏可能还未完全初始化
             return;
         }
 

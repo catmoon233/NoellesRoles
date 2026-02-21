@@ -307,6 +307,11 @@ public class InstinctRenderer {
 
                 // 杀手直觉
                 if (isKillerTeam(self_role) && TMMClient.isPlayerAliveAndInSurvival()) {
+                    // 魔术师：杀手看魔术师时显示红色边框（像看其他杀手一样）
+                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.MAGICIAN)) {
+                        return Color.RED.getRGB();
+                    }
+
                     if (TMMClient.gameComponent.isRole(target_player, ModRoles.PUPPETEER)) {
                         int entityOffset = target_player.getId() * 7;
                         return (getGradientColor(entityOffset + 10));

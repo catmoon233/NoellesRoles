@@ -33,11 +33,11 @@ public class MagicianPlayerEntityMixin {
                 player.getMainHandItem().is(ModItems.FAKE_BAT) &&
                 target instanceof Player) {
 
-            // 假球棒只造成击退效果
+            // 假球棒只造成击退效果（很小的击退）
             Player targetPlayer = (Player) target;
 
-            // 击退目标
-            double knockbackStrength = 0.8;
+            // 击退目标 - 削弱到很小的距离
+            double knockbackStrength = 0.15;
             double dx = targetPlayer.getX() - player.getX();
             double dy = targetPlayer.getY() - player.getY();
             double dz = targetPlayer.getZ() - player.getZ();

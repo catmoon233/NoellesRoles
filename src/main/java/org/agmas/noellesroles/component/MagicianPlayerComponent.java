@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.component;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -39,6 +38,7 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
      */
     public boolean startFakePsycho() {
         this.fakePsychoTicks = 30 * 20; // 30秒 = 600 tick
+        MagicianPlayerComponent.KEY.sync(this.player);
         return true;
     }
 
@@ -47,6 +47,7 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
      */
     public void stopFakePsycho() {
         this.fakePsychoTicks = 0;
+        MagicianPlayerComponent.KEY.sync(this.player);
     }
 
     /**
@@ -68,6 +69,7 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
      */
     public void setDisguiseRoleId(ResourceLocation roleId) {
         this.disguiseRoleId = roleId;
+        MagicianPlayerComponent.KEY.sync(this.player);
     }
 
     /**
@@ -81,6 +83,10 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
     public void serverTick() {
         if (fakePsychoTicks > 0) {
             fakePsychoTicks--;
+            if (fakePsychoTicks == 0) {
+                // 倒计时结束，同步到客户端
+                MagicianPlayerComponent.KEY.sync(this.player);
+            }
         }
     }
 
