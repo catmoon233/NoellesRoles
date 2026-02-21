@@ -57,6 +57,7 @@ public class WheelchairEntity extends Mob {
             if (this.horizontalCollision) {
                 Vec3 motion = this.getDeltaMovement();
                 this.setDeltaMovement(0, motion.y, 0);
+                this.forwardSpeed = 0;
             }
 
             // ---------- 2. 撞到玩家：击退 ----------

@@ -68,13 +68,6 @@ public class Noellesroles implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        if (Noellesroles.isOnlineMode == null) {
-            Noellesroles.isOnlineMode = ServerManager.onlineCheck(NoellesRolesConfig.HANDLER.instance().credit);
-        }
-        if (!Noellesroles.isOnlineMode
-                .equals(Noellesroles.fuckMojang)) {
-            Harpymodloader.isMojangVerify = false;
-        }
         HSRConstants.init();
         Harpymodloader.HIDDEN_MODIFIERS.add(SEModifiers.REFUGEE.identifier().getPath());
         // 初始化模组角色列表

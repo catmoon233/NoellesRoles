@@ -86,6 +86,13 @@ public class RoleShopHandler {
         ShopContent.register();
         {
             // 死灵法师的商店
+            var SHOP = new ArrayList<ShopEntry>();
+
+            SHOP.add(new ShopEntry(ModItems.WHEELCHAIR.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(ModRoles.OLDMAN.getIdentifier(), SHOP);
+        }
+        {
+            // 死灵法师的商店
             var NECROMANCER_SHOP = new ArrayList<ShopEntry>();
 
             NECROMANCER_SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
