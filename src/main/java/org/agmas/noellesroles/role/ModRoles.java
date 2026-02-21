@@ -199,7 +199,7 @@ public class ModRoles {
     // 杀手阵营角色
     public static Role CLEANER = TMMRoles
             .registerRole(new NoramlRole(CLEANER_ID, new Color(255, 1, 124).getRGB(), false,
-                    true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
+                    true, Role.MoodType.FAKE, Integer.MAX_VALUE, true).setCanPickUpRevolver(true));
     public static Role MORPHLING = TMMRoles
             .registerRole(new NoramlRole(MORPHLING_ID, new Color(220, 20, 60).getRGB(), false,
                     true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)

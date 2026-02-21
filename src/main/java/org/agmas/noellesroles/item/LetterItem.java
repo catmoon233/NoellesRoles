@@ -1,7 +1,6 @@
 // Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
 package org.agmas.noellesroles.item;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;

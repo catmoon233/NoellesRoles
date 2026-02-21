@@ -73,7 +73,8 @@ public class RoleShopHandler {
      * 初始化框架角色商店
      */
     public static void initializeFramingShop() {
-        FRAMING_ROLES_SHOP.add(new FramingShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
+        FRAMING_ROLES_SHOP
+                .add(new FramingShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
         FRAMING_ROLES_SHOP
                 .add(new FramingShopEntry(ModItems.DELUSION_VIAL.getDefaultInstance(), 30, ShopEntry.Type.POISON));
         FRAMING_ROLES_SHOP.add(new FramingShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), 5, ShopEntry.Type.TOOL));
@@ -273,6 +274,18 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.BOXER_ID, BOXER_SHOP);
+        }
+        {
+            var shopEntries = new ArrayList<ShopEntry>();
+            shopEntries.add(new ShopEntry(TMMItems.KNIFE.getDefaultInstance(), 200, ShopEntry.Type.TOOL));
+            shopEntries.add(new ShopEntry(TMMItems.CROWBAR.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            shopEntries.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            shopEntries.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), 500, ShopEntry.Type.TOOL));
+            shopEntries.add(new ShopEntry(TMMItems.NOTE.getDefaultInstance(), 15, ShopEntry.Type.TOOL));
+            shopEntries.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), 15, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(
+                    ModRoles.CLEANER_ID,
+                    shopEntries);
         }
         {
             ShopContent.customEntries.put(

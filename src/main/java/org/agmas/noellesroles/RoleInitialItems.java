@@ -62,8 +62,8 @@ public class RoleInitialItems {
      * 初始化初始物品映射
      */
     public static void initializeInitialItems() {
-
         INITIAL_ITEMS_MAP.clear();
+
         // 故障机器人初始物品（无开局物品）
         INITIAL_ITEMS_MAP.put(ModRoles.GLITCH_ROBOT, new ArrayList<>());
 
@@ -94,6 +94,11 @@ public class RoleInitialItems {
         // 乘务员钥匙
         attendantItems.add(() -> ModItems.MASTER_KEY_P.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.ATTENDANT, attendantItems);
+
+        // 清道夫初始物品
+        List<Supplier<ItemStack>> cleanerItems = new ArrayList<>();
+        cleanerItems.add(() -> ModItems.BUCKET_OF_H2SO4.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.CLEANER, cleanerItems);
 
         // 心理学家初始物品（不再有薄荷糖）
         List<Supplier<ItemStack>> psychologistItems = new ArrayList<>();

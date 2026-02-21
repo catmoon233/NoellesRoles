@@ -22,8 +22,11 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -36,6 +39,26 @@ public class AbilityHandler {
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                 .get(context.player().level());
         final ServerPlayer player = context.player();
+        if (gameWorldComponent.isRole(context.player(), ModRoles.CLEANER)) {
+            if (abilityPlayerComponent.cooldown > 0) {
+                context.player().displayClientMessage(Component.translatable(
+                        "message.noellesroles.cleaner.cooldown", abilityPlayerComponent.cooldown / 20)
+                        .withStyle(ChatFormatting.RED), true);
+            } else {
+                var items = player.level().getEntitiesOfClass(ItemEntity.class,
+                        player.getBoundingBox().inflate(5.), (p) -> true);
+                for (var it : items) {
+                    it.discard();
+                }
+                player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1f,
+                        1f);
+                context.player().displayClientMessage(Component.translatable(
+                        "message.noellesroles.cleaner.cleanned", items.size())
+                        .withStyle(ChatFormatting.GOLD), true);
+                abilityPlayerComponent.setCooldown(90);
+            }
+            return;
+        }
         if (gameWorldComponent.isRole(context.player(), ModRoles.GLITCH_ROBOT)) {
             if (!RoleUtils.isPlayerHasFreeSlot(context.player())) {
                 context.player().displayClientMessage(

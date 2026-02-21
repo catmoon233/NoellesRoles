@@ -37,6 +37,12 @@ public class ModItems {
             Noellesroles.id("misc"));
     public static final ItemRegistrar registrar = new ItemRegistrar(Noellesroles.MOD_ID);
 
+    public static final Item FOOD_STUFF = register(
+            new FoodStuffItem((new Item.Properties()).stacksTo(1)), "foodstuff");
+    public static final Item PAN = register(
+            new PanItem((new Item.Properties()).stacksTo(1)), "pan");
+    public static final Item BUCKET_OF_H2SO4 = register(
+            new H2SO4AcidItem((new Item.Properties()).stacksTo(1)), "bucket_of_h2so4");
     public static final Item LETTER_ITEM = register(
             new LetterItem((new Item.Properties()).stacksTo(1)), "letter");
     public static final Item PATROLLER_REVOLVER = register(
