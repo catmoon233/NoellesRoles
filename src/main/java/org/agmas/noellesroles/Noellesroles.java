@@ -12,6 +12,7 @@ import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.commands.*;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.ServerManager;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.repack.HSRConstants;
@@ -67,6 +68,13 @@ public class Noellesroles implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        if (Noellesroles.isOnlineMode == null) {
+            Noellesroles.isOnlineMode = ServerManager.onlineCheck(NoellesRolesConfig.HANDLER.instance().credit);
+        }
+        if (!Noellesroles.isOnlineMode
+                .equals(Noellesroles.fuckMojang)) {
+            Harpymodloader.isMojangVerify = false;
+        }
         HSRConstants.init();
         Harpymodloader.HIDDEN_MODIFIERS.add(SEModifiers.REFUGEE.identifier().getPath());
         // 初始化模组角色列表
@@ -113,7 +121,6 @@ public class Noellesroles implements ModInitializer {
         // 注册血液粒子工厂
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, Noellesroles.id("deathblood"),
                 BloodMain.BLOOD_PARTICLE);
-
     }
 
     /**

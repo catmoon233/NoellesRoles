@@ -1,15 +1,12 @@
 package org.agmas.noellesroles.mixin;
 
 import net.minecraft.network.Connection;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.ConfigWorldComponent;
-import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.doctor4t.trainmurdermystery.TMM;
-import org.agmas.noellesroles.utils.ServerManager;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerNoteComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
@@ -31,20 +27,6 @@ public class DecServerJoinPlayer {
             CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
         if (TMM.isLobby)
             return;
-        boolean flag = serverPlayer.getServer().isDedicatedServer();
-        if (serverPlayer.getServer().getPlayerCount() >= 6) {
-            flag = true;
-        }
-        if (flag) {
-            if (Noellesroles.isOnlineMode == null) {
-                Noellesroles.isOnlineMode = ServerManager.onlineCheck(NoellesRolesConfig.HANDLER.instance().credit);
-            }
-            if (!Noellesroles.isOnlineMode
-                    .equals(Noellesroles.fuckMojang)) {
-                connection.disconnect(Component.translatable("disconnect.loginFailedInfo.serversUnavailable"));
-                return;
-            }
-        }
         var modifierComponent = WorldModifierComponent.KEY.get(serverPlayer.level());
         var pl = modifierComponent.modifiers.get(serverPlayer.getUUID());
         if (pl != null) {
