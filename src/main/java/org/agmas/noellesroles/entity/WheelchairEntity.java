@@ -57,7 +57,7 @@ public class WheelchairEntity extends Mob {
         }
         double speed = this.position().distanceTo(lastPos);
         this.lastPos = this.position();
-        if (speed >= 0.2) {
+        if (speed >= 0.3) {
             if (this.getControllingPassenger() instanceof Player controller) {
                 AABB box = this.getBoundingBox().inflate(0.1);
                 List<Player> otherPlayers = this.level().getEntitiesOfClass(Player.class, box,
@@ -111,7 +111,7 @@ public class WheelchairEntity extends Mob {
         }
 
         // ===== 3. 前进/后退惯性（处理 W/S 键）=====
-        float maxSpeed = (float) 0.5;
+        float maxSpeed = (float) 0.3;
         if (forward != 0) {
             float targetSpeed = forward * maxSpeed;
             if (forwardSpeed < targetSpeed) {
