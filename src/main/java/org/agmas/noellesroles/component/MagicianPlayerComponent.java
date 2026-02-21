@@ -1,15 +1,15 @@
 package org.agmas.noellesroles.component;
 
-import dev.doctor4t.trainmurdermystery.api.GameConstants;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
-import dev.doctor4t.trainmurdermystery.networking.RemoveStatusBarPayload;
-import dev.doctor4t.trainmurdermystery.networking.TriggerStatusBarPayload;
+import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.network.RemoveStatusBarPayload;
+import dev.doctor4t.trainmurdermystery.network.TriggerStatusBarPayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerPlayNetworking;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.ModItems;
 import org.jetbrains.annotations.NotNull;
