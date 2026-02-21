@@ -160,6 +160,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                         ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "nianshou"),
                         NianShouPlayerComponent.class);
 
+        public static final ComponentKey<MagicianPlayerComponent> MAGICIAN = ComponentRegistry.getOrCreate(
+                        ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "magician"),
+                        MagicianPlayerComponent.class);
+
         public ModComponents() {
                 // CCA 需要无参构造函数
         }
@@ -315,6 +319,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 registry.beginRegistration(Player.class, MONITOR)
                                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                                 .end(MonitorPlayerComponent::new);
+
+                // 注册魔术师组件
+                registry.beginRegistration(Player.class, MAGICIAN)
+                                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                                .end(MagicianPlayerComponent::new);
 
                 // 注册起搏器组件
                 registry.beginRegistration(Player.class, DEFIBRILLATOR)

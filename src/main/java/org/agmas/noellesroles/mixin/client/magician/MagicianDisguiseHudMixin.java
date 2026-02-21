@@ -1,0 +1,74 @@
+package org.agmas.noellesroles.mixin.client.magician;
+
+import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.component.ModComponents;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+/**
+ * 魔术师HUD渲染Mixin
+ * - 在右下角显示"你正在扮演：xxx"
+ */
+@Mixin(Gui.class)
+public abstract class MagicianDisguiseHudMixin {
+
+    @Shadow
+    public abstract Font getFont();
+
+    @Inject(method = "render", at = @At("TAIL"))
+    public void renderMagicianDisguiseHud(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) {
+            return;
+        }
+        if (client.player.isSpectator()) {
+            return;
+        }
+
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(client.level);
+        Role magicianRole = TMMRoles.ROLES.get(ModRoles.MAGICIAN_ID);
+        if (magicianRole == null || !gameWorld.isRole(client.player, magicianRole)) {
+            return;
+        }
+
+        var magicianComponent = ModComponents.MAGICIAN.get(client.player);
+        if (magicianComponent == null) {
+            return;
+        }
+
+        ResourceLocation disguiseId = magicianComponent.getDisguiseRoleId();
+        if (disguiseId == null) {
+            return;
+        }
+
+        // 获取伪装角色的翻译
+        Component roleText = Component.translatable("announcement.role." + disguiseId.getPath());
+        Component fullText = Component.literal("你正在扮演：")
+                .append(roleText)
+                .withStyle(ChatFormatting.GOLD);
+
+        int screenWidth = client.getWindow().getGuiScaledWidth();
+        int screenHeight = client.getWindow().getGuiScaledHeight();
+        int textWidth = getFont().width(fullText);
+
+        // 右下角显示，留出一些边距
+        int x = screenWidth - textWidth - 10;
+        int y = screenHeight - 35;
+
+        context.drawString(getFont(), fullText, x, y, 0xFFD700);
+    }
+}

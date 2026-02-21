@@ -49,6 +49,7 @@
   "info.screen.roleid.recorder": "中立阵营\n拥有独立胜利条件\n仅在10人及以上的对局中会启用。\n你拥有杀手透视。\n开局拥有一本记录笔记用于猜测玩家身份。\n笔记本会记录场上存在的身份与存活玩家的信息且笔记本对他人不可见。\n建议尽快记录下能改变自身职业的中立角色身份。\n猜测出30%%玩家数的身份后取得胜利。\n记录错10次则自己死亡。",
   "info.screen.roleid.commander": "中立阵营\n与杀手一同胜利\n主动-你可以切换杀手频道，在此频道下仅杀手可听见、看见你的消息。\n在此频道下，你也能接收到杀手的消息（但杀手的消息可能会被周围人听见、看到）。\n被动-警觉：当你打开直觉的时候，你可以看见附近10格内手上持枪的玩家以及义警，它们将显示为蓝色。\n你还可以看见附近10格内的巡警，它们将显示为青色。",
   "info.screen.roleid.oldman": "平民阵营\n你的移动速度-40%\n你可以使用技能键购买轮椅。右键轮椅即可放出。坐在轮椅上时按技能键收回物品栏。",
+  "info.screen.roleid.magician": "平民阵营\n杀手会误以为你是杀手同伙，你会在游戏开始时随机扮演一名杀手。\n杀手看你的身份是你扮演的杀手身份，报幕时的杀手人数会算上魔术师的数量。\n商店可购买的所有东西都是假的(除了鞭炮和便签)。\n假疯狂模式：手持假球棒，并穿上疯狂模式的外观，但是不会播放疯狂模式的音乐。\n如果指挥官在场，魔术师会加入指挥官的频道。",
   "==================== 修饰符 ====================": "",
   "info.screen.modifier.lovers": "修饰符\n你会与另一名随机玩家绑定为恋人(恋人分配与阵营无关)。\n当恋人的其中一方死亡时，另一方会殉情而亡。\n若你与你的恋人存活到了最后，则恋人获胜。",
   "info.screen.modifier.refugee": "修饰符\n拥有难民修饰符的玩家会在死亡120秒后复活成亡命徒。\n变成亡命徒后你需要击杀掉所有玩家才能获胜。\n若你在变成亡命徒后被别人杀死，则场上的游戏时间/物品栏/金币/理智回溯到亡命徒复活的时刻。\n所有在亡命徒期间被杀死的玩家会复活。",
@@ -803,5 +804,15 @@
   "entity.noellesroles.wheelchair": "轮椅",
   "item.noellesroles.wheelchair": "轮椅",
   "item.noellesroles.letter": "信件",
-  "item.noellesroles.role_mine": "身份地雷"
+  "item.noellesroles.role_mine": "身份地雷",
+  "item.noellesroles.fake_bat": "假球棒",
+  "item.noellesroles.fake_psycho_mode": "假疯狂模式",
+  "item.noellesroles.fake_grenade": "假手雷",
+  "item.noellesroles.fake_lockpick": "假开锁器",
+  "item.noellesroles.fake_crowbar": "假撬棍",
+  "item.noellesroles.fake_body_bag": "假裹尸袋",
+  "announcement.role.magician": "魔术师",
+  "announcement.goals.magician": "用你的魔术技巧迷惑杀手，保护乘客！",
+  "message.magician.you_are_playing_as": "你正在扮演：",
+  "message.magician.commander_present_joined_channel": "指挥官在场，你已加入指挥官频道！"
 }

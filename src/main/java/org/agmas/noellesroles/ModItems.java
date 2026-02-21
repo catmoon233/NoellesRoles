@@ -58,6 +58,31 @@ public class ModItems {
     public static final Item FAKE_REVOLVER = register(
             new FakeRevolverItem(new Item.Properties().stacksTo(1).durability(4)),
             "fake_revolver");
+
+    public static final Item FAKE_BAT = register(
+            new FakeBatItem(new Item.Properties().stacksTo(1)),
+            "fake_bat");
+
+    public static final Item FAKE_PSYCHO_MODE = register(
+            new Item(new Item.Properties().stacksTo(1)),
+            "fake_psycho_mode");
+
+    public static final Item FAKE_GRENADE = register(
+            new FakeGrenadeItem(new Item.Properties().stacksTo(1)),
+            "fake_grenade");
+
+    public static final Item FAKE_LOCKPICK = register(
+            new FakeLockpickItem(new Item.Properties().stacksTo(1)),
+            "fake_lockpick");
+
+    public static final Item FAKE_CROWBAR = register(
+            new FakeCrowbarItem(new Item.Properties().stacksTo(1)),
+            "fake_crowbar");
+
+    public static final Item FAKE_BODY_BAG = register(
+            new FakeBodyBagItem(new Item.Properties().stacksTo(1)),
+            "fake_body_bag");
+
     public static final Item MASTER_KEY = register(
             new Item(new Item.Properties().stacksTo(1)),
             "master_key");
