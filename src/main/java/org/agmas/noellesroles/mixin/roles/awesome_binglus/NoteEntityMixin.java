@@ -6,7 +6,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +25,7 @@ public abstract class NoteEntityMixin extends Entity {
         NoteEntity note = (NoteEntity) (Object) this;
         final var attached = note.getAttached(ModRoles.ENTITY_NOTE_MAKER);
         if (attached != null) {
-            if (note.tickCount >= 20 * 80){
+            if (note.tickCount >= 20 * 120){
                 note.remove(Entity.RemovalReason.DISCARDED);
             }else {
                 try {
