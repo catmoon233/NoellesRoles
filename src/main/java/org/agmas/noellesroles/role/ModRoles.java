@@ -114,6 +114,7 @@ public class ModRoles {
     public static ResourceLocation THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Noellesroles
             .id("the_insane_damned_paranoid_killer");
     public static final ResourceLocation CONSPIRATOR_ID = Noellesroles.id("conspirator");
+    public static final ResourceLocation CLEANER_ID = Noellesroles.id("cleaner");
     public static final ResourceLocation TRAPPER_ID = Noellesroles.id("trapper");
     public static final ResourceLocation BOMBER_ID = Noellesroles.id("bomber");
     public static final ResourceLocation MANIPULATOR_ID = Noellesroles.id("manipulator");
@@ -196,7 +197,9 @@ public class ModRoles {
             .setCanPickUpRevolver(true);
 
     // 杀手阵营角色
-
+    public static Role CLEANER = TMMRoles
+            .registerRole(new NoramlRole(CLEANER_ID, new Color(255, 1, 124).getRGB(), false,
+                    true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
     public static Role MORPHLING = TMMRoles
             .registerRole(new NoramlRole(MORPHLING_ID, new Color(220, 20, 60).getRGB(), false,
                     true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)

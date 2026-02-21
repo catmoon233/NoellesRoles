@@ -221,6 +221,7 @@ public class AbilityHandler {
                 if (playerShopComponent.balance >= 150) {
                     playerShopComponent.addToBalance(-150);
                     FortunetellerPlayerComponent.KEY.get(player).protectPlayer(targetPlayer);
+                    abilityPlayerComponent.setCooldown(120 * 20);
                 } else {
                     player.displayClientMessage(Component.translatable("message.noellesroles.insufficient_funds"),
                             true);
