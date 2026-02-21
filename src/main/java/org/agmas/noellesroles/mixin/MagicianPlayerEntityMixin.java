@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * 魔术师玩家实体Mixin
  * - 处理假球棒的攻击（只击退，不击杀）
+ * - 攻击间隔：1秒
  */
 @Mixin(Player.class)
 public class MagicianPlayerEntityMixin {
@@ -32,6 +33,16 @@ public class MagicianPlayerEntityMixin {
         if (magicianRole != null && gameWorld.isRole(player, magicianRole) &&
                 player.getMainHandItem().is(ModItems.FAKE_BAT) &&
                 target instanceof Player) {
+
+            // 检查是否在cooldown中
+            if (player.getCooldowns().isOnCooldown(ModItems.FAKE_BAT)) {
+                // 在cooldown中，不进行攻击
+                ci.cancel();
+                return;
+            }
+
+            // 设置1秒（20 ticks）的cooldown
+            player.getCooldowns().addCooldown(ModItems.FAKE_BAT, 20);
 
             // 假球棒只造成击退效果（很小的击退）
             Player targetPlayer = (Player) target;
