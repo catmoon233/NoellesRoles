@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * 魔术师HUD渲染Mixin
  * - 在右下角显示"你正在扮演：xxx"（只给魔术师自己看）
+ * - 魔术师使用原版疯狂模式，不需要单独渲染
  */
 @Mixin(Gui.class)
 public abstract class MagicianDisguiseHudMixin {
