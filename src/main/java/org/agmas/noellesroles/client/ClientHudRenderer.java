@@ -44,7 +44,7 @@ public class ClientHudRenderer {
                         Color.WHITE.getRGB());
             } else {
                 var text = Component
-                        .translatable("hud.cleaner.ready")
+                        .translatable("hud.cleaner.ready",NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
                         .withStyle(ChatFormatting.AQUA);
                 guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
                         Color.WHITE.getRGB());

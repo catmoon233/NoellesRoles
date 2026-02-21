@@ -42,8 +42,8 @@ public class BoxerPlayerComponent implements RoleComponent, ServerTickingCompone
     /** 使用后冷却时间（120秒 = 2400 tick） */
     public static final int ABILITY_COOLDOWN = 2400;
     
-    /** 无敌持续时间（1.5秒 = 30 tick） */
-    public static final int INVULNERABILITY_DURATION = 30;
+    /** 无敌持续时间（2.5秒 = 50 tick） */
+    public static final int INVULNERABILITY_DURATION = 50;
     
     /** 反制效果：缓慢持续时间（2秒 = 40 tick） */
     public static final int COUNTER_SLOWNESS_DURATION = 40;
