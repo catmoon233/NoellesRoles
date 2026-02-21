@@ -55,7 +55,7 @@ public class AbilityHandler {
                 context.player().displayClientMessage(Component.translatable(
                         "message.noellesroles.cleaner.cleanned", items.size())
                         .withStyle(ChatFormatting.GOLD), true);
-                abilityPlayerComponent.setCooldown(90);
+                abilityPlayerComponent.setCooldown(20 * 90);
             }
             return;
         }

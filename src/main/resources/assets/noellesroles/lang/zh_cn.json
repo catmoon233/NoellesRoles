@@ -706,7 +706,7 @@
   "message.noellesroles.attendant.room_show": "Ta的房间在 %s",
   "==================== 监察员角色 ====================": "",
   "announcement.role.monitor": "监察员",
-  "info.screen.roleid.monitor": "平民阵营\n你可以使用技能键标记一名玩家并透视其位置。",
+  "info.screen.roleid.monitor": "平民阵营\n你可以使用技能键标记一名玩家并透视其位置。\n被动-你能察觉有人死去。冷却60s。",
   "gui.noellesroles.monitor.target": "你正在监视：%s",
   "gui.noellesroles.monitor.target_not_found": "你的目标不在你的认知范围内",
   "gui.noellesroles.monitor.unknown": "未知",
@@ -797,8 +797,8 @@
   "message.oldman.get_back": "你将轮椅收回了物品栏",
   "message.oldman.buy": "你购买了轮椅",
   "=========== 清道夫 ===========": "",
-  "message.noellesroles.cleaner.cooldown":"冷却中，剩余 %ss",
-  "message.noellesroles.cleaner.cleanned":"你清除了 %s 个掉落物",
+  "message.noellesroles.cleaner.cooldown": "冷却中，剩余 %ss",
+  "message.noellesroles.cleaner.cleanned": "你清除了 %s 个掉落物",
   "=========== 算命大师 ===========": "",
   "message.fortuneteller.protected": "你保护了 %s（持续120s）",
   "message.fortuneteller.been_protected": "%s 为你拂去了命运的尘埃，让你得以窥见其上的真谛。",
@@ -840,5 +840,8 @@
   "item.noellesroles.fake_body_bag": "假裹尸袋",
   "announcement.role.magician": "魔术师",
   "announcement.goals.magician": "用你的魔术技巧迷惑杀手，保护乘客！",
-  "message.magician.commander_present_joined_channel": "指挥官在场。你可能会进入指挥官频道！"
+  "message.magician.commander_present_joined_channel": "指挥官在场。你可能会进入指挥官频道！",
+  "hud.cleaner.cooldown": "冷却中，剩余 %ss",
+  "hud.cleaner.ready": "按下 %s 清除周围 5 格的掉落物",
+  "message.monitor.killer_killed": "你察觉到 %s 死去了..."
 }

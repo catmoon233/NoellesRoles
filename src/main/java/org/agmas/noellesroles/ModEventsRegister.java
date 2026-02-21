@@ -69,6 +69,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
@@ -428,7 +429,7 @@ public class ModEventsRegister {
             if (GameFunctions.isPlayerAliveAndSurvival(killer)) {
                 if (isInnocent) {
                     GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
-                    
+
                     // 检查是否是疯狂模式下的魔术师，如果是则不算误杀
                     if (gameWorldComponent.isRole(victim, ModRoles.MAGICIAN)) {
                         var psychoComponent = PlayerPsychoComponent.KEY.get(victim);
@@ -437,7 +438,7 @@ public class ModEventsRegister {
                             return;
                         }
                     }
-                    
+
                     if (gameWorldComponent.isRole(victim, ModRoles.VOODOO)) {
                         return;
                     }
@@ -455,6 +456,7 @@ public class ModEventsRegister {
             }
         });
         OnPlayerKilledPlayer.EVENT.register((victim, killer, deathReason) -> {
+            var gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
             if (deathReason.equals(OnPlayerKilledPlayer.DeathReason.KNIFE)) {
                 killer.addEffect(new MobEffectInstance(
                         MobEffects.MOVEMENT_SPEED, // ID
@@ -464,6 +466,19 @@ public class ModEventsRegister {
                         false, // showParticles（显示粒子）
                         false // showIcon（显示图标）
                 ));
+            }
+            for (var p : victim.level().players()) {
+                if (gameWorldComponent.isRole(p, ModRoles.MONITOR)) {
+                    if (p.getCooldowns().isOnCooldown(Items.BARRIER)) {
+                        continue;
+                    } else {
+                        p.getCooldowns().addCooldown(Items.BARRIER, 60 * 20);
+                        p.displayClientMessage(
+                                Component.translatable("message.monitor.killer_killed", victim.getDisplayName())
+                                        .withStyle(ChatFormatting.AQUA),
+                                true);
+                    }
+                }
             }
         });
         ShouldDropOnDeath.EVENT.register(((itemStack) -> {
@@ -689,7 +704,7 @@ public class ModEventsRegister {
                     if (psychoComponent != null) {
                         psychoComponent.reset();
                     }
-                    
+
                     // 随机分配一个杀手身份给魔术师（原版杀手和毒师除外）
                     List<ResourceLocation> killerRoles = new ArrayList<>();
                     for (var entry : dev.doctor4t.trainmurdermystery.api.TMMRoles.ROLES.entrySet()) {

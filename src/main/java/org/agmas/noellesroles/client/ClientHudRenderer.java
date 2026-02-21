@@ -21,6 +21,38 @@ public class ClientHudRenderer {
     public static void registerRenderersEvent() {
         CommanderHudRender.register();
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            // 渲染清道夫的提示
+            var client = Minecraft.getInstance();
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null || !TMMClient.gameComponent.isRole(client.player, ModRoles.CLEANER)) {
+                return;
+            }
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+            var abpc = NoellesRolesAbilityPlayerComponent.KEY.get(client.player);
+            if (abpc.cooldown > 0) {
+                var text = Component
+                        .translatable("hud.cleaner.cooldown", abpc.cooldown / 20)
+                        .withStyle(ChatFormatting.AQUA);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            } else {
+                var text = Component
+                        .translatable("hud.cleaner.ready")
+                        .withStyle(ChatFormatting.AQUA);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            }
+            return;
+        });
+
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             // 渲染算命大师的提示
             var client = Minecraft.getInstance();
             if (client == null)
@@ -63,7 +95,7 @@ public class ClientHudRenderer {
                 var text = Component
                         .translatable("hud.fortuneteller.cooldown", abpc.cooldown / 20)
                         .withStyle(ChatFormatting.YELLOW);
-            guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
             } else {
                 var text = Component
                         .translatable("hud.fortuneteller.ready",
