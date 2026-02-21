@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 
 /**
  * 魔术师玩家组件
@@ -53,31 +54,8 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         return false; // 其他人不需要知道
     }
 
-    /**
-     * 启动假疯狂模式(使用原版疯狂模式但给假球棒)
-     * @return 是否成功启动
-     */
     public boolean startFakePsycho() {
         // 使用原版疯狂模式系统,但是给假球棒
-        var psychoComponent = PlayerPsychoComponent.KEY.get(player);
-        if (psychoComponent == null) {
-            return false;
-        }
-
-        // 给假球棒而不是真球棒
-        if (ShopEntry.insertStackInFreeSlot(player, new ItemStack(ModItems.FAKE_BAT))) {
-            // 调用原版疯狂模式的启动逻辑
-            boolean result = psychoComponent.startPsycho();
-            if (result) {
-                // 同步魔术师组件状态到客户端
-                MagicianPlayerComponent.KEY.sync(this.player);
-            }
-            return result;
-        }
-        return false;
-    }
-
-    /**
      * 获取伪装的角色ID
      */
     public ResourceLocation getDisguiseRoleId() {
@@ -90,6 +68,7 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
     public void setDisguiseRoleId(ResourceLocation roleId) {
         this.disguiseRoleId = roleId;
         MagicianPlayerComponent.KEY.sync(this.player);
+        sync();
     }
 
     @Override
@@ -114,6 +93,7 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
     @Override
     public void reset() {
         disguiseRoleId = null;
+        sync();
     }
 
     @Override
