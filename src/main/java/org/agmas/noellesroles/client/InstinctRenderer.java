@@ -4,6 +4,7 @@ import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
+import org.agmas.noellesroles.component.MagicianPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
@@ -11,6 +12,7 @@ import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -309,10 +311,10 @@ public class InstinctRenderer {
                 if (isKillerTeam(self_role) && TMMClient.isPlayerAliveAndInSurvival()) {
                     // 魔术师：杀手看魔术师时显示红色边框（像看其他杀手一样）
                     if (TMMClient.gameComponent.isRole(target_player, ModRoles.MAGICIAN)) {
-                        return Color.RED.getRGB();
+                        target_role = RoleUtils.getRole(MagicianPlayerComponent.KEY.get(target_player).getDisguiseRoleId());
                     }
 
-                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.PUPPETEER)) {
+                    if (RoleUtils.compareRole(target_role, ModRoles.PUPPETEER)) {
                         int entityOffset = target_player.getId() * 7;
                         return (getGradientColor(entityOffset + 10));
                     }
@@ -332,22 +334,22 @@ public class InstinctRenderer {
                             }
                         }
                     }
-                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.VULTURE)) {
+                    if (RoleUtils.compareRole(target_role, ModRoles.VULTURE)) {
                         return (ModRoles.VULTURE.color());
                     }
-                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.ADMIRER)) {
+                    if (RoleUtils.compareRole(target_role, ModRoles.ADMIRER)) {
                         return (ModRoles.ADMIRER.color());
                     }
-                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.EXECUTIONER)) {
+                    if (RoleUtils.compareRole(target_role, ModRoles.EXECUTIONER)) {
                         return (ModRoles.EXECUTIONER.color());
                     }
-                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.JESTER)) {
+                    if (RoleUtils.compareRole(target_role, ModRoles.JESTER)) {
                         return (Color.PINK.getRGB());
                     }
-                    if (TMMClient.gameComponent.isRole(target_player, ModRoles.SLIPPERY_GHOST)) {
+                    if (RoleUtils.compareRole(target_role, ModRoles.SLIPPERY_GHOST)) {
                         return -2;
                     }
-                    if (TMMClient.gameComponent.isRole(target_player, SERoles.AMNESIAC)) {
+                    if (RoleUtils.compareRole(target_role, SERoles.AMNESIAC)) {
                         if (StupidExpress.CONFIG.rolesSection.amnesiacSection.amnesiacGlowsDifferently) {
                             return SERoles.AMNESIAC.color();
                         }

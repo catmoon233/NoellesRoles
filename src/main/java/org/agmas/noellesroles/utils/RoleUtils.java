@@ -241,6 +241,17 @@ public class RoleUtils {
     }
 
     /**
+     * 判断职业是否相等
+     * 
+     * @return 返回是否相等
+     */
+    public static boolean compareRole(Role role_a, Role role_b) {
+        if(role_a == null && role_b == null) return true;
+        if(role_a == null || role_b == null) return false;
+        return role_a.equals(role_b);
+    }
+
+    /**
      * 获取一个职业从他的路径
      * 
      * @return 返回Role

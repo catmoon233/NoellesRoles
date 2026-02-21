@@ -121,7 +121,6 @@
     "client.vulture.VultureEatenBodyMixin",
     "client.vulture.VultureHudMixin",
     "client.magician.MagicianDisguiseHudMixin",
-    "client.magician.MagicianRoleNameRendererMixin",
     "roles.photographer.BlindnessEffectMixin"
   ],
   "overwrites": {
