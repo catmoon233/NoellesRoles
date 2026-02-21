@@ -127,6 +127,8 @@ public class ModRoles {
     public static ResourceLocation VULTURE_ID = Noellesroles.id("vulture");
     public static final ResourceLocation NIAN_SHOU_ID = Noellesroles.id("nianshou");
     public static final ResourceLocation OLDMAN_ID = Noellesroles.id("oldman");
+    public static final ResourceLocation FORTUNETELLER_ID = Noellesroles.id("fortuneteller");
+
     // ==================== 已注册角色定义 ====================
     // 乘客阵营角色
     public static Role OLDMAN = TMMRoles.registerRole(
@@ -134,6 +136,12 @@ public class ModRoles {
                     true, false, Role.MoodType.REAL,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), false))
             .setCanSeeCoin(true);
+    // 算命大师
+    public static Role FORTUNETELLER = TMMRoles.registerRole(
+            new NormalRole(FORTUNETELLER_ID, new Color(239, 228, 176).getRGB(),
+                    true, false, Role.MoodType.REAL,
+                    TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+            .setCanSeeCoin(true).setCanSeeTime(true);
     public static Role ELF = TMMRoles.registerRole(
             new NormalRole(ELF_ID, new Color(106, 255, 179).getRGB(),
                     true, false, Role.MoodType.REAL,

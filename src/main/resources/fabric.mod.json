@@ -29,6 +29,7 @@
   "accessWidener": "noellesroles.accesswidener",
   "custom": {
     "cardinal-components": [
+      "noellesroles:fortuneteller",
       "noellesroles:defibrillator",
       "noellesroles:death_penalty",
       "noellesroles:morphling",

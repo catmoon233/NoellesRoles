@@ -30,6 +30,7 @@ import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
+import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.entity.WheelchairEntityModel;
 import org.agmas.noellesroles.entity.WheelchairEntityRenderer;
 import org.agmas.noellesroles.packet.*;
@@ -124,10 +125,9 @@ public class NoellesrolesClient implements ClientModInitializer {
     public void onInitializeClient() {
         // 注册HUD渲染
         EntityRendererRegistry.register(ModEntities.WHEELCHAIR, WheelchairEntityRenderer::new);
-        
+
         EntityModelLayerRegistry.registerModelLayer(WheelchairEntityModel.LAYER_LOCATION,
                 WheelchairEntityModel::createBodyLayer);
-                
         AllowNameRender.EVENT.register((target) -> {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(target.level());
             if (gameWorldComponent.isRole(target,
@@ -367,6 +367,11 @@ public class NoellesrolesClient implements ClientModInitializer {
             // if (playerBodyEntity.getPlayerUuid().equals(uuid))
             // ++playerBodyEntity.tickCount;
             // });
+            // }
+            // if (client.player.getVehicle()!=null && client.player.getVehicle() instanceof WheelchairEntity) {
+            //     if (ClientPlayNetworking.canSend(WheelchairMoveC2SPacket.ID)) {
+            //         // ClientPlayNetworking.send(new WheelchairMoveC2SPacket(client.player.input.forwardImpulse, client.player.input.leftImpulse));
+            //     }
             // }
             if (client.level != null && client.level.getGameTime() % 20 == 0) {
                 if (TMMClient.gameComponent != null && client.player != null) {

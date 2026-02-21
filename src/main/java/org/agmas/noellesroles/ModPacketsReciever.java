@@ -39,6 +39,7 @@ import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.SwapperPlayerComponent;
+import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
 import org.agmas.noellesroles.packet.RecorderC2SPacket;
 
@@ -278,7 +279,9 @@ public class ModPacketsReciever {
         ServerPlayNetworking.registerGlobalReceiver(ModPackets.ABILITY_PACKET, (payload, context) -> {
             AbilityHandler.handler(payload, context);
         });
-
+        ServerPlayNetworking.registerGlobalReceiver(AbilityWithTargetC2SPacket.ID, (payload, context) -> {
+            AbilityHandler.handlerWithTarget(payload, context);
+        });
         ServerPlayNetworking.registerGlobalReceiver(ModPackets.INSANE_KILLER_ABILITY_PACKET, (payload, context) -> {
             ServerPlayer player = (ServerPlayer) context.player();
             InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(player);

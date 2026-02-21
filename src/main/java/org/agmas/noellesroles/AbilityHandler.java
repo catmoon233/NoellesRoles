@@ -7,8 +7,10 @@ import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
+import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
+import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
 import org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
 import org.agmas.noellesroles.utils.RoleUtils;
@@ -35,7 +37,6 @@ public class AbilityHandler {
                 .get(context.player().level());
         final ServerPlayer player = context.player();
         if (gameWorldComponent.isRole(context.player(), ModRoles.GLITCH_ROBOT)) {
-
             if (!RoleUtils.isPlayerHasFreeSlot(context.player())) {
                 context.player().displayClientMessage(
                         Component.translatable("message.hotbar.full").withStyle(ChatFormatting.RED), true);
@@ -148,6 +149,8 @@ public class AbilityHandler {
             // 获取准星对准的玩家
             double minDistance = 5.0;
             for (Player otherPlayer : sender.level().players()) {
+                if (otherPlayer.isSpectator())
+                    continue;
                 if (otherPlayer.getUUID().equals(sender.getUUID())) {
                     continue; // 不能给自己发红包
                 }
@@ -196,6 +199,35 @@ public class AbilityHandler {
                                 .withStyle(ChatFormatting.GOLD),
                         true);
             }
+        }
+    }
+
+    public static void handlerWithTarget(AbilityWithTargetC2SPacket payload, Context context) {
+        NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
+                .get(context.player());
+
+        PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY
+                .get(context.player());
+        GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
+                .get(context.player().level());
+        final ServerPlayer player = context.player();
+        var targetPlayer = player.level().getPlayerByUUID(payload.target());
+        if (gameWorldComponent.isRole(player, ModRoles.FORTUNETELLER)) {
+            if (abilityPlayerComponent.cooldown > 0) {
+                player.displayClientMessage(Component.translatable("message.noellesroles.ability_cooldown"), true);
+                return;
+            }
+            if (targetPlayer != null) {
+                if (playerShopComponent.balance >= 150) {
+                    playerShopComponent.addToBalance(-150);
+                    FortunetellerPlayerComponent.KEY.get(player).protectPlayer(targetPlayer);
+                } else {
+                    player.displayClientMessage(Component.translatable("message.noellesroles.insufficient_funds"),
+                            true);
+                    return;
+                }
+            }
+            return;
         }
     }
 }

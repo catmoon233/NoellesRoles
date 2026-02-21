@@ -30,6 +30,7 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
 import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
@@ -464,6 +465,7 @@ public class ModEventsRegister {
             return false;
         }));
         OnPlayerDeath.EVENT.register((playerEntity, reason) -> {
+            FortunetellerPlayerComponent.KEY.get(playerEntity).reset();
             RoleUtils.RemoveAllEffects(playerEntity);
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.level());
             if (gameWorldComponent.isRole(playerEntity,
@@ -475,6 +477,23 @@ public class ModEventsRegister {
                 final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
                 betterVigilantePlayerComponent.reset();
             }
+        });
+        AllowPlayerDeath.EVENT.register((player, deathReason) -> {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+            WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
+            for (var p : player.level().players()) {
+                if (gameWorldComponent.isRole(p, ModRoles.FORTUNETELLER)) {
+                    if (GameFunctions.isPlayerAliveAndSurvival(p)
+                            || (worldModifierComponent.isModifier(p, SEModifiers.SPLIT_PERSONALITY)
+                                    && !SplitPersonalityComponent.KEY.get(p).isDeath())) {
+                        if(FortunetellerPlayerComponent.KEY.get(p).triggerProtect(player)){
+
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         });
         AllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (identifier == GameConstants.DeathReasons.FELL_OUT_OF_TRAIN)

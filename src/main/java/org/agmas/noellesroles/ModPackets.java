@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
+import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
 import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
@@ -23,6 +24,7 @@ import org.agmas.noellesroles.packet.SwapperC2SPacket;
 import org.agmas.noellesroles.packet.ThiefStealC2SPacket;
 import org.agmas.noellesroles.packet.ToggleInsaneSkillC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
+import org.agmas.noellesroles.packet.WheelchairMoveC2SPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
@@ -47,6 +49,10 @@ public class ModPackets {
         PayloadTypeRegistry.playC2S().register(ExecutionerSelectTargetC2SPacket.ID,
                 ExecutionerSelectTargetC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BroadcasterC2SPacket.ID, BroadcasterC2SPacket.CODEC);
+        
+        PayloadTypeRegistry.playC2S().register(AbilityWithTargetC2SPacket.ID, AbilityWithTargetC2SPacket.CODEC);
+
+        PayloadTypeRegistry.playC2S().register(WheelchairMoveC2SPacket.ID, WheelchairMoveC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(BroadcastMessageS2CPacket.ID, BroadcastMessageS2CPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(ScanAllTaskPointsPayload.ID, ScanAllTaskPointsPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(ScanAllTaskPointsPayload.ID, ScanAllTaskPointsPayload.CODEC);

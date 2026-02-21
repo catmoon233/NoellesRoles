@@ -67,5 +67,4 @@ public class WheelchairEntityModel extends EntityModel<WheelchairEntity> {
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, int k) {
 		bb_main.render(poseStack, vertexConsumer, i, j, k);
 	}
-
 }

@@ -2,12 +2,14 @@ package org.agmas.noellesroles.client;
 
 import org.agmas.noellesroles.client.screen.BroadcasterScreen;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
+import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 
 public class ClientAbilityHandler {
 
@@ -25,7 +27,16 @@ public class ClientAbilityHandler {
             ClientPlayNetworking.send(new AbilityC2SPacket());
             return;
         }
-
+        if (gameWorldComponent.isRole(client.player, ModRoles.FORTUNETELLER)) {
+            var hitResult = client.hitResult;
+            if (hitResult.getType() == net.minecraft.world.phys.HitResult.Type.ENTITY) {
+                net.minecraft.world.phys.EntityHitResult entityHit = (net.minecraft.world.phys.EntityHitResult) hitResult;
+                if (entityHit.getEntity() instanceof Player targetPlayer) {
+                    ClientPlayNetworking.send(new AbilityWithTargetC2SPacket(targetPlayer));
+                }
+            }
+            return;
+        }
         if (RicesRoleRhapsodyClient.onAbilityKeyPressed(client)) {
             return;
         }
