@@ -1,25 +1,5 @@
 package org.agmas.noellesroles.mixin.client.coroner;
 
-import com.llamalad7.mixinextras.sugar.Local;
-
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-
-import dev.doctor4t.trainmurdermystery.client.TMMClient;
-import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.player.Player;
-import pro.fazeclan.river.stupid_express.constants.SEModifiers;
-import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
-import net.minecraft.network.chat.Component;
-
 import java.awt.Color;
 
 import org.agmas.harpymodloader.Harpymodloader;
@@ -36,13 +16,31 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.client.TMMClient;
+import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 @Mixin(RoleNameRenderer.class)
 public abstract class CustomRolesRoleNameRendererMixin {
 
     @Shadow
     private static float nametagAlpha;
 
-    @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I", ordinal = 0))
+    @Inject(method = "renderHud", at = @At("TAIL"))
     private static void b(Font renderer, @NotNull LocalPlayer lp, GuiGraphics context, DeltaTracker tickCounter,
             CallbackInfo ci) {
         if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null)

@@ -65,7 +65,7 @@ public abstract class MagicianDisguiseHudMixin {
 
         // 获取伪装角色的翻译
         Component roleText = Component.translatable("announcement.role." + disguiseId.getPath());
-        Component fullText = Component.literal("你正在扮演：")
+        Component fullText = Component.translatable("message.magician.cosplay")
                 .append(roleText)
                 .withStyle(ChatFormatting.GOLD);
 
