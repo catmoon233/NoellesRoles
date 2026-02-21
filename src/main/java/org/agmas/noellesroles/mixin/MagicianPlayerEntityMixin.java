@@ -37,7 +37,7 @@ public class MagicianPlayerEntityMixin {
             Player targetPlayer = (Player) target;
 
             // 击退目标 - 削弱到很小的距离
-            double knockbackStrength = 0.15;
+            double knockbackStrength = 0.3;
             double dx = targetPlayer.getX() - player.getX();
             double dy = targetPlayer.getY() - player.getY();
             double dz = targetPlayer.getZ() - player.getZ();
