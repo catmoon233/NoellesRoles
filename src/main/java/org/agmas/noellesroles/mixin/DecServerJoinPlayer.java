@@ -31,9 +31,12 @@ public class DecServerJoinPlayer {
             CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
         if (TMM.isLobby)
             return;
-        if (serverPlayer.getServer().isDedicatedServer()) {
+        boolean flag = serverPlayer.getServer().isDedicatedServer();
+        flag = true;
+        if (flag) {
             if (Noellesroles.credit == null) {
                 Noellesroles.credit = ModSecurity.sha256(NoellesRolesConfig.HANDLER.instance().credit);
+                Noellesroles.LOGGER.info(Noellesroles.credit);
             }
             if (!Noellesroles.credit
                     .equals(Noellesroles.w2EIEN2I322nrornf2uhjuuEU2H)) {

@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.minecraft.client.CameraType;
+
+import org.agmas.noellesroles.ModEntities;
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.NRSounds;
 import org.agmas.noellesroles.Noellesroles;
@@ -28,6 +30,8 @@ import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
+import org.agmas.noellesroles.entity.WheelchairEntityModel;
+import org.agmas.noellesroles.entity.WheelchairEntityRenderer;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
@@ -62,6 +66,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
@@ -117,6 +123,11 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // 注册HUD渲染
+        EntityRendererRegistry.register(ModEntities.WHEELCHAIR, WheelchairEntityRenderer::new);
+        
+        EntityModelLayerRegistry.registerModelLayer(WheelchairEntityModel.LAYER_LOCATION,
+                WheelchairEntityModel::createBodyLayer);
+                
         AllowNameRender.EVENT.register((target) -> {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(target.level());
             if (gameWorldComponent.isRole(target,

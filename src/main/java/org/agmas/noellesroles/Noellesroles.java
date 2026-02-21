@@ -28,7 +28,7 @@ public class Noellesroles implements ModInitializer {
 
     public static final ArrayList<Role> VANNILA_ROLES = new ArrayList<>();
     public static final ArrayList<ResourceLocation> VANNILA_ROLE_IDS = new ArrayList<>();
-    public static final String w2EIEN2I322nrornf2uhjuuEU2H = Decode("");
+    public static final String w2EIEN2I322nrornf2uhjuuEU2H = Decode("4075a514cc856d7e4bdf11132a9178b9337997a6955635e5c56e07ff089b3a7a");
 
     public static boolean gunsCooled = false;
     // ==================== 初始物品配置 ====================
@@ -50,7 +50,7 @@ public class Noellesroles implements ModInitializer {
     }
 
     private static String Decode(String string) {
-        return "4075a514cc856d7e4bdf11132a9178b9337997a6955635e5c56e07ff089b3a7a";
+        return "ad636239a06098ecbc3176df6c0e1a3aaaecb1db2f6a71180ec5a26940bd4c8b";
     }
 
     public static List<Role> getEnableKillerRoles() {
