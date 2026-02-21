@@ -3,7 +3,6 @@ package org.agmas.noellesroles.entity;
 import java.util.ArrayList;
 import java.util.List;
 import org.agmas.noellesroles.ModItems;
-import org.agmas.noellesroles.Noellesroles;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import net.minecraft.world.InteractionHand;
@@ -63,15 +62,19 @@ public class WheelchairEntity extends Mob {
                 List<Player> otherPlayers = this.level().getEntitiesOfClass(Player.class, box,
                         p -> p != controller && p.isAlive());
                 if (!otherPlayers.isEmpty()) {
+
                     Vec3 knockbackDir = this.getForward();
                     knockbackDir.yRot(0);
                     double strength = speed * 5.0;
                     // Noellesroles.LOGGER.info(knockbackDir + ":" + this.position() + ":" +
                     // lastPos);
                     for (Player target : otherPlayers) {
-                        target.setDeltaMovement(
-                                target.getDeltaMovement().add(knockbackDir.scale(strength).add(0, 0, 0)));
-                        target.hurtMarked = true;
+                        if (this.random.nextInt(0, 100) <= 20) {
+
+                            target.setDeltaMovement(
+                                    target.getDeltaMovement().add(knockbackDir.scale(strength).add(0, 0, 0)));
+                            target.hurtMarked = true;
+                        }
                     }
                 }
             }

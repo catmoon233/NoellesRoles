@@ -9,6 +9,7 @@ import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 public class ClientAbilityHandler {
@@ -34,6 +35,8 @@ public class ClientAbilityHandler {
                 if (entityHit.getEntity() instanceof Player targetPlayer) {
                     ClientPlayNetworking.send(new AbilityWithTargetC2SPacket(targetPlayer));
                 }
+            } else {
+                client.player.displayClientMessage(Component.translatable("hud.fortuneteller.target_miss"), true);
             }
             return;
         }
