@@ -63,9 +63,6 @@ public class FortunetellerPlayerComponent implements RoleComponent, ServerTickin
         }
     }
 
-    public void useAbility() {
-    }
-
     public void protectPlayer(Player target) {
         UUID puid = target.getUUID();
         protectedPlayers.add(new ProtectedInfo(puid, MAX_PROTECT_TIME));
@@ -75,6 +72,7 @@ public class FortunetellerPlayerComponent implements RoleComponent, ServerTickin
                 Component.translatable("message.fortuneteller.been_protected", player.getDisplayName())
                         .withStyle(ChatFormatting.GOLD),
                 true);
+        this.sync();
     }
 
     public void serverTick() {
@@ -163,8 +161,12 @@ public class FortunetellerPlayerComponent implements RoleComponent, ServerTickin
             double x = player.getX();
             double y = player.getY();
             double z = player.getZ();
-            player2.displayClientMessage(Component.translatable("message.fortuneteller.protection_active_self").withStyle(ChatFormatting.AQUA), true);
-            player.displayClientMessage(Component.translatable("message.fortuneteller.protection_active_role",player2.getDisplayName()).withStyle(ChatFormatting.AQUA), true);
+            player2.displayClientMessage(Component.translatable("message.fortuneteller.protection_active_self")
+                    .withStyle(ChatFormatting.AQUA), true);
+            player.displayClientMessage(
+                    Component.translatable("message.fortuneteller.protection_active_role", player2.getDisplayName())
+                            .withStyle(ChatFormatting.AQUA),
+                    true);
             player2.teleportTo(x, y, z);
             return true;
         }
