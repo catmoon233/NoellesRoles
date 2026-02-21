@@ -8,6 +8,7 @@ import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.agmas.noellesroles.packet.PlayerResetS2CPacket;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
@@ -74,7 +75,9 @@ public abstract class PlayerResetMixin {
         (RecallerPlayerComponent.KEY.get(player)).reset();
         (VulturePlayerComponent.KEY.get(player)).reset();
         (ExecutionerPlayerComponent.KEY.get(player)).reset();
-
+        
+        FortunetellerPlayerComponent.KEY.get(player).reset();
+        
         BartenderPlayerComponent barComc = BartenderPlayerComponent.KEY.get(player);
         barComc.reset();
 
