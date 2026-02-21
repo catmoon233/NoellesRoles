@@ -9,7 +9,7 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * 魔术师玩家实体Mixin
@@ -23,7 +23,7 @@ public class MagicianPlayerEntityMixin {
      * 如果玩家手持假球棒且目标是玩家，则只造成击退而不击杀
      */
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
-    private void noellesroles$handleFakeBatAttack(Entity target, CallbackInfoReturnable<Boolean> cir) {
+    private void noellesroles$handleFakeBatAttack(Entity target, CallbackInfo ci) {
         Player player = (Player) (Object) this;
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
 
@@ -59,7 +59,7 @@ public class MagicianPlayerEntityMixin {
             }
 
             // 取消原始攻击逻辑
-            cir.setReturnValue(false);
+            ci.cancel();
         }
     }
 }
