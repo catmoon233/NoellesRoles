@@ -73,7 +73,7 @@ public class RoleShopHandler {
      * 初始化框架角色商店
      */
     public static void initializeFramingShop() {
-        FRAMING_ROLES_SHOP.add(new FramingShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
+        FRAMING_ROLES_SHOP.add(new FramingShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
         FRAMING_ROLES_SHOP
                 .add(new FramingShopEntry(ModItems.DELUSION_VIAL.getDefaultInstance(), 30, ShopEntry.Type.POISON));
         FRAMING_ROLES_SHOP.add(new FramingShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), 5, ShopEntry.Type.TOOL));
@@ -87,7 +87,7 @@ public class RoleShopHandler {
         initShops();
         ShopContent.register();
         {
-            // 死灵法师的商店
+            // 老人的商店
             var SHOP = new ArrayList<ShopEntry>();
 
             SHOP.add(new ShopEntry(ModItems.WHEELCHAIR.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
@@ -104,7 +104,7 @@ public class RoleShopHandler {
             // 指挥官的商店
             var NECROMANCER_SHOP = new ArrayList<ShopEntry>();
             NECROMANCER_SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
-            ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
+            ShopContent.customEntries.put(ModRoles.COMMANDER_ID, NECROMANCER_SHOP);
         }
         {
             // 游侠商店
@@ -277,7 +277,7 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.ADMIRER_ID,
-                    List.of(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 150, ShopEntry.Type.TOOL)));
+                    List.of(new ShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 150, ShopEntry.Type.TOOL)));
         }
         {
             ShopContent.customEntries.put(

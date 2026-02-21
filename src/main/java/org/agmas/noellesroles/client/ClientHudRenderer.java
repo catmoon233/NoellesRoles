@@ -61,9 +61,9 @@ public class ClientHudRenderer {
             }
             if (abpc.cooldown > 0) {
                 var text = Component
-                        .translatable("hud.fortuneteller.cooldown")
+                        .translatable("hud.fortuneteller.cooldown", abpc.cooldown / 20)
                         .withStyle(ChatFormatting.YELLOW);
-                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
+            guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
             } else {
                 var text = Component
                         .translatable("hud.fortuneteller.ready",
