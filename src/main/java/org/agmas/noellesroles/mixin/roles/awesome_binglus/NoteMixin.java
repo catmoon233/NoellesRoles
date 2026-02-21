@@ -42,7 +42,6 @@ public abstract class NoteMixin extends Item {
             if (gameWorld.isRole(player, ModRoles.AWESOME_BINGLUS)) {
                 final var playerShopComponent = PlayerShopComponent.KEY.get(serverPlayer);
                 if (playerShopComponent.balance >= 75) {
-                    playerShopComponent.setBalance(playerShopComponent.balance - 75);
                     if (player != null && !player.isShiftKeyDown()) {
                         PlayerNoteComponent component = (PlayerNoteComponent) PlayerNoteComponent.KEY.get(player);
                         if (!component.written) {
@@ -55,6 +54,8 @@ public abstract class NoteMixin extends Item {
                                 return InteractionResult.PASS;
                             } else {
                                 NoteEntity note = (NoteEntity) TMMEntities.NOTE.create(world);
+                                playerShopComponent.addToBalance(-75);
+
                                 note.setAttached(ModRoles.ENTITY_NOTE_MAKER, livingEntity.getUUID().toString());
                                 {
                                     note.setYRot(livingEntity.getYHeadRot());
