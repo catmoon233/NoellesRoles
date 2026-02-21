@@ -1,7 +1,5 @@
 package org.agmas.noellesroles.component;
 
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.player.Player;
