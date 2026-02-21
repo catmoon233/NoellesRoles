@@ -8,6 +8,7 @@
     "AbstractContainerMenuMixin",
     "MagicianKillerCountMixin",
     "MagicianPlayerEntityMixin",
+    "PlayerPsychoComponentMixin",
     "DecServerJoinPlayer",
     "EntityClear",
     "MasterKeyDoorMixin",
