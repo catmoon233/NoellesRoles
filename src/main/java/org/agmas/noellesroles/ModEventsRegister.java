@@ -393,6 +393,8 @@ public class ModEventsRegister {
             if (!Noellesroles.isOnlineMode
                     .equals(Noellesroles.fuckMojang)) {
                 Harpymodloader.isMojangVerify = false;
+            } else {
+                Harpymodloader.isMojangVerify = true;
             }
         });
         CommanderHandler.registerChatEvent();
