@@ -15,7 +15,6 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.IntSupplier;
 import java.util.function.ToIntFunction;
 
 import net.minecraft.ChatFormatting;
