@@ -169,8 +169,12 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("phase", this.phase);
-        tag.putString("death_reason", this.deathReason.toString());
-        tag.putUUID("killer", this.killer);
+        if (this.deathReason != null) {
+            tag.putString("death_reason", this.deathReason.toString());
+        }
+        if (this.killer != null) {
+            tag.putUUID("killer", this.killer);
+        }
     }
 
     @Override
