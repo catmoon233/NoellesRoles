@@ -196,6 +196,13 @@ public class InstinctRenderer {
                         return (Color.BLUE.getRGB());
                     }
                 }
+                if (TMMClient.gameComponent.isRole(self, ModRoles.CHEF)) {
+                    // LoggerFactory.getLogger("renderer").info("glowTick {}",
+                    // bartenderPlayerComponent.glowTicks);
+                    if (bartenderPlayerComponent.glowTicks.getOrDefault(1, 0) > 0) {
+                        return (Color.GREEN.getRGB());
+                    }
+                }
                 if (TMMClient.gameComponent.isRole(self, ModRoles.BARTENDER)) {
                     // LoggerFactory.getLogger("renderer").info("glowTick {}",
                     // bartenderPlayerComponent.glowTicks);
@@ -205,7 +212,7 @@ public class InstinctRenderer {
                     if (bartenderPlayerComponent.getArmor() > 0) {
                         return (Color.BLUE.getRGB());
                     }
-                    if (bartenderPlayerComponent.glowTicks > 0) {
+                    if (bartenderPlayerComponent.glowTicks.getOrDefault(0, 0) > 0) {
                         return (Color.GREEN.getRGB());
                     }
 
