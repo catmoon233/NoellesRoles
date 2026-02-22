@@ -64,7 +64,8 @@ public class BodyDeathReasonComponent implements RoleComponent, ServerTickingCom
         tag.putString("deathReason", deathReason.toString());
         tag.putString("playerRole", playerRole.toString());
         tag.putBoolean("vultured", vultured);
-        tag.putUUID("killer", killer);
+        if (this.killer != null)
+            tag.putUUID("killer", killer);
     }
 
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {

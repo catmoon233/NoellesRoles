@@ -9,7 +9,6 @@ import io.github.mortuusars.exposure.util.color.Color;
 
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.utils.RoleUtils;
@@ -388,9 +387,9 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
             int screenWidth = guiGraphics.guiWidth();
             int screenHeight = guiGraphics.guiHeight();
             var font = client.font;
-            final int lineHeight = (font.lineHeight + 4);
-            int yOffset = screenHeight - lineHeight * 3; // 右下角
-            int xOffset = screenWidth - 10; // 距离右边缘
+            final int lineHeight = (font.lineHeight + 8);
+            int yOffset = screenHeight - lineHeight * 4; // 右下角
+            int xOffset = screenWidth - 30; // 距离右边缘
             var wayC = WayfarerPlayerComponent.KEY.get(client.player);
             Component phaseText = Component.translatable("hud.noellesroles.wayfarer.phase." + wayC.phase + ".title")
                     .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD);

@@ -17,15 +17,7 @@ import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
- * 通用技能组件
- *
- * 用于管理玩家的技能冷却时间和使用次数
- * 该组件会自动在客户端和服务端之间同步
- *
- * 功能：
- * - 冷却时间管理（自动递减）
- * - 技能使用次数限制
- * - 自动同步到客户端（用于 HUD 显示）
+ * 记者最近死亡记录组件
  */
 public class AwesomePlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 

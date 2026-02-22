@@ -2,6 +2,7 @@ package org.agmas.noellesroles.client;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
+import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.MagicianPlayerComponent;
@@ -23,12 +24,14 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.OnGetInstinctHighlight;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 
 import java.awt.Color;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import pro.fazeclan.river.stupid_express.StupidExpress;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
@@ -102,6 +105,10 @@ public class InstinctRenderer {
                 return -1;
             if (GameFunctions.isPlayerSpectatingOrCreative(Minecraft.getInstance().player))
                 return -1;
+            Player player = Minecraft.getInstance().player;
+            if(!player.getMainHandItem().is(TMMItems.KNIFE)){
+                return -2;
+            }
             if (target instanceof Player targettedPlayer) {
                 if (TMMClient.gameComponent.isRole(targettedPlayer, SERoles.INITIATE)
                         && TMMClient.gameComponent.isRole(Minecraft.getInstance().player, SERoles.INITIATE)) {
@@ -153,6 +160,32 @@ public class InstinctRenderer {
             if (TMMClient.gameComponent == null) {
                 return -1;
             }
+            if (!(target instanceof Player targetPlayer)) {
+                return -1;
+            }
+            if (!TMMClient.gameComponent.isRole(self, ModRoles.AWESOME_BINGLUS)) {
+                return -1;
+            }
+            if (TMMClient.isPlayerSpectatingOrCreative()) {
+                return -1;
+            }
+            if (targetPlayer.distanceTo(self) <= 5) {
+                var awpc = AwesomePlayerComponent.KEY.get(targetPlayer);
+                // Mth.(awpc.nearByDeathTime);
+            }
+        });
+        // 记者
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            if (Minecraft.getInstance() == null)
+                return -1;
+            var self = Minecraft.getInstance().player;
+            if (self == null)
+                return -1;
+            if (GameFunctions.isPlayerSpectatingOrCreative(self))
+                return -1;
+            if (TMMClient.gameComponent == null) {
+                return -1;
+            }
             if (!(target instanceof PlayerBodyEntity)) {
                 return -1;
             }
@@ -189,7 +222,7 @@ public class InstinctRenderer {
             }
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
-                
+
                 // 红尘客
                 if (TMMClient.gameComponent.isRole(self, ModRoles.WAYFARER)) {
                     if (GameFunctions.isPlayerAliveAndSurvival(target_player)) {

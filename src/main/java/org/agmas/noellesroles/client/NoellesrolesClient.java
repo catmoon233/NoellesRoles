@@ -26,7 +26,6 @@ import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.event.MutableComponentResult;
 import org.agmas.noellesroles.client.event.OnMessageBelowMoneyRenderer;
 import org.agmas.noellesroles.client.screen.*;
-import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.MagicianPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -39,7 +38,6 @@ import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
-import org.agmas.noellesroles.roles.awesome_binglus.AwesomeClientHandler;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.utils.lottery.LotteryManager;
 import org.lwjgl.glfw.GLFW;
@@ -398,18 +396,18 @@ public class NoellesrolesClient implements ClientModInitializer {
 
             if (client.level != null && client.level.getGameTime() % 20 == 0) {
                 if (TMMClient.gameComponent != null && client.player != null) {
-                    if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS)) {
-                        for (var p : client.player.level().players()) {
-                            if (GameFunctions.isPlayerAliveAndSurvival(p)) {
-                                if (p.distanceTo(client.player) <= 5) {
-                                    var aweC = AwesomePlayerComponent.KEY.maybeGet(p).orElse(null);
-                                    if (aweC != null) {
-                                        AwesomeClientHandler.renderParticleOfPlayer(client, p, aweC);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS)) {
+                    //     for (var p : client.player.level().players()) {
+                    //         if (GameFunctions.isPlayerAliveAndSurvival(p)) {
+                    //             if (p.distanceTo(client.player) <= 5) {
+                    //                 var aweC = AwesomePlayerComponent.KEY.maybeGet(p).orElse(null);
+                    //                 if (aweC != null) {
+                    //                     AwesomeClientHandler.renderParticleOfPlayer(client, p, aweC);
+                    //                 }
+                    //             }
+                    //         }
+                    //     }
+                    // }
                 }
             }
             if (roleGuessNoteClientBind.consumeClick()) {
