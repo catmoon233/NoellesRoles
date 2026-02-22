@@ -4,7 +4,6 @@ import java.awt.Color;
 
 import org.agmas.noellesroles.AttendantHandler;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
-import org.agmas.noellesroles.component.WayfarerPlayerComponent;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHudRender;
@@ -21,7 +20,7 @@ public class ClientHudRenderer {
 
     public static void registerRenderersEvent() {
         CommanderHudRender.register();
-        WayfarerPlayerComponent.registerRendererEvent();
+        WayfarerHudRenderer.registerRendererEvent();
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             // 渲染清道夫的提示
             var client = Minecraft.getInstance();
