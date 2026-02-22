@@ -40,7 +40,7 @@ public abstract class CustomRolesRoleNameRendererMixin {
     @Shadow
     private static float nametagAlpha;
 
-    @Inject(method = "renderHud", at = @At("TAIL"))
+    @Inject(method = "renderHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I", ordinal = 0))
     private static void b(Font renderer, @NotNull LocalPlayer lp, GuiGraphics context, DeltaTracker tickCounter,
             CallbackInfo ci) {
         if (Minecraft.getInstance() == null || Minecraft.getInstance().player == null)

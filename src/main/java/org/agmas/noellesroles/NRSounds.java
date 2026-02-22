@@ -9,6 +9,7 @@ public class NRSounds {
     public static final SoundEvent GONGXI_FACAI = registrar.create("noellesroles.gongxifacai");
     public static final SoundEvent HARPY_WELCOME = registrar.create("noellesroles.harpy_welcome");
     public static final SoundEvent WIND = registrar.create("noellesroles.wind");
+    public static final SoundEvent JESTER_AMBIENT = registrar.create("noellesroles.jester");
     public static void initialize() {
         registrar.registerEntries();
     }

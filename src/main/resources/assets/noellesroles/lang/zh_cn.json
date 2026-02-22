@@ -855,5 +855,6 @@
   "hud.cleaner.cooldown": "冷却中，剩余 %ss",
   "hud.cleaner.ready": "按下 %s 清除周围 5 格的掉落物",
   "message.monitor.killer_killed": "你察觉到 %s 死去了...",
-  "subtitles.noellesroles.wind": "风声"
+  "subtitles.noellesroles.wind": "风声",
+  "subtitles.noellesroles.jester": "小丑狂暴"
 }

@@ -31,5 +31,26 @@
 			}
 		],
 		"subtitle": "subtitles.noellesroles.wind"
+	},
+	"noellesroles.jester": {
+		"sounds": [
+			{
+				"name": "noellesroles:jester/axel_f",
+				"stream": true
+			},
+			{
+				"name": "noellesroles:jester/un_owen",
+				"stream": true
+			},
+			{
+				"name": "noellesroles:jester/yaosemountain",
+				"stream": true
+			},
+			{
+				"name": "noellesroles:jester/zombieempiror_song",
+				"stream": true
+			}
+		],
+		"subtitle": "subtitles.noellesroles.jester"
 	}
 }

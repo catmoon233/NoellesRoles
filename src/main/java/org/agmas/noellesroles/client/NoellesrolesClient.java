@@ -48,10 +48,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
 
+import dev.doctor4t.ratatouille.client.util.ambience.AmbienceUtil;
+import dev.doctor4t.ratatouille.client.util.ambience.BackgroundAmbience;
 import dev.doctor4t.ratatouille.util.TextUtils;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.client.StaminaRenderer;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
@@ -126,6 +129,29 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // 注册HUD渲染
+
+        AmbienceUtil.registerBackgroundAmbience(
+                new BackgroundAmbience(NRSounds.JESTER_AMBIENT,
+                        player -> {
+                            if (TMMClient.gameComponent == null)
+                                return false;
+                            if (TMMClient.gameComponent.isPsychoActive()) {
+                                var level = Minecraft.getInstance().level;
+                                if (level == null)
+                                    return false;
+                                return (level.players().stream().anyMatch((p) -> {
+                                    if (TMMClient.gameComponent.isRole(p, ModRoles.JESTER)) {
+                                        if (PlayerPsychoComponent.KEY.get(p).getPsychoTicks() > 0) {
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }));
+                            }
+                            return false;
+                        },
+                        1));
+
         EntityRendererRegistry.register(ModEntities.WHEELCHAIR, WheelchairEntityRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(WheelchairEntityModel.LAYER_LOCATION,
@@ -134,7 +160,6 @@ public class NoellesrolesClient implements ClientModInitializer {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(target.level());
             if (gameWorldComponent.isRole(target,
                     ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
-
                 var insaneComponent = InsaneKillerPlayerComponent.KEY.get(target);
                 if (insaneComponent != null) {
                     if (insaneComponent.isActive || insaneComponent.inNearDeath()) {
