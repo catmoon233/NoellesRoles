@@ -24,7 +24,6 @@ public abstract class CoronerAddDeathReasonMixin {
         bodyDeathReasonComponent.deathReason = identifier;
         bodyDeathReasonComponent.playerRole = gameWorldComponent.getRole(victim).identifier();
         bodyDeathReasonComponent.sync();
-
     }
 
 }

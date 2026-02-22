@@ -2,10 +2,14 @@ package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions.WinStatus;
+import dev.doctor4t.trainmurdermystery.index.TMMEntities;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
+import io.github.mortuusars.exposure.util.color.Color;
+
 import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.client.NoellesrolesClient;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.utils.RoleUtils;
@@ -14,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerKilledPlayer;
@@ -23,17 +28,23 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import java.util.OptionalInt;
 import java.util.UUID;
 
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 红尘客组件
@@ -66,7 +77,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
      * 死亡原因
      * 存储只存Path
      */
-    public String deathReason;
+    public ResourceLocation deathReason;
 
     public WayfarerPlayerComponent(Player player) {
         this.player = player;
@@ -158,14 +169,15 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("phase", this.phase);
-        tag.putString("death_reason", this.deathReason);
+        tag.putString("death_reason", this.deathReason.toString());
         tag.putUUID("killer", this.killer);
     }
 
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.phase = tag.contains("phase") ? tag.getInt("phase") : 0;
-        this.deathReason = tag.contains("death_reason") ? tag.getString("death_reason") : null;
+        this.deathReason = tag.contains("death_reason") ? ResourceLocation.tryParse(tag.getString("death_reason"))
+                : null;
         if (tag.contains("killer")) {
             this.killer = tag.hasUUID("killer") ? tag.getUUID("killer") : null;
         } else {
@@ -184,8 +196,8 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
                 TMMItemUtils.clearItem(victim, TMMItems.KNIFE);
                 var wayC = WayfarerPlayerComponent.KEY.get(victim);
                 if (wayC.phase == 2) {
-                    if (deathReason.getPath().equals(wayC.deathReason)) {
-                        wayC.startPhaseThree();
+                    if (deathReason.getPath().equals(wayC.deathReason.getPath())) {
+                        wayC.startPhaseThree(deathReason);
                         return false;
                     }
                 } else {
@@ -248,11 +260,27 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         });
     }
 
-    public void startPhaseThree() {
+    public void startPhaseThree(ResourceLocation trueDeathReason) {
         this.phase = 3;
         this.killer = null;
         this.deathReason = null;
-
+        this.player.addEffect(new MobEffectInstance(
+                MobEffects.INVISIBILITY,
+                200, // 持续时间（tick）
+                1, // 等级（0 = 速度 I）
+                false, // ambient（环境效果，如信标）
+                false, // showParticles（显示粒子）
+                true // showIcon（显示图标）
+        ));
+        this.player.addEffect(new MobEffectInstance(
+                MobEffects.MOVEMENT_SLOWDOWN,
+                200, // 持续时间（tick）
+                10, // 等级（0 = 速度 I）
+                false, // ambient（环境效果，如信标）
+                false, // showParticles（显示粒子）
+                true // showIcon（显示图标）
+        ));
+        // 隐身并且不动
         TMMItemUtils.clearItem(player, TMMItems.KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
@@ -261,6 +289,20 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         player.displayClientMessage(
                 Component.translatable("message.noellesroles.wayfarer.phase.2.finish").withStyle(ChatFormatting.GOLD),
                 true);
+        // 生成尸体
+        PlayerBodyEntity body = (PlayerBodyEntity) TMMEntities.PLAYER_BODY.create(this.player.level());
+        if (body != null) {
+            body.setPlayerUuid(player.getUUID());
+            Vec3 spawnPos = player.position().add(player.getLookAngle().normalize().scale(1.0));
+            body.moveTo(spawnPos.x(), player.getY(), spawnPos.z(), player.getYHeadRot(), 0.0F);
+            body.setYRot(player.getYHeadRot());
+            body.setYHeadRot(player.getYHeadRot());
+            player.level().addFreshEntity(body);
+            final var bodyDeathReasonComponent = BodyDeathReasonComponent.KEY.get(body);
+            bodyDeathReasonComponent.deathReason = trueDeathReason;
+            bodyDeathReasonComponent.playerRole = ModRoles.WAYFARER_ID;
+            bodyDeathReasonComponent.sync();
+        }
         this.sync();
     }
 
@@ -324,7 +366,64 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         this.phase = 1;
         this.killer = targetKiller.getUUID();
         this.player.displayClientMessage(Component.translatable("", targetKiller.getDisplayName()), true);
-        this.deathReason = bodyDeathReasonComponent.deathReason.getPath();
+        this.deathReason = bodyDeathReasonComponent.deathReason;
         this.sync();
+    }
+
+    public static void registerRendererEvent() {
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            // 渲染清道夫的提示
+            var client = Minecraft.getInstance();
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null || !TMMClient.gameComponent.isRole(client.player, ModRoles.WAYFARER)) {
+                return;
+            }
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            final int lineHeight = (font.lineHeight + 4);
+            int yOffset = screenHeight - lineHeight * 3; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+            var wayC = WayfarerPlayerComponent.KEY.get(client.player);
+            Component phaseText = Component.translatable("hud.noellesroles.wayfarer.phase." + wayC.phase + ".title")
+                    .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD);
+            Component descText = Component.translatable("hud.noellesroles.wayfarer.phase." + wayC.phase + ".desc")
+                    .withStyle(ChatFormatting.WHITE);
+            Component tipText = Component.translatable("hud.noellesroles.wayfarer.phase.0.tip")
+                    .withStyle(ChatFormatting.YELLOW);
+
+            if (wayC.phase == 1) {
+                Component killerText = Component.translatable("hud.noellesroles.wayfarer.phase.1.unknown_killer")
+                        .withStyle(ChatFormatting.GRAY);
+                if (wayC.killer != null) {
+                    Player killer = client.level.getPlayerByUUID(wayC.killer);
+                    if (killer != null) {
+                        killerText = Component.literal(killer.getDisplayName().getString())
+                                .withStyle(ChatFormatting.GOLD);
+                    }
+                }
+                tipText = Component.translatable("hud.noellesroles.wayfarer.phase.1.tip", killerText)
+                        .withStyle(ChatFormatting.YELLOW);
+            } else if (wayC.phase == 2) {
+                Component killerText = Component.translatable("death_reason." + wayC.deathReason.toLanguageKey())
+                        .withStyle(ChatFormatting.LIGHT_PURPLE);
+                tipText = Component.translatable("hud.noellesroles.wayfarer.phase.2.tip", killerText)
+                        .withStyle(ChatFormatting.AQUA);
+            } else if (wayC.phase == 3) {
+                tipText = Component.translatable("hud.noellesroles.wayfarer.phase.3.tip")
+                        .withStyle(ChatFormatting.GREEN);
+            }
+            guiGraphics.drawString(font, phaseText, xOffset - font.width(phaseText), yOffset,
+                    Color.WHITE.getRGB());
+            guiGraphics.drawString(font, descText, xOffset - font.width(descText), yOffset + lineHeight,
+                    Color.WHITE.getRGB());
+
+            guiGraphics.drawString(font, tipText, xOffset - font.width(tipText), yOffset + lineHeight * 2,
+                    Color.WHITE.getRGB());
+            return;
+        });
     }
 }

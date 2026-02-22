@@ -122,7 +122,7 @@
     "client.vulture.VultureHudMixin",
     "client.magician.MagicianDisguiseHudMixin",
     "roles.photographer.BlindnessEffectMixin",
-    "client.wayfarer.NecromancerHudMixin"
+    "client.wayfarer.TargetEntityHudmixin"
   ],
   "overwrites": {
     "requireAnnotations": true
