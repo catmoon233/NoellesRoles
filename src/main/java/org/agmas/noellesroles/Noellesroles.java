@@ -94,6 +94,7 @@ public class Noellesroles implements ModInitializer {
         SetRoleMaxCommand.register();
         ConfigCommand.register();
         LootCommand.register();
+        RoomCommand.register();
         DisplayItemCommand.register();
 
         // 注册网络包类型

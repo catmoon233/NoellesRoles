@@ -356,6 +356,13 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(
                     ModRoles.WIND_YAOSE_ID, entries);
         }
+        // 厨师
+        {
+            List<ShopEntry> entries = new ArrayList<>();
+            entries.add(new ShopEntry(ModItems.PAN.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(
+                    ModRoles.CHEF_ID, entries);
+        }
         // 警长商店
         {
             List<ShopEntry> entries = new ArrayList<>();

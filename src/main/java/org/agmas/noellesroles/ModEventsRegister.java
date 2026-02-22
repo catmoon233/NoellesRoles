@@ -385,17 +385,24 @@ public class ModEventsRegister {
         }
     }
 
+    private static boolean isEnabled = false;
+
     public static void registerEvents() {
         ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
-            if (Noellesroles.isOnlineMode == null) {
-                Noellesroles.isOnlineMode = ServerManager.onlineCheck(NoellesRolesConfig.HANDLER.instance().credit);
-            }
-            if (!Noellesroles.isOnlineMode
-                    .equals(Noellesroles.fuckMojang)) {
-                Harpymodloader.isMojangVerify = false;
+            if (isEnabled) {
+                if (Noellesroles.isOnlineMode == null) {
+                    Noellesroles.isOnlineMode = ServerManager.onlineCheck(NoellesRolesConfig.HANDLER.instance().credit);
+                }
+                if (!Noellesroles.isOnlineMode
+                        .equals(Noellesroles.fuckMojang)) {
+                    Harpymodloader.isMojangVerify = false;
+                } else {
+                    Harpymodloader.isMojangVerify = true;
+                }
             } else {
                 Harpymodloader.isMojangVerify = true;
             }
+
         });
         CommanderHandler.registerChatEvent();
         InsaneKillerPlayerComponent.registerEvent();

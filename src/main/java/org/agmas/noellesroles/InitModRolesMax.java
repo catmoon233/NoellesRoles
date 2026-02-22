@@ -54,6 +54,10 @@ public class InitModRolesMax {
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.OLDMAN_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.CHEF_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.FORTUNETELLER_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.WIND_YAOSE_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.WAYFARER_ID, 1);
     }
 
     public static void registerDynamic() {

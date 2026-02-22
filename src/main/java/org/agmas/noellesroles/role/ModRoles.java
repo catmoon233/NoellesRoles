@@ -103,6 +103,7 @@ public class ModRoles {
     public static final ResourceLocation PHOTOGRAPHER_ID = Noellesroles.id("photographer");
     public static ResourceLocation ELF_ID = Noellesroles.id("elf");
     public static ResourceLocation WIND_YAOSE_ID = Noellesroles.id("wind_yaose");
+    public static ResourceLocation CHEF_ID = Noellesroles.id("chef");
     public static ResourceLocation MAGICIAN_ID = Noellesroles.id("magician");
 
     // 杀手阵营角色 ID
@@ -132,6 +133,8 @@ public class ModRoles {
     public static final ResourceLocation OLDMAN_ID = Noellesroles.id("oldman");
     public static final ResourceLocation FORTUNETELLER_ID = Noellesroles.id("fortuneteller");
 
+    public static final ResourceLocation WAYFARER_ID = Noellesroles.id("wayfarer");
+
     // ==================== 已注册角色定义 ====================
     // 乘客阵营角色
     public static Role OLDMAN = TMMRoles.registerRole(
@@ -155,6 +158,17 @@ public class ModRoles {
                     true, false, Role.MoodType.REAL,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), false))
             .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true);
+    public static Role CHEF = TMMRoles.registerRole(
+            new NormalRole(CHEF_ID, new Color(229, 255, 0).getRGB(),
+                    true, false, Role.MoodType.REAL,
+                    TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+            .setCanSeeCoin(true).setCanPickUpRevolver(true);
+    // 红尘客
+    public static Role WAYFARER = TMMRoles.registerRole(
+            new NormalRole(WAYFARER_ID, new Color(255, 54, 105).getRGB(),
+                    false, false, Role.MoodType.FAKE,
+                    Integer.MAX_VALUE, false))
+            .setCanSeeCoin(true).setNeutrals(true).setCanPickUpRevolver(false);
     public static Role JESTER = TMMRoles
             .registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
                     false, Role.MoodType.FAKE, Integer.MAX_VALUE, true))

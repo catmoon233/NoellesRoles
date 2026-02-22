@@ -91,6 +91,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "stalker"),
             StalkerPlayerComponent.class);
 
+    public static final ComponentKey<WayfarerPlayerComponent> WAYFARER = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "wayfarer"),
+            WayfarerPlayerComponent.class);
+
     public static final ComponentKey<AthletePlayerComponent> ATHLETE = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "athlete"),
             AthletePlayerComponent.class);
@@ -341,6 +345,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, BOMBER)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(BomberPlayerComponent::new);
+                
+        registry.beginRegistration(Player.class, WAYFARER)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(WayfarerPlayerComponent::new);
         // 注册监察员组件
         registry.beginRegistration(Player.class, MONITOR)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
