@@ -22,5 +22,14 @@
 			}
 		],
 		"subtitle": "subtitles.harpy_welcome"
+	},
+	"noellesroles.wind": {
+		"sounds": [
+			{
+				"name": "noellesroles:wind",
+				"stream": true
+			}
+		],
+		"subtitle": "subtitles.noellesroles.wind"
 	}
 }

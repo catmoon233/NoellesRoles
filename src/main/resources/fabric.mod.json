@@ -31,6 +31,7 @@
     "cardinal-components": [
       "noellesroles:fortuneteller",
       "noellesroles:defibrillator",
+      "noellesroles:volume",
       "noellesroles:death_penalty",
       "noellesroles:morphling",
       "noellesroles:ability",

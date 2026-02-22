@@ -4,6 +4,7 @@ import org.agmas.noellesroles.component.BomberPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
+import org.agmas.noellesroles.component.PlayerVolumeComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
@@ -39,6 +40,23 @@ public class AbilityHandler {
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                 .get(context.player().level());
         final ServerPlayer player = context.player();
+        if (gameWorldComponent.isRole(context.player(), ModRoles.WIND_YAOSE)) {
+            if (abilityPlayerComponent.cooldown > 0) {
+                context.player().displayClientMessage(Component.translatable(
+                        "tip.noellesroles.cooldown", abilityPlayerComponent.cooldown / 20)
+                        .withStyle(ChatFormatting.RED), true);
+            } else {
+                for (var p : player.level().players()) {
+                    if (p.distanceTo(player) <= 30.) {
+                        // 30s
+                        PlayerVolumeComponent.KEY.get(p).setVolume(600, 0.05f);
+                    }
+                }
+                abilityPlayerComponent.setCooldown(20 * 120);
+            }
+            return;
+        }
+
         if (gameWorldComponent.isRole(context.player(), ModRoles.CLEANER)) {
             if (abilityPlayerComponent.cooldown > 0) {
                 context.player().displayClientMessage(Component.translatable(

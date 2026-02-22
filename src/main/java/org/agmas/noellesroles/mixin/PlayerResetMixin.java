@@ -69,7 +69,8 @@ public abstract class PlayerResetMixin {
     private static void clearAllComponents(ServerPlayer player) {
         RoleUtils.RemoveAllPlayerAttributes(player);
         RoleUtils.RemoveAllEffects(player);
-
+        (PlayerVolumeComponent.KEY.get(player)).reset();
+        
         ((MorphlingPlayerComponent) MorphlingPlayerComponent.KEY.get(player)).reset();
         ((VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(player)).reset();
         (RecallerPlayerComponent.KEY.get(player)).reset();

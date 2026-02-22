@@ -1,5 +1,6 @@
 {
   "info.screen.roleid.elf": "警长阵营\n你无法捡起手枪，开局自带一把弓，可在商店中购买弩、毒箭、光灵箭。\n毒箭：被射中的人直接死亡\n光灵箭：被射中的人会发光，若光灵箭被射在墙面上则显示6格半径内的玩家人数。\n如果射杀了好人，则自己也会死亡。",
+  "info.screen.roleid.wind_yaose": "中立阵营\n与好人一同胜利\n你无法捡起手枪...",
   "info.screen.roleid.photographer": "平民阵营\n可在商店中购买拍立得相机和相纸\n按下快门时，你可以致盲面前的人并使镜头中隐身的人发光3s。\n可以拍摄照片记录犯罪现场。\n死亡时会掉落拍摄的照片。\n物品栏中将相纸右键拖入相机装填相纸。\n滚轮调整视距,Shift调整闪光灯和曝光度,右键按下快门进行拍摄。\n拍好的照片可以Q键丢出来。\n死亡时掉落照片。",
   "info.screen.roleid.avenger": "平民阵营\n开局获得一个保护者的对象\n在对象死后，你变为义警，并且得知击杀者的名字。\n复仇目标有可能是好人/中立/杀手",
   "info.screen.roleid.conspirator": "杀手阵营\n商店拥有一个死亡笔记，可以猜测他人的职业，猜中后目标玩家会因为心脏衰竭而死\n商店部分物品价格改变，并且仅能购买笔记、刀、枪、开锁器。\n猜错三次会导致自己死亡。",
@@ -75,6 +76,9 @@
   "announcement.role.oldman": "老人",
   "announcement.role.noellesroles.oldman": "老人",
   "announcement.goals.oldman": "老骥伏枥，志在千里；烈士暮年，壮心不已。",
+  "announcement.role.wind_yaose": "风精灵",
+  "announcement.role.noellesroles.wind_yaose": "风精灵",
+  "announcement.goals.wind_yaose": "化身为风，于静谧之地去往人们的身旁。",
   "announcement.role.fortuneteller": "算命大师",
   "announcement.role.noellesroles.fortuneteller": "算命大师",
   "announcement.goals.fortuneteller": "窥破阴阳路，点醒梦中人。",
@@ -121,6 +125,11 @@
   "announcement.role.vulture": "秃鹫",
   "announcement.role.sheriff": "警长",
   "announcement.goals.sheriff": "用你的枪完成任务获得金币。",
+  "=============== 这啥也不是 ===============": "",
+  "announcement.role.hoan_meirin": "红美铃",
+  "announcement.role.noellesroles.hoan_meirin": "红美铃",
+  "announcement.goals.hoan_meirin": "“我一直在这里等着你”",
+  "=============== 一些补充翻译键 ===============": "",
   "announcement.win.coroner": "乘客胜利！",
   "announcement.win.the_insane_damned_paranoid_killer": "杀手胜利！",
   "death_reason.noellesroles.voodoo": "巫毒魔法",
@@ -841,7 +850,10 @@
   "announcement.role.magician": "魔术师",
   "announcement.goals.magician": "用你的魔术技巧迷惑杀手，保护乘客！",
   "message.magician.commander_present_joined_channel": "指挥官在场。你可能会进入指挥官频道！",
+  "hud.wind_yaose.cooldown": "冷却中，剩余 %ss",
+  "hud.wind_yaose.ready": "按下 %s 开始起风",
   "hud.cleaner.cooldown": "冷却中，剩余 %ss",
   "hud.cleaner.ready": "按下 %s 清除周围 5 格的掉落物",
-  "message.monitor.killer_killed": "你察觉到 %s 死去了..."
+  "message.monitor.killer_killed": "你察觉到 %s 死去了...",
+  "subtitles.noellesroles.wind": "风声"
 }
