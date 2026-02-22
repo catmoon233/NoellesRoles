@@ -234,7 +234,9 @@ public class LootInfoScreen extends AbstractPixelScreen {
                     Component.translatable("screen.noellesroles.loot.lootBtn"),
                     poolButton -> {
                         // 发送抽奖请求
-                        ClientPlayNetworking.send(new LootRequestC2SPacket(curPool.getPoolID()));
+//                        ClientPlayNetworking.send(new LootRequestC2SPacket(curPool.getPoolID()));
+                        Minecraft minecraft = Minecraft.getInstance();
+                        minecraft.setScreen(new CookingGameScreen());
                     }
             );
             addRenderableWidget(startPoolBtn);
