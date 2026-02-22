@@ -1,17 +1,17 @@
 package org.agmas.noellesroles.roles.coroner;
 
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.UUID;
+
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -26,6 +26,7 @@ public class BodyDeathReasonComponent implements RoleComponent, ServerTickingCom
     public ResourceLocation playerRole = TMMRoles.CIVILIAN.identifier();
     public boolean vultured = false;
     public PlayerBodyEntity playerBodyEntity;
+    public UUID killer;
 
     @Override
     public void reset() {
@@ -51,6 +52,10 @@ public class BodyDeathReasonComponent implements RoleComponent, ServerTickingCom
         return null;
     }
 
+    public UUID getKiller() {
+        return this.killer;
+    }
+
     public void sync() {
         KEY.sync(this.playerBodyEntity);
     }
@@ -59,12 +64,14 @@ public class BodyDeathReasonComponent implements RoleComponent, ServerTickingCom
         tag.putString("deathReason", deathReason.toString());
         tag.putString("playerRole", playerRole.toString());
         tag.putBoolean("vultured", vultured);
+        tag.putUUID("killer", killer);
     }
 
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.deathReason = ResourceLocation.parse(tag.getString("deathReason"));
         this.playerRole = ResourceLocation.parse(tag.getString("playerRole"));
         this.vultured = tag.getBoolean("vultured");
+        this.killer = tag.hasUUID("killer") ? tag.getUUID("killer") : null;
     }
 
     @Override

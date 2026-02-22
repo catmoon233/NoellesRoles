@@ -53,6 +53,7 @@ public abstract class CoronerHudMixin {
         if (NoellesrolesClient.targetFakeBody != null) {
             if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.CORONER)
                     || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)
+                    || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.WAYFARER)
                     || TMMClient.isPlayerSpectatingOrCreative()) {
                 context.pose().pushPose();
                 context.pose().translate((float) context.guiWidth() / 2.0F, (float) context.guiHeight() / 2.0F + 6.0F,
@@ -114,7 +115,7 @@ public abstract class CoronerHudMixin {
                         }
                     }
                 }
-                
+
                 context.pose().pushPose();
                 context.pose().translate((float) context.guiWidth() / 2.0F, (float) context.guiHeight() / 2.0F + 6.0F,
                         0.0F);
@@ -129,6 +130,7 @@ public abstract class CoronerHudMixin {
                 }
                 BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
                         .get(NoellesrolesClient.targetBody);
+                        
                 MutableComponent name = Component
                         .translatable("hud.coroner.death_info", NoellesrolesClient.targetBody.tickCount / 20)
                         .append(Component

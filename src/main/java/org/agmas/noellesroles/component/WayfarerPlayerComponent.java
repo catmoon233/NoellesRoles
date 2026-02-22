@@ -1,17 +1,28 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
+
+import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.UUID;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 
 /**
  * 红尘客组件
@@ -84,10 +95,22 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
 
     @Override
     public void serverTick() {
-
         // 检查玩家是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(player))
             return;
+        var level = this.player.level();
+        if (!GameWorldComponent.KEY.get(level).isRole(this.player, ModRoles.WAYFARER))
+            return;
+        if (this.phase == 1) {
+            if (level.getGameTime() % 20 == 0) {
+                if (this.killer != null) {
+                    if (level.getPlayerByUUID(this.killer) == null) {
+
+                    }
+                }
+
+            }
+        }
     }
 
     // ==================== NBT 序列化 ====================
@@ -112,5 +135,47 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
 
     @Override
     public void clientTick() {
+    }
+
+    public static void registerEvents() {
+
+    }
+
+    public void startFindKiller(PlayerBodyEntity be, Player targetVictim, Player targetKiller) {
+        boolean hasKey = false;
+        if (targetVictim != null) {
+            for (var item : targetVictim.getInventory().items) {
+                if (item.is(TMMItems.KEY)) {
+                    hasKey = true;
+                    RoleUtils.insertStackInFreeSlot(player, item.copy());
+                    break;
+                }
+            }
+        }
+        if (!hasKey) {
+            int roomNumber = GameFunctions.roomToPlayer.getOrDefault(be.getPlayerUuid(), 0);
+            String roomName = "Room " + roomNumber;
+            var keyItem = TMMItems.KEY.getDefaultInstance();
+            ItemStack itemStack = new ItemStack(TMMItems.KEY);
+            var keyLore = new ItemLore(Component.literal(roomName)
+                    .toFlatList(
+                            net.minecraft.network.chat.Style.EMPTY.withItalic(false).withColor(16747520)));
+            itemStack.set(DataComponents.LORE, keyLore);
+            RoleUtils.insertStackInFreeSlot(player, keyItem);
+        }
+        var item = TMMItems.INIT_ITEMS.LETTER.getDefaultInstance();
+        if (player instanceof ServerPlayer sp) {
+            if (targetVictim != null) {
+                if (targetVictim instanceof ServerPlayer targetServerVictim)
+                    TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc.accept(item, targetServerVictim);
+            } else {
+                TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc.accept(item, sp);
+            }
+        }
+        RoleUtils.insertStackInFreeSlot(player, item);
+        this.phase = 2;
+        this.killer = targetKiller.getUUID();
+        this.player.displayClientMessage(Component.translatable(""), true);
+        this.sync();
     }
 }

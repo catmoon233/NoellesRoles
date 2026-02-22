@@ -2,6 +2,7 @@ package org.agmas.noellesroles;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
@@ -14,14 +15,15 @@ import org.agmas.noellesroles.component.BoxerPlayerComponent;
 import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
-import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
+import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
+import org.agmas.noellesroles.component.WayfarerPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
@@ -30,6 +32,7 @@ import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
+import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
 import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
@@ -41,6 +44,8 @@ import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.utils.ServerManager;
 
 import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
@@ -61,13 +66,23 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -76,21 +91,13 @@ import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
 import pro.fazeclan.river.stupid_express.modifier.refugee.cca.RefugeeComponent;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
-import dev.doctor4t.trainmurdermystery.api.Role;
-import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 
 public class ModEventsRegister {
     private static AttributeModifier noJumpingAttribute = new AttributeModifier(
             Noellesroles.id("no_jumping"), -1.0f, AttributeModifier.Operation.ADD_VALUE);
 
+    private static AttributeModifier windYaoseScaleAttribute = new AttributeModifier(
+            Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
     /**
      * 处理拳击手无敌反制
      * 钢筋铁骨期间可以反弹任何死亡
@@ -500,6 +507,36 @@ public class ModEventsRegister {
 
             return false;
         }));
+        UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(level);
+            if (gameWorldComponent.isRole(player, ModRoles.WAYFARER)) {
+                var wayC = WayfarerPlayerComponent.KEY.get(player);
+                if (wayC.phase != 1) {
+                    return InteractionResult.PASS;
+                }
+                if (entity instanceof PlayerBodyEntity be) {
+                    if (level.isClientSide)
+                        return InteractionResult.SUCCESS;
+                    Player targetVictim = level.getPlayerByUUID(be.getPlayerUuid());
+
+                    BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
+                            .get(be);
+                    UUID killerUid = bodyDeathReasonComponent.killer;
+                    Player targetKiller = level.getPlayerByUUID(killerUid);
+                    // bodyDeathReasonComponent
+                    if (targetKiller == null) {
+                        player.displayClientMessage(
+                                Component.translatable("message.noellesroles.wayfarer.select.killer_died")
+                                        .withStyle(ChatFormatting.RED),
+                                true);
+                        return InteractionResult.FAIL;
+                    }
+                    wayC.startFindKiller(be, targetVictim, targetKiller);
+                    return InteractionResult.SUCCESS;
+                }
+            }
+            return InteractionResult.PASS;
+        });
         OnPlayerDeath.EVENT.register((playerEntity, reason) -> {
             FortunetellerPlayerComponent.KEY.get(playerEntity).reset();
             RoleUtils.RemoveAllEffects(playerEntity);
@@ -518,6 +555,7 @@ public class ModEventsRegister {
                     dropCount--;
                 }
             }
+
             if (gameWorldComponent.isRole(playerEntity, ModRoles.BETTER_VIGILANTE)) {
                 final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
                 betterVigilantePlayerComponent.reset();
@@ -574,6 +612,14 @@ public class ModEventsRegister {
         TrueKillerFinder.registerEvents();
 
         ModdedRoleAssigned.EVENT.register((player, role) -> {
+            if (role.identifier().equals(ModRoles.WAYFARER.identifier())) {
+                player.getInventory().clearContent();
+                return;
+            }
+            if (role.identifier().equals(ModRoles.WIND_YAOSE.identifier())) {
+                player.getAttribute(Attributes.SCALE).addOrReplacePermanentModifier(windYaoseScaleAttribute);
+                return;
+            }
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
                 player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
                 return;
