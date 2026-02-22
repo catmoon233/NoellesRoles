@@ -9,6 +9,7 @@ import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
+import org.agmas.noellesroles.component.WayfarerPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
@@ -163,6 +164,7 @@ public class InstinctRenderer {
             }
             return SERoles.AMNESIAC.color();
         });
+
         // 通用逻辑
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
             if (Minecraft.getInstance() == null)
@@ -187,6 +189,22 @@ public class InstinctRenderer {
             }
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
+                
+                // 红尘客
+                if (TMMClient.gameComponent.isRole(self, ModRoles.WAYFARER)) {
+                    if (GameFunctions.isPlayerAliveAndSurvival(target_player)) {
+                        var wayC = WayfarerPlayerComponent.KEY.get(self);
+                        if (wayC.phase == 1) {
+                            if (wayC.killer != null) {
+                                if (target_player.getUUID().equals(wayC.killer)) {
+                                    return Color.RED.getRGB();
+                                }
+                            }
+                        }
+                        return -2;
+                    }
+
+                }
                 var target_role = TMMClient.gameComponent.getRole(target_player);
                 BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(target_player);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
@@ -318,7 +336,8 @@ public class InstinctRenderer {
                 if (isKillerTeam(self_role) && TMMClient.isPlayerAliveAndInSurvival()) {
                     // 魔术师：杀手看魔术师时显示红色边框（像看其他杀手一样）
                     if (TMMClient.gameComponent.isRole(target_player, ModRoles.MAGICIAN)) {
-                        target_role = RoleUtils.getRole(MagicianPlayerComponent.KEY.get(target_player).getDisguiseRoleId());
+                        target_role = RoleUtils
+                                .getRole(MagicianPlayerComponent.KEY.get(target_player).getDisguiseRoleId());
                     }
 
                     if (RoleUtils.compareRole(target_role, ModRoles.PUPPETEER)) {
@@ -330,10 +349,10 @@ public class InstinctRenderer {
                             return getRoleColor(target_role);
                         }
                         if (target_player.distanceTo(self) <= 10) {
-                            if (TMMClient.gameComponent.isRole(target_player,ModRoles.PATROLLER)){
+                            if (TMMClient.gameComponent.isRole(target_player, ModRoles.PATROLLER)) {
                                 return new Color(76, 255, 239).getRGB();
                             }
-                            if (TMMClient.gameComponent.isRole(target_player,TMMRoles.VIGILANTE)){
+                            if (TMMClient.gameComponent.isRole(target_player, TMMRoles.VIGILANTE)) {
                                 return new Color(63, 72, 204).getRGB();
                             }
                             if (TMMItemUtils.hasItem(target_player, TMMItemTags.GUNS) > 0) {

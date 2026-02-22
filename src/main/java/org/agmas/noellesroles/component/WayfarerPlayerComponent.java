@@ -1,25 +1,36 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions.WinStatus;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-
+import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
+import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
-
+import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
+import dev.doctor4t.trainmurdermystery.event.OnPlayerKilledPlayer;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
+import java.util.OptionalInt;
 import java.util.UUID;
+
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
@@ -72,7 +83,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
      */
     @Override
     public void reset() {
-        this.phase = 1;
+        this.phase = 0;
         this.killer = null;
         this.deathReason = null;
         this.sync();
@@ -88,7 +99,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
      * 同步到客户端
      */
     public void sync() {
-        ModComponents.STALKER.sync(this.player);
+        KEY.sync(this.player);
     }
 
     // ==================== Tick 处理 ====================
@@ -104,16 +115,45 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         if (this.phase == 1) {
             if (level.getGameTime() % 20 == 0) {
                 if (this.killer != null) {
-                    if (level.getPlayerByUUID(this.killer) == null) {
-
+                    if (level.getPlayerByUUID(this.killer) == null || this.deathReason == null) {
+                        this.stopFindKiller_KillerDead();
                     }
                 }
-
+            }
+        } else if (this.phase == 3) {
+            if (player.isSleeping()) {
+                this.finishAndWin();
+                return;
             }
         }
     }
 
     // ==================== NBT 序列化 ====================
+
+    private void finishAndWin() {
+        this.phase = 4;
+        if (this.player instanceof ServerPlayer sp) {
+            RoleUtils.customWinnerWin(sp.serverLevel(), WinStatus.CUSTOM, "wayfarer",
+                    OptionalInt.of(ModRoles.WAYFARER.getColor()));
+        }
+        this.sync();
+    }
+
+    private void stopFindKiller_KillerDead() {
+        this.phase = 0;
+        this.killer = null;
+        this.deathReason = null;
+
+        TMMItemUtils.clearItem(player, TMMItems.KNIFE);
+        TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
+        TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
+
+        RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());
+        player.displayClientMessage(
+                Component.translatable("message.noellesroles.wayfarer.killer_died").withStyle(ChatFormatting.RED),
+                true);
+        this.sync();
+    }
 
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
@@ -138,44 +178,153 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     public static void registerEvents() {
-
-    }
-
-    public void startFindKiller(PlayerBodyEntity be, Player targetVictim, Player targetKiller) {
-        boolean hasKey = false;
-        if (targetVictim != null) {
-            for (var item : targetVictim.getInventory().items) {
-                if (item.is(TMMItems.KEY)) {
-                    hasKey = true;
-                    RoleUtils.insertStackInFreeSlot(player, item.copy());
-                    break;
+        AllowPlayerDeath.EVENT.register((victim, deathReason) -> {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
+            if (gameWorldComponent.isRole(victim, ModRoles.WAYFARER)) {
+                TMMItemUtils.clearItem(victim, TMMItems.KNIFE);
+                var wayC = WayfarerPlayerComponent.KEY.get(victim);
+                if (wayC.phase == 2) {
+                    if (deathReason.getPath().equals(wayC.deathReason)) {
+                        wayC.startPhaseThree();
+                        return false;
+                    }
+                } else {
+                    victim.displayClientMessage(
+                            Component.translatable("message.noellesroles.wayfarer.phase.2.failed")
+                                    .withStyle(ChatFormatting.RED),
+                            true);
+                    return true;
                 }
             }
-        }
-        if (!hasKey) {
-            int roomNumber = GameFunctions.roomToPlayer.getOrDefault(be.getPlayerUuid(), 0);
-            String roomName = "Room " + roomNumber;
-            var keyItem = TMMItems.KEY.getDefaultInstance();
-            ItemStack itemStack = new ItemStack(TMMItems.KEY);
-            var keyLore = new ItemLore(Component.literal(roomName)
-                    .toFlatList(
-                            net.minecraft.network.chat.Style.EMPTY.withItalic(false).withColor(16747520)));
-            itemStack.set(DataComponents.LORE, keyLore);
-            RoleUtils.insertStackInFreeSlot(player, keyItem);
-        }
-        var item = TMMItems.INIT_ITEMS.LETTER.getDefaultInstance();
-        if (player instanceof ServerPlayer sp) {
-            if (targetVictim != null) {
-                if (targetVictim instanceof ServerPlayer targetServerVictim)
-                    TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc.accept(item, targetServerVictim);
-            } else {
-                TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc.accept(item, sp);
+            return true;
+        });
+        OnPlayerKilledPlayer.EVENT.register((victim, killer, reason) -> {
+            if (killer == null)
+                return;
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
+            if (gameWorldComponent.isRole(killer, ModRoles.WAYFARER)) {
+                TMMItemUtils.clearItem(killer, TMMItems.KNIFE);
+                var wayC = WayfarerPlayerComponent.KEY.get(killer);
+                if (wayC.phase == 1) {
+                    if (victim.getUUID().equals(wayC.killer)) {
+                        wayC.startPhaseTwo();
+                        return;
+                    } else {
+                        GameFunctions.killPlayer(killer, true, null, Noellesroles.id("wayfarer_error"));
+                        return;
+                    }
+                }
             }
-        }
-        RoleUtils.insertStackInFreeSlot(player, item);
+        });
+        UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(level);
+            if (gameWorldComponent.isRole(player, ModRoles.WAYFARER)) {
+                var wayC = WayfarerPlayerComponent.KEY.get(player);
+                if (wayC.phase != 1) {
+                    return InteractionResult.PASS;
+                }
+                if (entity instanceof PlayerBodyEntity be) {
+                    if (level.isClientSide)
+                        return InteractionResult.SUCCESS;
+                    Player targetVictim = level.getPlayerByUUID(be.getPlayerUuid());
+
+                    BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
+                            .get(be);
+                    UUID killerUid = bodyDeathReasonComponent.killer;
+                    Player targetKiller = level.getPlayerByUUID(killerUid);
+                    // bodyDeathReasonComponent
+                    if (targetKiller == null) {
+                        player.displayClientMessage(
+                                Component.translatable("message.noellesroles.wayfarer.select.killer_died")
+                                        .withStyle(ChatFormatting.RED),
+                                true);
+                        return InteractionResult.FAIL;
+                    }
+                    wayC.startFindKiller(be, targetVictim, targetKiller, bodyDeathReasonComponent);
+                    return InteractionResult.SUCCESS;
+                }
+            }
+            return InteractionResult.PASS;
+        });
+    }
+
+    public void startPhaseThree() {
+        this.phase = 3;
+        this.killer = null;
+        this.deathReason = null;
+
+        TMMItemUtils.clearItem(player, TMMItems.KNIFE);
+        TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
+        TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
+
+        RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());
+        player.displayClientMessage(
+                Component.translatable("message.noellesroles.wayfarer.phase.2.finish").withStyle(ChatFormatting.GOLD),
+                true);
+        this.sync();
+    }
+
+    public void startPhaseTwo() {
         this.phase = 2;
+        this.killer = null;
+
+        TMMItemUtils.clearItem(player, TMMItems.KNIFE);
+        TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
+        TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
+
+        RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());
+        player.displayClientMessage(
+                Component.translatable("message.noellesroles.wayfarer.phase.1.finish").withStyle(ChatFormatting.GOLD),
+                true);
+        this.sync();
+    }
+
+    public void startFindKiller(PlayerBodyEntity be, @Nullable Player targetVictim, @NotNull Player targetKiller,
+            BodyDeathReasonComponent bodyDeathReasonComponent) {
+        boolean hasKey = false;
+        boolean hasInited = TMMItemUtils.hasItem(this.player, TMMItems.KEY) > 0;
+        if (!hasInited) {
+            if (targetVictim != null) {
+                for (var item : targetVictim.getInventory().items) {
+                    if (item.is(TMMItems.KEY)) {
+                        hasKey = true;
+                        RoleUtils.insertStackInFreeSlot(player, item.copy());
+                        break;
+                    }
+                }
+            }
+            if (!hasKey) {
+                int roomNumber = GameFunctions.roomToPlayer.getOrDefault(be.getPlayerUuid(), 0);
+                String roomName = "Room " + roomNumber;
+                var keyItem = TMMItems.KEY.getDefaultInstance();
+                ItemStack itemStack = new ItemStack(TMMItems.KEY);
+                var keyLore = new ItemLore(Component.literal(roomName)
+                        .toFlatList(
+                                net.minecraft.network.chat.Style.EMPTY.withItalic(false).withColor(16747520)));
+                itemStack.set(DataComponents.LORE, keyLore);
+                RoleUtils.insertStackInFreeSlot(player, keyItem);
+            }
+            var item = TMMItems.INIT_ITEMS.LETTER.getDefaultInstance();
+            if (player instanceof ServerPlayer sp) {
+                if (targetVictim != null) {
+                    if (targetVictim instanceof ServerPlayer targetServerVictim)
+                        TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc.accept(item, targetServerVictim);
+                } else {
+                    TMMItems.INIT_ITEMS.LETTER_UpdateItemFunc.accept(item, sp);
+                }
+            }
+            RoleUtils.insertStackInFreeSlot(player, item);
+        }
+
+        TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
+        TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
+        TMMItemUtils.clearItem(player, TMMItems.KNIFE);
+
+        RoleUtils.insertStackInFreeSlot(player, TMMItems.KNIFE.getDefaultInstance());
+        this.phase = 1;
         this.killer = targetKiller.getUUID();
-        this.player.displayClientMessage(Component.translatable(""), true);
+        this.player.displayClientMessage(Component.translatable("", targetKiller.getDisplayName()), true);
+        this.deathReason = bodyDeathReasonComponent.deathReason.getPath();
         this.sync();
     }
 }

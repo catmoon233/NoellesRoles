@@ -98,6 +98,7 @@ public class ModEventsRegister {
 
     private static AttributeModifier windYaoseScaleAttribute = new AttributeModifier(
             Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+
     /**
      * 处理拳击手无敌反制
      * 钢筋铁骨期间可以反弹任何死亡
@@ -507,36 +508,8 @@ public class ModEventsRegister {
 
             return false;
         }));
-        UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(level);
-            if (gameWorldComponent.isRole(player, ModRoles.WAYFARER)) {
-                var wayC = WayfarerPlayerComponent.KEY.get(player);
-                if (wayC.phase != 1) {
-                    return InteractionResult.PASS;
-                }
-                if (entity instanceof PlayerBodyEntity be) {
-                    if (level.isClientSide)
-                        return InteractionResult.SUCCESS;
-                    Player targetVictim = level.getPlayerByUUID(be.getPlayerUuid());
-
-                    BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
-                            .get(be);
-                    UUID killerUid = bodyDeathReasonComponent.killer;
-                    Player targetKiller = level.getPlayerByUUID(killerUid);
-                    // bodyDeathReasonComponent
-                    if (targetKiller == null) {
-                        player.displayClientMessage(
-                                Component.translatable("message.noellesroles.wayfarer.select.killer_died")
-                                        .withStyle(ChatFormatting.RED),
-                                true);
-                        return InteractionResult.FAIL;
-                    }
-                    wayC.startFindKiller(be, targetVictim, targetKiller);
-                    return InteractionResult.SUCCESS;
-                }
-            }
-            return InteractionResult.PASS;
-        });
+        
+        WayfarerPlayerComponent.registerEvents();
         OnPlayerDeath.EVENT.register((playerEntity, reason) -> {
             FortunetellerPlayerComponent.KEY.get(playerEntity).reset();
             RoleUtils.RemoveAllEffects(playerEntity);
@@ -614,6 +587,7 @@ public class ModEventsRegister {
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(ModRoles.WAYFARER.identifier())) {
                 player.getInventory().clearContent();
+                // (WayfarerPlayerComponent.KEY.get(player)).reset();
                 return;
             }
             if (role.identifier().equals(ModRoles.WIND_YAOSE.identifier())) {
