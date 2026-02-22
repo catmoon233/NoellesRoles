@@ -26,7 +26,6 @@ import java.util.List;
 /**
  * 抽奖信息页
  * - 用于显示卡池信息，以及启动抽奖
- * TODO : 点击立绘预览卡池-打开预览screen
  */
 public class LootInfoScreen extends AbstractPixelScreen {
     public static class PoolButton extends AbstractButton {
@@ -235,7 +234,9 @@ public class LootInfoScreen extends AbstractPixelScreen {
                     Component.translatable("screen.noellesroles.loot.lootBtn"),
                     poolButton -> {
                         // 发送抽奖请求
-                        ClientPlayNetworking.send(new LootRequestC2SPacket(curPool.getPoolID()));
+//                        ClientPlayNetworking.send(new LootRequestC2SPacket(curPool.getPoolID()));
+                        Minecraft minecraft = Minecraft.getInstance();
+                        minecraft.setScreen(new CookingGameScreen());
                     }
             );
             addRenderableWidget(startPoolBtn);
