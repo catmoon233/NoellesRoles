@@ -31,7 +31,6 @@ import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import java.awt.Color;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import pro.fazeclan.river.stupid_express.StupidExpress;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
@@ -106,7 +105,7 @@ public class InstinctRenderer {
             if (GameFunctions.isPlayerSpectatingOrCreative(Minecraft.getInstance().player))
                 return -1;
             Player player = Minecraft.getInstance().player;
-            if(!player.getMainHandItem().is(TMMItems.KNIFE)){
+            if (TMMItemUtils.hasItem(player, TMMItems.KNIFE) <= 0) {
                 return -2;
             }
             if (target instanceof Player targettedPlayer) {
@@ -171,8 +170,13 @@ public class InstinctRenderer {
             }
             if (targetPlayer.distanceTo(self) <= 5) {
                 var awpc = AwesomePlayerComponent.KEY.get(targetPlayer);
-                // Mth.(awpc.nearByDeathTime);
+                int redDepth = (int) (255
+                        * ((float) awpc.nearByDeathTime
+                                / (float) AwesomePlayerComponent.nearByDeathTimeRecordTime));
+                redDepth = Math.clamp(redDepth, 0, 255);
+                return new Color(redDepth, 0, 0).getRGB();
             }
+            return -1;
         });
         // 记者
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {

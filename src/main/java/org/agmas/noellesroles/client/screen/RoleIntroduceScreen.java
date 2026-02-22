@@ -89,7 +89,8 @@ public class RoleIntroduceScreen extends Screen {
         List<Role> filteredRoles = new ArrayList<>();
         for (Role role : availableRoles) {
             String roleName = RoleUtils.getRoleName(role).getString();
-            if (searchContent == null || roleName.toLowerCase().contains(searchContent.toLowerCase())) {
+            if (searchContent == null || roleName.toLowerCase().contains(searchContent.toLowerCase())
+                    || role.identifier().toString().contains(searchContent.toLowerCase())) {
                 filteredRoles.add(role);
             }
         }
