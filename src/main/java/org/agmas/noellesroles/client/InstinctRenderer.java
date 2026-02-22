@@ -105,7 +105,7 @@ public class InstinctRenderer {
             if (GameFunctions.isPlayerSpectatingOrCreative(Minecraft.getInstance().player))
                 return -1;
             Player player = Minecraft.getInstance().player;
-            if (!player.getMainHandItem().is(TMMItems.KNIFE)) {
+            if (TMMItemUtils.hasItem(player, TMMItems.KNIFE) <= 0) {
                 return -2;
             }
             if (target instanceof Player targettedPlayer) {
