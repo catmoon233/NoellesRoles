@@ -15,6 +15,9 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntSupplier;
+import java.util.function.ToIntFunction;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -79,6 +82,19 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
 
     /** 三阶段突进冷却（2秒 = 40 tick） */
     public static final int DASH_COOLDOWN = 20;
+
+    public static final ToIntFunction<Player> MAX_SPRINT_TIME_IntSupplier = (player) -> {
+        if (player == null)
+            return Integer.MAX_VALUE;
+        var spc = StalkerPlayerComponent.KEY.maybeGet(player).orElse(null);
+        if (spc == null)
+            return Integer.MAX_VALUE;
+        if (spc.phase >= 2) {
+            return 0;
+        } else {
+            return Integer.MAX_VALUE;
+        }
+    };
 
     // ==================== 状态变量 ====================
 

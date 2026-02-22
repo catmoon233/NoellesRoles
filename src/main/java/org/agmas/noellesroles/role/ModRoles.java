@@ -745,7 +745,7 @@ public class ModRoles {
                 Role.MoodType.FAKE, // 假心情
                 Integer.MAX_VALUE, // 无限冲刺
                 true // 隐藏计分板
-        ).setComponentKey(StalkerPlayerComponent.KEY));
+        ).setComponentKey(StalkerPlayerComponent.KEY)).setMaxSprintTime(StalkerPlayerComponent.MAX_SPRINT_TIME_IntSupplier);
 
         // 慕恋者角色 - 中立阵营
         ADMIRER = TMMRoles.registerRole(new NoramlRole(
