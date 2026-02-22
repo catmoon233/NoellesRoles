@@ -31,7 +31,6 @@ import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.MagicianPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
-import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.entity.WheelchairEntityModel;
 import org.agmas.noellesroles.entity.WheelchairEntityRenderer;
 import org.agmas.noellesroles.packet.*;

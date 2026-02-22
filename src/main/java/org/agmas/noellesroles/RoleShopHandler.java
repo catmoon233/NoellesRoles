@@ -349,7 +349,13 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(
                     ModRoles.MAGICIAN_ID, MAGICIAN_SHOP);
         }
-
+        // 风精灵
+        {
+            List<ShopEntry> entries = new ArrayList<>();
+            entries.add(new ShopEntry(Items.WIND_CHARGE.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(
+                    ModRoles.WIND_YAOSE_ID, entries);
+        }
         // 警长商店
         {
             List<ShopEntry> entries = new ArrayList<>();

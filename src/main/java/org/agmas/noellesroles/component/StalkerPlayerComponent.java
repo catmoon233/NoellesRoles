@@ -10,10 +10,13 @@ import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.ToIntFunction;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
  * - 二阶段（觉醒猎手）：杀手阵营，有刀和一次免疫
  * - 三阶段（狂暴追击者）：蓄力突进处决
  */
-public class StalkerPlayerComponent implements RoleComponent, ServerTickingComponent {
+public class StalkerPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     @Override
     public Player getPlayer() {
         return player;
@@ -78,6 +81,19 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
 
     /** 三阶段突进冷却（2秒 = 40 tick） */
     public static final int DASH_COOLDOWN = 20;
+
+    public static final ToIntFunction<Player> MAX_SPRINT_TIME_IntSupplier = (player) -> {
+        if (player == null)
+            return Integer.MAX_VALUE;
+        var spc = StalkerPlayerComponent.KEY.maybeGet(player).orElse(null);
+        if (spc == null)
+            return Integer.MAX_VALUE;
+        if (spc.phase >= 2) {
+            return 0;
+        } else {
+            return Integer.MAX_VALUE;
+        }
+    };
 
     // ==================== 状态变量 ====================
 
@@ -803,5 +819,13 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
         this.ph1_energy_need = tag.contains("ph1_energy_need") ? tag.getInt("ph1_energy_need") : 500;
         this.ph2_energy_need = tag.contains("ph2_energy_need") ? tag.getInt("ph2_energy_need") : 30;
         this.ph2_kill_need = tag.contains("ph2_kill_need") ? tag.getInt("ph2_kill_need") : 2;
+    }
+
+    @Override
+    public void clientTick() {
+        // 二阶段及以上禁止冲刺
+        if (phase >= 2 && player.isSprinting()) {
+            player.setSprinting(false);
+        }
     }
 }

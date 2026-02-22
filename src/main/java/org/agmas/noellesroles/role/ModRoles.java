@@ -102,6 +102,7 @@ public class ModRoles {
     public static final ResourceLocation PSYCHOLOGIST_ID = Noellesroles.id("psychologist");
     public static final ResourceLocation PHOTOGRAPHER_ID = Noellesroles.id("photographer");
     public static ResourceLocation ELF_ID = Noellesroles.id("elf");
+    public static ResourceLocation WIND_YAOSE_ID = Noellesroles.id("wind_yaose");
     public static ResourceLocation MAGICIAN_ID = Noellesroles.id("magician");
 
     // 杀手阵营角色 ID
@@ -149,6 +150,11 @@ public class ModRoles {
                     true, false, Role.MoodType.REAL,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), false))
             .setVigilanteTeam(true).setCanSeeCoin(true).setCanPickUpRevolver(false);
+    public static Role WIND_YAOSE = TMMRoles.registerRole(
+            new NormalRole(WIND_YAOSE_ID, new Color(106, 255, 179).getRGB(),
+                    true, false, Role.MoodType.REAL,
+                    TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+            .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true);
     public static Role JESTER = TMMRoles
             .registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
                     false, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
@@ -745,7 +751,8 @@ public class ModRoles {
                 Role.MoodType.FAKE, // 假心情
                 Integer.MAX_VALUE, // 无限冲刺
                 true // 隐藏计分板
-        ).setComponentKey(StalkerPlayerComponent.KEY));
+        ).setComponentKey(StalkerPlayerComponent.KEY))
+                .setMaxSprintTime(StalkerPlayerComponent.MAX_SPRINT_TIME_IntSupplier);
 
         // 慕恋者角色 - 中立阵营
         ADMIRER = TMMRoles.registerRole(new NoramlRole(

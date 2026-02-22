@@ -92,7 +92,12 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.MAGICIAN_ID, 0);
             }
-            if (random.nextInt(0, 100) < 50) {
+            if (random.nextInt(0, 100) <= 50) {
+                Harpymodloader.setRoleMaximum(SERoles.NECROMANCER, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(SERoles.NECROMANCER, 0);
+            }
+            if (random.nextInt(0, 100) <= 75) {
                 Harpymodloader.setRoleMaximum(ModRoles.MONITOR_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.MONITOR_ID, 0);
