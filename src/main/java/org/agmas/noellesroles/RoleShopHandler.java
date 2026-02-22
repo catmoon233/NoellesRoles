@@ -126,7 +126,7 @@ public class RoleShopHandler {
             PoisonArrow.set(DataComponents.ITEM_NAME, Component.translatable("item.poison_arrow.name"));
             PoisonArrow.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.POISON));
             PoisonArrow.set(DataComponents.MAX_STACK_SIZE, 1);
-            shopEntries.add(new ShopEntry(PoisonArrow, 100, ShopEntry.Type.WEAPON) {
+            shopEntries.add(new ShopEntry(PoisonArrow, 75, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull Player player) {
                     int itemCount = TMMItemUtils.hasItem(player, Items.TIPPED_ARROW);
@@ -343,7 +343,6 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(
                     ModRoles.NIAN_SHOU_ID, NIAN_SHOU_SHOP);
         }
-
         // 魔术师商店
         {
             ShopContent.customEntries.put(
