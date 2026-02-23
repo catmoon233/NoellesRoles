@@ -1,11 +1,12 @@
 package org.agmas.noellesroles.roles.thief;
 
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
+import org.agmas.noellesroles.utils.RoleUtils;
+import java.util.OptionalInt;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -487,9 +488,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         }
 
         // 小偷胜利！
-        GameRoundEndComponent roundEnd = GameRoundEndComponent.KEY.get(serverLevel);
-        roundEnd.CustomWinnerID = "thief";
-        roundEnd.CustomWinnerColor = new java.awt.Color(255, 215, 0).getRGB(); // 金色
+        RoleUtils.customWinnerWin(serverLevel, GameFunctions.WinStatus.CUSTOM, "thief",
+                OptionalInt.of(new java.awt.Color(255, 215, 0).getRGB()));
 
         return true;
     }
