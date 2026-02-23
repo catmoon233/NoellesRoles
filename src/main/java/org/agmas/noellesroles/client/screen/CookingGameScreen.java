@@ -2,6 +2,7 @@ package org.agmas.noellesroles.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,6 +19,7 @@ import org.agmas.noellesroles.client.animation.*;
 import org.agmas.noellesroles.client.widget.TextureWidget;
 import org.agmas.noellesroles.client.widget.TickTimerWidget;
 import org.agmas.noellesroles.client.widget.TimerWidget;
+import org.agmas.noellesroles.packet.ChefCookC2SPacket;
 import org.agmas.noellesroles.utils.Pair;
 import org.lwjgl.glfw.GLFW;
 
@@ -332,6 +334,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                         aniTick,
                                         true,
                                         (tickTimer) -> {
+                                            Map<Integer, Float> resultBuffTime = new HashMap<>();
                                             // 添加信息卡
                                             int curX = INFO_BOUND + centerX - scoreBarWidth / 2;
                                             int curY = INFO_BOUND + centerY - maxScoreBarHeight / 2;
@@ -350,9 +353,12 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                                         entry.getValue().buffID,
                                                         entry.getValue().buffSecond,
                                                         font));
+                                                resultBuffTime.put(entry.getKey(), entry.getValue().buffSecond);
                                                 ++curNum;
                                                 curX += scoreCardSize + INFO_INTERVAL;
                                             }
+                                            // 向服务器发结果包
+                                            ClientPlayNetworking.send(new ChefCookC2SPacket(resultBuffTime));
                                         }));
                             }));
                 }));
