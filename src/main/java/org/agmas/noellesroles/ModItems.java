@@ -11,6 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -36,6 +37,11 @@ public class ModItems {
     public static ResourceKey<CreativeModeTab> MISC_CREATIVE_GROUP = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
             Noellesroles.id("misc"));
     public static final ItemRegistrar registrar = new ItemRegistrar(Noellesroles.MOD_ID);
+
+    public static final Item A_BOTTLE_OF_WATER = register(
+            new ChefWaterItem((new Item.Properties()).stacksTo(1).food(Foods.HONEY_BOTTLE)), "a_bottle_of_water");
+    public static final Item LINGSHI = register(
+            new ChefFoodItem((new Item.Properties()).stacksTo(1)), "lingshi");
 
     public static final Item FOOD_STUFF = register(
             new FoodStuffItem((new Item.Properties()).stacksTo(1)), "foodstuff");

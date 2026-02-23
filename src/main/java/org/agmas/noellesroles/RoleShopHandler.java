@@ -102,10 +102,18 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
         }
         {
+            // 厨师的商店
+            var shop = new ArrayList<ShopEntry>();
+            shop.add(new ShopEntry(ModItems.A_BOTTLE_OF_WATER.getDefaultInstance(), 75, ShopEntry.Type.TOOL));
+            shop.add(new ShopEntry(ModItems.LINGSHI.getDefaultInstance(), 75, ShopEntry.Type.TOOL));
+            shop.add(new ShopEntry(ModItems.PAN.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(ModRoles.CHEF_ID, shop);
+        }
+        {
             // 指挥官的商店
-            var NECROMANCER_SHOP = new ArrayList<ShopEntry>();
-            NECROMANCER_SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
-            ShopContent.customEntries.put(ModRoles.COMMANDER_ID, NECROMANCER_SHOP);
+            var _SHOP = new ArrayList<ShopEntry>();
+            _SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(ModRoles.COMMANDER_ID, _SHOP);
         }
         {
             // 游侠商店
@@ -354,13 +362,6 @@ public class RoleShopHandler {
             entries.add(new ShopEntry(Items.WIND_CHARGE.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
             ShopContent.customEntries.put(
                     ModRoles.WIND_YAOSE_ID, entries);
-        }
-        // 厨师
-        {
-            List<ShopEntry> entries = new ArrayList<>();
-            entries.add(new ShopEntry(ModItems.PAN.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
-            ShopContent.customEntries.put(
-                    ModRoles.CHEF_ID, entries);
         }
         // 警长商店
         {
