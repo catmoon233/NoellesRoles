@@ -9,6 +9,7 @@ import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 
 import dev.doctor4t.trainmurdermystery.cca.AbilityPlayerComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -62,6 +63,9 @@ public class ChefFoodItem extends Item {
         for (var it : map.entrySet()) {
             int type = it.getKey();
             float duration = it.getValue();
+            if (duration >= 120f) {
+                duration = 120f;
+            }
             switch (type) {
                 case 1:
                     livingEntity.addEffect(new MobEffectInstance(
@@ -112,6 +116,11 @@ public class ChefFoodItem extends Item {
                     ));
                     break;
                 case 5:
+                    var mm2 = PlayerMoodComponent.KEY.maybeGet(livingEntity).orElse(null);
+                    if (mm2 != null) {
+                        mm2.tasks.clear();
+                        mm2.generateTask();
+                    }
                     break;
                 case 6:
                     livingEntity.addEffect(new MobEffectInstance(
@@ -124,12 +133,38 @@ public class ChefFoodItem extends Item {
                     ));
                     break;
                 case 7:
+                    var pmmc = PlayerShopComponent.KEY.maybeGet(livingEntity).orElse(null);
+                    pmmc.addToBalance((int) duration);
                     break;
                 case -1:
+                    livingEntity.addEffect(new MobEffectInstance(
+                            MobEffects.CONFUSION,
+                            (int) (duration * 20), // 持续时间（tick）
+                            0, // 等级（0 = 速度 I）
+                            false, // ambient（环境效果，如信标）
+                            true, // showParticles（显示粒子）
+                            true // showIcon（显示图标）
+                    ));
                     break;
                 case -2:
+                    livingEntity.addEffect(new MobEffectInstance(
+                            MobEffects.DARKNESS,
+                            (int) (duration * 20), // 持续时间（tick）
+                            0, // 等级（0 = 速度 I）
+                            false, // ambient（环境效果，如信标）
+                            true, // showParticles（显示粒子）
+                            true // showIcon（显示图标）
+                    ));
                     break;
                 case -3:
+                    livingEntity.addEffect(new MobEffectInstance(
+                            MobEffects.MOVEMENT_SLOWDOWN,
+                            (int) (duration * 20), // 持续时间（tick）
+                            0, // 等级（0 = 速度 I）
+                            false, // ambient（环境效果，如信标）
+                            true, // showParticles（显示粒子）
+                            true // showIcon（显示图标）
+                    ));
                     break;
                 default:
                     break;
