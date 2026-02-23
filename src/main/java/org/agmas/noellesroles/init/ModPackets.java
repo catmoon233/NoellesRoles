@@ -77,7 +77,7 @@ public class ModPackets {
         PayloadTypeRegistry.playC2S().register(ManipulatorC2SPacket.ID, ManipulatorC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(OpenLockGuiS2CPacket.ID, OpenLockGuiS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLockGuiS2CPacket.ID, OpenLockGuiS2CPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(OpenVendingMachinesScreenS2CPacket.ID, OpenVendingMachinesScreenS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenVendingMachinesScreenS2CPacket.ID, OpenVendingMachinesScreenS2CPacket.CODEC);
 
         PayloadTypeRegistry.playS2C().register(BloodConfigS2CPacket.ID, BloodConfigS2CPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BloodConfigS2CPacket.ID, BloodConfigS2CPacket.CODEC);
