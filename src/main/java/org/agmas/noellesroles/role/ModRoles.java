@@ -157,7 +157,7 @@ public class ModRoles {
             new NormalRole(WIND_YAOSE_ID, new Color(106, 255, 179).getRGB(),
                     true, false, Role.MoodType.REAL,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), false))
-            .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true);
+            .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setCanUseInstinct(true);
     public static Role CHEF = TMMRoles.registerRole(
             new NormalRole(CHEF_ID, new Color(229, 255, 0).getRGB(),
                     true, false, Role.MoodType.REAL,

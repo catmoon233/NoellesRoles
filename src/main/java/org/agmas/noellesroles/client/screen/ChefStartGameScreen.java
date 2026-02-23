@@ -1,7 +1,9 @@
 package org.agmas.noellesroles.client.screen;
 
+import org.agmas.noellesroles.ModDataComponentTypes;
 import org.agmas.noellesroles.ModItems;
 
+import dev.doctor4t.trainmurdermystery.item.CocktailItem;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -51,9 +53,13 @@ public class ChefStartGameScreen extends Screen {
         int maxWidth = this.width;
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
-        int buttonY = maxHeight / 2 + BUTTON_HEIGHT / 2;
+        int buttonY = maxHeight / 2;
         if (TMMItemUtils.hasItem(this.minecraft.player, ModItems.FOOD_STUFF) > 0
                 && TMMItemUtils.hasItem(this.minecraft.player, (food) -> {
+                    if (food.getItem() instanceof CocktailItem)
+                        return false;
+                    if (food.has(ModDataComponentTypes.COOKED))
+                        return false;
                     return food.has(DataComponents.FOOD);
                 }) > 0) {
             hasItem = true;

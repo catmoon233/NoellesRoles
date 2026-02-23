@@ -362,7 +362,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                                     Component.translatable("screen.noellesroles.chef.result.close"),
                                                     (btn) -> {
                                                         this.onClose();
-                                                    }).bounds(this.centerX / 2 - 50, this.centerY / 2 + 60, 100, 20)
+                                                    }).bounds(this.centerX - 50, this.centerY + 60, 100, 20)
                                                     .build();
                                             addRenderableOnly(closeBtn);
                                             // 向服务器发结果包

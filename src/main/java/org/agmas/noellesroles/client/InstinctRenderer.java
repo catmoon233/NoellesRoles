@@ -226,6 +226,10 @@ public class InstinctRenderer {
             }
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
+                // 风精灵
+                if (TMMClient.gameComponent.isRole(self, ModRoles.WIND_YAOSE)) {
+                    return ModRoles.WIND_YAOSE.getColor();
+                }
 
                 // 红尘客
                 if (TMMClient.gameComponent.isRole(self, ModRoles.WAYFARER)) {

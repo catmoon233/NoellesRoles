@@ -38,6 +38,8 @@ public class ModItems {
             Noellesroles.id("misc"));
     public static final ItemRegistrar registrar = new ItemRegistrar(Noellesroles.MOD_ID);
 
+    public static final Item COOKED_FOOD = register(
+            new ChefFoodItem(new Item.Properties().stacksTo(1)), "cooked_food");
     public static final Item A_BOTTLE_OF_WATER = register(
             new ChefWaterItem((new Item.Properties()).stacksTo(1).food(Foods.HONEY_BOTTLE)), "a_bottle_of_water");
     public static final Item LINGSHI = register(
