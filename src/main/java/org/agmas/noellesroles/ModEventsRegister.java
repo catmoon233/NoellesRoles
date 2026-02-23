@@ -12,6 +12,7 @@ import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.BoxerPlayerComponent;
 import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
+import org.agmas.noellesroles.component.BanditPlayerComponent;
 import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
@@ -566,6 +567,15 @@ public class ModEventsRegister {
         });
         OnPlayerKilledPlayer.EVENT.register((victim, killer, deathReason) -> {
             var gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
+
+            // 强盗的金钱盗取逻辑
+            if (gameWorldComponent.isRole(killer, ModRoles.BANDIT)) {
+                var banditComponent = ModComponents.BANDIT.get(killer);
+                if (banditComponent != null) {
+                    banditComponent.handleKilledVictim(victim);
+                }
+            }
+
             if (deathReason.equals(OnPlayerKilledPlayer.DeathReason.KNIFE)) {
                 killer.addEffect(new MobEffectInstance(
                         MobEffects.MOVEMENT_SPEED, // ID

@@ -120,6 +120,7 @@ public class ModRoles {
     public static final ResourceLocation TRAPPER_ID = Noellesroles.id("trapper");
     public static final ResourceLocation BOMBER_ID = Noellesroles.id("bomber");
     public static final ResourceLocation MANIPULATOR_ID = Noellesroles.id("manipulator");
+    public static final ResourceLocation BANDIT_ID = Noellesroles.id("bandit");
 
     // 中立阵营
     public static final ResourceLocation STALKER_ID = Noellesroles.id("stalker");
@@ -580,6 +581,24 @@ public class ModRoles {
      */
     public static Role MAGICIAN;
 
+    /**
+     * 强盗角色 - 杀手阵营
+     * - 杀手阵营 (isInnocent = false, canUseKiller = true)
+     * - 假心情系统
+     * - 无限冲刺时间
+     * - 在计分板上隐藏
+     * - 杀手直觉：只能透视半径10格内的玩家，透视杀手队友无距离限制
+     * - 开局自带一把匪徒手枪，一把撬棍
+     * - 被动技能：杀人之后可以盗取被杀者一半的钱，被杀害的玩家会减少一半的钱
+     * - 专属商店：
+     *   - 刀 (200金币)
+     *   - 匪徒手枪 (175金币)
+     *   - 手榴弹 (600金币)
+     *   - 关灯 (150金币)
+     * - 无疯狂模式、无开锁器和撬棍
+     */
+    public static Role BANDIT;
+
     // ==================== 其他变量定义 ====================
     public static ArrayList<Role> SHOW_MONEY_ROLES = new ArrayList<>();
     public static HashMap<Role, RoleAnnouncementTexts.RoleAnnouncementText> roleRoleAnnouncementTextHashMap = new HashMap<>();
@@ -844,6 +863,17 @@ public class ModRoles {
         )).setCanPickUpRevolver(true).setComponentKey(ModComponents.MAGICIAN).setCanSeeCoin(true)
                 .setNeutralForKiller(true).setCanSeeTeammateKiller(false).setNeutrals(false);
 
+        // 强盗角色 - 杀手阵营
+        BANDIT = TMMRoles.registerRole(new NoramlRole(
+                BANDIT_ID, // 角色 ID
+                new Color(139, 69, 19).getRGB(), // 棕色 - 代表强盗的粗糙感
+                false, // isInnocent = 非乘客阵营
+                true, // canUseKiller = 有杀手能力
+                Role.MoodType.FAKE, // 假心情
+                Integer.MAX_VALUE, // 无限冲刺时间
+                true // 隐藏计分板
+        )).setComponentKey(ModComponents.BANDIT));
+
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
         // 复仇者每局只能有 1 个
@@ -924,6 +954,9 @@ public class ModRoles {
 
         // 魔术师
         Harpymodloader.setRoleMaximum(MAGICIAN_ID, 1);
+
+        // 强盗
+        Harpymodloader.setRoleMaximum(BANDIT_ID, 1);
 
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
         BartenderPlayerComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
