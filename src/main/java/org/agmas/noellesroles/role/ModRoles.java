@@ -13,7 +13,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.component.*;
-
+import org.agmas.noellesroles.roles.chef.ChefRole;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerRole;
@@ -157,9 +157,9 @@ public class ModRoles {
             new NormalRole(WIND_YAOSE_ID, new Color(106, 255, 179).getRGB(),
                     true, false, Role.MoodType.REAL,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), false))
-            .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true);
+            .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setCanUseInstinct(true);
     public static Role CHEF = TMMRoles.registerRole(
-            new NormalRole(CHEF_ID, new Color(229, 255, 0).getRGB(),
+            new ChefRole(CHEF_ID, new Color(229, 255, 0).getRGB(),
                     true, false, Role.MoodType.REAL,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), false))
             .setCanSeeCoin(true).setCanPickUpRevolver(true);
