@@ -1,6 +1,7 @@
 package org.agmas.noellesroles;
 
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -15,9 +16,36 @@ public class CustomWinnerClass {
             if (isLooseEnd) {
                 return WinStatus.NOT_MODIFY;
             }
+
+            var gameComponent = GameWorldComponent.KEY.get(serverLevel);
+
+            // 检查是否有小偷存活
+            boolean hasThiefAlive = false;
+            for (var player : serverLevel.players()) {
+                if (GameFunctions.isPlayerAliveAndSurvival(player) &&
+                    gameComponent.isRole(player, ModRoles.THIEF)) {
+                    hasThiefAlive = true;
+                    break;
+                }
+            }
+
+            // 如果有小偷存活，检查小偷独立胜利条件
+            if (hasThiefAlive) {
+                // 检查小偷是否满足独立胜利条件
+                if (ThiefPlayerComponent.checkThiefVictory(serverLevel)) {
+                    return WinStatus.CUSTOM;
+                }
+
+                // 如果小偷存活且游戏要结束（乘客或杀手胜利），阻止游戏结束
+                if (winStatus.equals(WinStatus.PASSENGERS) ||
+                    winStatus.equals(WinStatus.KILLERS) ||
+                    winStatus.equals(WinStatus.TIME)) {
+                    return WinStatus.NONE; // 游戏继续
+                }
+            }
+
             if (winStatus.equals(WinStatus.TIME) || winStatus.equals(WinStatus.PASSENGERS) || winStatus.equals(WinStatus.LOOSE_END)) {
                 var players = serverLevel.players();
-                var gameComponent = GameWorldComponent.KEY.get(serverLevel);
                 for (var player : players) {
                     if (GameFunctions.isPlayerAliveAndSurvival(player))
                         if (gameComponent.isRole(player, ModRoles.NIAN_SHOU)) {
@@ -27,7 +55,6 @@ public class CustomWinnerClass {
             }
             if (winStatus.equals(WinStatus.LOOSE_END)) {
                 var players = serverLevel.players();
-                var gameComponent = GameWorldComponent.KEY.get(serverLevel);
                 for (var player : players) {
                     if (GameFunctions.isPlayerAliveAndSurvival(player))
                         if (gameComponent.isRole(player, TMMRoles.LOOSE_END)) {

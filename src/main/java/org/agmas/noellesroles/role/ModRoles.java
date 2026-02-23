@@ -17,6 +17,7 @@ import org.agmas.noellesroles.roles.chef.ChefRole;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerRole;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -132,6 +133,7 @@ public class ModRoles {
     public static ResourceLocation VULTURE_ID = Noellesroles.id("vulture");
     public static final ResourceLocation NIAN_SHOU_ID = Noellesroles.id("nianshou");
     public static final ResourceLocation OLDMAN_ID = Noellesroles.id("oldman");
+    public static final ResourceLocation THIEF_ID = Noellesroles.id("thief");
     public static final ResourceLocation FORTUNETELLER_ID = Noellesroles.id("fortuneteller");
 
     public static final ResourceLocation WAYFARER_ID = Noellesroles.id("wayfarer");
@@ -571,6 +573,20 @@ public class ModRoles {
     public static Role NIAN_SHOU;
 
     /**
+     * 小偷角色 - 中立阵营
+     * - 中立阵营 (isInnocent = false, canUseKiller = false)
+     * - 假心情 (MoodType.FAKE)
+     * - 无限冲刺时间
+     * - 技能：蹲下按技能键切换偷钱/偷物品模式，按技能键释放技能（冷却30s，偷取失败不进入冷却）
+     * - 偷钱：偷取目标100金币（目标必须至少有100金币）
+     * - 偷物品：仿照StupidExpress2的小偷机制
+     * - 被动：杀一人获得100金币
+     * - 独立胜利条件：手持小偷的荣誉（金锭）回房间睡觉则独立胜利
+     * - 小偷的荣誉所需金币数 = 游戏开始总人数 * 75
+     */
+    public static Role THIEF;
+
+    /**
      * 魔术师角色 - 好人阵营（从模仿者移植）
      * - 好人阵营 (isInnocent = true)
      * - 能捡枪 (setCanPickUpRevolver(true))
@@ -851,6 +867,18 @@ public class ModRoles {
                 true // 隐藏计分板
         ).setComponentKey(NianShouPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true));
 
+        // 小偷角色 - 中立阵营
+        THIEF = TMMRoles.registerRole(new NoramlRole(
+                THIEF_ID, // 角色 ID
+                new Color(255, 215, 0).getRGB(), // 金色 - 代表财富
+                false, // isInnocent = 非乘客阵营
+                false, // canUseKiller = 无杀手能力
+                Role.MoodType.FAKE, // 假心情
+                Integer.MAX_VALUE, // 无限冲刺时间
+                true // 隐藏计分板
+        )).setComponentKey(ThiefPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true)
+                .setNeutralForKiller(true).setCanSeeTeammateKiller(false);
+
         // 魔术师角色 - 好人阵营
         MAGICIAN = TMMRoles.registerRole(new NoramlRole(
                 MAGICIAN_ID, // 角色 ID
@@ -887,6 +915,9 @@ public class ModRoles {
 
         // 拳击手每局只能有 1 个
         Harpymodloader.setRoleMaximum(BOXER_ID, 1);
+
+        // 小偷每局只能有 1 个
+        Harpymodloader.setRoleMaximum(THIEF_ID, 1);
 
         // 邮差每局只能有 1 个
         Harpymodloader.setRoleMaximum(POSTMAN_ID, 1);

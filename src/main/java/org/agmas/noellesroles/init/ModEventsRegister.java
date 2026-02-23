@@ -577,6 +577,14 @@ public class ModEventsRegister {
                 }
             }
 
+            // 小偷的击杀奖励逻辑
+            if (gameWorldComponent.isRole(killer, ModRoles.THIEF)) {
+                var thiefComponent = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.KEY.get(killer);
+                if (thiefComponent != null) {
+                    thiefComponent.handleKilledVictim(victim);
+                }
+            }
+
             if (deathReason.equals(OnPlayerKilledPlayer.DeathReason.KNIFE)) {
                 killer.addEffect(new MobEffectInstance(
                         MobEffects.MOVEMENT_SPEED, // ID

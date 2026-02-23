@@ -70,6 +70,8 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> MAGICIAN_SHOP = new ArrayList<>();
     // ==================== 强盗商店 ====================
     public static ArrayList<ShopEntry> BANDIT_SHOP = new ArrayList<>();
+    // ==================== 小偷商店 ====================
+    public static ArrayList<ShopEntry> THIEF_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -362,6 +364,11 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.BANDIT_ID, BANDIT_SHOP);
+        }
+        // 小偷商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.THIEF_ID, THIEF_SHOP);
         }
         // 风精灵
         {
@@ -698,6 +705,42 @@ public class RoleShopHandler {
         BANDIT_SHOP.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 150, ShopEntry.Type.TOOL) {
             public boolean onBuy(@NotNull Player player) {
                 return PlayerShopComponent.useBlackout(player);
+            }
+        });
+
+        // 小偷商店
+        // 小偷的荣誉（金锭） - 根据人数动态计算价格
+        THIEF_SHOP.add(new ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
+                0, // 价格会在购买时动态计算
+                ShopEntry.Type.TOOL) {
+            @Override
+            public boolean onBuy(@NotNull Player player) {
+                // 获取游戏总人数
+                int totalPlayers = player.level().players().size();
+                int cost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.getHonorCost(totalPlayers);
+
+                // 检查金币是否足够
+                PlayerShopComponent shop = PlayerShopComponent.KEY.get(player);
+                if (shop.balance < cost) {
+                    player.displayClientMessage(
+                            Component.literal("金币不足！需要 " + cost + " 金币").withStyle(ChatFormatting.RED),
+                            true);
+                    return false;
+                }
+
+                // 扣除金币并给予金锭
+                shop.balance -= cost;
+                shop.sync();
+
+                player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
+                player.displayClientMessage(
+                        Component.literal("购买了小偷的荣誉！花费 " + cost + " 金币").withStyle(ChatFormatting.GOLD),
+                        true);
+                return true;
+            }
+
+            public Component getName() {
+                return Component.literal("小偷的荣誉 (金锭)");
             }
         });
     }
