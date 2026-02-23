@@ -30,10 +30,13 @@ public class TargetEntityHudmixin {
         }
         var p = Minecraft.getInstance().player;
         if (gameWorldComponent.isRole(p, ModRoles.WAYFARER) && !TMMClient.isPlayerSpectatingOrCreative()) {
+            var wayC = WayfarerPlayerComponent.KEY.get(p);
             context.pose().pushPose();
             context.pose().translate(context.guiWidth() / 2.0f, context.guiHeight() / 2.0f + 24.0f, 0.0f);
             context.pose().scale(0.6f, 0.6f, 1.0f);
-
+            if (wayC.phase != 0) {
+                return;
+            }
             Component status = Component.translatable("hud.noellesroles.wayfarer.select");
 
             WayfarerPlayerComponent nc = WayfarerPlayerComponent.KEY.get(player);

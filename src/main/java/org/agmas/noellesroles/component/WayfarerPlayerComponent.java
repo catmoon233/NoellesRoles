@@ -123,7 +123,8 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         if (this.phase == 1) {
             if (level.getGameTime() % 20 == 0) {
                 if (this.killer != null) {
-                    if (level.getPlayerByUUID(this.killer) == null || this.deathReason == null) {
+                    var killerP = level.getPlayerByUUID(this.killer);
+                    if (killerP == null || this.deathReason == null || !GameFunctions.isPlayerAliveAndSurvival(killerP)) {
                         this.stopFindKiller_KillerDead();
                     }
                 }
@@ -232,35 +233,38 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
             }
         });
         UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
+            if (!(entity instanceof PlayerBodyEntity be))
+                return net.minecraft.world.InteractionResult.PASS;
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(level);
             if (gameWorldComponent.isRole(player, ModRoles.WAYFARER)) {
                 var wayC = WayfarerPlayerComponent.KEY.get(player);
-                if (wayC.phase != 1) {
+                if (wayC.phase != 0) {
                     return InteractionResult.PASS;
                 }
-                if (entity instanceof PlayerBodyEntity be) {
-                    if (level.isClientSide)
-                        return InteractionResult.SUCCESS;
-                    Player targetVictim = level.getPlayerByUUID(be.getPlayerUuid());
 
-                    BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
-                            .get(be);
-                    UUID killerUid = be.getKillerUuid();
-                    Player targetKiller = level.getPlayerByUUID(killerUid);
-                    // bodyDeathReasonComponent
-                    if (targetKiller == null) {
-                        player.displayClientMessage(
-                                Component.translatable("message.noellesroles.wayfarer.select.killer_died")
-                                        .withStyle(ChatFormatting.RED),
-                                true);
-                        return InteractionResult.FAIL;
-                    }
-                    wayC.startFindKiller(be, targetVictim, targetKiller, bodyDeathReasonComponent);
+                if (level.isClientSide)
                     return InteractionResult.SUCCESS;
+                Player targetVictim = level.getPlayerByUUID(be.getPlayerUuid());
+
+                BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
+                        .get(be);
+                UUID killerUid = be.getKillerUuid();
+                Player targetKiller = level.getPlayerByUUID(killerUid);
+                // bodyDeathReasonComponent
+                if (targetKiller == null || !GameFunctions.isPlayerAliveAndSurvival(targetKiller)) {
+                    player.displayClientMessage(
+                            Component.translatable("message.noellesroles.wayfarer.select.killer_died")
+                                    .withStyle(ChatFormatting.RED),
+                            true);
+                    return InteractionResult.FAIL;
                 }
+                wayC.startFindKiller(be, targetVictim, targetKiller, bodyDeathReasonComponent);
+                return InteractionResult.SUCCESS;
+
             }
             return InteractionResult.PASS;
         });
+
     }
 
     public void startPhaseThree(ResourceLocation trueDeathReason) {
