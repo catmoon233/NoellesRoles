@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import net.minecraft.client.CameraType;
 
+import org.agmas.noellesroles.init.ModBlocks;
 import org.agmas.noellesroles.init.ModEntities;
 import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.init.NRSounds;
@@ -67,6 +68,7 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.network.BreakArmorPayload;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -79,6 +81,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -128,6 +131,7 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // 注册HUD渲染
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.VENDING_MACHINES_BLOCK, RenderType.cutout());
         PanItem.openScreenCallback = () -> {
             Minecraft client = Minecraft.getInstance();
             if (client.player == null)
@@ -334,7 +338,10 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         ClientPlayNetworking.registerGlobalReceiver(OpenVendingMachinesScreenS2CPacket.ID, (payload, context) -> {
             context.client().execute(() -> {
-                context.client().setScreen(new VendingMachinesGui(Map.of(TMMItems.REVOLVER.getDefaultInstance(),300,TMMItems.LOCKPICK.getDefaultInstance(),100,TMMItems.BODY_BAG.getDefaultInstance(),100,TMMItems.GRENADE.getDefaultInstance(),1000)).setBlockPos(payload.blockPos()));
+                context.client()
+                        .setScreen(new VendingMachinesGui(Map.of(TMMItems.REVOLVER.getDefaultInstance(), 300,
+                                TMMItems.LOCKPICK.getDefaultInstance(), 100, TMMItems.BODY_BAG.getDefaultInstance(),
+                                100, TMMItems.GRENADE.getDefaultInstance(), 1000)).setBlockPos(payload.blockPos()));
 
             });
 
