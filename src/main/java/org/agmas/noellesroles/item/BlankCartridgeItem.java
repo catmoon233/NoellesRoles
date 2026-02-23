@@ -1,7 +1,6 @@
 package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

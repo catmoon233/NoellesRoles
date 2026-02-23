@@ -364,7 +364,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                                         this.onClose();
                                                     }).bounds(this.centerX - 50, this.centerY + 60, 100, 20)
                                                     .build();
-                                            addRenderableOnly(closeBtn);
+                                            addRenderableWidget(closeBtn);
                                             // 向服务器发结果包
                                             ClientPlayNetworking.send(new ChefCookC2SPacket(resultBuffTime));
                                         }));
@@ -623,7 +623,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
      * - 根据buffID进行图像读取，只需要以buff + "ID"命名即可
      * </p>
      */
-    private static final Pair<Integer, Integer> BUFF_BOUNDS = new Pair<>(-3, 7);
+    private static final Pair<Integer, Integer> BUFF_BOUNDS = new Pair<>(-3, 8);
     /** 食材大小基础范围：与时长有关，此处填写的单位为材质像素单位，在初始化中会被转换为屏幕像素单位（*pixelSize) */
     private static final Pair<Integer, Integer> FOOD_SCALE_BOUNDS = new Pair<>(-5, 5);
     /** buff持续时间范围，可以为负数 */

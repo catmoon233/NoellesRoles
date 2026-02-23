@@ -389,14 +389,9 @@ public class InstinctRenderer {
                         if (isKillerTeam(target_role)) {
                             return getRoleColor(target_role);
                         }
-                        if (target_player.distanceTo(self) <= 10) {
-                            if (TMMClient.gameComponent.isRole(target_player, ModRoles.PATROLLER)) {
-                                return new Color(76, 255, 239).getRGB();
-                            }
-                            if (TMMClient.gameComponent.isRole(target_player, TMMRoles.VIGILANTE)) {
-                                return new Color(63, 72, 204).getRGB();
-                            }
-                            if (TMMItemUtils.hasItem(target_player, TMMItemTags.GUNS) > 0) {
+                        if (target_player.distanceTo(self) <= 5) {
+                            var role = TMMClient.gameComponent.getRole(target_player);
+                            if (role!=null && role.isVigilanteTeam()) {
                                 return new Color(63, 72, 204).getRGB();
                             }
                         }

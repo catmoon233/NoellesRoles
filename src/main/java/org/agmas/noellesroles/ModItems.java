@@ -46,7 +46,7 @@ public class ModItems {
             new ChefFoodItem((new Item.Properties()).stacksTo(1)), "lingshi");
 
     public static final Item FOOD_STUFF = register(
-            new FoodStuffItem((new Item.Properties()).stacksTo(1)), "foodstuff");
+            new FoodStuffItem((new Item.Properties()).stacksTo(16)), "foodstuff");
     public static final Item PAN = register(
             new PanItem((new Item.Properties()).stacksTo(1)), "pan");
     public static final Item BUCKET_OF_H2SO4 = register(
