@@ -98,6 +98,7 @@ public class Noellesroles implements ModInitializer {
         LootCommand.register();
         RoomCommand.register();
         DisplayItemCommand.register();
+        AddGoodsCommand.register();
         
         // 加载预设配置
         Preset.PresetManager.loadPresets();

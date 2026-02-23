@@ -736,5 +736,15 @@
   "subtitles.gongxifacai": "Gong Xi Fa Cai",
   "hud.noellesroles.nianshou.red_packets": "Red Packets: %s",
   "msg.noellesroles.taskpoint.available": "Task point perspective is available. Press %s to turn it on or off.",
-  "message.tip.for_taskpoint": "Press %s to switch task point perspective."
+  "message.tip.for_taskpoint": "Press %s to switch task point perspective.",
+  "noellesroles.bought_item": "bought suceessfully",
+  "noellesroles.not_enough_money": "not enough money",
+  "noellesroles.cant_buy_item": "inventory is full",
+  "gui.vendingmachine.money_display": "\uE781 %s",
+  "Vending Machine": "Vending Machine",
+  "VENDING MACHINE": "VENDING MACHINE",
+  "BUY": "BUY",
+  "Collect": "Collect",
+  "gui.vendingmachine.knob.tooltip": "%s",
+  "gui.vendingmachine.collect.tooltip": "%s"
 }

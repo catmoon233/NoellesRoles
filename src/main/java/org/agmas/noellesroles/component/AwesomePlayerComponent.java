@@ -56,7 +56,7 @@ public class AwesomePlayerComponent implements RoleComponent, ServerTickingCompo
                         AwesomePlayerComponent component = AwesomePlayerComponent.KEY.maybeGet(player).orElse(null);
                         if (component != null) {
                             component.setNearByDeathTime(nearByDeathTimeRecordTime); // 30s
-                            // component.sync();
+                            // componentKey.sync();
                         }
                     }
                 }

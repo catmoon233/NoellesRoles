@@ -1062,9 +1062,9 @@ public class RicesRoleRhapsody implements ModInitializer {
         // player.giveItemStack(new ItemStack(Items.PAPER));
         //
         // // 设置角色特定的组件数据
-        // ExamplePlayerComponent component = ExamplePlayerComponent.KEY.get(player);
-        // component.reset();
-        // component.sync();
+        // ExamplePlayerComponent componentKey = ExamplePlayerComponent.KEY.get(player);
+        // componentKey.reset();
+        // componentKey.sync();
         // }
 
         // ==================== 示例：设置初始金钱 ====================

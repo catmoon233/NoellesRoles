@@ -18,6 +18,8 @@ import java.util.UUID;
 
 import net.minecraft.client.CameraType;
 
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.agmas.noellesroles.block_entity.VendingMachinesBlockEntity;
 import org.agmas.noellesroles.init.ModBlocks;
 import org.agmas.noellesroles.init.ModEntities;
 import org.agmas.noellesroles.init.ModItems;
@@ -217,6 +219,16 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+        ClientPlayNetworking.registerGlobalReceiver(VendingBuyMessageCallBackS2CPacket.ID, (payload, context) -> {
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null) {
+                    if (client.screen instanceof VendingMachinesGui vendingMachinesGui){
+                        vendingMachinesGui.addPurchaseMessage(payload.componentKey());
+                    }
+                }
+            });
+        });
         ClientPlayNetworking.registerGlobalReceiver(OpenIntroPayload.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
@@ -329,6 +341,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+
         OnRoundStartWelcomeTimmer.EVENT.register((player, timer) -> {
             if (timer == 1) {
                 if (NoellesRolesConfig.HANDLER.instance().welcome_voice) {
@@ -338,11 +351,14 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         ClientPlayNetworking.registerGlobalReceiver(OpenVendingMachinesScreenS2CPacket.ID, (payload, context) -> {
             context.client().execute(() -> {
-                context.client()
-                        .setScreen(new VendingMachinesGui(Map.of(TMMItems.REVOLVER.getDefaultInstance(), 300,
-                                TMMItems.LOCKPICK.getDefaultInstance(), 100, TMMItems.BODY_BAG.getDefaultInstance(),
-                                100, TMMItems.GRENADE.getDefaultInstance(), 1000)).setBlockPos(payload.blockPos()));
-
+                BlockEntity blockEntity = context.client().level.getBlockEntity(payload.blockPos());
+                if (blockEntity instanceof VendingMachinesBlockEntity vendingMachinesBlockEntity) {
+                    Map<ItemStack, Integer> shopItems = new HashMap<>();
+                    vendingMachinesBlockEntity.getShops().forEach(shop -> {
+                        shopItems.put(shop.stack(), shop.price());
+                    });
+                    context.client().setScreen(new VendingMachinesGui(shopItems).setBlockPos(payload.blockPos()));
+                }
             });
 
         });

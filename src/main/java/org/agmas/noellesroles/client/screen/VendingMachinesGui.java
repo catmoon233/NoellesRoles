@@ -4,22 +4,27 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.agmas.noellesroles.packet.VendingMachinesBuyC2SPacket;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -109,9 +114,14 @@ public class VendingMachinesGui extends AbstractPixelScreen {
     private int collectClickAnimation = 0;
     private static final int COLLECT_CLICK_DURATION = 8;
     private long lastCollectClickTime = 0;
+    
+    // 购买信息提示
+    private Map<Long, String> purchaseMessages = new HashMap<>();
+    private static final int PURCHASE_MESSAGE_DURATION = 3000; // 3秒
+    private static final int PURCHASE_MESSAGE_Y_POS = 50; // 屏幕上方位置
 
     public VendingMachinesGui(Map<ItemStack, Integer> vendingItems) {
-        this(Component.literal("Vending Machine"), vendingItems);
+        this(Component.translatable("Vending Machine"), vendingItems);
     }
 
     public VendingMachinesGui setBlockPos(BlockPos blockPos){
@@ -168,6 +178,16 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         }
     }
 
+
+    @Override
+    public boolean keyPressed(int i, int j, int k) {
+
+        if (Minecraft.getInstance().options.keyInventory.matches(i, j)){
+            onClose();
+        }
+        return super.keyPressed(i, j, k);
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -191,6 +211,9 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         if (collectClickAnimation > 0) {
             collectClickAnimation--;
         }
+        
+        // 清理过期的购买提示信息
+        cleanupExpiredPurchaseMessages();
     }
 
     @Override
@@ -207,6 +230,12 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         
         // 渲染tooltip
         renderTooltips(guiGraphics, mouseX, mouseY);
+        
+        // 渲染购买信息提示
+        renderPurchaseMessages(guiGraphics);
+        
+        // 渲染玩家金钱
+        renderPlayerMoney(guiGraphics);
     }
 
     @Override
@@ -539,21 +568,21 @@ public class VendingMachinesGui extends AbstractPixelScreen {
     }
 
     private void renderLayerText(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        Component title = Component.literal("VENDING MACHINE");
+        Component title = Component.translatable("VENDING MACHINE");
         guiGraphics.drawString(this.font, title,
                 this.panelLeft + 10,
                 this.panelTop + 8,
                 0xFFEAEAEA,
                 false);
 
-        Component buyLabel = Component.literal("BUY");
+        Component buyLabel = Component.translatable("BUY");
         guiGraphics.drawString(this.font, buyLabel,
                 this.knobCenterX - this.font.width(buyLabel) / 2,
                 this.knobCenterY + this.knobRadius + 6,
                 0xFFE9E9E9,
                 false);
 
-        Component dropLabel = Component.literal("Collect");
+        Component dropLabel = Component.translatable("Collect");
         guiGraphics.drawString(this.font, dropLabel,
                 this.dropSlotX + this.dropSlotSize / 2 - this.font.width(dropLabel) / 2,
                 this.dropSlotY + this.dropSlotSize + 4,
@@ -609,6 +638,7 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         }
     }
 
+    private static VendingGoods cache_selected = null;
     private void onKnobPressed() {
         if (!isSelectedIndexValid()) {
             playClickSound();
@@ -627,8 +657,11 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         if (!this.purchaseCheck.test(purchaseStack, selected.price)) {
             return;
         }
+
+        cache_selected = selected;
+        ClientPlayNetworking.send(new VendingMachinesBuyC2SPacket(blockPos, BuiltInRegistries.ITEM.getKey(purchaseStack.getItem()).toString()));
         this.onPurchaseTriggered.accept(purchaseStack.copy(), selected.price);
-        startDropAnimationForSelection(selected);
+
     }
 
     private void startDropAnimationForSelection(VendingGoods selected) {
@@ -947,5 +980,103 @@ public class VendingMachinesGui extends AbstractPixelScreen {
             this.tick = 0;
             this.spinY = 0.0f;
         }
+    }
+    
+    /**
+     * 添加购买提示信息
+     */
+    public void addPurchaseMessage(String key) {
+        if (key.equals("noellesroles.bought_item")) {
+            if (cache_selected != null) {
+                startDropAnimationForSelection(cache_selected);
+            }
+        }
+        long timestamp = System.currentTimeMillis();
+        this.purchaseMessages.put(timestamp, key);
+    }
+    
+    /**
+     * 清理过期的购买提示信息
+     */
+    private void cleanupExpiredPurchaseMessages() {
+        long currentTime = System.currentTimeMillis();
+        this.purchaseMessages.entrySet().removeIf(entry -> 
+            currentTime - entry.getKey() > PURCHASE_MESSAGE_DURATION);
+    }
+    
+    /**
+     * 渲染购买信息提示
+     */
+    private void renderPurchaseMessages(GuiGraphics guiGraphics) {
+        long currentTime = System.currentTimeMillis();
+        int messageIndex = 0;
+        
+        for (Map.Entry<Long, String> entry : this.purchaseMessages.entrySet()) {
+            long timestamp = entry.getKey();
+            var message = Component.translatable(entry.getValue());
+            
+            // 计算透明度（随时间递减）
+            float age = (currentTime - timestamp) / (float) PURCHASE_MESSAGE_DURATION;
+            float alpha = 1.0f - age; // 从1.0降到0.0
+            
+            if (alpha <= 0) continue;
+            
+            // 计算位置（支持多个消息堆叠显示）
+            int yPos = PURCHASE_MESSAGE_Y_POS + (messageIndex * 25);
+            int xPos = this.width / 2;
+            
+            // 渲染带背景的消息
+            int textWidth = this.font.width(message);
+            int bgWidth = textWidth + 16;
+            int bgHeight = this.font.lineHeight + 8;
+            
+            // 背景颜色（带透明度）
+            int bgColor = ((int)(alpha * 200) << 24) | 0x000000; // 黑色背景
+            int borderColor = ((int)(alpha * 255) << 24) | 0xAAAAAA; // 灰色边框
+            
+            // 绘制背景
+            guiGraphics.fill(xPos - bgWidth/2, yPos, xPos + bgWidth/2, yPos + bgHeight, bgColor);
+            guiGraphics.fill(xPos - bgWidth/2, yPos, xPos + bgWidth/2, yPos + 1, borderColor);
+            guiGraphics.fill(xPos - bgWidth/2, yPos + bgHeight - 1, xPos + bgWidth/2, yPos + bgHeight, borderColor);
+            guiGraphics.fill(xPos - bgWidth/2, yPos, xPos - bgWidth/2 + 1, yPos + bgHeight, borderColor);
+            guiGraphics.fill(xPos + bgWidth/2 - 1, yPos, xPos + bgWidth/2, yPos + bgHeight, borderColor);
+            
+            // 绘制文本（带透明度）
+            int textColor = ((int)(alpha * 255) << 24) | 0xFFFFFF; // 白色文本
+            guiGraphics.drawString(this.font, message, 
+                xPos - textWidth/2, yPos + 4, textColor, false);
+            
+            messageIndex++;
+        }
+    }
+    
+    /**
+     * 渲染玩家金钱显示
+     */
+    private void renderPlayerMoney(GuiGraphics guiGraphics) {
+        if (this.minecraft == null || this.minecraft.player == null) {
+            return;
+        }
+        
+        // 获取玩家金钱
+        PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(this.minecraft.player);
+        int balance = shopComponent.balance;
+        
+        // 创建金钱显示文本
+        Component moneyText = Component.translatable("gui.vendingmachine.money_display", 
+            String.valueOf(balance));
+        
+        // 计算位置（右上角）
+        int textWidth = this.font.width(moneyText);
+        int xPos = this.width - textWidth - 10;
+        int yPos = 10;
+        
+        // 绘制背景
+        int bgWidth = textWidth + 12;
+        int bgHeight = this.font.lineHeight + 6;
+        guiGraphics.fill(xPos - 6, yPos - 3, xPos + bgWidth - 6, yPos + bgHeight - 3, 0xA0000000);
+        
+        // 绘制文本
+        guiGraphics.drawString(this.font, moneyText, xPos, yPos, 0xFFFFD700, false);
     }
 }
