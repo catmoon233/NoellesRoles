@@ -246,6 +246,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
         tickTimers.clear();
         timerWidgets.clear();
         buffTimers.clear();
+        scoreCards.clear();
+        lastInfoCards.clear();
 
         // 设置初值
         isInitialized = false;
@@ -305,6 +307,13 @@ public class CookingGameScreen extends AbstractPixelScreen {
                     startStringWidget.setMessage(Component.literal("Time Out"));
                     startStringWidget.setPosition(originalX,
                             (int) (centerY / START_STRING_SCALE - (float) strWidgetSize / 2));
+                    // 播放停止音效
+                    Minecraft.getInstance().getSoundManager().play(
+                            SimpleSoundInstance.forUI(
+                                    SoundEvents.FIREWORK_ROCKET_LARGE_BLAST,
+                                    1.0F
+                            )
+                    );
                     // 停止倒计时
                     gameTimer.setOneShoot(false);
                     // 设置倒计时结束后的停顿再进行下一步处理
@@ -371,6 +380,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
                             }));
                 }));
 
+        // 控制开场动画时间线
         animationTimeLineManager = AnimationTimeLineManager.builder()
                 .addAnimation(0f, new BezierAnimation(
                         startStringWidget,
@@ -389,12 +399,31 @@ public class CookingGameScreen extends AbstractPixelScreen {
                         new Vec2(0, (float) -strWidgetSize * 1.5f),
                         20))
                 .build();
+        // 控制开场动画文本及音效
+        timerWidgets.add(new TimerWidget(
+                0,
+                true,
+                (timerWidget) -> {
+                    // 播放默认按钮音效
+                    Minecraft.getInstance().getSoundManager().play(
+                            SimpleSoundInstance.forUI(
+                                    SoundEvents.UI_BUTTON_CLICK,
+                                    1.0F
+                            )
+                    );
+                }));
         timerWidgets.add(new TimerWidget(
                 1,
                 true,
                 (timerWidget) -> {
                     startStringWidget.setMessage(Component.literal("2"));
                     startStringWidget.setY(originalY);
+                    Minecraft.getInstance().getSoundManager().play(
+                            SimpleSoundInstance.forUI(
+                                    SoundEvents.UI_BUTTON_CLICK,
+                                    1.0F
+                            )
+                    );
                 }));
         timerWidgets.add(new TimerWidget(
                 2,
@@ -402,6 +431,12 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 (timerWidget) -> {
                     startStringWidget.setMessage(Component.literal("1"));
                     startStringWidget.setY(originalY);
+                    Minecraft.getInstance().getSoundManager().play(
+                            SimpleSoundInstance.forUI(
+                                    SoundEvents.UI_BUTTON_CLICK,
+                                    1.0F
+                            )
+                    );
                 }));
         timerWidgets.add(new TimerWidget(
                 3,
@@ -409,6 +444,12 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 (timerWidget) -> {
                     startStringWidget.setMessage(Component.literal("GO"));
                     startStringWidget.setY(originalY);
+                    Minecraft.getInstance().getSoundManager().play(
+                            SimpleSoundInstance.forUI(
+                                    SoundEvents.END_PORTAL_SPAWN,
+                                    1.0F
+                            )
+                    );
                 }));
         timerWidgets.add(new TimerWidget(
                 4,
@@ -458,14 +499,14 @@ public class CookingGameScreen extends AbstractPixelScreen {
                     buffID,
                     buffTime));
         }
-        foods.forEach(FoodCard::tick);
         pan.tick();
         foods.forEach(food -> {
             if (!food.isRemovable) {
+                // 食材 tick更新
+                food.tick();
                 if (GameItem.isOverlap(food, pan) && food.imgWidget.getBottom() >= pan.imgWidget.getBottom()) {
                     food.isRemovable = true;
 
-                    // TODO : 进行实时排序并兼容动画
                     // 当接到一种新食材时，创建该食材的进度条，并添加进进度条列表、播放动画
                     if (!infoCards.containsKey(food.buffID)) {
                         infoCards.put(food.buffID, new InfoCard(
@@ -481,8 +522,30 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                                 + (BASE_FOOD_SIZE * pixelSize + INFO_INTERVAL) * (infoCards.size() - 1)
                                                 - height),
                                 STRING_DURATION_TICKS).build());
+                        lastInfoCards.add(infoCards.get(food.buffID));
                     }
                     infoCards.get(food.buffID).addBuffSecond(food.buffSecond);
+
+                    // 进行实时排序并设置动画
+                    List<Pair<Integer, InfoCard>> curInfoCardsList = new ArrayList<>();
+                    for (int i = 0; i < lastInfoCards.size(); ++i)
+                        curInfoCardsList.add(new Pair<>(i, lastInfoCards.get(i)));
+                    // 降序排序
+                    curInfoCardsList.sort((o1, o2) ->
+                        Float.compare(o2.second.buffSecond, o1.second.buffSecond));
+                    for (int i = 0; i < lastInfoCards.size(); ++i) {
+                        if (i == curInfoCardsList.get(i).first)
+                            continue;
+                        animations.add(BezierAnimation.builder(
+                                lastInfoCards.get(curInfoCardsList.get(i).first),
+                                new Vec2(0,
+                                        (BASE_FOOD_SIZE * pixelSize + INFO_INTERVAL) * (i - curInfoCardsList.get(i).first)),
+                                STRING_DURATION_TICKS)
+                                .build());
+                    }
+                    for (int i = 0; i < lastInfoCards.size(); ++i)
+                        if (i != curInfoCardsList.get(i).first)
+                            lastInfoCards.set(i, curInfoCardsList.get(i).second);
 
                     // 播放接到食物的音效
                     Minecraft.getInstance().getSoundManager().play(
@@ -654,30 +717,51 @@ public class CookingGameScreen extends AbstractPixelScreen {
     private static final int DURATION = 200;
     /** 结算时每行 buff的数量 */
     private static final int ROW_BUFF_NUM = 4;
+    /** 动画列表 */
     private final Deque<AbstractAnimation> animations = new ArrayDeque<>();
+    /** 接取成功的文字反馈 */
     private final Deque<AlphaStringWidget> catchFeedBackStrings = new ArrayDeque<>();
+    /** 游戏中的食物对象 */
     private final Deque<FoodCard> foods = new ArrayDeque<>();
+    /** tick 定时器列表 */
     private final List<TickTimerWidget> tickTimers = new ArrayList<>();
     /** 有时需要嵌套定时器，如果直接添加会和遍历冲突，使用列表缓存，遍历后添加 */
     private final List<TickTimerWidget> buffTimers = new ArrayList<>();
+    /** 基于时间的渲染计时器列表 */
     private final List<TimerWidget> timerWidgets = new ArrayList<>();
+    /** 结算信息卡列表 */
     private final List<ScoreCard> scoreCards = new ArrayList<>();
-    /** 对应 id的 buff时长 */
+    /** 上一次排序后的卡片顺序，用于实时排序 */
+    private final List<InfoCard> lastInfoCards = new ArrayList<>();
+    /** 信息记录卡：存储对应 id的 buff时长 */
     private final Map<Integer, InfoCard> infoCards;
+    /** 下落的食材的实际缩放范围 */
     private final Pair<Integer, Integer> foodScaleBounds = new Pair<>(FOOD_SCALE_BOUNDS.first,
             FOOD_SCALE_BOUNDS.second);
     private final RandomSource randomSource;
     private AnimationTimeLineManager animationTimeLineManager = null;
+    /** 开始文本、时间结束文本等各个时间线的公共文本 */
     private AlphaStringWidget startStringWidget = null;
+    /** 锅 */
     private Pan pan;
+    /** 是否完成初始化动画 */
     private boolean isInitialized = false;
+    /** 游戏时间是否到了 */
     private boolean isTimeout = false;
+    /** 是否初始化完结算信息 */
     private boolean isInitScore = false;
+    /** 游戏重力 */
     private float gravity;
+    /** 结算界面宽度 */
     private int scoreBarWidth;
+    /** 结算界面高度 */
     private int maxScoreBarHeight;
+    /** 当前结算界面高度:用于控制动画 */
     private int curScoreBarHeight;
+    /** 游戏界面起始 X坐标 */
     private int gameStartX;
+    /** 下次生成物品的时间 */
     private int nextTick;
+    /** 当前游戏倒计时时间 */
     private int curTime;
 }

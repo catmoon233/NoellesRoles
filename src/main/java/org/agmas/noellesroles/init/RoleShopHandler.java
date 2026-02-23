@@ -1,4 +1,4 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +68,10 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> NIAN_SHOU_SHOP = new ArrayList<>();
     // ==================== 魔术师商店 ====================
     public static ArrayList<ShopEntry> MAGICIAN_SHOP = new ArrayList<>();
+    // ==================== 强盗商店 ====================
+    public static ArrayList<ShopEntry> BANDIT_SHOP = new ArrayList<>();
+    // ==================== 小偷商店 ====================
+    public static ArrayList<ShopEntry> THIEF_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -355,6 +359,16 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.MAGICIAN_ID, MAGICIAN_SHOP);
+        }
+        // 强盗商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.BANDIT_ID, BANDIT_SHOP);
+        }
+        // 小偷商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.THIEF_ID, THIEF_SHOP);
         }
         // 风精灵
         {
@@ -665,6 +679,68 @@ public class RoleShopHandler {
                     magicianComponent.startFakePsycho();
                 }
                 return true;
+            }
+        });
+
+        // 强盗商店
+        // 刀 - 200金币
+        BANDIT_SHOP.add(new ShopEntry(
+                TMMItems.KNIFE.getDefaultInstance(),
+                200,
+                ShopEntry.Type.WEAPON));
+
+        // 匪徒手枪 - 175金币
+        BANDIT_SHOP.add(new ShopEntry(
+                HSRItems.BANDIT_REVOLVER.getDefaultInstance(),
+                175,
+                ShopEntry.Type.WEAPON));
+
+        // 手榴弹 - 600金币
+        BANDIT_SHOP.add(new ShopEntry(
+                TMMItems.GRENADE.getDefaultInstance(),
+                600,
+                ShopEntry.Type.WEAPON));
+
+        // 关灯 - 150金币
+        BANDIT_SHOP.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 150, ShopEntry.Type.TOOL) {
+            public boolean onBuy(@NotNull Player player) {
+                return PlayerShopComponent.useBlackout(player);
+            }
+        });
+
+        // 小偷商店
+        // 小偷的荣誉（金锭） - 根据人数动态计算价格
+        THIEF_SHOP.add(new ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
+                0, // 价格会在购买时动态计算
+                ShopEntry.Type.TOOL) {
+            @Override
+            public boolean onBuy(@NotNull Player player) {
+                // 获取游戏总人数
+                int totalPlayers = player.level().players().size();
+                int cost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.getHonorCost(totalPlayers);
+
+                // 检查金币是否足够
+                PlayerShopComponent shop = PlayerShopComponent.KEY.get(player);
+                if (shop.balance < cost) {
+                    player.displayClientMessage(
+                            Component.literal("金币不足！需要 " + cost + " 金币").withStyle(ChatFormatting.RED),
+                            true);
+                    return false;
+                }
+
+                // 扣除金币并给予金锭
+                shop.balance -= cost;
+                shop.sync();
+
+                player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
+                player.displayClientMessage(
+                        Component.literal("购买了小偷的荣誉！花费 " + cost + " 金币").withStyle(ChatFormatting.GOLD),
+                        true);
+                return true;
+            }
+
+            public Component getName() {
+                return Component.literal("小偷的荣誉 (金锭)");
             }
         });
     }

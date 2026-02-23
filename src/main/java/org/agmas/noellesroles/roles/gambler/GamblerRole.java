@@ -2,7 +2,7 @@ package org.agmas.noellesroles.roles.gambler;
 
 import static dev.doctor4t.trainmurdermystery.game.GameFunctions.getSpawnPos;
 import static dev.doctor4t.trainmurdermystery.game.GameFunctions.roomToPlayer;
-import org.agmas.noellesroles.NRSounds;
+import org.agmas.noellesroles.init.NRSounds;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.utils.RoleUtils;
 

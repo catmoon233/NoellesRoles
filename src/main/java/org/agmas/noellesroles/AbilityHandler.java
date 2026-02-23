@@ -3,10 +3,12 @@ package org.agmas.noellesroles;
 import org.agmas.noellesroles.component.BomberPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.PlayerVolumeComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.WheelchairEntity;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
@@ -240,6 +242,19 @@ public class AbilityHandler {
                                 .withStyle(ChatFormatting.GOLD),
                         true);
             }
+        }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.THIEF)) {
+            ThiefPlayerComponent thiefComponent = ThiefPlayerComponent.KEY.get(context.player());
+
+            // 检查玩家是否在蹲下
+            if (context.player().isShiftKeyDown()) {
+                // 蹲下按技能键：切换模式
+                thiefComponent.toggleMode();
+            } else {
+                // 普通按技能键：使用技能
+                thiefComponent.useAbility();
+            }
+            return;
         }
     }
 

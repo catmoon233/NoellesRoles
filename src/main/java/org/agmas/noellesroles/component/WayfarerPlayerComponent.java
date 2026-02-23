@@ -5,7 +5,7 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions.WinStatus;
 import dev.doctor4t.trainmurdermystery.index.TMMEntities;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;

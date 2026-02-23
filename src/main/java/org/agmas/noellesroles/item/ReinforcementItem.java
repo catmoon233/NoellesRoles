@@ -2,7 +2,7 @@ package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import net.minecraft.server.level.ServerLevel;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.role.ModRoles;

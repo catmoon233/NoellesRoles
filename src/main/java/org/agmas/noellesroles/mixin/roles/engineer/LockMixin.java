@@ -2,7 +2,6 @@ package org.agmas.noellesroles.mixin.roles.engineer;
 
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -13,12 +12,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
-import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.packet.OpenLockGuiS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,4 +1,4 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.entity.*;
 
 

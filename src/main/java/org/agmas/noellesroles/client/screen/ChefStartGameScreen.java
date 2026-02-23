@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.client.screen;
 
 import org.agmas.noellesroles.ModDataComponentTypes;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 
 import dev.doctor4t.trainmurdermystery.item.CocktailItem;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;

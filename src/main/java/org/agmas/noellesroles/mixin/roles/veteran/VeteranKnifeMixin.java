@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.mixin.roles.veteran;
 
-import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -10,7 +9,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.VeteranPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;

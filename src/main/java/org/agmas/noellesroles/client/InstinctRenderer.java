@@ -11,6 +11,7 @@ import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.WayfarerPlayerComponent;
+import org.agmas.noellesroles.component.BanditPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
@@ -375,6 +376,22 @@ public class InstinctRenderer {
 
                 // 杀手直觉
                 if (isKillerTeam(self_role) && TMMClient.isPlayerAliveAndInSurvival()) {
+                    // 强盗直觉：只能透视半径10格内的玩家，透视杀手队友无距离限制
+                    if (TMMClient.gameComponent.isRole(self, ModRoles.BANDIT)) {
+                        // 检查目标是否是杀手队友
+                        if (target_role != null && target_role.canUseKiller()) {
+                            // 杀手队友无距离限制
+                            return getRoleColor(target_role);
+                        } else {
+                            // 普通玩家只能透视10格内
+                            if (target_player.distanceTo(self) <= 10) {
+                                return getRoleColor(target_role);
+                            } else {
+                                return -1;
+                            }
+                        }
+                    }
+
                     // 魔术师：杀手看魔术师时显示红色边框（像看其他杀手一样）
                     if (TMMClient.gameComponent.isRole(target_player, ModRoles.MAGICIAN)) {
                         target_role = RoleUtils

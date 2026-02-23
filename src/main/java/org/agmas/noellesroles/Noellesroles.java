@@ -6,6 +6,7 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import org.agmas.noellesroles.init.*;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
 import org.agmas.harpymodloader.Harpymodloader;
@@ -116,7 +117,9 @@ public class Noellesroles implements ModInitializer {
         // 注册商店
         RoleShopHandler.shopRegister();
         ModEventsRegister.registerPredicate();
-        // 设置刀击中效果
+
+        //注册方块
+        ModBlocks.initialize();
 
         // 注册血液粒子工厂
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, Noellesroles.id("deathblood"),
