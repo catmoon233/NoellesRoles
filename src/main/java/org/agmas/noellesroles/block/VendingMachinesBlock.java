@@ -59,6 +59,11 @@ public class VendingMachinesBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected VoxelShape getInteractionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+        return SHAPE;
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level,
             BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         useeVendingMachines(player, blockPos);

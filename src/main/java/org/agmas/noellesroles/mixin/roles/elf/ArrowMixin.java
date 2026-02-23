@@ -9,6 +9,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.SpectralArrow;
@@ -31,6 +33,14 @@ public class ArrowMixin {
             return;
         if (entityHitResult.getEntity() instanceof ServerPlayer player) {
             AbstractArrow arrow = (AbstractArrow) (Object) this;
+            if (arrow instanceof SpectralArrow){
+                player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 20 * 20, 0, false, false, true));
+                arrow.discard();
+                ci.cancel();
+
+                return;
+
+            }
             if (arrow instanceof Arrow) {
                 if (arrow.getOwner() instanceof ServerPlayer serverPlayer) {
                     if (GameWorldComponent.KEY.get(serverPlayer.serverLevel()).isRole(serverPlayer, ModRoles.ELF)) {

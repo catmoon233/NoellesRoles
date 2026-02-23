@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -109,6 +110,11 @@ public class VendingMachinesGui extends AbstractPixelScreen {
     private int collectClickAnimation = 0;
     private static final int COLLECT_CLICK_DURATION = 8;
     private long lastCollectClickTime = 0;
+    
+    // 购买信息提示
+    private Map<Long, String> purchaseMessages = new HashMap<>();
+    private static final int PURCHASE_MESSAGE_DURATION = 3000; // 3秒
+    private static final int PURCHASE_MESSAGE_Y_POS = 50; // 屏幕上方位置
 
     public VendingMachinesGui(Map<ItemStack, Integer> vendingItems) {
         this(Component.literal("Vending Machine"), vendingItems);
@@ -191,6 +197,9 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         if (collectClickAnimation > 0) {
             collectClickAnimation--;
         }
+        
+        // 清理过期的购买提示信息
+        cleanupExpiredPurchaseMessages();
     }
 
     @Override
@@ -207,6 +216,12 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         
         // 渲染tooltip
         renderTooltips(guiGraphics, mouseX, mouseY);
+        
+        // 渲染购买信息提示
+        renderPurchaseMessages(guiGraphics);
+        
+        // 渲染玩家金钱
+        renderPlayerMoney(guiGraphics);
     }
 
     @Override
@@ -947,5 +962,98 @@ public class VendingMachinesGui extends AbstractPixelScreen {
             this.tick = 0;
             this.spinY = 0.0f;
         }
+    }
+    
+    /**
+     * 添加购买提示信息
+     */
+    public void addPurchaseMessage(String key) {
+        long timestamp = System.currentTimeMillis();
+        this.purchaseMessages.put(timestamp, key);
+    }
+    
+    /**
+     * 清理过期的购买提示信息
+     */
+    private void cleanupExpiredPurchaseMessages() {
+        long currentTime = System.currentTimeMillis();
+        this.purchaseMessages.entrySet().removeIf(entry -> 
+            currentTime - entry.getKey() > PURCHASE_MESSAGE_DURATION);
+    }
+    
+    /**
+     * 渲染购买信息提示
+     */
+    private void renderPurchaseMessages(GuiGraphics guiGraphics) {
+        long currentTime = System.currentTimeMillis();
+        int messageIndex = 0;
+        
+        for (Map.Entry<Long, String> entry : this.purchaseMessages.entrySet()) {
+            long timestamp = entry.getKey();
+            var message = Component.translatable(entry.getValue());
+            
+            // 计算透明度（随时间递减）
+            float age = (currentTime - timestamp) / (float) PURCHASE_MESSAGE_DURATION;
+            float alpha = 1.0f - age; // 从1.0降到0.0
+            
+            if (alpha <= 0) continue;
+            
+            // 计算位置（支持多个消息堆叠显示）
+            int yPos = PURCHASE_MESSAGE_Y_POS + (messageIndex * 25);
+            int xPos = this.width / 2;
+            
+            // 渲染带背景的消息
+            int textWidth = this.font.width(message);
+            int bgWidth = textWidth + 16;
+            int bgHeight = this.font.lineHeight + 8;
+            
+            // 背景颜色（带透明度）
+            int bgColor = ((int)(alpha * 200) << 24) | 0x000000; // 黑色背景
+            int borderColor = ((int)(alpha * 255) << 24) | 0xAAAAAA; // 灰色边框
+            
+            // 绘制背景
+            guiGraphics.fill(xPos - bgWidth/2, yPos, xPos + bgWidth/2, yPos + bgHeight, bgColor);
+            guiGraphics.fill(xPos - bgWidth/2, yPos, xPos + bgWidth/2, yPos + 1, borderColor);
+            guiGraphics.fill(xPos - bgWidth/2, yPos + bgHeight - 1, xPos + bgWidth/2, yPos + bgHeight, borderColor);
+            guiGraphics.fill(xPos - bgWidth/2, yPos, xPos - bgWidth/2 + 1, yPos + bgHeight, borderColor);
+            guiGraphics.fill(xPos + bgWidth/2 - 1, yPos, xPos + bgWidth/2, yPos + bgHeight, borderColor);
+            
+            // 绘制文本（带透明度）
+            int textColor = ((int)(alpha * 255) << 24) | 0xFFFFFF; // 白色文本
+            guiGraphics.drawString(this.font, message, 
+                xPos - textWidth/2, yPos + 4, textColor, false);
+            
+            messageIndex++;
+        }
+    }
+    
+    /**
+     * 渲染玩家金钱显示
+     */
+    private void renderPlayerMoney(GuiGraphics guiGraphics) {
+        if (this.minecraft == null || this.minecraft.player == null) {
+            return;
+        }
+        
+        // 获取玩家金钱
+        PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(this.minecraft.player);
+        int balance = shopComponent.balance;
+        
+        // 创建金钱显示文本
+        Component moneyText = Component.translatable("gui.vendingmachine.money_display", 
+            String.valueOf(balance));
+        
+        // 计算位置（右上角）
+        int textWidth = this.font.width(moneyText);
+        int xPos = this.width - textWidth - 10;
+        int yPos = 10;
+        
+        // 绘制背景
+        int bgWidth = textWidth + 12;
+        int bgHeight = this.font.lineHeight + 6;
+        guiGraphics.fill(xPos - 6, yPos - 3, xPos + bgWidth - 6, yPos + bgHeight - 3, 0xA0000000);
+        
+        // 绘制文本
+        guiGraphics.drawString(this.font, moneyText, xPos, yPos, 0xFFFFD700, false);
     }
 }
