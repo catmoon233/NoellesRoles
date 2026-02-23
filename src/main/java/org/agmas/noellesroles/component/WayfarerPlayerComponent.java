@@ -9,6 +9,7 @@ import org.agmas.noellesroles.ModItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
+import org.agmas.noellesroles.utils.ModNBTUtils;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,7 @@ import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
-import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
+import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerKilledPlayer;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
@@ -64,6 +65,8 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     /** 当前阶段（1、2、3） */
     public int phase = 0;
 
+    public Vec3 pos;
+
     /** 凶手 */
     public UUID killer;
 
@@ -91,13 +94,13 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         this.phase = 0;
         this.killer = null;
         this.deathReason = null;
+        this.pos = null;
         this.sync();
     }
 
     @Override
     public void clear() {
-        this.phase = 0;
-        this.killer = null;
+        this.reset();
     }
 
     /**
@@ -163,6 +166,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("phase", this.phase);
+        ModNBTUtils.writePos(tag, "pos", pos);
         if (this.deathReason != null) {
             tag.putString("death_reason", this.deathReason.toString());
         }
@@ -174,6 +178,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.phase = tag.contains("phase") ? tag.getInt("phase") : 0;
+        this.pos = ModNBTUtils.readPos(tag, "pos", null);
         this.deathReason = tag.contains("death_reason") ? ResourceLocation.tryParse(tag.getString("death_reason"))
                 : null;
         if (tag.contains("killer")) {
@@ -188,7 +193,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     public static void registerEvents() {
-        AllowPlayerDeath.EVENT.register((victim, deathReason) -> {
+        AfterShieldAllowPlayerDeath.EVENT.register((victim, deathReason) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
             if (gameWorldComponent.isRole(victim, ModRoles.WAYFARER)) {
                 TMMItemUtils.clearItem(victim, TMMItems.KNIFE);
@@ -240,7 +245,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
 
                     BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
                             .get(be);
-                    UUID killerUid = bodyDeathReasonComponent.killer;
+                    UUID killerUid = be.getKillerUuid();
                     Player targetKiller = level.getPlayerByUUID(killerUid);
                     // bodyDeathReasonComponent
                     if (targetKiller == null) {
@@ -262,6 +267,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         this.phase = 3;
         this.killer = null;
         this.deathReason = null;
+        // 隐身并且不动
         this.player.addEffect(new MobEffectInstance(
                 MobEffects.INVISIBILITY,
                 200, // 持续时间（tick）
@@ -278,7 +284,6 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
                 false, // showParticles（显示粒子）
                 true // showIcon（显示图标）
         ));
-        // 隐身并且不动
         TMMItemUtils.clearItem(player, TMMItems.KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
@@ -290,6 +295,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         // 生成尸体
         PlayerBodyEntity body = (PlayerBodyEntity) TMMEntities.PLAYER_BODY.create(this.player.level());
         if (body != null) {
+            body.setDeathReason(trueDeathReason.toString());
             body.setPlayerUuid(player.getUUID());
             Vec3 spawnPos = player.position().add(player.getLookAngle().normalize().scale(1.0));
             body.moveTo(spawnPos.x(), player.getY(), spawnPos.z(), player.getYHeadRot(), 0.0F);
@@ -297,10 +303,11 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
             body.setYHeadRot(player.getYHeadRot());
             player.level().addFreshEntity(body);
             final var bodyDeathReasonComponent = BodyDeathReasonComponent.KEY.get(body);
-            bodyDeathReasonComponent.deathReason = trueDeathReason;
             bodyDeathReasonComponent.playerRole = ModRoles.WAYFARER_ID;
             bodyDeathReasonComponent.sync();
         }
+        // 传送
+        this.player.teleportTo(this.pos.x, this.pos.y, this.pos.z);
         this.sync();
     }
 
@@ -355,7 +362,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
             }
             RoleUtils.insertStackInFreeSlot(player, item);
         }
-
+        this.pos = be.position();
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
         TMMItemUtils.clearItem(player, TMMItems.KNIFE);
@@ -364,7 +371,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         this.phase = 1;
         this.killer = targetKiller.getUUID();
         this.player.displayClientMessage(Component.translatable("", targetKiller.getDisplayName()), true);
-        this.deathReason = bodyDeathReasonComponent.deathReason;
+        this.deathReason = ResourceLocation.tryParse(be.getDeathReason());
         this.sync();
     }
 }

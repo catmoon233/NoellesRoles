@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * 这里删不了
+ */
 @Mixin(GameFunctions.class)
 public abstract class CoronerAddDeathReasonMixin {
 
@@ -20,8 +23,6 @@ public abstract class CoronerAddDeathReasonMixin {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
         if (gameWorldComponent.getRole(victim) == null) return;
         final var bodyDeathReasonComponent = BodyDeathReasonComponent.KEY.get(playerBodyEntity);
-        bodyDeathReasonComponent.killer = killer.getUUID();
-        bodyDeathReasonComponent.deathReason = identifier;
         bodyDeathReasonComponent.playerRole = gameWorldComponent.getRole(victim).identifier();
         bodyDeathReasonComponent.sync();
     }
