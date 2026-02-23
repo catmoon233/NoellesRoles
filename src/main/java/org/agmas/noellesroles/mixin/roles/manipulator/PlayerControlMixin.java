@@ -27,11 +27,6 @@ public class PlayerControlMixin {
         if (player instanceof ServerPlayer serverPlayer) {
             final var gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.serverLevel());
             if (gameWorldComponent.isRunning() && GameFunctions.isPlayerAliveAndSurvival(serverPlayer)) {
-                // 手铐
-                if (serverPlayer.getOffhandItem() != null && serverPlayer.getOffhandItem().is(ModItems.HANDCUFFS)) {
-                    ci.cancel();
-                    return;
-                }
                 final var inControlCCA = InControlCCA.KEY.get(serverPlayer);
                 if (inControlCCA.isControlling) {
                     // 只有生存模式的玩家才会随机移动
