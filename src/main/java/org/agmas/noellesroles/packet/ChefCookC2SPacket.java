@@ -1,7 +1,9 @@
 package org.agmas.noellesroles.packet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.agmas.noellesroles.Noellesroles;
 
@@ -14,7 +16,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
-public record ChefCookC2SPacket(ArrayList<String> cookInfo) implements CustomPacketPayload {
+public record ChefCookC2SPacket(Map<Integer, Float> cookInfo) implements CustomPacketPayload {
     public static final Gson gson = new Gson();
     public static final ResourceLocation ABILITY_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID,
             "ability_no");
@@ -31,8 +33,8 @@ public record ChefCookC2SPacket(ArrayList<String> cookInfo) implements CustomPac
 
     public static ChefCookC2SPacket read(FriendlyByteBuf buf) {
         String data = buf.readUtf();
-        ArrayList<String> cookInfos = new ArrayList<>();
-        java.lang.reflect.Type type = new TypeToken<List<String>>() {
+        Map<Integer, Float> cookInfos = new HashMap<>();
+        java.lang.reflect.Type type = new TypeToken<Map<Integer, Float>>() {
         }.getType();
         try {
             cookInfos = gson.fromJson(data, type);
