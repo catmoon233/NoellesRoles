@@ -7,6 +7,8 @@ import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.agmas.noellesroles.init.ModBlocks;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +23,7 @@ public class VendingMachinesBlockEntity extends BlockEntity {
    private final List<ShopEntry> items = new ArrayList<>();
 
    public VendingMachinesBlockEntity(BlockPos pos, BlockState state) {
-      super(TMMBlockEntities.SECURITY_MONITOR, pos, state);
+      super(ModBlocks.VENDING_MACHINES_BLOCK_ENTITY, pos, state);
    }
 
    public List<ShopEntry> getShops() {
