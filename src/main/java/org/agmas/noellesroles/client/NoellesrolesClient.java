@@ -132,7 +132,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             Minecraft client = Minecraft.getInstance();
             if (client.player == null)
                 return;
-            client.setScreen(new CookingGameScreen());
+            client.setScreen(new ChefStartGameScreen());
         };
         AmbienceUtil.registerBackgroundAmbience(
                 new BackgroundAmbience(NRSounds.JESTER_AMBIENT,

@@ -8,6 +8,7 @@ import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
 import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
+import org.agmas.noellesroles.packet.ChefCookC2SPacket;
 import org.agmas.noellesroles.packet.DisplayItemS2CPacket;
 import org.agmas.noellesroles.packet.ExecutionerSelectTargetC2SPacket;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
@@ -58,6 +59,7 @@ public class ModPackets {
         PayloadTypeRegistry.playS2C().register(ScanAllTaskPointsPayload.ID, ScanAllTaskPointsPayload.CODEC);
 
         PayloadTypeRegistry.playC2S().register(PlayerResetS2CPacket.ID, PlayerResetS2CPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(ChefCookC2SPacket.ID, ChefCookC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(PlayerResetS2CPacket.ID, PlayerResetS2CPacket.CODEC);
 
         PayloadTypeRegistry.playC2S().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);

@@ -40,12 +40,16 @@ import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.SwapperPlayerComponent;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
+import org.agmas.noellesroles.packet.ChefCookC2SPacket;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
 import org.agmas.noellesroles.packet.RecorderC2SPacket;
 
 public class ModPacketsReciever {
 
     public static void registerPackets() {
+        ServerPlayNetworking.registerGlobalReceiver(ChefCookC2SPacket.ID, (payload, context) -> {
+
+        });
         ServerPlayNetworking.registerGlobalReceiver(ModPackets.MORPH_PACKET, (payload, context) -> {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                     .get(context.player().level());
