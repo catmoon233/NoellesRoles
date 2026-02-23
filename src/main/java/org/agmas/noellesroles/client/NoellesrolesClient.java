@@ -32,6 +32,7 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.WheelchairEntityModel;
 import org.agmas.noellesroles.entity.WheelchairEntityRenderer;
+import org.agmas.noellesroles.item.PanItem;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
@@ -127,7 +128,12 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // 注册HUD渲染
-
+        PanItem.openScreenCallback = () -> {
+            Minecraft client = Minecraft.getInstance();
+            if (client.player == null)
+                return;
+            client.setScreen(new ChefStartGameScreen());
+        };
         AmbienceUtil.registerBackgroundAmbience(
                 new BackgroundAmbience(NRSounds.JESTER_AMBIENT,
                         player -> {
@@ -396,17 +402,18 @@ public class NoellesrolesClient implements ClientModInitializer {
 
             if (client.level != null && client.level.getGameTime() % 20 == 0) {
                 if (TMMClient.gameComponent != null && client.player != null) {
-                    // if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS)) {
-                    //     for (var p : client.player.level().players()) {
-                    //         if (GameFunctions.isPlayerAliveAndSurvival(p)) {
-                    //             if (p.distanceTo(client.player) <= 5) {
-                    //                 var aweC = AwesomePlayerComponent.KEY.maybeGet(p).orElse(null);
-                    //                 if (aweC != null) {
-                    //                     AwesomeClientHandler.renderParticleOfPlayer(client, p, aweC);
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
+                    // if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS))
+                    // {
+                    // for (var p : client.player.level().players()) {
+                    // if (GameFunctions.isPlayerAliveAndSurvival(p)) {
+                    // if (p.distanceTo(client.player) <= 5) {
+                    // var aweC = AwesomePlayerComponent.KEY.maybeGet(p).orElse(null);
+                    // if (aweC != null) {
+                    // AwesomeClientHandler.renderParticleOfPlayer(client, p, aweC);
+                    // }
+                    // }
+                    // }
+                    // }
                     // }
                 }
             }

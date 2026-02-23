@@ -7,6 +7,7 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleNameRenderer;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -53,7 +55,6 @@ public abstract class CoronerHudMixin {
         if (NoellesrolesClient.targetFakeBody != null) {
             if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.CORONER)
                     || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)
-                    || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.WAYFARER)
                     || TMMClient.isPlayerSpectatingOrCreative()) {
                 context.pose().pushPose();
                 context.pose().translate((float) context.guiWidth() / 2.0F, (float) context.guiHeight() / 2.0F + 6.0F,
@@ -99,6 +100,7 @@ public abstract class CoronerHudMixin {
         if (NoellesrolesClient.targetBody != null) {
             if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.CORONER)
                     || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)
+                    || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.WAYFARER)
                     || TMMClient.isPlayerSpectatingOrCreative()) {
                 var deathPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player);
                 boolean hasPenalty = false;
@@ -130,12 +132,15 @@ public abstract class CoronerHudMixin {
                 }
                 BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
                         .get(NoellesrolesClient.targetBody);
-                        
+                ResourceLocation deathReason = ResourceLocation
+                        .tryParse(NoellesrolesClient.targetBody.getDeathReason());
+                if (deathReason == null) {
+                    deathReason = GameConstants.DeathReasons.GENERIC;
+                }
                 MutableComponent name = Component
                         .translatable("hud.coroner.death_info", NoellesrolesClient.targetBody.tickCount / 20)
                         .append(Component
-                                .translatable("death_reason." + bodyDeathReasonComponent.deathReason.getNamespace()
-                                        + "." + bodyDeathReasonComponent.deathReason.getPath()));
+                                .translatable("death_reason." + deathReason.toLanguageKey()));
                 boolean vultured = bodyDeathReasonComponent.vultured;
                 final var worldModifiers = WorldModifierComponent.KEY.get(Minecraft.getInstance().player.level());
                 if (worldModifiers != null) {

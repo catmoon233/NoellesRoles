@@ -7,9 +7,11 @@ import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.noellesroles.commands.BroadcastCommand;
+import org.agmas.noellesroles.component.AvengerPlayerComponent;
 import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.BoxerPlayerComponent;
+import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
 import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
@@ -39,6 +41,7 @@ import org.agmas.noellesroles.utils.EntityClearUtils;
 import org.agmas.noellesroles.utils.MapScanner;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.utils.ServerManager;
+import org.slf4j.LoggerFactory;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -54,6 +57,7 @@ import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
 import dev.doctor4t.trainmurdermystery.event.OnGameTrueStarted;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerDeath;
+import dev.doctor4t.trainmurdermystery.event.OnPlayerDeathWithKiller;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerKilledPlayer;
 import dev.doctor4t.trainmurdermystery.event.OnTeammateKilledTeammate;
 import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
@@ -72,6 +76,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -392,6 +397,17 @@ public class ModEventsRegister {
     private static boolean isEnabled = false;
 
     public static void registerEvents() {
+        TMM.canDrop.add((player) -> {
+            var mainHandItem = player.getMainHandItem();
+            var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+            if (gameWorldComponent.isRole(player, ModRoles.CHEF)) {
+                if (mainHandItem.get(ModDataComponentTypes.COOKED) != null) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
         ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
             if (isEnabled) {
                 if (Noellesroles.isOnlineMode == null) {
@@ -468,6 +484,86 @@ public class ModEventsRegister {
                 }
             }
         });
+        OnPlayerDeathWithKiller.EVENT.register((victim, killer, deathReason) -> {
+            final var world = victim.level();
+            if (world.isClientSide)
+                return;
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(world);
+            if (gameWorldComponent.isRole(victim, ModRoles.BROADCASTER)) {
+                String last_message = null;
+
+                BroadcasterPlayerComponent comp = BroadcasterPlayerComponent.KEY.get(victim);
+                if (comp != null) {
+                    LoggerFactory.getLogger("debug").error(comp.getStoredStr());
+                    last_message = comp.getStoredStr();
+                }
+                Component msg;
+                if (last_message != null && !last_message.trim().isEmpty()) {
+                    msg = Component
+                            .translatable("message.noellesroles.broadcaster.death_with_msg",
+                                    Component.literal(last_message).withStyle(ChatFormatting.GOLD))
+                            .withStyle(ChatFormatting.RED);
+                } else {
+                    msg = Component.translatable("message.noellesroles.broadcaster.death")
+                            .withStyle(ChatFormatting.RED);
+                }
+                world.players().forEach(
+                        player -> {
+                            if (player instanceof ServerPlayer sp) {
+                                player.playNotifySound(SoundEvents.ENDER_DRAGON_GROWL, SoundSource.PLAYERS, 0.5F, 1.3F);
+
+                                org.agmas.noellesroles.packet.BroadcastMessageS2CPacket packet = new org.agmas.noellesroles.packet.BroadcastMessageS2CPacket(
+                                        msg);
+                                net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(sp, packet);
+                            }
+                        });
+            }
+        });
+        OnPlayerDeathWithKiller.EVENT.register((victim, killer, deathReason) -> {
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(victim.level());
+            if (gameWorld == null)
+                return;
+            var refugeeC = RefugeeComponent.KEY.get(victim.level());
+            boolean isRefugeeAlive = false;
+            if (refugeeC.isAnyRevivals) {
+                isRefugeeAlive = true;
+            }
+            if (isRefugeeAlive)
+                return;
+            // 遍历所有玩家，检查是否有复仇者绑定了这个受害者
+            for (Player player : victim.level().players()) {
+                if (!gameWorld.isRole(player, ModRoles.AVENGER))
+                    continue;
+                if (player.equals(victim))
+                    continue; // 复仇者自己死亡不触发
+
+                AvengerPlayerComponent avengerComponent = ModComponents.AVENGER.get(player);
+
+                // 检查这个复仇者是否绑定了受害者
+                if (avengerComponent.targetPlayer != null &&
+                        avengerComponent.targetPlayer.equals(victim.getUUID()) &&
+                        !avengerComponent.activated) {
+
+                    // 激活复仇者能力，传入凶手信息
+                    if (killer != null) {
+                        avengerComponent.activate(killer.getUUID());
+                        avengerComponent.targetName = killer.getName().getString();
+                    } else {
+                        avengerComponent.activate(null);
+                    }
+
+                    String playerName = player.getName().getString();
+                    String victimName = victim.getName().getString();
+                    String killerName = killer != null ? killer.getName().getString() : "未知";
+
+                    player.displayClientMessage(
+                            Component.translatable("message.avenger.target_died", victimName, killerName)
+                                    .withStyle(ChatFormatting.GOLD),
+                            true);
+                    Noellesroles.LOGGER.info("复仇者 {} 绑定的目标 {} 被 {} 杀死，激活复仇者能力", playerName, victimName, killerName);
+                }
+            }
+        });
         OnPlayerKilledPlayer.EVENT.register((victim, killer, deathReason) -> {
             var gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
             if (deathReason.equals(OnPlayerKilledPlayer.DeathReason.KNIFE)) {
@@ -503,7 +599,7 @@ public class ModEventsRegister {
 
             return false;
         }));
-        
+
         WayfarerPlayerComponent.registerEvents();
         OnPlayerDeath.EVENT.register((playerEntity, reason) -> {
             FortunetellerPlayerComponent.KEY.get(playerEntity).reset();
@@ -582,6 +678,7 @@ public class ModEventsRegister {
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(ModRoles.WAYFARER.identifier())) {
                 player.getInventory().clearContent();
+                RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());
                 // (WayfarerPlayerComponent.KEY.get(player)).reset();
                 return;
             }
