@@ -11,6 +11,7 @@ import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.commands.*;
+import org.agmas.noellesroles.presets.Preset;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -96,6 +97,12 @@ public class Noellesroles implements ModInitializer {
         LootCommand.register();
         RoomCommand.register();
         DisplayItemCommand.register();
+        
+        // 加载预设配置
+        Preset.PresetManager.loadPresets();
+        
+        // 注册预设命令
+        PresetCommand.register();
 
         // 注册网络包类型
         ModPackets.registerPackets();
