@@ -94,7 +94,7 @@ public class VendingMachinesBlockEntity extends BlockEntity {
       super.loadAdditional(tag, provider);
       items.clear();
       if (tag.contains("shop", Tag.TAG_LIST)) {
-         ListTag shoptags = tag.getList("shop", Tag.TAG_LIST);
+         ListTag shoptags = tag.getList("shop", Tag.TAG_COMPOUND);
          for (var s : shoptags) {
             if (s.getId() == Tag.TAG_COMPOUND) {
                var entry = (CompoundTag) (s);
@@ -107,7 +107,7 @@ public class VendingMachinesBlockEntity extends BlockEntity {
                   try {
                      CompoundTag itemTag = entry.getCompound("item");
                      // 检查是否是有效的物品标签
-                     if (itemTag.contains("id") && !itemTag.getString("id").equals("minecraft:air") && itemTag.getByte("Count") > 0) {
+                     if (itemTag.contains("id") && !itemTag.getString("id").equals("minecraft:air") && itemTag.getByte("count") > 0) {
                         item = ItemStack.parse(this.level.registryAccess(), entry.get("item")).orElse(ItemStack.EMPTY);
                         // 验证解析后的物品
                         if (item.isEmpty()) {
