@@ -10,7 +10,6 @@ import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import dev.doctor4t.trainmurdermystery.cca.AbilityPlayerComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
