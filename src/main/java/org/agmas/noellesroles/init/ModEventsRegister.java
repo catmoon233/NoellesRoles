@@ -855,14 +855,15 @@ public class ModEventsRegister {
                         psychoComponent.reset();
                     }
 
-                    // 随机分配一个杀手身份给魔术师（原版杀手和毒师除外）
+                    // 随机分配一个杀手身份给魔术师（原版杀手、毒师和清道夫除外）
                     List<ResourceLocation> killerRoles = new ArrayList<>();
                     for (var entry : dev.doctor4t.trainmurdermystery.api.TMMRoles.ROLES.entrySet()) {
                         Role r = entry.getValue();
                         if (r.canUseKiller()
                                 && !r.identifier()
                                         .equals(dev.doctor4t.trainmurdermystery.api.TMMRoles.KILLER.identifier())
-                                && !r.identifier().equals(ModRoles.POISONER_ID)) {
+                                && !r.identifier().equals(ModRoles.POISONER_ID)
+                                && !r.identifier().equals(ModRoles.CLEANER_ID)) {
                             killerRoles.add(r.identifier());
                         }
                     }
