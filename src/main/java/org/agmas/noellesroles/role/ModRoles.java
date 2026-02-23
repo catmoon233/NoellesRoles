@@ -872,7 +872,7 @@ public class ModRoles {
                 Role.MoodType.FAKE, // 假心情
                 Integer.MAX_VALUE, // 无限冲刺时间
                 true // 隐藏计分板
-        )).setComponentKey(ModComponents.BANDIT));
+        )).setComponentKey(ModComponents.BANDIT);
 
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
