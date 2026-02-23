@@ -28,6 +28,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SkinSplitPersonalityComponent;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 /**
  * 玩家重置 Mixin
@@ -69,7 +71,9 @@ public abstract class PlayerResetMixin {
     private static void clearAllComponents(ServerPlayer player) {
         RoleUtils.RemoveAllPlayerAttributes(player);
         RoleUtils.RemoveAllEffects(player);
-
+        SplitPersonalityComponent.KEY.get(player).clear();
+        SkinSplitPersonalityComponent.KEY.get(player).clear();
+        SkinSplitPersonalityComponent.KEY.get(player).sync();
         (PlayerVolumeComponent.KEY.get(player)).clear();
         (WayfarerPlayerComponent.KEY.get(player)).clear();
         

@@ -1,18 +1,18 @@
 // Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
 package org.agmas.noellesroles.block_entity;
 
-import dev.doctor4t.trainmurdermystery.block.CameraBlock;
 import dev.doctor4t.trainmurdermystery.index.TMMBlockEntities;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -24,61 +24,59 @@ public class VendingMachinesBlockEntity extends BlockEntity {
       super(TMMBlockEntities.SECURITY_MONITOR, pos, state);
    }
 
-   public List<BlockPos> getCameraPositions() {
-      return new ArrayList(this.cameraPositions);
+   public List<ShopEntry> getShops() {
+      return new ArrayList<ShopEntry>(items);
    }
 
-   public Direction getCameraDirectionAt(Level level, BlockPos pos) {
-      BlockState cameraState = level.getBlockState(pos);
-      return cameraState.getBlock() instanceof CameraBlock ? (Direction)cameraState.getValue(CameraBlock.FACING) : null;
-   }
-
-   public boolean removeCameraPosition(BlockPos pos) {
-      boolean removed = this.cameraPositions.remove(pos);
-      if (removed) {
-         this.setChanged();
-      }
-
-      return removed;
-   }
-
-   public void clearCameraPositions() {
-      if (!this.cameraPositions.isEmpty()) {
-         this.cameraPositions.clear();
+   public void clearItems() {
+      if (!this.items.isEmpty()) {
+         this.items.clear();
          this.setChanged();
       }
 
    }
 
+   @Override
    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
       super.saveAdditional(compoundTag, provider);
-      CompoundTag positionsTag = new CompoundTag();
-      positionsTag.putInt("Size", this.cameraPositions.size());
+      ListTag list = new ListTag();
 
-      for(int i = 0; i < this.cameraPositions.size(); ++i) {
-         BlockPos pos = (BlockPos)this.cameraPositions.get(i);
-         positionsTag.putIntArray("Pos_" + i, new int[]{pos.getX(), pos.getY(), pos.getZ()});
+      for (int i = 0; i < this.items.size(); ++i) {
+         CompoundTag entryTag = new CompoundTag();
+         ShopEntry shopEntry = this.items.get(i);
+         entryTag.putInt("price", shopEntry.price());
+         CompoundTag shop = new CompoundTag();
+         var itemStack = ItemStack.EMPTY;
+         if (shopEntry.stack() != null) {
+            itemStack = shopEntry.stack();
+         }
+         itemStack.save(this.level.registryAccess(), shop);
+         entryTag.put("item", shop);
+         list.add(entryTag);
       }
-
-      compoundTag.put("CameraPositions", positionsTag);
+      compoundTag.put("shop", list);
    }
 
+   @Override
    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
       super.loadAdditional(tag, provider);
-      if (tag.contains("CameraPositions")) {
-         CompoundTag positionsTag = tag.getCompound("CameraPositions");
-         int size = positionsTag.getInt("Size");
-         this.cameraPositions.clear();
-
-         for(int i = 0; i < size; ++i) {
-            if (positionsTag.contains("Pos_" + i)) {
-               int[] posArray = positionsTag.getIntArray("Pos_" + i);
-               if (posArray.length == 3) {
-                  this.cameraPositions.add(new BlockPos(posArray[0], posArray[1], posArray[2]));
+      items.clear();
+      if (tag.contains("shop", Tag.TAG_LIST)) {
+         ListTag shoptags = tag.getList("shop", Tag.TAG_LIST);
+         for (var s : shoptags) {
+            if (s.getId() == Tag.TAG_COMPOUND) {
+               var entry = (CompoundTag) (s);
+               int price = 0;
+               ItemStack item = ItemStack.EMPTY;
+               if (entry.contains("price")) {
+                  price = entry.getInt("price");
                }
+               if (entry.contains("item")) {
+                  item = ItemStack.parse(this.level.registryAccess(), entry.get("item")).orElse(ItemStack.EMPTY);
+               }
+               items.add(new ShopEntry(item, price, ShopEntry.Type.TOOL));
             }
          }
       }
-
    }
 }
