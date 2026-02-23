@@ -3,7 +3,7 @@ package org.agmas.noellesroles.client;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.event.AllowItemShowInHand;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.role.ModRoles;
 
 public class InvisbleHandItem {

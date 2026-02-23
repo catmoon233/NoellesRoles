@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
-import org.agmas.noellesroles.ModEntities;
+import org.agmas.noellesroles.init.ModEntities;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.role.ModRoles;

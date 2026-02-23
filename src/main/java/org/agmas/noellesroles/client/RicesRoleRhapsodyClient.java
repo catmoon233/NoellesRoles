@@ -3,8 +3,8 @@ package org.agmas.noellesroles.client;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.CameraType;
 
-import org.agmas.noellesroles.ModItems;
-import org.agmas.noellesroles.ModEntities;
+import org.agmas.noellesroles.init.ModItems;
+import org.agmas.noellesroles.init.ModEntities;
 import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
 import org.agmas.noellesroles.client.renderer.LockEntityRender;
 import org.agmas.noellesroles.client.renderer.ManipulatorBodyEntityRenderer;

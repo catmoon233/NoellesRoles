@@ -13,7 +13,7 @@ import java.util.UUID;
 /**
  * 模组 ScreenHandler 注册
  */
-public class ModScreenHandlers {
+public class wModScreenHandlers {
     
     /**
      * 邮差传递界面的 ScreenHandler 类型

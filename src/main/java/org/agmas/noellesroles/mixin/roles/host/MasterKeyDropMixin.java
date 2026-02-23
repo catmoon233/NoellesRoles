@@ -2,7 +2,7 @@ package org.agmas.noellesroles.mixin.roles.host;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.world.item.ItemStack;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -1,7 +1,8 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import dev.doctor4t.ratatouille.util.registrar.SoundEventRegistrar;
 import net.minecraft.sounds.SoundEvent;
+import org.agmas.noellesroles.Noellesroles;
 
 public class NRSounds {
     public static final SoundEventRegistrar registrar = new SoundEventRegistrar(Noellesroles.MOD_ID);
