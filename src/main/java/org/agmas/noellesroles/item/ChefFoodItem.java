@@ -123,7 +123,7 @@ public class ChefFoodItem extends Item {
                             true // showIcon（显示图标）
                     ));
                     break;
-                case 6:
+                case 7:
                     break;
                 case -1:
                     break;
