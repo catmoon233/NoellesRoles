@@ -615,6 +615,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
     /** buff持续时间范围，可以为负数 */
     private static final Pair<Float, Float> BUFF_SECONDS = new Pair<>(0.5f, 15f);
     /** 屏幕占比(x,y) */
+    @SuppressWarnings("unused")
     private static final Pair<Float, Float> INTRODUCTION_SIZE = new Pair<>(0.5f, 0.7f);
     /** 信息框背景颜色和线框颜色 */
     private static final Pair<Color, Color> INFO_BG_COLOR = new Pair<>(new Color(0x4F555555, true),
