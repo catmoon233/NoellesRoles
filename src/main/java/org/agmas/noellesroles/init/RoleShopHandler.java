@@ -1,4 +1,4 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +68,8 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> NIAN_SHOU_SHOP = new ArrayList<>();
     // ==================== 魔术师商店 ====================
     public static ArrayList<ShopEntry> MAGICIAN_SHOP = new ArrayList<>();
+    // ==================== 强盗商店 ====================
+    public static ArrayList<ShopEntry> BANDIT_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -102,10 +104,18 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(SERoles.NECROMANCER.getIdentifier(), NECROMANCER_SHOP);
         }
         {
+            // 厨师的商店
+            var shop = new ArrayList<ShopEntry>();
+            shop.add(new ShopEntry(ModItems.A_BOTTLE_OF_WATER.getDefaultInstance(), 75, ShopEntry.Type.TOOL));
+            shop.add(new ShopEntry(ModItems.LINGSHI.getDefaultInstance(), 75, ShopEntry.Type.TOOL));
+            shop.add(new ShopEntry(ModItems.PAN.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(ModRoles.CHEF_ID, shop);
+        }
+        {
             // 指挥官的商店
-            var NECROMANCER_SHOP = new ArrayList<ShopEntry>();
-            NECROMANCER_SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
-            ShopContent.customEntries.put(ModRoles.COMMANDER_ID, NECROMANCER_SHOP);
+            var _SHOP = new ArrayList<ShopEntry>();
+            _SHOP.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(ModRoles.COMMANDER_ID, _SHOP);
         }
         {
             // 游侠商店
@@ -348,19 +358,17 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(
                     ModRoles.MAGICIAN_ID, MAGICIAN_SHOP);
         }
+        // 强盗商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.BANDIT_ID, BANDIT_SHOP);
+        }
         // 风精灵
         {
             List<ShopEntry> entries = new ArrayList<>();
             entries.add(new ShopEntry(Items.WIND_CHARGE.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
             ShopContent.customEntries.put(
                     ModRoles.WIND_YAOSE_ID, entries);
-        }
-        // 厨师
-        {
-            List<ShopEntry> entries = new ArrayList<>();
-            entries.add(new ShopEntry(ModItems.PAN.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
-            ShopContent.customEntries.put(
-                    ModRoles.CHEF_ID, entries);
         }
         // 警长商店
         {
@@ -664,6 +672,32 @@ public class RoleShopHandler {
                     magicianComponent.startFakePsycho();
                 }
                 return true;
+            }
+        });
+
+        // 强盗商店
+        // 刀 - 200金币
+        BANDIT_SHOP.add(new ShopEntry(
+                TMMItems.KNIFE.getDefaultInstance(),
+                200,
+                ShopEntry.Type.WEAPON));
+
+        // 匪徒手枪 - 175金币
+        BANDIT_SHOP.add(new ShopEntry(
+                HSRItems.BANDIT_REVOLVER.getDefaultInstance(),
+                175,
+                ShopEntry.Type.WEAPON));
+
+        // 手榴弹 - 600金币
+        BANDIT_SHOP.add(new ShopEntry(
+                TMMItems.GRENADE.getDefaultInstance(),
+                600,
+                ShopEntry.Type.WEAPON));
+
+        // 关灯 - 150金币
+        BANDIT_SHOP.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 150, ShopEntry.Type.TOOL) {
+            public boolean onBuy(@NotNull Player player) {
+                return PlayerShopComponent.useBlackout(player);
             }
         });
     }

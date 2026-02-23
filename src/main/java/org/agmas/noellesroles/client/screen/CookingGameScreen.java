@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -23,9 +24,8 @@ import org.agmas.noellesroles.packet.ChefCookC2SPacket;
 import org.agmas.noellesroles.utils.Pair;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.*;
-import java.util.List;
 
 import static java.lang.Math.abs;
 
@@ -206,7 +206,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
                     ResourceLocation.fromNamespaceAndPath(
                             "noellesroles", "textures/gui/cooking/buff" + buffID + ".png"));
             scoreText = new AlphaStringWidget(i, j + k, k, l - k,
-                    Component.literal(String.format("%.1f", time) + " Second"), font);
+                    Component.translatable("screen.noellesroles.chef.result.seconds", String.format("%.1f", time)),
+                    font);
         }
 
         public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
@@ -366,6 +367,13 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                                 ++curNum;
                                                 curX += scoreCardSize + INFO_INTERVAL;
                                             }
+                                            Button closeBtn = Button.builder(
+                                                    Component.translatable("screen.noellesroles.chef.result.close"),
+                                                    (btn) -> {
+                                                        this.onClose();
+                                                    }).bounds(this.centerX - 50, this.centerY + 60, 100, 20)
+                                                    .build();
+                                            addRenderableWidget(closeBtn);
                                             // 向服务器发结果包
                                             ClientPlayNetworking.send(new ChefCookC2SPacket(resultBuffTime));
                                         }));
@@ -678,7 +686,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
      * - 根据buffID进行图像读取，只需要以buff + "ID"命名即可
      * </p>
      */
-    private static final Pair<Integer, Integer> BUFF_BOUNDS = new Pair<>(-3, 7);
+    private static final Pair<Integer, Integer> BUFF_BOUNDS = new Pair<>(-3, 8);
     /** 食材大小基础范围：与时长有关，此处填写的单位为材质像素单位，在初始化中会被转换为屏幕像素单位（*pixelSize) */
     private static final Pair<Integer, Integer> FOOD_SCALE_BOUNDS = new Pair<>(-5, 5);
     /** buff持续时间范围，可以为负数 */

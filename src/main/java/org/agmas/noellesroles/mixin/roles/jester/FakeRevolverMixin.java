@@ -3,7 +3,7 @@ package org.agmas.noellesroles.mixin.roles.jester;
 import dev.doctor4t.trainmurdermystery.item.RevolverItem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

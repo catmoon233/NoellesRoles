@@ -1,13 +1,15 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.packet.BroadcastMessageS2CPacket;
 import org.agmas.noellesroles.packet.BroadcasterC2SPacket;
+import org.agmas.noellesroles.packet.ChefCookC2SPacket;
 import org.agmas.noellesroles.packet.DisplayItemS2CPacket;
 import org.agmas.noellesroles.packet.ExecutionerSelectTargetC2SPacket;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
@@ -58,6 +60,7 @@ public class ModPackets {
         PayloadTypeRegistry.playS2C().register(ScanAllTaskPointsPayload.ID, ScanAllTaskPointsPayload.CODEC);
 
         PayloadTypeRegistry.playC2S().register(PlayerResetS2CPacket.ID, PlayerResetS2CPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(ChefCookC2SPacket.ID, ChefCookC2SPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(PlayerResetS2CPacket.ID, PlayerResetS2CPacket.CODEC);
 
         PayloadTypeRegistry.playC2S().register(GamblerSelectRoleC2SPacket.ID, GamblerSelectRoleC2SPacket.CODEC);
@@ -74,6 +77,7 @@ public class ModPackets {
         PayloadTypeRegistry.playC2S().register(ManipulatorC2SPacket.ID, ManipulatorC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(OpenLockGuiS2CPacket.ID, OpenLockGuiS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLockGuiS2CPacket.ID, OpenLockGuiS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenVendingMachinesScreenS2CPacket.ID, OpenVendingMachinesScreenS2CPacket.CODEC);
 
         PayloadTypeRegistry.playS2C().register(BloodConfigS2CPacket.ID, BloodConfigS2CPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BloodConfigS2CPacket.ID, BloodConfigS2CPacket.CODEC);

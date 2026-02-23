@@ -26,6 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.LockEntityManager;
+import org.agmas.noellesroles.init.ModEntities;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;

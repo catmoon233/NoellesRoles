@@ -2,7 +2,7 @@ package org.agmas.noellesroles.component;
 
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import org.agmas.noellesroles.ModEntities;
+import org.agmas.noellesroles.init.ModEntities;
 import org.agmas.noellesroles.entity.CalamityMarkEntity;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;

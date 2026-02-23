@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.ConfigWorldComponent;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

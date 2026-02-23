@@ -16,7 +16,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.NRSounds;
+import org.agmas.noellesroles.init.NRSounds;
 import org.agmas.noellesroles.role.ModRoles;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;

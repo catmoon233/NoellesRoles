@@ -18,6 +18,7 @@ import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.component.BanditPlayerComponent;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -175,6 +176,9 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
     public static final ComponentKey<MagicianPlayerComponent> MAGICIAN = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "magician"),
             MagicianPlayerComponent.class);
+    public static final ComponentKey<BanditPlayerComponent> BANDIT = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "bandit"),
+            BanditPlayerComponent.class);
 
     public ModComponents() {
         // CCA 需要无参构造函数
@@ -367,6 +371,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, NIAN_SHOU)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(NianShouPlayerComponent::new);
+
+        // 注册强盗组件
+        registry.beginRegistration(Player.class, BANDIT)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(BanditPlayerComponent::new);
 
         // ==================== 示例：注册更多组件 ====================
         //

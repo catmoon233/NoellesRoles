@@ -1,4 +1,4 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,6 +134,12 @@ public class RoleInitialItems {
             awesomeBinglusItems.add(() -> TMMItems.NOTE.getDefaultInstance());
         }
         INITIAL_ITEMS_MAP.put(ModRoles.AWESOME_BINGLUS, awesomeBinglusItems);
+
+        // 强盗初始物品
+        List<Supplier<ItemStack>> banditItems = new ArrayList<>();
+        banditItems.add(() -> org.agmas.noellesroles.repack.HSRItems.BANDIT_REVOLVER.getDefaultInstance());
+        banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
     }
 
 }

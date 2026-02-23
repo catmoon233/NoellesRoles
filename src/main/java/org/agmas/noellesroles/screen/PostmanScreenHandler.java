@@ -1,6 +1,6 @@
 package org.agmas.noellesroles.screen;
 
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PostmanPlayerComponent;
 
@@ -13,7 +13,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;

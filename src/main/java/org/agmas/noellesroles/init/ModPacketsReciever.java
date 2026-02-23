@@ -1,4 +1,4 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -8,8 +8,11 @@ import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
+import dev.doctor4t.trainmurdermystery.item.CocktailItem;
+import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -22,8 +25,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
+import org.agmas.noellesroles.AbilityHandler;
+import org.agmas.noellesroles.ModDataComponentTypes;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.item.ChefFoodItem;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
@@ -40,12 +47,28 @@ import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.SwapperPlayerComponent;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
+import org.agmas.noellesroles.packet.ChefCookC2SPacket;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
 import org.agmas.noellesroles.packet.RecorderC2SPacket;
 
 public class ModPacketsReciever {
 
     public static void registerPackets() {
+        ServerPlayNetworking.registerGlobalReceiver(ChefCookC2SPacket.ID, (payload, context) -> {
+            final var player = context.player();
+            TMMItemUtils.clearItem(player, (food) -> {
+                if (food.getItem() instanceof CocktailItem)
+                    return false;
+                if (food.has(ModDataComponentTypes.COOKED))
+                    return false;
+                return food.has(DataComponents.FOOD);
+            }, 1);
+            TMMItemUtils.clearItem(player, ModItems.FOOD_STUFF, 1);
+            var cooked_food = ModItems.COOKED_FOOD.getDefaultInstance();
+            cooked_food.set(ModDataComponentTypes.COOKED,ModDataComponentTypes.cookedFood(payload.cookInfo()));
+            ChefFoodItem.randomModel(cooked_food);
+            RoleUtils.insertStackInFreeSlot(player, cooked_food);
+        });
         ServerPlayNetworking.registerGlobalReceiver(ModPackets.MORPH_PACKET, (payload, context) -> {
             GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                     .get(context.player().level());

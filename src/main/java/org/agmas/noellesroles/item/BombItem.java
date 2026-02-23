@@ -18,10 +18,9 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 
 import java.util.UUID;
 
@@ -114,7 +113,21 @@ public class BombItem extends Item {
         EntityHitResult hitResult = ProjectileUtil.getEntityHitResult(player, eyePosition, endPosition, searchBox,
                 (entity) -> entity instanceof Player && !entity.isSpectator(), reachDistance * reachDistance);
 
+        // 检查视线是否被阻挡
+        ClipContext clipContext = new ClipContext(eyePosition, endPosition, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player);
+        BlockHitResult blockHitResult = player.level().clip(clipContext);
+        
         if (hitResult != null && hitResult.getEntity() instanceof ServerPlayer target) {
+            // 检查是否有方块阻挡了视线
+            if (blockHitResult.getType() == HitResult.Type.BLOCK) {
+                Vec3 blockPos = blockHitResult.getLocation();
+                Vec3 entityPos = hitResult.getEntity().getEyePosition();
+                
+                // 如果方块距离玩家更近，则说明视线被阻挡
+                if (eyePosition.distanceTo(blockPos) < eyePosition.distanceTo(entityPos)) {
+                    return InteractionResultHolder.pass(stack);
+                }
+            }
             // Transfer bomb
             ItemStack newStack = stack.copy();
             stack.shrink(1);

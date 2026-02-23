@@ -18,9 +18,9 @@ import java.util.UUID;
 
 import net.minecraft.client.CameraType;
 
-import org.agmas.noellesroles.ModEntities;
-import org.agmas.noellesroles.ModItems;
-import org.agmas.noellesroles.NRSounds;
+import org.agmas.noellesroles.init.ModEntities;
+import org.agmas.noellesroles.init.ModItems;
+import org.agmas.noellesroles.init.NRSounds;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.event.MutableComponentResult;
@@ -132,7 +132,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             Minecraft client = Minecraft.getInstance();
             if (client.player == null)
                 return;
-            client.setScreen(new CookingGameScreen());
+            client.setScreen(new ChefStartGameScreen());
         };
         AmbienceUtil.registerBackgroundAmbience(
                 new BackgroundAmbience(NRSounds.JESTER_AMBIENT,
@@ -331,6 +331,13 @@ public class NoellesrolesClient implements ClientModInitializer {
                     player.level().playLocalSound(player, NRSounds.HARPY_WELCOME, SoundSource.AMBIENT, 1f, 1f);
                 }
             }
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OpenVendingMachinesScreenS2CPacket.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                context.client().setScreen(new VendingMachinesGui(Map.of(TMMItems.REVOLVER.getDefaultInstance(),300,TMMItems.LOCKPICK.getDefaultInstance(),100,TMMItems.BODY_BAG.getDefaultInstance(),100,TMMItems.GRENADE.getDefaultInstance(),1000)));
+
+            });
+
         });
         // 注册抽奖界面网络包处理：接收并保存服务器卡池信息并显示界面
         ClientPlayNetworking.registerGlobalReceiver(LootPoolsInfoS2CPacket.ID, (payload, context) -> {
