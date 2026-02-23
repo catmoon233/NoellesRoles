@@ -1,4 +1,4 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import java.util.ArrayList;
 import java.util.HashMap;

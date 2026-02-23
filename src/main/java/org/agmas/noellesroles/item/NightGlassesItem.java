@@ -11,6 +11,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.agmas.noellesroles.init.ModItems;
 
 public class NightGlassesItem extends ArmorItem {
     private int tick = 0;
@@ -28,7 +29,7 @@ public class NightGlassesItem extends ArmorItem {
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int i, boolean bl) {
         if (entity instanceof Player pl) {
             ItemStack headItem = pl.getSlot(103).get();
-            if (headItem.equals(itemStack) && itemStack.is(org.agmas.noellesroles.ModItems.NIGHT_VISION_GLASSES)) {
+            if (headItem.equals(itemStack) && itemStack.is(ModItems.NIGHT_VISION_GLASSES)) {
                 this.tick++;
                 if (this.tick >= 20) {
                     this.tick = 0;

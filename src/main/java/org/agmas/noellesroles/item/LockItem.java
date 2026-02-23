@@ -19,11 +19,9 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import org.agmas.noellesroles.ModEntities;
+import org.agmas.noellesroles.init.ModEntities;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
-import org.agmas.noellesroles.utils.BlockUtils;
-import org.agmas.noellesroles.utils.Pair;
 
 import java.util.List;
 

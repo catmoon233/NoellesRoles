@@ -3,7 +3,7 @@ package org.agmas.noellesroles.blood;
 import java.util.LinkedHashSet;
 import java.util.SequencedSet;
 
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.blood.particle.BloodParticle;
 import org.agmas.noellesroles.repack.HSRItems;
 

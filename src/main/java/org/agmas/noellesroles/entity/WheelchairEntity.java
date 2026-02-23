@@ -2,7 +2,7 @@ package org.agmas.noellesroles.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import net.minecraft.world.InteractionHand;

@@ -1,6 +1,6 @@
 package org.agmas.noellesroles.roles.chef;
 
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 
 import dev.doctor4t.trainmurdermystery.api.NormalRole;
 import net.minecraft.resources.ResourceLocation;

@@ -3,7 +3,7 @@ package org.agmas.noellesroles.entity;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 
 import java.util.List;
 import net.minecraft.core.particles.ParticleTypes;

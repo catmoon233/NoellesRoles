@@ -1,6 +1,6 @@
 package org.agmas.noellesroles.screen;
 
-import org.agmas.noellesroles.ModItems;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.PostmanPlayerComponent;
 

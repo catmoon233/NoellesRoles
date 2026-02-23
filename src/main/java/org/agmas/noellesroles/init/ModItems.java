@@ -1,4 +1,4 @@
-package org.agmas.noellesroles;
+package org.agmas.noellesroles.init;
 
 import dev.doctor4t.ratatouille.util.registrar.ItemRegistrar;
 import dev.doctor4t.trainmurdermystery.api.ChargeableItemRegistry;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.item.*;
 import org.agmas.noellesroles.item.charge_item.AntidoteChargeItem;
 import org.agmas.noellesroles.item.charge_item.AntidoteReagentChargeItem;
