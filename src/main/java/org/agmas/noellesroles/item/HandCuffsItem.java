@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.item;
 
-import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.init.ModItems;
 
 import net.minecraft.ChatFormatting;
@@ -26,7 +25,7 @@ public class HandCuffsItem extends Item {
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slot, boolean bl) {
         if (itemStack.is(ModItems.HANDCUFFS)) {
             if (entity instanceof Player player) {
-                if (player.getOffhandItem().is(ModItems.HANDCUFFS)) {
+                if (player.getOffhandItem().equals(itemStack)) {
                     player.addEffect(new MobEffectInstance(
                             MobEffects.MOVEMENT_SLOWDOWN,
                             (int) (20), // 持续时间（tick）
@@ -59,7 +58,7 @@ public class HandCuffsItem extends Item {
                         true);
                 return InteractionResult.FAIL;
             }
-            target.setItemSlot(EquipmentSlot.OFFHAND, ModItems.HANDCUFFS.getDefaultInstance());
+            target.setItemSlot(EquipmentSlot.OFFHAND, stack.copy());
             stack.shrink(1);
             user.displayClientMessage(Component.translatable("item.noellesroles.handcuffs.put", target.getDisplayName())
                     .withStyle(ChatFormatting.GOLD), true);
