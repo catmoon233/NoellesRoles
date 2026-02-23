@@ -1,8 +1,6 @@
 package org.agmas.noellesroles.packet;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.agmas.noellesroles.Noellesroles;
@@ -19,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 public record ChefCookC2SPacket(Map<Integer, Float> cookInfo) implements CustomPacketPayload {
     public static final Gson gson = new Gson();
     public static final ResourceLocation ABILITY_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID,
-            "ability_no");
+            "chef_cook_packet");
     public static final Type<ChefCookC2SPacket> ID = new Type<>(ABILITY_PAYLOAD_ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, ChefCookC2SPacket> CODEC;
 
