@@ -17,7 +17,7 @@ import static dev.doctor4t.trainmurdermystery.index.TMMBlocks.DARK_STEEL;
 
 public interface ModBlocks {
     BlockRegistrar registrar = new BlockRegistrar(Noellesroles.MOD_ID);
-    Block TARNISHED_GOLD_STAIRS = registrar.createWithItem("vending_machines", new SecurityMonitorBlock(BlockBehaviour.Properties.ofFullCopy(DARK_STEEL).noOcclusion()), TMMItems.DECORATION_GROUP);
+    Block VENDING_MACHINES = registrar.createWithItem("vending_machines", new VendingMachines(BlockBehaviour.Properties.ofFullCopy(DARK_STEEL).noOcclusion()), TMMItems.DECORATION_GROUP);
 
     static void initialize() {
 

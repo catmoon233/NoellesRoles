@@ -22,14 +22,16 @@ public class VendingMachines extends Block {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        useeVendingMachines(player);
         return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+        useeVendingMachines(player);
         return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
     }
-    public static void useeVendingMachines(Player player, InteractionHand hand) {
+    public static void useeVendingMachines(Player player) {
         if (player instanceof ServerPlayer serverPlayer){
             ServerPlayNetworking.send(serverPlayer, new OpenVendingMachinesScreenS2CPacket());
         }
