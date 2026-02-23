@@ -124,7 +124,8 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
             if (level.getGameTime() % 20 == 0) {
                 if (this.killer != null) {
                     var killerP = level.getPlayerByUUID(this.killer);
-                    if (killerP == null || this.deathReason == null || !GameFunctions.isPlayerAliveAndSurvival(killerP)) {
+                    if (killerP == null || this.deathReason == null
+                            || !GameFunctions.isPlayerAliveAndSurvival(killerP)) {
                         this.stopFindKiller_KillerDead();
                     }
                 }
@@ -203,13 +204,13 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
                     if (deathReason.getPath().equals(wayC.deathReason.getPath())) {
                         wayC.startPhaseThree(deathReason);
                         return false;
+                    } else {
+                        victim.displayClientMessage(
+                                Component.translatable("message.noellesroles.wayfarer.phase.2.failed")
+                                        .withStyle(ChatFormatting.RED),
+                                true);
+                        return true;
                     }
-                } else {
-                    victim.displayClientMessage(
-                            Component.translatable("message.noellesroles.wayfarer.phase.2.failed")
-                                    .withStyle(ChatFormatting.RED),
-                            true);
-                    return true;
                 }
             }
             return true;

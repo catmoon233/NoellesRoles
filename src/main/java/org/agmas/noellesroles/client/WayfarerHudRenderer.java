@@ -66,6 +66,9 @@ public class WayfarerHudRenderer {
             } else if (wayC.phase == 3) {
                 tipText = Component.translatable("hud.noellesroles.wayfarer.phase.3.tip")
                         .withStyle(ChatFormatting.GREEN);
+            } else if (wayC.phase == 4) {
+                tipText = Component.translatable("hud.noellesroles.wayfarer.phase.4.tip")
+                        .withStyle(ChatFormatting.LIGHT_PURPLE);
             }
             guiGraphics.drawString(font, phaseText, xOffset, yOffset,
                     Color.WHITE.getRGB());
