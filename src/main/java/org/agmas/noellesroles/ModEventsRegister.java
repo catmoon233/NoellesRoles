@@ -397,6 +397,17 @@ public class ModEventsRegister {
     private static boolean isEnabled = false;
 
     public static void registerEvents() {
+        TMM.canDrop.add((player) -> {
+            var mainHandItem = player.getMainHandItem();
+            var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+            if (gameWorldComponent.isRole(player, ModRoles.CHEF)) {
+                if (mainHandItem.get(ModDataComponentTypes.COOKED) != null) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
         ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
             if (isEnabled) {
                 if (Noellesroles.isOnlineMode == null) {
