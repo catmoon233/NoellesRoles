@@ -4,6 +4,8 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.agmas.noellesroles.roles.manipulator.RandomMoveData;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,6 +27,10 @@ public class PlayerControlMixin {
         if (player instanceof ServerPlayer serverPlayer) {
             final var gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.serverLevel());
             if (gameWorldComponent.isRunning() && GameFunctions.isPlayerAliveAndSurvival(serverPlayer)) {
+                // 手铐
+                if (serverPlayer.getOffhandItem() != null && serverPlayer.getOffhandItem().is(ModItems.HANDCUFFS)) {
+                    return;
+                }
                 final var inControlCCA = InControlCCA.KEY.get(serverPlayer);
                 if (inControlCCA.isControlling) {
                     // 只有生存模式的玩家才会随机移动

@@ -13,7 +13,6 @@ import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.BoxerPlayerComponent;
 import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
-import org.agmas.noellesroles.component.BanditPlayerComponent;
 import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
@@ -982,6 +981,16 @@ public class ModEventsRegister {
         });
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
+            serverLevel.players().forEach(p -> {
+                p.addEffect(new MobEffectInstance(
+                        MobEffects.WATER_BREATHING,
+                        (int) (5 * 20), // 持续时间 5s（tick）
+                        0, // 等级（0 = 速度 I）
+                        true, // ambient（环境效果，如信标）
+                        false, // showParticles（显示粒子）
+                        false // showIcon（显示图标）
+                ));
+            });
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(player -> {
                 if (!gameWorldComponent.isJumpAvailable() && GameFunctions.isPlayerAliveAndSurvival(player)) {
@@ -1132,7 +1141,7 @@ public class ModEventsRegister {
             return false;
         });
         TMM.canCollide.add(a -> {
-            if (a.hasEffect(MobEffects.INVISIBILITY)) {
+            if (a.hasEffect(MobEffects.INVISIBILITY) || a.hasEffect(MobEffects.WATER_BREATHING)) {
                 return true;
             }
             return false;

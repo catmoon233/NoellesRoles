@@ -54,6 +54,11 @@ public class ModItems {
             new H2SO4AcidItem((new Item.Properties()).stacksTo(1)), "bucket_of_h2so4");
     public static final Item LETTER_ITEM = register(
             new LetterItem((new Item.Properties()).stacksTo(1)), "letter");
+            
+    public static final Item ONCE_REVOLVER = register(
+            new OnceRevolverItem((new Item.Properties()).stacksTo(1).durability(1)), "once_revolver");
+    public static final Item HANDCUFFS = register(
+            new HandCuffsItem((new Item.Properties()).stacksTo(1)), "handcuffs");
     public static final Item PATROLLER_REVOLVER = register(
             new PatrollerRevolverItem((new Item.Properties()).stacksTo(1)), "patroller_revolver");
     public static final Item SINGER_MUSIC_DISC = register(

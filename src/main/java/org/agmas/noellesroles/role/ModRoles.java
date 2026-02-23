@@ -989,10 +989,10 @@ public class ModRoles {
         // 强盗
         Harpymodloader.setRoleMaximum(BANDIT_ID, 1);
 
+        PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
         BartenderPlayerComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
-        PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
-
+        BartenderPlayerComponent.canSyncedRolePaths.add(ModRoles.CHEF_ID.getPath());
     }
 
     // ==================== 工具方法 ====================
