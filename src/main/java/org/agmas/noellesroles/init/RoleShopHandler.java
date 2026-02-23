@@ -68,6 +68,8 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> NIAN_SHOU_SHOP = new ArrayList<>();
     // ==================== 魔术师商店 ====================
     public static ArrayList<ShopEntry> MAGICIAN_SHOP = new ArrayList<>();
+    // ==================== 强盗商店 ====================
+    public static ArrayList<ShopEntry> BANDIT_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -355,6 +357,11 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.MAGICIAN_ID, MAGICIAN_SHOP);
+        }
+        // 强盗商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.BANDIT_ID, BANDIT_SHOP);
         }
         // 风精灵
         {
@@ -665,6 +672,32 @@ public class RoleShopHandler {
                     magicianComponent.startFakePsycho();
                 }
                 return true;
+            }
+        });
+
+        // 强盗商店
+        // 刀 - 200金币
+        BANDIT_SHOP.add(new ShopEntry(
+                TMMItems.KNIFE.getDefaultInstance(),
+                200,
+                ShopEntry.Type.WEAPON));
+
+        // 匪徒手枪 - 175金币
+        BANDIT_SHOP.add(new ShopEntry(
+                HSRItems.BANDIT_REVOLVER.getDefaultInstance(),
+                175,
+                ShopEntry.Type.WEAPON));
+
+        // 手榴弹 - 600金币
+        BANDIT_SHOP.add(new ShopEntry(
+                TMMItems.GRENADE.getDefaultInstance(),
+                600,
+                ShopEntry.Type.WEAPON));
+
+        // 关灯 - 150金币
+        BANDIT_SHOP.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 150, ShopEntry.Type.TOOL) {
+            public boolean onBuy(@NotNull Player player) {
+                return PlayerShopComponent.useBlackout(player);
             }
         });
     }
