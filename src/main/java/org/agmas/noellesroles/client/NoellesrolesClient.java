@@ -217,6 +217,16 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+        ClientPlayNetworking.registerGlobalReceiver(VendingBuyMessageCallBackS2CPacket.ID, (payload, context) -> {
+            final var client = context.client();
+            client.execute(() -> {
+                if (client.player != null) {
+                    if (client.screen instanceof VendingMachinesGui vendingMachinesGui){
+                        vendingMachinesGui.addPurchaseMessage(payload.componentKey());
+                    }
+                }
+            });
+        });
         ClientPlayNetworking.registerGlobalReceiver(OpenIntroPayload.ID, (payload, context) -> {
             final var client = context.client();
             client.execute(() -> {
@@ -329,6 +339,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             });
         });
+
         OnRoundStartWelcomeTimmer.EVENT.register((player, timer) -> {
             if (timer == 1) {
                 if (NoellesRolesConfig.HANDLER.instance().welcome_voice) {

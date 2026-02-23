@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.init;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -9,6 +10,7 @@ import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.item.CocktailItem;
+import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -16,18 +18,21 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.AbilityHandler;
 import org.agmas.noellesroles.ModDataComponentTypes;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.block_entity.VendingMachinesBlockEntity;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -53,6 +58,47 @@ public class ModPacketsReciever {
     public static void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(VendingMachinesBuyC2SPacket.TYPE, (payload, context) -> {
             context.server().execute(() -> {
+                try {
+
+
+                    ServerPlayer player = context.player();
+                    ServerLevel serverLevel = player.serverLevel();
+                    BlockEntity blockEntity = serverLevel.getBlockEntity(payload.blockPos());
+                    if (blockEntity instanceof VendingMachinesBlockEntity vendingMachinesBlockEntity) {
+                        List<ShopEntry> shops = vendingMachinesBlockEntity.getShops();
+                        shops.stream().filter(a -> {
+                            if (BuiltInRegistries.ITEM.getKey(a.stack().getItem()).toString().equals(payload.item())) {
+                                return true;
+                            }
+                            return false;
+                        }).findFirst().ifPresent(entry -> {
+                            PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(player);
+                            if (playerShopComponent.balance < entry.price()) {
+                                player.displayClientMessage(Component.translatable("noellesroles.not_enough_money").withStyle(ChatFormatting.RED), true);
+                                ServerPlayNetworking.send(player, new VendingBuyMessageCallBackS2CPacket("not_enough_money"));
+                                player.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY_FAIL), SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F, 0.9F + player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
+                                player.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY), SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F, 0.9F + player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
+                                TMM.REPLAY_MANAGER.recordStoreBuy(player.getUUID(), BuiltInRegistries.ITEM.getKey(entry.stack().getItem()), entry.stack().getCount(), entry.price());
+                                return;
+                            } else {
+                                if (entry.onBuy(player)) {
+                                    playerShopComponent.addToBalance(-entry.price());
+                                    player.displayClientMessage(Component.translatable("noellesroles.bought_item").withStyle(ChatFormatting.GREEN), true);
+                                    ServerPlayNetworking.send(player, new VendingBuyMessageCallBackS2CPacket("noellesroles.bought_item"));
+
+                                } else {
+                                    player.displayClientMessage(Component.translatable("noellesroles.cant_buy_item").withStyle(ChatFormatting.RED), true);
+                                    ServerPlayNetworking.send(player, new VendingBuyMessageCallBackS2CPacket("noellesroles.cant_buy_item"));
+                                    player.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY_FAIL), SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F, 0.9F +player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
+
+                                }
+                            }
+
+                        });
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             });
         });
         ServerPlayNetworking.registerGlobalReceiver(ChefCookC2SPacket.ID, (payload, context) -> {
