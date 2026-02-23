@@ -1,7 +1,20 @@
 {
   "variants": {
-    "": {
-      "model": "noellesroles:block/vending_machines"
+    "facing=north": {
+      "model": "noellesroles:block/vending_machines",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "noellesroles:block/vending_machines",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "noellesroles:block/vending_machines",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "noellesroles:block/vending_machines",
+      "y": 90
     }
   }
 }

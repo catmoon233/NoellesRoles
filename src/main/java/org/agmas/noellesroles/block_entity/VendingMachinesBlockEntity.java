@@ -1,7 +1,6 @@
 // Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
 package org.agmas.noellesroles.block_entity;
 
-import dev.doctor4t.trainmurdermystery.index.TMMBlockEntities;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 
 import java.util.ArrayList;

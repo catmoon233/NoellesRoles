@@ -96,7 +96,7 @@ public class VendingMachinesBlock extends BaseEntityBlock {
 
     static {
         FACING = BlockStateProperties.HORIZONTAL_FACING;
-        SHAPE = Block.box(0.0, 0.0, 0.0, 32.0, 32.0, 32.0);
+        SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 32.0, 16.0);
         CODEC = simpleCodec(VendingMachinesBlock::new);
     }
 }
