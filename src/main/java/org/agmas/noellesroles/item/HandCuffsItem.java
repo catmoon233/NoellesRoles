@@ -2,6 +2,8 @@ package org.agmas.noellesroles.item;
 
 import org.agmas.noellesroles.init.ModItems;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -35,10 +37,24 @@ public class HandCuffsItem extends Item {
     public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity entity,
             InteractionHand hand) {
         super.interactLivingEntity(stack, user, entity, hand);
+        if (user.getOffhandItem().is(ModItems.HANDCUFFS))
+            return InteractionResult.PASS;
         if (entity instanceof Player target) {
             if (target.getOffhandItem() != null) {
+                target.displayClientMessage(
+                        Component.translatable("item.noellesroles.handcuffs.failed", user.getDisplayName())
+                                .withStyle(ChatFormatting.RED),
+                        true);
+                return InteractionResult.FAIL;
             }
+            target.setItemSlot(EquipmentSlot.OFFHAND, ModItems.HANDCUFFS.getDefaultInstance());
             stack.shrink(1);
+            user.displayClientMessage(Component.translatable("item.noellesroles.handcuffs.put", target.getDisplayName())
+                    .withStyle(ChatFormatting.GOLD), true);
+            target.displayClientMessage(
+                    Component.translatable("item.noellesroles.handcuffs.recieved", user.getDisplayName())
+                            .withStyle(ChatFormatting.RED),
+                    true);
         } else {
             return InteractionResult.PASS;
         }

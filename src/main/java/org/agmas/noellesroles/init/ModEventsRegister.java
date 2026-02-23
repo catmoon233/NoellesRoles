@@ -68,6 +68,7 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
@@ -79,8 +80,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -98,7 +101,7 @@ public class ModEventsRegister {
             Noellesroles.id("no_jumping"), -1.0f, AttributeModifier.Operation.ADD_VALUE);
 
     private static AttributeModifier windYaoseScaleAttribute = new AttributeModifier(
-            Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_VALUE);
 
     /**
      * 处理拳击手无敌反制
@@ -398,6 +401,28 @@ public class ModEventsRegister {
     private static boolean isEnabled = false;
 
     public static void registerEvents() {
+        UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
+            var gameC = GameWorldComponent.KEY.get(level);
+            if (!gameC.isRole(player, TMMRoles.VIGILANTE))
+                return InteractionResult.PASS;
+            if (!gameC.isRunning())
+                return InteractionResult.PASS;
+            if (entity instanceof Player target) {
+                if (target.getOffhandItem().is(ModItems.HANDCUFFS)) {
+                    RoleUtils.insertStackInFreeSlot(player, target.getOffhandItem().copy());
+                    target.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
+                    player.displayClientMessage(
+                            Component.translatable("item.noellesroles.handcuffs.put_off", target.getDisplayName())
+                                    .withStyle(ChatFormatting.GREEN),
+                            true);
+                    target.displayClientMessage(Component
+                            .translatable("item.noellesroles.handcuffs.reciever_put_off", player.getDisplayName())
+                            .withStyle(ChatFormatting.GREEN), true);
+                    return InteractionResult.SUCCESS;
+                }
+            }
+            return InteractionResult.PASS;
+        });
         TMM.canDrop.add((player) -> {
             var mainHandItem = player.getMainHandItem();
             var gameWorldComponent = GameWorldComponent.KEY.get(player.level());

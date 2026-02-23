@@ -20,7 +20,7 @@ public class PlayerControlMixin {
 
     // 随机移动数据类
 
-    @Inject(method = "aiStep", at = @At("HEAD"))
+    @Inject(method = "aiStep", at = @At("HEAD"), cancellable = true)
     public void noe$aiStep(CallbackInfo ci) {
         Player player = (Player) (Object) this;
 
@@ -29,6 +29,7 @@ public class PlayerControlMixin {
             if (gameWorldComponent.isRunning() && GameFunctions.isPlayerAliveAndSurvival(serverPlayer)) {
                 // 手铐
                 if (serverPlayer.getOffhandItem() != null && serverPlayer.getOffhandItem().is(ModItems.HANDCUFFS)) {
+                    ci.cancel();
                     return;
                 }
                 final var inControlCCA = InControlCCA.KEY.get(serverPlayer);
