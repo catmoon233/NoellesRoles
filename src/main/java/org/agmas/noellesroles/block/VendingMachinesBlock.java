@@ -61,18 +61,20 @@ public class VendingMachinesBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level,
             BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        useeVendingMachines(player, blockPos);
         return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player,
             BlockHitResult blockHitResult) {
+        useeVendingMachines(player, blockPos);
         return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
     }
 
-    public static void useeVendingMachines(Player player, InteractionHand hand) {
+    public static void useeVendingMachines(Player player, BlockPos blockPos) {
         if (player instanceof ServerPlayer serverPlayer) {
-            ServerPlayNetworking.send(serverPlayer, new OpenVendingMachinesScreenS2CPacket());
+            ServerPlayNetworking.send(serverPlayer, new OpenVendingMachinesScreenS2CPacket(blockPos));
         }
     }
 

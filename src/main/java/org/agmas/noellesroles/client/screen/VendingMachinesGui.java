@@ -10,11 +10,13 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -60,6 +62,8 @@ public class VendingMachinesGui extends AbstractPixelScreen {
     private Consumer<ItemStack> onCollectDroppedItem = stack -> {
     };
 
+    private BlockPos blockPos;
+
     private int panelLeft;
     private int panelTop;
     private int panelWidth;
@@ -100,11 +104,20 @@ public class VendingMachinesGui extends AbstractPixelScreen {
     private boolean isKnobHovered = false;
     private boolean isDropSlotHovered = false;
     private int hoveredGoodsIndex = -1;
+    
+    // Collect点击效果
+    private int collectClickAnimation = 0;
+    private static final int COLLECT_CLICK_DURATION = 8;
+    private long lastCollectClickTime = 0;
 
     public VendingMachinesGui(Map<ItemStack, Integer> vendingItems) {
         this(Component.literal("Vending Machine"), vendingItems);
     }
 
+    public VendingMachinesGui setBlockPos(BlockPos blockPos){
+        this.blockPos = blockPos;
+        return this;
+    }
     public VendingMachinesGui(Component title, Map<ItemStack, Integer> vendingItems) {
         super(title == null ? Component.empty() : title);
         setGoods(vendingItems);
@@ -173,6 +186,11 @@ public class VendingMachinesGui extends AbstractPixelScreen {
             this.knobAnimationTick++;
         }
         updateDropAnimation();
+        
+        // 更新Collect点击动画
+        if (collectClickAnimation > 0) {
+            collectClickAnimation--;
+        }
     }
 
     @Override
@@ -430,9 +448,35 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         int bgColor = isDropSlotHovered ? 0xFF4F5762 : 0xFF2F3742;
         int innerColor = isDropSlotHovered ? 0xFF242830 : 0xFF141820;
         
-        guiGraphics.fill(this.dropSlotX, this.dropSlotY, this.dropSlotX + this.dropSlotSize, this.dropSlotY + this.dropSlotSize, bgColor);
-        guiGraphics.fill(this.dropSlotX + 1, this.dropSlotY + 1, this.dropSlotX + this.dropSlotSize - 1,
-                this.dropSlotY + this.dropSlotSize - 1, innerColor);
+        // 应用Collect点击动画效果
+        float collectScale = 1.0f;
+        int collectAlpha = 255;
+        if (collectClickAnimation > 0) {
+            float progress = (float) collectClickAnimation / COLLECT_CLICK_DURATION;
+            collectScale = 1.0f + 0.1f * (1.0f - progress);
+            collectAlpha = (int) (255 * (0.7f + 0.3f * progress));
+        }
+        
+        // 渲染背景（带动画缩放）
+        if (collectClickAnimation > 0) {
+            int centerX = this.dropSlotX + this.dropSlotSize / 2;
+            int centerY = this.dropSlotY + this.dropSlotSize / 2;
+            int scaledWidth = (int) (this.dropSlotSize * collectScale);
+            int scaledHeight = (int) (this.dropSlotSize * collectScale);
+            int scaledX = centerX - scaledWidth / 2;
+            int scaledY = centerY - scaledHeight / 2;
+            
+            // 动画背景色
+            int animBgColor = (collectAlpha << 24) | (bgColor & 0x00FFFFFF);
+            int animInnerColor = (collectAlpha << 24) | (innerColor & 0x00FFFFFF);
+            
+            guiGraphics.fill(scaledX, scaledY, scaledX + scaledWidth, scaledY + scaledHeight, animBgColor);
+            guiGraphics.fill(scaledX + 1, scaledY + 1, scaledX + scaledWidth - 1, scaledY + scaledHeight - 1, animInnerColor);
+        } else {
+            guiGraphics.fill(this.dropSlotX, this.dropSlotY, this.dropSlotX + this.dropSlotSize, this.dropSlotY + this.dropSlotSize, bgColor);
+            guiGraphics.fill(this.dropSlotX + 1, this.dropSlotY + 1, this.dropSlotX + this.dropSlotSize - 1,
+                    this.dropSlotY + this.dropSlotSize - 1, innerColor);
+        }
 
         if (this.hasDropSlotLayerTexture) {
             guiGraphics.blit(
@@ -612,9 +656,16 @@ public class VendingMachinesGui extends AbstractPixelScreen {
             return;
         }
 
+        // 启动Collect点击动画
+        this.collectClickAnimation = COLLECT_CLICK_DURATION;
+        this.lastCollectClickTime = System.currentTimeMillis();
+        
         this.onCollectDroppedItem.accept(this.droppedItem.stack.copy());
         this.droppedItem.clear();
         playCollectSound();
+        
+        // 添加粒子效果
+        spawnCollectParticles();
     }
 
     private int getGoodsIndexAt(double mouseX, double mouseY) {
@@ -725,7 +776,34 @@ public class VendingMachinesGui extends AbstractPixelScreen {
     private void playCollectSound() {
         Minecraft client = Minecraft.getInstance();
         if (client != null) {
-            client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ITEM_PICKUP, 1.0F));
+            // 播放更丰富的收集音效
+            client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ITEM_PICKUP, 1.2F, 1.0F));
+            // 添加第二个音效层增加层次感
+            client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.8F, 1.3F));
+        }
+    }
+    
+    /**
+     * 生成Collect时的粒子效果
+     */
+    private void spawnCollectParticles() {
+        if (this.minecraft == null || this.minecraft.level == null) {
+            return;
+        }
+        
+        // 在收集槽位置生成粒子
+        double centerX = this.dropSlotX + this.dropSlotSize / 2.0;
+        double centerY = this.dropSlotY + this.dropSlotSize / 2.0;
+        
+        // 生成多个粒子
+        for (int i = 0; i < 8; i++) {
+            double angle = (Math.PI * 2 * i) / 8;
+            double distance = 8.0 + Math.random() * 12.0;
+            double particleX = centerX + Math.cos(angle) * distance;
+            double particleY = centerY + Math.sin(angle) * distance;
+            
+            // 发送粒子生成数据包到服务端（如果需要的话）
+            // 这里可以根据需要添加粒子生成逻辑
         }
     }
 
@@ -765,6 +843,25 @@ public class VendingMachinesGui extends AbstractPixelScreen {
             // 收集槽悬停时的边框效果
             guiGraphics.renderOutline(this.dropSlotX - 1, this.dropSlotY - 1,
                     this.dropSlotSize + 2, this.dropSlotSize + 2, 0xFFAAAAAA);
+            
+            // 添加脉冲效果当准备好收集时
+            if (this.droppedItem.phase == DropPhase.READY_TO_COLLECT) {
+                long currentTime = System.currentTimeMillis();
+                float pulse = (float) (Math.sin((currentTime - lastCollectClickTime) * 0.01) * 0.3 + 0.7);
+                int pulseColor = (int) (255 * pulse) << 24 | 0x00FFAA00;
+                guiGraphics.fill(this.dropSlotX - 2, this.dropSlotY - 2,
+                        this.dropSlotX + this.dropSlotSize + 2, this.dropSlotY + this.dropSlotSize + 2, pulseColor);
+            }
+        }
+        
+        // Collect点击动画效果
+        if (collectClickAnimation > 0) {
+            float progress = (float) collectClickAnimation / COLLECT_CLICK_DURATION;
+            int pulseIntensity = (int) (100 * progress);
+            int pulseColor = (pulseIntensity << 24) | 0x00FFFF88;
+            
+            guiGraphics.fill(this.dropSlotX - 3, this.dropSlotY - 3,
+                    this.dropSlotX + this.dropSlotSize + 3, this.dropSlotY + this.dropSlotSize + 3, pulseColor);
         }
     }
     

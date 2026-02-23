@@ -28,6 +28,7 @@ import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.AbilityHandler;
 import org.agmas.noellesroles.ModDataComponentTypes;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.item.ChefFoodItem;
@@ -46,14 +47,14 @@ import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.SwapperPlayerComponent;
-import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
-import org.agmas.noellesroles.packet.ChefCookC2SPacket;
-import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
-import org.agmas.noellesroles.packet.RecorderC2SPacket;
 
 public class ModPacketsReciever {
 
     public static void registerPackets() {
+        ServerPlayNetworking.registerGlobalReceiver(VendingMachinesBuyC2SPacket.TYPE, (payload, context) -> {
+            context.server().execute(() -> {
+            });
+        });
         ServerPlayNetworking.registerGlobalReceiver(ChefCookC2SPacket.ID, (payload, context) -> {
             final var player = context.player();
             TMMItemUtils.clearItem(player, (food) -> {

@@ -334,7 +334,7 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         ClientPlayNetworking.registerGlobalReceiver(OpenVendingMachinesScreenS2CPacket.ID, (payload, context) -> {
             context.client().execute(() -> {
-                context.client().setScreen(new VendingMachinesGui(Map.of(TMMItems.REVOLVER.getDefaultInstance(),300,TMMItems.LOCKPICK.getDefaultInstance(),100,TMMItems.BODY_BAG.getDefaultInstance(),100,TMMItems.GRENADE.getDefaultInstance(),1000)));
+                context.client().setScreen(new VendingMachinesGui(Map.of(TMMItems.REVOLVER.getDefaultInstance(),300,TMMItems.LOCKPICK.getDefaultInstance(),100,TMMItems.BODY_BAG.getDefaultInstance(),100,TMMItems.GRENADE.getDefaultInstance(),1000)).setBlockPos(payload.blockPos()));
 
             });
 
