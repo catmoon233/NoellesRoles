@@ -4,19 +4,23 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.agmas.noellesroles.packet.VendingMachinesBuyC2SPacket;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -117,7 +121,7 @@ public class VendingMachinesGui extends AbstractPixelScreen {
     private static final int PURCHASE_MESSAGE_Y_POS = 50; // 屏幕上方位置
 
     public VendingMachinesGui(Map<ItemStack, Integer> vendingItems) {
-        this(Component.literal("Vending Machine"), vendingItems);
+        this(Component.translatable("Vending Machine"), vendingItems);
     }
 
     public VendingMachinesGui setBlockPos(BlockPos blockPos){
@@ -172,6 +176,16 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         if (onCollectDroppedItem != null) {
             this.onCollectDroppedItem = onCollectDroppedItem;
         }
+    }
+
+
+    @Override
+    public boolean keyPressed(int i, int j, int k) {
+
+        if (Minecraft.getInstance().options.keyInventory.matches(i, j)){
+            onClose();
+        }
+        return super.keyPressed(i, j, k);
     }
 
     @Override
@@ -554,21 +568,21 @@ public class VendingMachinesGui extends AbstractPixelScreen {
     }
 
     private void renderLayerText(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        Component title = Component.literal("VENDING MACHINE");
+        Component title = Component.translatable("VENDING MACHINE");
         guiGraphics.drawString(this.font, title,
                 this.panelLeft + 10,
                 this.panelTop + 8,
                 0xFFEAEAEA,
                 false);
 
-        Component buyLabel = Component.literal("BUY");
+        Component buyLabel = Component.translatable("BUY");
         guiGraphics.drawString(this.font, buyLabel,
                 this.knobCenterX - this.font.width(buyLabel) / 2,
                 this.knobCenterY + this.knobRadius + 6,
                 0xFFE9E9E9,
                 false);
 
-        Component dropLabel = Component.literal("Collect");
+        Component dropLabel = Component.translatable("Collect");
         guiGraphics.drawString(this.font, dropLabel,
                 this.dropSlotX + this.dropSlotSize / 2 - this.font.width(dropLabel) / 2,
                 this.dropSlotY + this.dropSlotSize + 4,
@@ -624,6 +638,7 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         }
     }
 
+    private static VendingGoods cache_selected = null;
     private void onKnobPressed() {
         if (!isSelectedIndexValid()) {
             playClickSound();
@@ -642,8 +657,11 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         if (!this.purchaseCheck.test(purchaseStack, selected.price)) {
             return;
         }
+
+        cache_selected = selected;
+        ClientPlayNetworking.send(new VendingMachinesBuyC2SPacket(blockPos, BuiltInRegistries.ITEM.getKey(purchaseStack.getItem()).toString()));
         this.onPurchaseTriggered.accept(purchaseStack.copy(), selected.price);
-        startDropAnimationForSelection(selected);
+
     }
 
     private void startDropAnimationForSelection(VendingGoods selected) {
@@ -968,6 +986,11 @@ public class VendingMachinesGui extends AbstractPixelScreen {
      * 添加购买提示信息
      */
     public void addPurchaseMessage(String key) {
+        if (key.equals("noellesroles.bought_item")) {
+            if (cache_selected != null) {
+                startDropAnimationForSelection(cache_selected);
+            }
+        }
         long timestamp = System.currentTimeMillis();
         this.purchaseMessages.put(timestamp, key);
     }

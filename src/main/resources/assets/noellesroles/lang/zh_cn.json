@@ -925,5 +925,10 @@
   "gui.vendingmachine.knob.tooltip": "购买",
   "noellesroles.bought_item": "§a购买成功",
   "noellesroles.not_enough_money": "§4金币不足",
-  "noellesroles.cant_buy_item": "§6物品栏已满"
+  "noellesroles.cant_buy_item": "§6物品栏已满",
+  "Vending Machine": "售货机,",
+  "VENDING MACHINE": "自动售货机",
+  "BUY": "购买",
+  "Collect": "收集"
+
 }
