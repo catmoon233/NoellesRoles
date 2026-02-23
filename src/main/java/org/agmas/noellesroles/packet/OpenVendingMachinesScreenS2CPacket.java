@@ -26,8 +26,6 @@ public record OpenVendingMachinesScreenS2CPacket(BlockPos blockPos) implements C
 
     public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(this.blockPos);
-
-
     }
 
     public static OpenVendingMachinesScreenS2CPacket decode(RegistryFriendlyByteBuf buf) {

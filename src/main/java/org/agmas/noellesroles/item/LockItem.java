@@ -62,6 +62,8 @@ public class LockItem extends Item implements AdventureUsable {
             case NORTH:
                 z = context.getClickLocation().z;
                 break;
+            default:
+                break;
         }
         return new Vec3(x, y, z);
     }

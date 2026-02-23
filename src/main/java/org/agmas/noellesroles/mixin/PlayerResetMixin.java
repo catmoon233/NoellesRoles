@@ -71,20 +71,21 @@ public abstract class PlayerResetMixin {
     private static void clearAllComponents(ServerPlayer player) {
         RoleUtils.RemoveAllPlayerAttributes(player);
         RoleUtils.RemoveAllEffects(player);
+        player.setLastHurtMob(null);
         SplitPersonalityComponent.KEY.get(player).clear();
         SkinSplitPersonalityComponent.KEY.get(player).clear();
         SkinSplitPersonalityComponent.KEY.get(player).sync();
         (PlayerVolumeComponent.KEY.get(player)).clear();
         (WayfarerPlayerComponent.KEY.get(player)).clear();
-        
+
         ((MorphlingPlayerComponent) MorphlingPlayerComponent.KEY.get(player)).reset();
         ((VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(player)).reset();
         (RecallerPlayerComponent.KEY.get(player)).reset();
         (VulturePlayerComponent.KEY.get(player)).reset();
         (ExecutionerPlayerComponent.KEY.get(player)).reset();
-        
+
         FortunetellerPlayerComponent.KEY.get(player).reset();
-        
+
         BartenderPlayerComponent barComc = BartenderPlayerComponent.KEY.get(player);
         barComc.reset();
 
