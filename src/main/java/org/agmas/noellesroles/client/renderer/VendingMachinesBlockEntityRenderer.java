@@ -65,13 +65,13 @@ public class VendingMachinesBlockEntityRenderer implements BlockEntityRenderer<V
             int r = k % ROW;
             // int c = k / ROW;
             float y = 0;
-            if(floor == 0){
+            if (floor == 0) {
                 y = 1.7f;
-            }else if(floor == 1){
+            } else if (floor == 1) {
                 y = 1.2f;
-            }else if(floor==2){
+            } else if (floor == 2) {
                 y = 0.7f;
-            }else{
+            } else {
                 y = 0.2f;
             }
             float x = 0.3f + 0.4f * r;
@@ -84,7 +84,7 @@ public class VendingMachinesBlockEntityRenderer implements BlockEntityRenderer<V
 
             matrices.translate(x, y, z);
 
-            float rotationDegrees = (angle) * -1;
+            float rotationDegrees = 180 + (angle) * -1;
             // matrices.mulPose(Axis.XP.rotationDegrees(20));
             matrices.mulPose(Axis.YP.rotationDegrees(rotationDegrees));
             matrices.scale(0.3f, 0.3f, 0.3f);
