@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +29,7 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.event.MutableComponentResult;
 import org.agmas.noellesroles.client.event.OnMessageBelowMoneyRenderer;
+import org.agmas.noellesroles.client.renderer.VendingMachinesBlockEntityRenderer;
 import org.agmas.noellesroles.client.screen.*;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.MagicianPlayerComponent;
@@ -84,6 +86,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -133,6 +136,10 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // 注册HUD渲染
+        BlockEntityRenderers.register(
+                ModBlocks.VENDING_MACHINES_BLOCK_ENTITY,
+                VendingMachinesBlockEntityRenderer::new);
+
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.VENDING_MACHINES_BLOCK, RenderType.translucent());
         PanItem.openScreenCallback = () -> {
             Minecraft client = Minecraft.getInstance();
@@ -223,7 +230,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             final var client = context.client();
             client.execute(() -> {
                 if (client.player != null) {
-                    if (client.screen instanceof VendingMachinesGui vendingMachinesGui){
+                    if (client.screen instanceof VendingMachinesGui vendingMachinesGui) {
                         vendingMachinesGui.addPurchaseMessage(payload.componentKey());
                     }
                 }
@@ -353,7 +360,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             context.client().execute(() -> {
                 BlockEntity blockEntity = context.client().level.getBlockEntity(payload.blockPos());
                 if (blockEntity instanceof VendingMachinesBlockEntity vendingMachinesBlockEntity) {
-                    Map<ItemStack, Integer> shopItems = new HashMap<>();
+                    Map<ItemStack, Integer> shopItems = new LinkedHashMap<>();
                     vendingMachinesBlockEntity.getShops().forEach(shop -> {
                         shopItems.put(shop.stack(), shop.price());
                     });

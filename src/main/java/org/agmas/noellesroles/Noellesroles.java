@@ -99,10 +99,10 @@ public class Noellesroles implements ModInitializer {
         RoomCommand.register();
         DisplayItemCommand.register();
         GoodsManagerCommand.register();
-        
+
         // 加载预设配置
         Preset.PresetManager.loadPresets();
-        
+
         // 注册预设命令
         PresetCommand.register();
 
@@ -119,7 +119,7 @@ public class Noellesroles implements ModInitializer {
         RoleShopHandler.shopRegister();
         ModEventsRegister.registerPredicate();
 
-        //注册方块
+        // 注册方块
         ModBlocks.initialize();
 
         // 注册血液粒子工厂
