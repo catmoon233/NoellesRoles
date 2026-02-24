@@ -7,6 +7,7 @@ import net.minecraft.server.players.PlayerList;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.ConfigWorldComponent;
+import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,6 +37,7 @@ public class DecServerJoinPlayer {
         serverPlayer.getInventory().clearContent();
         RoleUtils.RemoveAllEffects(serverPlayer);
         RoleUtils.RemoveAllPlayerAttributes(serverPlayer);
+        (InsaneKillerPlayerComponent.KEY.get(serverPlayer)).reset();
         ((PlayerMoodComponent) PlayerMoodComponent.KEY.get(serverPlayer)).reset();
         ((PlayerShopComponent) PlayerShopComponent.KEY.get(serverPlayer)).reset();
         ((PlayerPoisonComponent) PlayerPoisonComponent.KEY.get(serverPlayer)).reset();

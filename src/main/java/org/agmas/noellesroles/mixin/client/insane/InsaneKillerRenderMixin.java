@@ -3,8 +3,6 @@ package org.agmas.noellesroles.mixin.client.insane;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.index.TMMEntities;
-import net.minecraft.client.CameraType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -40,7 +38,6 @@ public abstract class InsaneKillerRenderMixin
         InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(abstractClientPlayer);
         ClientLevel clientLevel = abstractClientPlayer.clientLevel;
         if (component.isActive) {
-
             ci.cancel();
             isPlayerBodyEntity.put(abstractClientPlayer.getUUID(), true);
             if (!playerBodyEntities.containsKey(abstractClientPlayer.getUUID())){

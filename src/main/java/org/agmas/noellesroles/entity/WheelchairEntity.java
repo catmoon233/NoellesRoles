@@ -63,7 +63,7 @@ public class WheelchairEntity extends Mob {
 
                     Vec3 knockbackDir = this.getForward();
                     knockbackDir.yRot(0);
-                    double strength = speed * 5.0;
+                    double strength = speed * 10.0;
                     // Noellesroles.LOGGER.info(knockbackDir + ":" + this.position() + ":" +
                     // lastPos);
                     for (Player target : otherPlayers) {
@@ -112,7 +112,7 @@ public class WheelchairEntity extends Mob {
         }
 
         // ===== 3. 前进/后退惯性（处理 W/S 键）=====
-    float maxSpeed = (float) 0.4;
+        float maxSpeed = (float) 0.4;
         if (forward != 0) {
             float targetSpeed = forward * maxSpeed;
             if (forwardSpeed < targetSpeed) {

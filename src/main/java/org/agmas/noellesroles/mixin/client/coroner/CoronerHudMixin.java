@@ -135,8 +135,12 @@ public abstract class CoronerHudMixin {
                 }
                 BodyDeathReasonComponent bodyDeathReasonComponent = (BodyDeathReasonComponent) BodyDeathReasonComponent.KEY
                         .get(NoellesrolesClient.targetBody);
+                String deathReason_str = NoellesrolesClient.targetBody.getDeathReason();
+                if (deathReason_str.isBlank() || deathReason_str.isEmpty()) {
+                    deathReason_str = GameConstants.DeathReasons.GENERIC.toString();
+                }
                 ResourceLocation deathReason = ResourceLocation
-                        .tryParse(NoellesrolesClient.targetBody.getDeathReason());
+                        .tryParse(deathReason_str);
                 if (deathReason == null) {
                     deathReason = GameConstants.DeathReasons.GENERIC;
                 }
