@@ -57,7 +57,6 @@ public class InitModRolesMax {
         Harpymodloader.setRoleMaximum(ModRoles.CHEF_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.FORTUNETELLER_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.WIND_YAOSE_ID, 1);
-        Harpymodloader.setRoleMaximum(ModRoles.WAYFARER_ID, 1);
     }
 
     public static void registerDynamic() {
@@ -85,7 +84,11 @@ public class InitModRolesMax {
             // 动态大小
             // 年兽角色：5%概率生成
             Random random = new Random();
-
+            if (players_count >= 10 && random.nextInt(0, 100) >= 25) {
+                Harpymodloader.setRoleMaximum(ModRoles.WAYFARER_ID, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.WAYFARER_ID, 0);
+            }
             if (random.nextInt(0, 100) < 50) {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
             } else {
