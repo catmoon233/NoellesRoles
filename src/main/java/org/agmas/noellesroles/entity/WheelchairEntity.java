@@ -38,12 +38,10 @@ public class WheelchairEntity extends Mob {
     private static final float FORWARD_FRICTION = 0.8f; // 无输入时每 tick 乘系数
 
     // 新增方法：获取当前骑手（玩家）
-    public Player getRider() {
-        return this.getPassengers().stream()
-                .filter(e -> e instanceof Player)
-                .map(e -> (Player) e)
-                .findFirst()
-                .orElse(null);
+    public Entity getRider() {
+        if (this.getPassengers().size() > 0)
+            return this.getPassengers().getFirst();
+        return null;
     }
 
     @Override
@@ -56,7 +54,7 @@ public class WheelchairEntity extends Mob {
         }
         double speed = this.position().distanceTo(lastPos);
         this.lastPos = this.position();
-        if (speed >= 0.3) {
+        if (speed >= 0.1) {
             if (this.getControllingPassenger() instanceof Player controller) {
                 AABB box = this.getBoundingBox().inflate(0.1);
                 List<Player> otherPlayers = this.level().getEntitiesOfClass(Player.class, box,
@@ -151,7 +149,9 @@ public class WheelchairEntity extends Mob {
 
     @Override
     public LivingEntity getControllingPassenger() {
-        return this.getRider();
+        if (this.getRider() instanceof LivingEntity e)
+            return e;
+        return null;
     }
 
     @Override
@@ -214,7 +214,7 @@ public class WheelchairEntity extends Mob {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         // 1. 如果玩家正在潜行，尝试回收为物品
-        if (player.isShiftKeyDown()) {
+        if (this.getPassengers().isEmpty() && player.isShiftKeyDown()) {
             if (!this.level().isClientSide) {
                 // 回收逻辑：给玩家一个轮椅物品，并移除实体
                 ItemStack wheelchairItem = new ItemStack(ModItems.WHEELCHAIR); // 你需要一个自定义物品
