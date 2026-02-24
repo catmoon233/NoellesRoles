@@ -182,7 +182,6 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
         this.invisibilityTicks = tag.getInt("invisibilityTicks");
         this.abilityUnlocked = tag.getBoolean("abilityUnlocked");
         this.unlockNotified = tag.getBoolean("unlockNotified");
-        this.lastStandNotified = tag.getBoolean("lastStandNotified");
     }
 
     /**
