@@ -6,6 +6,7 @@ import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.harpymodloader.events.ModdedRoleRemoved;
 import org.agmas.noellesroles.*;
 import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.agmas.noellesroles.component.AvengerPlayerComponent;
@@ -717,7 +718,16 @@ public class ModEventsRegister {
         });
         AwesomePlayerComponent.registerEvents();
         TrueKillerFinder.registerEvents();
+        ModdedRoleRemoved.EVENT.register((player, role) -> {
+            if (role != null) {
+                if (role.identifier()
+                        .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES
+                                .identifier())) {
+                    InsaneKillerPlayerComponent.KEY.get(player).reset();
+                }
 
+            }
+        });
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.identifier().equals(ModRoles.WAYFARER.identifier())) {
                 player.getInventory().clearContent();
