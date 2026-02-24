@@ -728,18 +728,8 @@ public class RoleShopHandler {
                 ThiefPlayerComponent.KEY.get(player).sync();
                 int cost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost;
 
-                // 检查金币是否足够
-                PlayerShopComponent shop = PlayerShopComponent.KEY.get(player);
-                if (shop.balance < cost) {
-                    player.displayClientMessage(
-                            Component.translatable("message.noellesroles.thief.not_enough_money_to_buy_honor", cost).withStyle(ChatFormatting.RED),
-                            true);
-                    return false;
-                }
-
                 // 扣除金币并给予金锭
-                shop.balance -= cost;
-                shop.sync();
+                // shop.addToBalance(-cost);
 
                 player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
                 player.displayClientMessage(
