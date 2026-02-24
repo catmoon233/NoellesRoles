@@ -36,10 +36,13 @@ public class GameFunctionsCommand {
                               "subtitle", ComponentArgument.textComponent(registryAccess))
                           .executes(GameFunctionsCommand::executeWinWithIdAndTitle)))))
               .then(Commands.literal("reset").then(Commands.literal("normal").executes((context) -> {
-                GameFunctions.tryResetTrain(context.getSource().getLevel());
+                GameFunctions.tryAutoTrainReset(context.getSource().getLevel());
+                context.getSource().sendSuccess(() -> Component.literal("Normal Reset(copy)!"), true);
                 return 1;
               })).then(Commands.literal("clean").executes((context) -> {
                 GameFunctions.tryResetTrainOnlySomeBlock(context.getSource().getLevel());
+                context.getSource().sendSuccess(() -> Component.literal("Clean Reset (clean only)!"), true);
+
                 return 1;
               })))
               .then(Commands.literal("blackout").executes((context) -> {
@@ -111,6 +114,7 @@ public class GameFunctionsCommand {
     // roundComponent
     roundComponent.CustomWinnerSubtitle = null;
     roundComponent.CustomWinnerTitle = null;
+    roundComponent.CustomWinnerColor = java.awt.Color.WHITE.getRGB();
     roundComponent.setWinStatus(WinStatus.CUSTOM);
     roundComponent.sync();
     context.getSource()
