@@ -274,8 +274,8 @@ public class AbilityHandler {
                 return;
             }
             if (targetPlayer != null) {
-                if (playerShopComponent.balance >= 150) {
-                    playerShopComponent.addToBalance(-150);
+                if (playerShopComponent.balance >= 200) {
+                    playerShopComponent.addToBalance(-200);
                     FortunetellerPlayerComponent.KEY.get(player).protectPlayer(targetPlayer);
                     abilityPlayerComponent.setCooldown(120 * 20);
                 } else {

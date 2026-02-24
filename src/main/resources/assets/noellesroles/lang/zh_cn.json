@@ -850,7 +850,7 @@
   "message.fortuneteller.protection_active_role": "%s 的护盾触发了。",
   "hud.fortuneteller.protecting_line": "[保佑中] %s: %s",
   "hud.fortuneteller.protecting_above": "⇧ 算命大师 ⇧",
-  "hud.fortuneteller.ready": "按下 %s 给玩家算命（150金币）",
+  "hud.fortuneteller.ready": "按下 %s 给玩家算命（200金币）",
   "hud.fortuneteller.cooldown": "冷却中，剩余 %s 秒",
   "hud.fortuneteller.target_miss": "请瞄准一个玩家后激活技能",
   "=========== 魔术师 ===========": "",
