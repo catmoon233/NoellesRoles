@@ -39,18 +39,43 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
     }
 
     public void startSwap(UUID t1, UUID t2) {
-        this.target1 = t1;
-        this.target2 = t2;
-        this.isSwapping = true;
-        this.swapTimer = 50; // 2.5秒 = 50 ticks
+
         NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY
                 .get(this.player);
+        Player player1 = player.level().getPlayerByUUID(target1);
+        Player player2 = player.level().getPlayerByUUID(target2);
+        if (!GameFunctions.isPlayerAliveAndSurvival(player1)) {
+            this.player.displayClientMessage(
+                    Component.translatable("message.swapper.failed.died", player1.getDisplayName()), true);
+            return;
+        }
+        if (!GameFunctions.isPlayerAliveAndSurvival(player2)) {
+            this.player.displayClientMessage(
+                    Component.translatable("message.swapper.failed.died", player2.getDisplayName()), true);
+            return;
+        }
+        if (!player1.onGround()) {
+            this.player.displayClientMessage(
+                    Component.translatable("message.swapper.failed.not_on_ground", player1.getDisplayName()), true);
+            return;
+        }
+        if (!player2.onGround()) {
+            this.player.displayClientMessage(
+                    Component.translatable("message.swapper.failed.not_on_ground", player2.getDisplayName()), true);
+            return;
+        }
+
         if (abilityPlayerComponent != null) {
             if (!abilityPlayerComponent.canUseAbility()) {
                 return;
             }
             abilityPlayerComponent.setCooldown(20 * 20);
         }
+        this.target1 = t1;
+        this.target2 = t2;
+        this.isSwapping = true;
+        this.swapTimer = 50; // 2.5秒 = 50 ticks
+        
         ModComponents.SWAPPER.sync(player);
     }
 

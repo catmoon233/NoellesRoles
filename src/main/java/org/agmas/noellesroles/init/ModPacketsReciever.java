@@ -243,7 +243,7 @@ public class ModPacketsReciever {
                 if (payload.player() != null && payload.player2() != null) {
                     if (context.player().level().getPlayerByUUID(payload.player()) != null &&
                             context.player().level().getPlayerByUUID(payload.player2()) != null) {
-
+                        
                         SwapperPlayerComponent swapperComponent = ModComponents.SWAPPER.get(context.player());
                         if (!swapperComponent.isSwapping) {
                             swapperComponent.startSwap(payload.player(), payload.player2());
