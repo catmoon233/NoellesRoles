@@ -655,7 +655,7 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         }
 
         if (this.droppedItem.phase == DropPhase.READY_TO_COLLECT) {
-            Component hint = Component.literal("Click slot to get item");
+            Component hint = Component.translatable("screen.vending_machine.click_to_pick");
             guiGraphics.drawString(this.font, hint,
                     this.panelLeft + this.panelWidth - this.font.width(hint) - 10,
                     this.panelTop + this.panelHeight - this.font.lineHeight - 8,
