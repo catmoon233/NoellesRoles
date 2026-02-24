@@ -35,6 +35,9 @@ public class PlayerVolumeComponent
     // 持有该组件的玩家
     public final Player player;
 
+    // 主播模式
+    public boolean vtMode = false;
+
     // 声音剩余时间
     public int left_time = -1;
 
@@ -153,7 +156,7 @@ public class PlayerVolumeComponent
         tag.putInt("left_time", this.left_time);
         tag.putFloat("volume", this.volume);
         tag.putInt("during_sound_interval", this.duringSoundPlayInterval);
-
+        tag.putBoolean("vtMode", this.vtMode);
         if (duringSound != null) {
             tag.putString("during_sound", duringSound.getLocation().toString());
         }
@@ -161,6 +164,7 @@ public class PlayerVolumeComponent
 
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
+        this.vtMode = tag.contains("vtMode") ? tag.getBoolean("vtMode") : false;
         this.left_time = tag.contains("left_time") ? tag.getInt("left_time") : -1;
         this.duringSoundPlayInterval = tag.contains("during_sound_interval") ? tag.getInt("during_sound_interval")
                 : -1;

@@ -939,7 +939,7 @@
   "subtitles.noellesroles.wind": "风声",
   "subtitles.noellesroles.jester": "小丑狂暴",
   "gui.vendingmachine.knob.tooltip": "点击购买选中商品",
-  "gui.vendingmachine.collect.tooltip":"点击收集商品",
+  "gui.vendingmachine.collect.tooltip": "点击收集商品",
   "gui.vendingmachine.money_display": "%s\uE781",
   "noellesroles.bought_item": "§a购买成功",
   "noellesroles.not_enough_money": "§4金币不足",
@@ -948,5 +948,9 @@
   "VENDING MACHINE": "自动售货机",
   "BUY": "购买",
   "Collect": "收集口",
-  "screen.vending_machine.click_to_pick":"点击收集口取走商品"
+  "screen.vending_machine.click_to_pick": "点击收集口取走商品",
+  "message.noellesroles.vt_mode.enabled": "已为 %s 启用主播模式。Ta将无法听到旁观者的讨论。",
+  "message.noellesroles.vt_mode.disabled": "已为 %s 关闭主播模式。",
+  "购买了小偷的荣誉！花费 %s 金币": "购买了小偷的荣誉！花费 %s 金币",
+  "金币不足！需要 %s 金币": "金币不足！需要 %s 金币"
 }

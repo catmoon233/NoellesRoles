@@ -47,6 +47,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  */
 public class ThiefPlayerComponent implements RoleComponent, ServerTickingComponent {
 
+    public static int honorCost = 0;
     /** 组件键 */
     public static final ComponentKey<ThiefPlayerComponent> KEY = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "thief"),
@@ -134,6 +135,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
 
     /**
      * 尝试使用技能（按技能键释放）
+     * 
      * @return 是否成功释放技能
      */
     public boolean useAbility() {
@@ -197,7 +199,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (targetBalance < STEAL_MONEY_AMOUNT) {
             serverPlayer.displayClientMessage(
                     Component.translatable("message.noellesroles.thief.not_enough_money",
-                            target.getName().getString())
+                            target.getDisplayName())
                             .withStyle(ChatFormatting.RED),
                     true);
             return true; // 失败不进入冷却
@@ -214,7 +216,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         // 通知小偷
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.stole_money",
-                        target.getName().getString(),
+                        target.getDisplayName(),
                         STEAL_MONEY_AMOUNT)
                         .withStyle(ChatFormatting.GOLD),
                 true);
@@ -264,7 +266,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (count == 0) {
             serverPlayer.displayClientMessage(
                     Component.translatable("message.noellesroles.thief.no_stealable_items",
-                            target.getName().getString())
+                            target.getDisplayName())
                             .withStyle(ChatFormatting.YELLOW),
                     true);
             return true; // 没有物品可偷，不进入冷却
@@ -293,7 +295,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         }
 
         // 先获取物品名称（在移除之前）
-        String itemName = stolenItem.getHoverName().getString();
+        Component itemName = stolenItem.getDisplayName();
 
         // 从目标物品栏移除物品
         target.getInventory().items.set(slotIndex, ItemStack.EMPTY);
@@ -324,7 +326,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         // 通知小偷
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.stole_item",
-                        target.getName().getString(),
+                        target.getDisplayName(),
                         itemName)
                         .withStyle(ChatFormatting.AQUA),
                 true);
@@ -348,64 +350,101 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
      * 只允许偷取指定的武器和道具
      */
     private boolean canStealItem(ItemStack stack) {
-        if (stack.isEmpty()) return false;
+        if (stack.isEmpty())
+            return false;
 
         // 禁止偷取的物品
         // 金锭（小偷的荣誉）
-        if (stack.is(Items.GOLD_INGOT)) return false;
+        if (stack.is(Items.GOLD_INGOT))
+            return false;
 
         // 只允许偷取以下物品：
 
         // 枪械类
-        if (stack.is(TMMItems.REVOLVER)) return true;  // 左轮手枪
-        if (stack.is(HSRItems.BANDIT_REVOLVER)) return true;  // 匪徒手枪
-        if (stack.is(ModItems.PATROLLER_REVOLVER)) return true;  // 巡警手枪
-        if (stack.is(TMMItems.DERRINGER)) return true;  // 德林加手枪
-        if (stack.is(ModItems.ONCE_REVOLVER)) return true;  // 一次性手枪
+        if (stack.is(TMMItems.REVOLVER))
+            return true; // 左轮手枪
+        if (stack.is(HSRItems.BANDIT_REVOLVER))
+            return true; // 匪徒手枪
+        if (stack.is(ModItems.PATROLLER_REVOLVER))
+            return true; // 巡警手枪
+        if (stack.is(TMMItems.DERRINGER))
+            return true; // 德林加手枪
+        if (stack.is(ModItems.ONCE_REVOLVER))
+            return true; // 一次性手枪
 
         // 武器类
-        if (stack.is(TMMItems.KNIFE)) return true;  // 匕首
-        if (stack.is(TMMItems.BAT)) return true;  // 球棒（小巧思）
+        if (stack.is(TMMItems.KNIFE))
+            return true; // 匕首
+        if (stack.is(TMMItems.BAT))
+            return true; // 球棒（小巧思）
 
         // 投掷物类
-        if (stack.is(TMMItems.GRENADE)) return true;  // 手榴弹
-        if (stack.is(TMMItems.FIRECRACKER)) return true;  // 鞭炮
-        if (stack.is(ModItems.BOMB)) return true;  // 炸弹
+        if (stack.is(TMMItems.GRENADE))
+            return true; // 手榴弹
+        if (stack.is(TMMItems.FIRECRACKER))
+            return true; // 鞭炮
+        if (stack.is(ModItems.BOMB))
+            return true; // 炸弹
 
         // 道具类
-        if (stack.is(TMMItems.SCORPION)) return true;  // 蝎子
-        if (stack.is(TMMItems.POISON_VIAL)) return true;  // 毒药瓶
-        if (stack.is(TMMItems.CROWBAR)) return true;  // 撬棍
-        if (stack.is(TMMItems.LOCKPICK)) return true;  // 开锁器
-        if (stack.is(TMMItems.BODY_BAG)) return true;  // 裹尸袋
-        if (stack.is(TMMItems.NOTE)) return true;  // 纸条
-        if (stack.is(ModItems.HANDCUFFS)) return true;  // 手铐
+        if (stack.is(TMMItems.SCORPION))
+            return true; // 蝎子
+        if (stack.is(TMMItems.POISON_VIAL))
+            return true; // 毒药瓶
+        if (stack.is(TMMItems.CROWBAR))
+            return true; // 撬棍
+        if (stack.is(TMMItems.LOCKPICK))
+            return true; // 开锁器
+        if (stack.is(TMMItems.BODY_BAG))
+            return true; // 裹尸袋
+        if (stack.is(TMMItems.NOTE))
+            return true; // 纸条
+        if (stack.is(ModItems.HANDCUFFS))
+            return true; // 手铐
 
         // 特殊物品类（来自HSRItems）
-        if (stack.is(HSRItems.TOXIN)) return true;  // 毒针
-        if (stack.is(HSRItems.ANTIDOTE)) return true;  // 解药
+        if (stack.is(HSRItems.TOXIN))
+            return true; // 毒针
+        if (stack.is(HSRItems.ANTIDOTE))
+            return true; // 解药
 
         // NoellesRoles 特殊物品
-        if (stack.is(ModItems.BOXING_GLOVE)) return true;  // 拳套
-        if (stack.is(ModItems.DEFIBRILLATOR)) return true;  // 除颤仪
-        if (stack.is(ModItems.DELUSION_VIAL)) return true;  // 幻觉试剂
-        if (stack.is(ModItems.ANTIDOTE_REAGENT)) return true;  // 解药试剂
-        if (stack.is(ModItems.BLANK_CARTRIDGE)) return true;  // 空包弹
-        if (stack.is(ModItems.SMOKE_GRENADE)) return true;  // 烟雾弹
-        if (stack.is(ModItems.REINFORCEMENT)) return true;  // 加固门道具
-        if (stack.is(ModItems.ALARM_TRAP)) return true;  // 警报陷阱
-        if (stack.is(ModItems.LOCK_ITEM)) return true;  // 锁
-        if (stack.is(ModItems.DELIVERY_BOX)) return true;  // 传递盒
-        if (stack.is(ModItems.HALLUCINATION_BOTTLE)) return true;  // 迷幻瓶
-        if (stack.is(ModItems.NIGHT_VISION_GLASSES)) return true;  // 夜视镜
-        if (stack.is(ModItems.WHEELCHAIR)) return true;  // 轮椅
+        if (stack.is(ModItems.BOXING_GLOVE))
+            return true; // 拳套
+        if (stack.is(ModItems.DEFIBRILLATOR))
+            return true; // 除颤仪
+        if (stack.is(ModItems.DELUSION_VIAL))
+            return true; // 幻觉试剂
+        if (stack.is(ModItems.ANTIDOTE_REAGENT))
+            return true; // 解药试剂
+        if (stack.is(ModItems.BLANK_CARTRIDGE))
+            return true; // 空包弹
+        if (stack.is(ModItems.SMOKE_GRENADE))
+            return true; // 烟雾弹
+        if (stack.is(ModItems.REINFORCEMENT))
+            return true; // 加固门道具
+        if (stack.is(ModItems.ALARM_TRAP))
+            return true; // 警报陷阱
+        if (stack.is(ModItems.LOCK_ITEM))
+            return true; // 锁
+        if (stack.is(ModItems.DELIVERY_BOX))
+            return true; // 传递盒
+        if (stack.is(ModItems.HALLUCINATION_BOTTLE))
+            return true; // 迷幻瓶
+        if (stack.is(ModItems.NIGHT_VISION_GLASSES))
+            return true; // 夜视镜
+        if (stack.is(ModItems.WHEELCHAIR))
+            return true; // 轮椅
 
         // 护盾试剂（来自TMM）
-        if (stack.is(TMMItems.DEFENSE_VIAL)) return true;  // 护盾试剂
+        if (stack.is(TMMItems.DEFENSE_VIAL))
+            return true; // 护盾试剂
 
         // 万能钥匙和乘务员钥匙
-        if (stack.is(ModItems.MASTER_KEY)) return true;
-        if (stack.is(ModItems.MASTER_KEY_P)) return true;
+        if (stack.is(ModItems.MASTER_KEY))
+            return true;
+        if (stack.is(ModItems.MASTER_KEY_P))
+            return true;
 
         // 其他物品不可偷取
         return false;
@@ -420,8 +459,10 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         double closestDistance = maxDistance;
 
         for (Player otherPlayer : player.level().players()) {
-            if (otherPlayer == player) continue;
-            if (GameFunctions.isPlayerEliminated(otherPlayer)) continue;
+            if (otherPlayer == player)
+                continue;
+            if (GameFunctions.isPlayerEliminated(otherPlayer))
+                continue;
 
             double distance = player.distanceTo(otherPlayer);
             if (distance < closestDistance && player.hasLineOfSight(otherPlayer)) {
