@@ -385,12 +385,29 @@ public class VendingMachinesGui extends AbstractPixelScreen {
             int itemX = slotX + (this.slotSize - 16) / 2;
             int itemY = slotY + (this.slotSize - 16) / 2;
             guiGraphics.renderItem(goods.stack, itemX, itemY);
+            int goodStackCounts = goods.stack.getCount();
 
-            final float textScale = 0.5f;
+            float textScale = 0.75f;
+
             guiGraphics.pose().pushPose();
             guiGraphics.pose().scale(textScale, textScale, 1);
+
+            String goodStackCountsText = String.valueOf(goodStackCounts);
+            guiGraphics.drawString(this.font, goodStackCountsText,
+                    (int) ((slotX + this.slotSize) / textScale) - font.width(goodStackCountsText) - 2,
+                    (int) ((slotY + this.slotSize) / textScale) - font.lineHeight - 2,
+                    java.awt.Color.WHITE.getRGB(),
+                    false);
+
+            guiGraphics.pose().popPose();
+
+            textScale = 0.5f;
+
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(textScale, textScale, 1);
+
             Component priceText = Component.translatable("gui.vendingmachine.money_display", goods.price);
-            int slotTextX = (int) ((slotX + this.slotSize / 2 - font.width(priceText) / 2) / textScale);
+            int slotTextX = (int) ((slotX + this.slotSize / 2) / textScale) - font.width(priceText) / 2;
             int slotTextY = (int) ((slotY + this.slotSize) / textScale) + 2;
             guiGraphics.drawString(this.font, priceText,
                     slotTextX,
@@ -434,9 +451,31 @@ public class VendingMachinesGui extends AbstractPixelScreen {
 
         if (isSelectedIndexValid()) {
             VendingGoods selected = this.goods.get(this.selectedIndex);
-            guiGraphics.renderItem(selected.stack,
-                    this.previewX + (this.previewSize - 16) / 2,
-                    this.previewY + (this.previewSize - 16) / 2);
+            if (selected.stack != null) {
+                guiGraphics.renderItem(selected.stack,
+                        this.previewX + (this.previewSize - 16) / 2,
+                        this.previewY + (this.previewSize - 16) / 2);
+
+                int goodStackCounts = selected.stack.getCount();
+
+                float textScale = 1f;
+                String goodStackCountsText = String.valueOf(goodStackCounts);
+                guiGraphics.drawString(this.font, goodStackCountsText,
+                        (int) ((this.previewX + this.previewSize) / textScale) - font.width(goodStackCountsText) - 2,
+                        (int) ((this.previewY + this.previewSize) / textScale) - font.lineHeight - 2,
+                        java.awt.Color.WHITE.getRGB(),
+                        false);
+
+
+                Component priceText = Component.translatable("gui.vendingmachine.money_display", selected.price);
+                int slotTextX = (int) ((this.previewX + this.previewSize / 2) / textScale) - font.width(priceText) / 2;
+                int slotTextY = (int) ((this.previewY + this.previewSize) / textScale) + 4;
+                guiGraphics.drawString(this.font, priceText,
+                        slotTextX,
+                        slotTextY,
+                        0xFFE6C878,
+                        false);
+            }
         }
 
         float knobAngle = getKnobAngle(delta);
@@ -836,15 +875,15 @@ public class VendingMachinesGui extends AbstractPixelScreen {
         }
 
         // 在收集槽位置生成粒子
-        double centerX = this.dropSlotX + this.dropSlotSize / 2.0;
-        double centerY = this.dropSlotY + this.dropSlotSize / 2.0;
+        // double centerX = this.dropSlotX + this.dropSlotSize / 2.0;
+        // double centerY = this.dropSlotY + this.dropSlotSize / 2.0;
 
         // 生成多个粒子
         for (int i = 0; i < 8; i++) {
-            double angle = (Math.PI * 2 * i) / 8;
-            double distance = 8.0 + Math.random() * 12.0;
-            double particleX = centerX + Math.cos(angle) * distance;
-            double particleY = centerY + Math.sin(angle) * distance;
+            // double angle = (Math.PI * 2 * i) / 8;
+            // double distance = 8.0 + Math.random() * 12.0;
+            // double particleX = centerX + Math.cos(angle) * distance;
+            // double particleY = centerY + Math.sin(angle) * distance;
 
             // 发送粒子生成数据包到服务端（如果需要的话）
             // 这里可以根据需要添加粒子生成逻辑

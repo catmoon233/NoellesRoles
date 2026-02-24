@@ -78,14 +78,14 @@ public class VendingMachinesBlock extends BaseEntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level,
             BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         onUseVendingMachines(player, blockPos);
-        return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
+        return ItemInteractionResult.FAIL;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player,
             BlockHitResult blockHitResult) {
         onUseVendingMachines(player, blockPos);
-        return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
+        return InteractionResult.SUCCESS;
     }
 
     public static void onUseVendingMachines(Player player, BlockPos blockPos) {

@@ -57,6 +57,27 @@ public class VendingMachinesBlockEntity extends BlockEntity {
       }
    }
 
+   public void removeItem(ItemStack it) {
+      this.items.removeIf((itt) -> {
+         return itt.stack().getItem().equals(it.getItem());
+      });
+      this.setChanged();
+      this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(),
+            Block.UPDATE_CLIENTS);
+   }
+
+   public boolean removeItemStack(int stackid) {
+      if (stackid < 0)
+         return false;
+      if (stackid >= this.items.size())
+         return false;
+      this.items.remove(stackid);
+      this.setChanged();
+      this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(),
+            Block.UPDATE_CLIENTS);
+      return true;
+   }
+
    @Override
    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
       super.saveAdditional(compoundTag, provider);
