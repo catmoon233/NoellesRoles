@@ -11,6 +11,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.component.PlayerVolumeComponent;
@@ -30,39 +31,24 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
 
   public void vtMode(LocationalSoundPacketEvent event) {
     // VoicechatServerApi api = event.getVoicechat();
-    var sconnection = event.getSenderConnection();
-    var connection = event.getReceiverConnection();
-    if (connection == null)
+    VoicechatConnection senderConnection = event.getSenderConnection();
+    VoicechatConnection receiverConnection = event.getReceiverConnection();
+    if (senderConnection == null || receiverConnection == null)
       return;
-    if (connection != null && connection.isInstalled() && connection.isConnected()) {
-      var vcplayer = connection.getPlayer();
-      if (vcplayer != null) {
-        var vctplayer = vcplayer.getPlayer();
-        if (vctplayer != null) {
-          ServerPlayer reciever = (ServerPlayer) vctplayer;
-          if (reciever != null) {
-            var pvc = PlayerVolumeComponent.KEY.get(reciever);
-            if (pvc.vtMode) {
-              if (sconnection != null && sconnection.isInstalled() && sconnection.isConnected()) {
-                var svcplayer = sconnection.getPlayer();
-                if (svcplayer != null) {
-                  var svctplayer = svcplayer.getPlayer();
-                  if (svctplayer != null) {
-                    ServerPlayer sender = (ServerPlayer) svctplayer;
-                    if (sender != null && sender.isSpectator()
-                        && GameWorldComponent.KEY.get(sender.level()).isRunning()) {
-                      event.cancel();
-                      return;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+
+    if (!(senderConnection.getPlayer().getPlayer() instanceof Player senderPlayer))
+      return;
+    if (!(receiverConnection.getPlayer().getPlayer() instanceof Player receiverPlayer))
+      return;
+
+    var pvc = PlayerVolumeComponent.KEY.get(receiverPlayer);
+    if (receiverPlayer.isSpectator() && pvc.vtMode) {
+      if (senderPlayer.isSpectator()
+          && GameWorldComponent.KEY.get(senderPlayer.level()).isRunning()) {
+        event.cancel();
+        return;
       }
     }
-    return;
   }
 
   public void paranoidEvent(MicrophonePacketEvent event) {
