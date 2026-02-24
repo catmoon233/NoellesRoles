@@ -711,7 +711,7 @@ public class RoleShopHandler {
         // 小偷商店
         // 小偷的荣誉（金锭） - 根据人数动态计算价格
         THIEF_SHOP.add(new ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
-                0, // 价格会在购买时动态计算
+                0, // 价格在onBuy中动态计算
                 ShopEntry.Type.TOOL) {
             @Override
             public boolean onBuy(@NotNull Player player) {
@@ -737,10 +737,6 @@ public class RoleShopHandler {
                         Component.literal("购买了小偷的荣誉！花费 " + cost + " 金币").withStyle(ChatFormatting.GOLD),
                         true);
                 return true;
-            }
-
-            public Component getName() {
-                return Component.literal("小偷的荣誉 (金锭)");
             }
         });
     }
