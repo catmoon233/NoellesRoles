@@ -17,6 +17,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -33,8 +34,11 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
     public int invisibilityTicks = 0;
     public boolean abilityUnlocked = false;
     public boolean unlockNotified = false;
+    public boolean lastStandNotified = false;
     /** 解锁所需的游戏剩余时间（3分钟 = 180秒 = 3600 tick） */
     public static final int UNLOCK_REMAINING_TICKS = 180 * 20;
+    /** 最后的幸存者模式时间（2分钟 = 120秒 = 2400 tick） */
+    public static final int LAST_STAND_TIME = 120 * 20;
 
     @Override
     public Player getPlayer() {
@@ -48,6 +52,7 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
         this.invisibilityTicks = 0;
         this.abilityUnlocked = false;
         this.unlockNotified = false;
+        this.lastStandNotified = false;
         this.sync();
     }
 
@@ -108,6 +113,9 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
                 unlockNotified = true;
             }
         }
+
+        // 检查最后幸存者状态
+        checkLastStand(gameWorld);
 
         if (cooldown > 0) {
             cooldown--;
@@ -174,5 +182,66 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
         this.invisibilityTicks = tag.getInt("invisibilityTicks");
         this.abilityUnlocked = tag.getBoolean("abilityUnlocked");
         this.unlockNotified = tag.getBoolean("unlockNotified");
+        this.lastStandNotified = tag.getBoolean("lastStandNotified");
+    }
+
+    /**
+     * 检查最后幸存者状态
+     * 当场上平民阵营只剩小透明时，将游戏时间设为2分钟（如果当前时间更长）
+     * 并广播提示
+     */
+    private void checkLastStand(GameWorldComponent gameWorld) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        if (lastStandNotified) {
+            return; // 已经通知过了，不再重复
+        }
+
+        // 统计存活的平民阵营玩家
+        int aliveCivilianCount = 0;
+        boolean hasGhost = false;
+
+        for (var p : player.level().players()) {
+            if (!GameFunctions.isPlayerAliveAndSurvival(p)) {
+                continue;
+            }
+            var role = gameWorld.getRole(p.getUUID());
+            if (role == null) {
+                continue;
+            }
+            // 检查是否是平民阵营（isInnocent = true 且 canUseKiller = false）
+            if (role.isInnocent() && !role.canUseKiller()) {
+                aliveCivilianCount++;
+                if (gameWorld.isRole(p, ModRoles.GHOST)) {
+                    hasGhost = true;
+                }
+            }
+        }
+
+        // 如果存活平民阵营只有1人，且是小透明
+        if (aliveCivilianCount == 1 && hasGhost) {
+            // 获取游戏时间
+            GameTimeComponent gameTime = GameTimeComponent.KEY.get(player.level());
+            if (gameTime != null) {
+                long currentTicks = gameTime.getTime();
+                // 如果当前时间超过2分钟，则设置为2分钟
+                if (currentTicks > LAST_STAND_TIME) {
+                    gameTime.setTime(LAST_STAND_TIME);
+                }
+            }
+
+            // 发送全局广播
+            var broadcastMessage = Component
+                    .translatable("message.noellesroles.ghost.last_stand")
+                    .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
+            serverPlayer.server.getPlayerList().getPlayers().forEach((p) -> {
+                BroadcastCommand.BroadcastMessage(p, broadcastMessage);
+            });
+
+            lastStandNotified = true;
+            sync();
+        }
     }
 }
