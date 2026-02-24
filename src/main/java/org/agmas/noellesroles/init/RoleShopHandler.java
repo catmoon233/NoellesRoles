@@ -730,7 +730,7 @@ public class RoleShopHandler {
                 PlayerShopComponent shop = PlayerShopComponent.KEY.get(player);
                 if (shop.balance < cost) {
                     player.displayClientMessage(
-                            Component.translatable("金币不足！需要 %s 金币", cost).withStyle(ChatFormatting.RED),
+                            Component.translatable("message.noellesroles.thief.not_enough_money_to_buy_honor", cost).withStyle(ChatFormatting.RED),
                             true);
                     return false;
                 }
@@ -741,7 +741,7 @@ public class RoleShopHandler {
 
                 player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
                 player.displayClientMessage(
-                        Component.translatable("购买了小偷的荣誉！花费 %s 金币", cost).withStyle(ChatFormatting.GOLD),
+                        Component.translatable("message.noellesroles.thief.honor_purchased", cost).withStyle(ChatFormatting.GOLD),
                         true);
                 return true;
             }
