@@ -63,7 +63,7 @@ public class WheelchairEntity extends Mob {
 
                     Vec3 knockbackDir = this.getForward();
                     knockbackDir.yRot(0);
-                    double strength = speed * 10.0;
+                    double strength = speed * 5.0;
                     // Noellesroles.LOGGER.info(knockbackDir + ":" + this.position() + ":" +
                     // lastPos);
                     for (Player target : otherPlayers) {

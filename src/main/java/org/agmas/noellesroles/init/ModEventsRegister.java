@@ -723,7 +723,7 @@ public class ModEventsRegister {
                 if (role.identifier()
                         .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES
                                 .identifier())) {
-                    InsaneKillerPlayerComponent.KEY.get(player).reset();
+                    InsaneKillerPlayerComponent.KEY.get(player).clear();
                 }
 
             }
