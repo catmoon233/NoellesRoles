@@ -42,7 +42,7 @@ public class VendingMachinesBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING;
     private static final MapCodec<VendingMachinesBlock> CODEC;
     protected static final VoxelShape SHAPE;
-    protected static final VoxelShape SHAPE_TOP = Block.box(0, 0, 0, 16, 16, 16);
+    protected static final VoxelShape SHAPE_TOP = Block.box(0, -16, 0, 16, 16, 16);
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     public VendingMachinesBlock(Properties properties) {
@@ -77,19 +77,22 @@ public class VendingMachinesBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level,
             BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        useeVendingMachines(player, blockPos);
+        onUseVendingMachines(player, blockPos);
         return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player,
             BlockHitResult blockHitResult) {
-        useeVendingMachines(player, blockPos);
+        onUseVendingMachines(player, blockPos);
         return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
     }
 
-    public static void useeVendingMachines(Player player, BlockPos blockPos) {
+    public static void onUseVendingMachines(Player player, BlockPos blockPos) {
         if (player instanceof ServerPlayer serverPlayer) {
+            if (player.level().getBlockState(blockPos).getValue(HALF).equals(DoubleBlockHalf.UPPER)) {
+                blockPos = blockPos.below();
+            }
             ServerPlayNetworking.send(serverPlayer, new OpenVendingMachinesScreenS2CPacket(blockPos));
         }
     }
@@ -113,7 +116,9 @@ public class VendingMachinesBlock extends BaseEntityBlock {
     }
 
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new VendingMachinesBlockEntity(pos, state);
+        if (state.getValue(HALF).equals(DoubleBlockHalf.LOWER))
+            return new VendingMachinesBlockEntity(pos, state);
+        return null;
     }
 
     public RenderShape getRenderShape(BlockState state) {
