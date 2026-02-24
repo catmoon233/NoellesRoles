@@ -710,20 +710,27 @@ public class RoleShopHandler {
 
         // 小偷商店
         // 小偷的荣誉（金锭） - 根据人数动态计算价格
-        THIEF_SHOP.add(new ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
+        ShopEntry THIEF_SHOP_ENTRY = new ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
                 0, // 价格在onBuy中动态计算
                 ShopEntry.Type.TOOL) {
+            @Override
+            public int price() {
+                return org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost;
+            }
+
             @Override
             public boolean onBuy(@NotNull Player player) {
                 // 获取游戏总人数
                 int totalPlayers = player.level().players().size();
-                int cost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.getHonorCost(totalPlayers);
+                org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent
+                        .getHonorCost(totalPlayers);
+                int cost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost;
 
                 // 检查金币是否足够
                 PlayerShopComponent shop = PlayerShopComponent.KEY.get(player);
                 if (shop.balance < cost) {
                     player.displayClientMessage(
-                            Component.literal("金币不足！需要 " + cost + " 金币").withStyle(ChatFormatting.RED),
+                            Component.translatable("金币不足！需要 %s 金币", cost).withStyle(ChatFormatting.RED),
                             true);
                     return false;
                 }
@@ -734,10 +741,11 @@ public class RoleShopHandler {
 
                 player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
                 player.displayClientMessage(
-                        Component.literal("购买了小偷的荣誉！花费 " + cost + " 金币").withStyle(ChatFormatting.GOLD),
+                        Component.translatable("购买了小偷的荣誉！花费 %s 金币", cost).withStyle(ChatFormatting.GOLD),
                         true);
                 return true;
             }
-        });
+        };
+        THIEF_SHOP.add(THIEF_SHOP_ENTRY);
     }
 }

@@ -729,6 +729,11 @@ public class ModEventsRegister {
             }
         });
         ModdedRoleAssigned.EVENT.register((player, role) -> {
+            if (role.identifier().equals(ModRoles.THIEF.identifier())) {
+                int totalPlayers = player.level().players().size();
+                org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent
+                        .getHonorCost(totalPlayers);
+            }
             if (role.identifier().equals(ModRoles.WAYFARER.identifier())) {
                 player.getInventory().clearContent();
                 RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());

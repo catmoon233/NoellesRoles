@@ -30,27 +30,29 @@ public class CommanderHandler {
             MicrophonePacketEvent event) {
         var api = event.getVoicechat();
         if (gameWorldComponent.isRole(player, ModRoles.COMMANDER)) {
-            var napc = NoellesRolesAbilityPlayerComponent.KEY.get(player);
-            if (napc.status == 1) { // 给杀手广播
-                event.cancel();
-                player.level().players().forEach((p) -> {
-                    if (p.getUUID() != player.getUUID()) {
-                        var role = gameWorldComponent.getRole(p.getUUID());
-                        if (role == null)
-                            return;
-                        if (!canUseKillerChannel(role))
-                            return;
-                        VoicechatConnection con = api.getConnectionOf(p.getUUID());
-                        if (con != null && con.isInstalled() && con.isConnected()) {
-                            api.sendLocationalSoundPacketTo(con, event.getPacket()
-                                    .locationalSoundPacketBuilder()
-                                    .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
-                                    .distance((float) api.getVoiceChatDistance())
-                                    .build());
+            if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                var napc = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+                if (napc.status == 1) { // 给杀手广播
+                    event.cancel();
+                    player.level().players().forEach((p) -> {
+                        if (p.getUUID() != player.getUUID()) {
+                            var role = gameWorldComponent.getRole(p.getUUID());
+                            if (role == null)
+                                return;
+                            if (!canUseKillerChannel(role))
+                                return;
+                            VoicechatConnection con = api.getConnectionOf(p.getUUID());
+                            if (con != null && con.isInstalled() && con.isConnected()) {
+                                api.sendLocationalSoundPacketTo(con, event.getPacket()
+                                        .locationalSoundPacketBuilder()
+                                        .position(api.createPosition(p.getX(), p.getY(), p.getZ()))
+                                        .distance((float) api.getVoiceChatDistance())
+                                        .build());
+                            }
                         }
-                    }
-                });
-                return;
+                    });
+                    return;
+                }
             }
         } else {
             var role = gameWorldComponent.getRole(player);

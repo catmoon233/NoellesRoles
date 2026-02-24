@@ -27,12 +27,12 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
         VoicechatPlugin.super.initialize(api);
     }
 
-    public void vtMode(MicrophonePacketEvent event) {
+    public boolean vtMode(MicrophonePacketEvent event) {
         // VoicechatServerApi api = event.getVoicechat();
         var sconnection = event.getSenderConnection();
         var connection = event.getReceiverConnection();
         if (connection == null)
-            return;
+            return false;
         if (connection != null && connection.isInstalled() && connection.isConnected()) {
             var vcplayer = connection.getPlayer();
             if (vcplayer != null) {
@@ -50,7 +50,7 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
                                         ServerPlayer sender = (ServerPlayer) svctplayer;
                                         if (sender != null && sender.isSpectator()) {
                                             event.cancel();
-                                            return;
+                                            return true;
                                         }
                                     }
                                 }
@@ -60,15 +60,12 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
                 }
             }
         }
-        // ServerPlayer players = ((ServerPlayer)
-        // event.getSenderConnection().getPlayer().getPlayer());
-
-        // if (players.interactionManager.getGameMode().equals(GameMode.SPECTATOR)) {
-
-        // }
+        return false;
     }
 
     public void paranoidEvent(MicrophonePacketEvent event) {
+        if(vtMode(event)) return;
+
         VoicechatServerApi api = event.getVoicechat();
         var connection = event.getSenderConnection();
         if (connection != null && connection.isInstalled() && connection.isConnected()) {
@@ -117,7 +114,6 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
     @Override
     public void registerEvents(EventRegistration registration) {
         registration.registerEvent(MicrophonePacketEvent.class, this::paranoidEvent);
-        registration.registerEvent(MicrophonePacketEvent.class, this::vtMode);
         VoicechatPlugin.super.registerEvents(registration);
     }
 }

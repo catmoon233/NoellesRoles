@@ -38,8 +38,7 @@ public class CustomWinnerClass {
 
                 // 如果小偷存活且游戏要结束（乘客或杀手胜利），阻止游戏结束
                 if (winStatus.equals(WinStatus.PASSENGERS) ||
-                    winStatus.equals(WinStatus.KILLERS) ||
-                    winStatus.equals(WinStatus.TIME)) {
+                    winStatus.equals(WinStatus.KILLERS)) {
                     return WinStatus.NONE; // 游戏继续
                 }
             }
