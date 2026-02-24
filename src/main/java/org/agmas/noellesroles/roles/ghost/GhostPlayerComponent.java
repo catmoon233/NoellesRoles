@@ -236,7 +236,7 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
             var broadcastMessage = Component
                     .translatable("message.noellesroles.ghost.last_stand")
                     .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
-            player.server.getPlayerList().getPlayers().forEach((p) -> {
+            serverPlayer.server.getPlayerList().getPlayers().forEach((p) -> {
                 BroadcastCommand.BroadcastMessage(p, broadcastMessage);
             });
 
