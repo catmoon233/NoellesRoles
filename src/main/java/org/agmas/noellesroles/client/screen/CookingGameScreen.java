@@ -89,9 +89,9 @@ public class CookingGameScreen extends AbstractPixelScreen {
         public void tick() {
             float deltaX = 0;
             if (isLeft)
-                deltaX -= velocity * (isSpeedUp ? velocityScale : 1);
+                deltaX -= velocity * (isShiftKeyDown ? velocityScale : 1);
             if (isRight)
-                deltaX += velocity * (isSpeedUp ? velocityScale : 1);
+                deltaX += velocity * (isShiftKeyDown ? velocityScale : 1);
             if ((deltaX < 0 && imgWidget.getX() > minX) || (deltaX > 0 && imgWidget.getX() + PAN_WIDTH < maxX)) {
                 imgWidget.setX((int) (imgWidget.getX() + deltaX));
             }
@@ -109,7 +109,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
         private final int minX, maxX;
         private boolean isLeft = false;
         private boolean isRight = false;
-        private boolean isSpeedUp = false;
+        /** shift键是否按下，用于是否启用加速以及快速结算 */
+        private boolean isShiftKeyDown = false;
         private int velocity = 0;
     }
 
@@ -280,13 +281,17 @@ public class CookingGameScreen extends AbstractPixelScreen {
         float scaleY = centerY + strWidgetSize * START_STRING_SCALE / 2;
         int originalX = (int) (scaleX / START_STRING_SCALE);
         int originalY = (int) (scaleY / START_STRING_SCALE);
-
-        startStringWidget = new AlphaStringWidget(
+        timeLineStringWidget = new AlphaStringWidget(
                 originalX, originalY,
                 strWidgetSize, strWidgetSize,
                 Component.literal("3"),
                 font);
-        startStringWidget.active = true;
+        timeLineStringWidget.active = true;
+        pausedStringWidget = new AlphaStringWidget(
+                originalX, (int) (centerY / START_STRING_SCALE - (float) strWidgetSize / 2),
+                strWidgetSize, strWidgetSize,
+                Component.literal("Paused"),
+                font);
 
         // 时序控制
         // 倒计时10S
@@ -296,7 +301,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 (timerWidget) -> {
                     --curTime;
                     if (curTime >= 0)
-                        startStringWidget.setMessage(Component.literal(curTime + ""));
+                        timeLineStringWidget.setMessage(Component.literal(curTime + ""));
                 });
         tickTimers.add(gameTimer);
         tickTimers.add(new TickTimerWidget(
@@ -304,8 +309,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 true,
                 (TickTimerWidget) -> {
                     isTimeout = true;
-                    startStringWidget.setMessage(Component.literal("Time Out"));
-                    startStringWidget.setPosition(originalX,
+                    timeLineStringWidget.setMessage(Component.literal("Time Out"));
+                    timeLineStringWidget.setPosition(originalX,
                             (int) (centerY / START_STRING_SCALE - (float) strWidgetSize / 2));
                     // 播放停止音效
                     Minecraft.getInstance().getSoundManager().play(
@@ -331,7 +336,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                 int aniTick = 10;
                                 animations.add(BezierAnimation.builder(
                                         // 无作用只是用来辅助动画绘图
-                                        startStringWidget,
+                                                timeLineStringWidget,
                                         new Vec2(0, maxScoreBarHeight),
                                         aniTick)
                                         .setCallback(vec -> {
@@ -339,12 +344,11 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                         })
                                         .build());
                                 isInitScore = true;
-                                startStringWidget.active = false;
+                                timeLineStringWidget.active = false;
                                 buffTimers.add(new TickTimerWidget(
                                         aniTick,
                                         true,
                                         (tickTimer) -> {
-                                            Map<Integer, Float> resultBuffTime = new HashMap<>();
                                             // 添加信息卡
                                             int curX = INFO_BOUND + centerX - scoreBarWidth / 2;
                                             int curY = INFO_BOUND + centerY - maxScoreBarHeight / 2;
@@ -363,10 +367,10 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                                         entry.getValue().buffID,
                                                         entry.getValue().buffSecond,
                                                         font));
-                                                resultBuffTime.put(entry.getKey(), entry.getValue().buffSecond);
                                                 ++curNum;
                                                 curX += scoreCardSize + INFO_INTERVAL;
                                             }
+                                            sendResult();
                                             Button closeBtn = Button.builder(
                                                     Component.translatable("screen.noellesroles.chef.result.close"),
                                                     (btn) -> {
@@ -374,8 +378,6 @@ public class CookingGameScreen extends AbstractPixelScreen {
                                                     }).bounds(this.centerX - 50, this.centerY + 60, 100, 20)
                                                     .build();
                                             addRenderableWidget(closeBtn);
-                                            // 向服务器发结果包
-                                            ClientPlayNetworking.send(new ChefCookC2SPacket(resultBuffTime));
                                         }));
                             }));
                 }));
@@ -383,19 +385,19 @@ public class CookingGameScreen extends AbstractPixelScreen {
         // 控制开场动画时间线
         animationTimeLineManager = AnimationTimeLineManager.builder()
                 .addAnimation(0f, new BezierAnimation(
-                        startStringWidget,
+                        timeLineStringWidget,
                         new Vec2(0, (float) -strWidgetSize * 1.5f),
                         20))
                 .addAnimation(1f, new BezierAnimation(
-                        startStringWidget,
+                        timeLineStringWidget,
                         new Vec2(0, (float) -strWidgetSize * 1.5f),
                         20))
                 .addAnimation(2f, new BezierAnimation(
-                        startStringWidget,
+                        timeLineStringWidget,
                         new Vec2(0, (float) -strWidgetSize * 1.5f),
                         20))
                 .addAnimation(3f, new BezierAnimation(
-                        startStringWidget,
+                        timeLineStringWidget,
                         new Vec2(0, (float) -strWidgetSize * 1.5f),
                         20))
                 .build();
@@ -416,8 +418,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 1,
                 true,
                 (timerWidget) -> {
-                    startStringWidget.setMessage(Component.literal("2"));
-                    startStringWidget.setY(originalY);
+                    timeLineStringWidget.setMessage(Component.literal("2"));
+                    timeLineStringWidget.setY(originalY);
                     Minecraft.getInstance().getSoundManager().play(
                             SimpleSoundInstance.forUI(
                                     SoundEvents.UI_BUTTON_CLICK,
@@ -429,8 +431,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 2,
                 true,
                 (timerWidget) -> {
-                    startStringWidget.setMessage(Component.literal("1"));
-                    startStringWidget.setY(originalY);
+                    timeLineStringWidget.setMessage(Component.literal("1"));
+                    timeLineStringWidget.setY(originalY);
                     Minecraft.getInstance().getSoundManager().play(
                             SimpleSoundInstance.forUI(
                                     SoundEvents.UI_BUTTON_CLICK,
@@ -442,8 +444,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 3,
                 true,
                 (timerWidget) -> {
-                    startStringWidget.setMessage(Component.literal("GO"));
-                    startStringWidget.setY(originalY);
+                    timeLineStringWidget.setMessage(Component.literal("GO"));
+                    timeLineStringWidget.setY(originalY);
                     Minecraft.getInstance().getSoundManager().play(
                             SimpleSoundInstance.forUI(
                                     SoundEvents.END_PORTAL_SPAWN,
@@ -456,8 +458,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 true,
                 (timerWidget) -> {
                     isInitialized = true;
-                    startStringWidget.setMessage(Component.literal(curTime + ""));
-                    startStringWidget.setPosition(centerX - strWidgetSize / 2, 0);
+                    timeLineStringWidget.setMessage(Component.literal(curTime + ""));
+                    timeLineStringWidget.setPosition(centerX - strWidgetSize / 2, 0);
                 }));
     }
 
@@ -465,7 +467,7 @@ public class CookingGameScreen extends AbstractPixelScreen {
     @Override
     public void tick() {
         super.tick();
-        if (!isInitialized)
+        if (!isInitialized || isPaused)
             return;
         tickTimers.forEach(TickTimerWidget::tick);
         tickTimers.removeIf(TickTimerWidget::isFinished);
@@ -592,11 +594,13 @@ public class CookingGameScreen extends AbstractPixelScreen {
         super.render(guiGraphics, i, j, f);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        animations.forEach(animation -> animation.renderUpdate(f));
 
-        animationTimeLineManager.renderUpdate(f);
-        timerWidgets.forEach(timerWidget -> timerWidget.onRenderUpdate(f));
-        timerWidgets.removeIf(TimerWidget::isFinished);
+        if (!isPaused) {
+            animations.forEach(animation -> animation.renderUpdate(f));
+            animationTimeLineManager.renderUpdate(f);
+            timerWidgets.forEach(timerWidget -> timerWidget.onRenderUpdate(f));
+            timerWidgets.removeIf(TimerWidget::isFinished);
+        }
 
         // 绘制信息栏
         guiGraphics.fill(0, 0, gameStartX, height, INFO_BG_COLOR.first.getRGB());
@@ -613,16 +617,28 @@ public class CookingGameScreen extends AbstractPixelScreen {
 
         // 恢复 RGB
         guiGraphics.setColor(1f, 1f, 1f, 1f);
-        if (startStringWidget.active) {
+        // 渲染文本并缩放
+        if (timeLineStringWidget.active) {
             if (!isInitialized || isTimeout) {
                 PoseStack startStringPoseStack = guiGraphics.pose();
                 startStringPoseStack.pushPose();
                 startStringPoseStack.scale(START_STRING_SCALE, START_STRING_SCALE, 1.0f);
-                startStringWidget.render(guiGraphics, i, j, f);
+                timeLineStringWidget.render(guiGraphics, i, j, f);
                 startStringPoseStack.popPose();
             } else
-                startStringWidget.render(guiGraphics, i, j, f);
+                timeLineStringWidget.render(guiGraphics, i, j, f);
         }
+        if (isPaused && pausedStringWidget.active) {
+            PoseStack startStringPoseStack = guiGraphics.pose();
+            startStringPoseStack.pushPose();
+            startStringPoseStack.scale(START_STRING_SCALE, START_STRING_SCALE, 1.0f);
+            pausedStringWidget.render(guiGraphics, i, j, f);
+            startStringPoseStack.popPose();
+        }
+        guiGraphics.drawString(this.font, Component.translatable("screen.noellesroles.cook.cookgameTip"),
+                width - font.width(Component.translatable("screen.noellesroles.cook.cookgameTip")),
+                0,
+                0xFFFFFFFF);
 
         // 游戏结束，绘制计分板
         if (isTimeout && isInitScore) {
@@ -652,7 +668,17 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 yield true;
             }
             case GLFW.GLFW_KEY_LEFT_SHIFT -> {
-                pan.isSpeedUp = true;
+                pan.isShiftKeyDown = true;
+                yield true;
+            }
+            // 截断 esc键，暂停游戏，再次esc继续游戏，shift esc立即退出，并直接返回结果
+            case GLFW.GLFW_KEY_ESCAPE -> {
+                if (isTimeout || pan.isShiftKeyDown) {
+                    sendResult();
+                    super.keyPressed(keyCode, scanCode, modifiers);
+                }
+                isPaused = !isPaused;
+                pausedStringWidget.active = isPaused;
                 yield true;
             }
             default -> super.keyPressed(keyCode, scanCode, modifiers);
@@ -671,11 +697,19 @@ public class CookingGameScreen extends AbstractPixelScreen {
                 yield true;
             }
             case GLFW.GLFW_KEY_LEFT_SHIFT -> {
-                pan.isSpeedUp = false;
+                pan.isShiftKeyDown = false;
                 yield true;
             }
             default -> super.keyReleased(keyCode, scanCode, modifiers);
         };
+    }
+    /** 结算发布结果 */
+    private void sendResult() {
+        Map<Integer, Float> resultBuffTime = new HashMap<>();
+        for (Map.Entry<Integer, InfoCard> entry : infoCards.entrySet())
+            resultBuffTime.put(entry.getKey(), entry.getValue().buffSecond);
+        // 向服务器发结果包
+        ClientPlayNetworking.send(new ChefCookC2SPacket(resultBuffTime));
     }
 
     /**
@@ -741,7 +775,9 @@ public class CookingGameScreen extends AbstractPixelScreen {
     private final RandomSource randomSource;
     private AnimationTimeLineManager animationTimeLineManager = null;
     /** 开始文本、时间结束文本等各个时间线的公共文本 */
-    private AlphaStringWidget startStringWidget = null;
+    private AlphaStringWidget timeLineStringWidget = null;
+    /** 暂停文本 */
+    private AlphaStringWidget pausedStringWidget = null;
     /** 锅 */
     private Pan pan;
     /** 是否完成初始化动画 */
@@ -750,6 +786,8 @@ public class CookingGameScreen extends AbstractPixelScreen {
     private boolean isTimeout = false;
     /** 是否初始化完结算信息 */
     private boolean isInitScore = false;
+    /** 是否暂停 */
+    private boolean isPaused = false;
     /** 游戏重力 */
     private float gravity;
     /** 结算界面宽度 */

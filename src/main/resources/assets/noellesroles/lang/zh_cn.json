@@ -241,6 +241,7 @@
   "screen.noellesroles.recorder.next_page": "下一页",
   "screen.noellesroles.recorder.page_info": "第 %s / %s 页",
   "screen.noellesroles.loot.lockGameTip": "按 'W' 尝试撬锁, 按 'A'/'D' 移动撬锁器",
+  "screen.noellesroles.cook.cookgameTip": "按\"ESC\"键暂停，按\"SHIFT ESC\"立即结算",
   "screen.noellesroles.loot.lootBtn": "开始抽奖",
   "==================== 赌徒角色 ====================": "",
   "game.win.gambler": "赌徒以1%%的概率取得胜利，他正讥笑着所有人！",
