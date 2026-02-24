@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -137,10 +138,18 @@ public abstract class CoronerHudMixin {
                 if (deathReason == null) {
                     deathReason = GameConstants.DeathReasons.GENERIC;
                 }
+                Component deathText = Component
+                        .translatable("death_reason." + deathReason.toLanguageKey());
+                if (BuiltInRegistries.ITEM.containsKey(deathReason)) {
+                    var it = BuiltInRegistries.ITEM.get(deathReason);
+                    if (it != null) {
+                        deathText = it.getDescription();
+                    }
+                }
+
                 MutableComponent name = Component
                         .translatable("hud.coroner.death_info", NoellesrolesClient.targetBody.tickCount / 20)
-                        .append(Component
-                                .translatable("death_reason." + deathReason.toLanguageKey()));
+                        .append(deathText);
                 boolean vultured = bodyDeathReasonComponent.vultured;
                 final var worldModifiers = WorldModifierComponent.KEY.get(Minecraft.getInstance().player.level());
                 if (worldModifiers != null) {

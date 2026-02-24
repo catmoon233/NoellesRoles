@@ -79,11 +79,12 @@ public class GameFunctionsCommand {
       context.getSource().sendFailure(Component.translatable("Wrong deathReason Resource Location %s!", deathReason));
       return 0;
     }
+    final String deathReasonT = deathReasonRL.toLanguageKey();
     GameFunctions.killPlayer(victim, spawnBody, killer, deathReasonRL);
     context.getSource()
         .sendSuccess(() -> Component.translatable("Killed player %s by %s with reason %s (Spawn body: %s)",
             victim.getDisplayName(), (killer == null ? Component.literal("System") : killer.getDisplayName()),
-            Component.translatable("death_reason." + deathReason), (spawnBody ? "Yes" : "No")), true);
+            Component.translatable("death_reason." + deathReasonT), (spawnBody ? "Yes" : "No")), true);
     return 1;
   }
 
