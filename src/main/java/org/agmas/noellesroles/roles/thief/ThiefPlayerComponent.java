@@ -358,6 +358,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (stack.is(HSRItems.BANDIT_REVOLVER)) return true;  // 匪徒手枪
         if (stack.is(ModItems.PATROLLER_REVOLVER)) return true;  // 巡警手枪
         if (stack.is(TMMItems.DERRINGER)) return true;  // 德林加手枪
+        if (stack.is(ModItems.ONCE_REVOLVER)) return true;  // 一次性手枪
 
         // 武器类
         if (stack.is(TMMItems.KNIFE)) return true;  // 匕首
@@ -375,6 +376,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (stack.is(TMMItems.LOCKPICK)) return true;  // 开锁器
         if (stack.is(TMMItems.BODY_BAG)) return true;  // 裹尸袋
         if (stack.is(TMMItems.NOTE)) return true;  // 纸条
+        if (stack.is(ModItems.HANDCUFFS)) return true;  // 手铐
 
         // 特殊物品类（来自HSRItems）
         if (stack.is(HSRItems.TOXIN)) return true;  // 毒针
@@ -393,6 +395,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (stack.is(ModItems.DELIVERY_BOX)) return true;  // 传递盒
         if (stack.is(ModItems.HALLUCINATION_BOTTLE)) return true;  // 迷幻瓶
         if (stack.is(ModItems.NIGHT_VISION_GLASSES)) return true;  // 夜视镜
+        if (stack.is(ModItems.WHEELCHAIR)) return true;  // 轮椅
 
         // 护盾试剂（来自TMM）
         if (stack.is(TMMItems.DEFENSE_VIAL)) return true;  // 护盾试剂
