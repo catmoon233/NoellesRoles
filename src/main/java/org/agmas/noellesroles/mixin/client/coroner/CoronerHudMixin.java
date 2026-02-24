@@ -84,6 +84,8 @@ public abstract class CoronerHudMixin {
                 }
 
                 Role role = gameWorldComponent.getRole(NoellesrolesClient.targetFakeBody);
+                if (role == null)
+                    role = TMMRoles.CIVILIAN;
                 Component roleInfo = Component.translatable("hud.coroner.role_info").withColor(CommonColors.RED)
                         .append(Component.translatable("announcement.role." + role.identifier().getPath())
                                 .withColor(role.color()));

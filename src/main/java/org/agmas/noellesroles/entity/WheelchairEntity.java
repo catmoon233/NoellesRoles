@@ -112,7 +112,7 @@ public class WheelchairEntity extends Mob {
         }
 
         // ===== 3. 前进/后退惯性（处理 W/S 键）=====
-        float maxSpeed = (float) 0.4;
+    float maxSpeed = (float) 0.4;
         if (forward != 0) {
             float targetSpeed = forward * maxSpeed;
             if (forwardSpeed < targetSpeed) {
