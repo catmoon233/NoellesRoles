@@ -10,6 +10,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.Block;
+
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.init.ModBlocks;
 
 import net.minecraft.core.BlockPos;
@@ -46,12 +48,12 @@ public class VendingMachinesBlockEntity extends BlockEntity {
       this.items.add(shopEntry);
       this.setChanged();
       this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(),
-              Block.UPDATE_CLIENTS);
+            Block.UPDATE_CLIENTS);
       // 调试输出
       if (this.level != null && !this.level.isClientSide()) {
-         System.out.println("[VendingMachine] 添加商品: " + shopEntry.stack().getDisplayName().getString() + 
-                           " 价格: " + shopEntry.price() + 
-                           " 物品为空: " + shopEntry.stack().isEmpty());
+         Noellesroles.LOGGER.debug("[VendingMachine] 添加商品: " + shopEntry.stack().getDisplayName().getString() +
+               " 价格: " + shopEntry.price() +
+               " 物品为空: " + shopEntry.stack().isEmpty());
       }
    }
 
@@ -65,21 +67,19 @@ public class VendingMachinesBlockEntity extends BlockEntity {
          ShopEntry shopEntry = this.items.get(i);
          entryTag.putInt("price", shopEntry.price());
          ItemStack itemStack = shopEntry.stack();
-         
+
          // 仿照BeveragePlateBlockEntity的序列化方式
          if (itemStack != null && !itemStack.isEmpty()) {
             entryTag.put("item", itemStack.save(provider));
          } else {
-            // 如果物品为空，创建一个默认的空物品标签
-            CompoundTag emptyItem = new CompoundTag();
-            emptyItem.putString("id", "minecraft:air");
-            emptyItem.putByte("Count", (byte) 0);
-            entryTag.put("item", emptyItem);
+            // 如果物品为空，跳过
+            continue;
          }
          list.add(entryTag);
       }
       compoundTag.put("shop", list);
    }
+
    @Override
    public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
       return this.saveWithoutMetadata(registryLookup);
@@ -89,6 +89,7 @@ public class VendingMachinesBlockEntity extends BlockEntity {
    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
       return ClientboundBlockEntityDataPacket.create(this);
    }
+
    @Override
    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
       super.loadAdditional(tag, provider);
@@ -107,20 +108,26 @@ public class VendingMachinesBlockEntity extends BlockEntity {
                   try {
                      CompoundTag itemTag = entry.getCompound("item");
                      // 检查是否是有效的物品标签
-                     if (itemTag.contains("id") && !itemTag.getString("id").equals("minecraft:air") && itemTag.getByte("count") > 0) {
-                        item = ItemStack.parse(this.level.registryAccess(), entry.get("item")).orElse(ItemStack.EMPTY);
+                     if (itemTag.contains("id") && !itemTag.getString("id").equals("minecraft:air")
+                           && itemTag.getByte("count") > 0) {
+                        item = ItemStack.parse(provider, entry.get("item")).orElse(ItemStack.EMPTY);
                         // 验证解析后的物品
                         if (item.isEmpty()) {
-                           System.out.println("[VendingMachine] 警告: 物品解析失败");
+                           Noellesroles.LOGGER.warn("[VendingMachine] 警告: 物品解析失败");
+                           continue;
                         }
                      } else {
                         // 空物品或无效物品
                         item = ItemStack.EMPTY;
-                        System.out.println("[VendingMachine] 检测到空物品或无效物品");
+                        Noellesroles.LOGGER.warn("[VendingMachine] 检测到空物品或无效物品");
+                        continue;
+
                      }
                   } catch (Exception e) {
-                     System.out.println("[VendingMachine] 物品反序列化异常: " + e.getMessage());
+                     Noellesroles.LOGGER.error("[VendingMachine] 物品反序列化异常: " + e.getMessage());
                      item = ItemStack.EMPTY;
+                     continue;
+
                   }
                }
                items.add(new ShopEntry(item, price, ShopEntry.Type.TOOL));

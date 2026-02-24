@@ -50,7 +50,6 @@ public class HandCuffsItem extends Item {
             return InteractionResult.PASS;
         if(user.level().isClientSide) return InteractionResult.SUCCESS;
         if (entity instanceof Player target) {
-            // Noellesroles.LOGGER.info("target: "+target.getDisplayName().getString());
             if (!target.getOffhandItem().isEmpty()) {
                 user.displayClientMessage(
                         Component.translatable("item.noellesroles.handcuffs.failed", user.getDisplayName())
