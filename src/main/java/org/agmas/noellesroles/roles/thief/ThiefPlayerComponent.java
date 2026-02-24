@@ -180,8 +180,6 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             return false;
         }
 
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
-
         // 检查目标是否被淘汰
         if (GameFunctions.isPlayerEliminated(target)) {
             serverPlayer.displayClientMessage(
@@ -242,8 +240,6 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (!(player instanceof ServerPlayer serverPlayer) || !(target instanceof ServerPlayer targetPlayer)) {
             return false;
         }
-
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
 
         // 检查目标是否被淘汰
         if (GameFunctions.isPlayerEliminated(target)) {
@@ -568,10 +564,15 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         tag.putInt("Cooldown", this.cooldown);
         tag.putInt("CurrentMode", this.currentMode);
         tag.putBoolean("IsInSelectionMode", this.isInSelectionMode);
+        var gameC = GameWorldComponent.KEY.get(this.player);
+        if (gameC.isRole(this.player, ModRoles.THIEF)) {
+            tag.putInt("honorCost", honorCost);
+        }
     }
 
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registryLookup) {
+        honorCost = tag.getInt("honorCost");
         this.cooldown = tag.getInt("Cooldown");
         this.currentMode = tag.getInt("CurrentMode");
         this.isInSelectionMode = tag.getBoolean("IsInSelectionMode");

@@ -9,6 +9,7 @@ import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.jetbrains.annotations.NotNull;
 
 import dev.doctor4t.trainmurdermystery.TMMConfig;
@@ -724,6 +725,7 @@ public class RoleShopHandler {
                 int totalPlayers = player.level().players().size();
                 org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent
                         .getHonorCost(totalPlayers);
+                ThiefPlayerComponent.KEY.get(player).sync();
                 int cost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost;
 
                 // 检查金币是否足够
