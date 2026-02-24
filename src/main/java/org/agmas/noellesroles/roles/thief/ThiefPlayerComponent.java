@@ -292,6 +292,9 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             return true;
         }
 
+        // 先获取物品名称（在移除之前）
+        String itemName = stolenItem.getHoverName().getString();
+
         // 从目标物品栏移除物品
         target.getInventory().items.set(slotIndex, ItemStack.EMPTY);
 
@@ -322,14 +325,14 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.stole_item",
                         target.getName().getString(),
-                        stolenItem.getHoverName().getString())
+                        itemName)
                         .withStyle(ChatFormatting.AQUA),
                 true);
 
         // 通知被偷者
         targetPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.item_stolen",
-                        stolenItem.getHoverName().getString())
+                        itemName)
                         .withStyle(ChatFormatting.RED),
                 true);
 

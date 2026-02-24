@@ -8,6 +8,7 @@ import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHudRender;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 
 import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -209,6 +210,50 @@ public class ClientHudRenderer {
                 guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset, Color.WHITE.getRGB());
                 return;
             }
+        });
+
+        // 小偷HUD
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            var client = Minecraft.getInstance();
+            if (client == null) return;
+            if (client.player == null) return;
+            if (TMMClient.gameComponent == null || !TMMClient.gameComponent.isRole(client.player, ModRoles.THIEF)) {
+                return;
+            }
+
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+
+            var thiefComponent = ThiefPlayerComponent.KEY.maybeGet(client.player).orElse(null);
+            if (thiefComponent == null) return;
+
+            // 显示当前模式
+            Component modeText;
+            if (thiefComponent.currentMode == ThiefPlayerComponent.MODE_STEAL_MONEY) {
+                modeText = Component.translatable("hud.thief.mode.money").withStyle(ChatFormatting.GOLD);
+            } else {
+                modeText = Component.translatable("hud.thief.mode.item").withStyle(ChatFormatting.AQUA);
+            }
+
+            // 显示冷却或就绪状态
+            int dy = yOffset - font.lineHeight - 4;
+            if (thiefComponent.cooldown > 0) {
+                var cdText = Component.translatable("hud.thief.cooldown", thiefComponent.cooldown / 20).withStyle(ChatFormatting.RED);
+                guiGraphics.drawString(font, cdText, xOffset - font.width(cdText), dy, Color.WHITE.getRGB());
+                dy -= font.lineHeight;
+            } else {
+                var readyText = Component.translatable("hud.thief.ready", NoellesrolesClient.abilityBind.getTranslatedKeyMessage()).withStyle(ChatFormatting.GREEN);
+                guiGraphics.drawString(font, readyText, xOffset - font.width(readyText), dy, Color.WHITE.getRGB());
+                dy -= font.lineHeight;
+            }
+
+            // 显示模式信息
+            var modeInfo = Component.translatable("hud.thief.current_mode").withStyle(ChatFormatting.WHITE);
+            guiGraphics.drawString(font, modeInfo, xOffset - font.width(modeInfo) - font.width(modeText), dy, Color.WHITE.getRGB());
+            guiGraphics.drawString(font, modeText, xOffset - font.width(modeText), dy, Color.WHITE.getRGB());
         });
     }
 
