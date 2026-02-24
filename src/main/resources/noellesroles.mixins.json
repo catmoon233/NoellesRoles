@@ -96,6 +96,7 @@
     "client.general.MessageBelowMoney",
     "client.insane.InsaneHudMixin",
     "client.insane.InsaneKillerRenderMixin",
+    "client.insane.FixInsaneRenderMixin",
     "client.insane.KeyBindingMixin",
     "client.manipulator.CameraMixin",
     "client.manipulator.KeyBindingMixin",
