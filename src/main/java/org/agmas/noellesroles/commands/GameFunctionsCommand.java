@@ -11,11 +11,17 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ComponentArgument;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+
+import org.jetbrains.annotations.Nullable;
+
+import com.mojang.brigadier.arguments.BoolArgumentType;
 
 public class GameFunctionsCommand {
   public static void register() {
@@ -40,17 +46,60 @@ public class GameFunctionsCommand {
                 return executeBlackout(context, -1);
               }).then(Commands.literal("stop").executes((context) -> {
                 return executeBlackout(context, 0);
-              }))));
+              })))
+              .then(Commands.literal("kill")
+                  .then(Commands.argument("victim", EntityArgument.player())
+                      .then(Commands.argument("death_reason", StringArgumentType.string()).executes((context) -> {
+                        ServerPlayer victim = EntityArgument.getPlayer(context, "victim");
+                        String deathReason = StringArgumentType.getString(context, "death_reason");
+                        return executeKillPlayer(context, victim, null, deathReason, true);
+                      })
+                          .then(Commands.argument("killer", EntityArgument.player()).executes((context) -> {
+                            ServerPlayer victim = EntityArgument.getPlayer(context, "victim");
+                            ServerPlayer killer = EntityArgument.getPlayer(context, "killer");
+                            String deathReason = StringArgumentType.getString(context, "death_reason");
+                            return executeKillPlayer(context, victim, killer, deathReason, true);
+                          })
+                              .then(Commands.argument("spawn_body", BoolArgumentType.bool()).executes((context) -> {
+                                ServerPlayer victim = EntityArgument.getPlayer(context, "victim");
+                                boolean spawnBody = BoolArgumentType.getBool(context, "spawn_body");
+                                ServerPlayer killer = EntityArgument.getPlayer(context, "killer");
+                                String deathReason = StringArgumentType.getString(context, "death_reason");
+                                return executeKillPlayer(context, victim, killer, deathReason, spawnBody);
+                              })))))));
         });
+  }
+
+  public static int executeKillPlayer(CommandContext<CommandSourceStack> context, ServerPlayer victim,
+      @Nullable ServerPlayer killer, String deathReason, boolean spawnBody) {
+    ResourceLocation deathReasonRL = null;
+    try {
+      deathReasonRL = ResourceLocation.tryParse(deathReason);
+    } catch (Exception e) {
+      context.getSource().sendFailure(Component.translatable("Wrong deathReason Resource Location %s!", deathReason));
+      return 0;
+    }
+    GameFunctions.killPlayer(victim, spawnBody, killer, deathReasonRL);
+    context.getSource()
+        .sendSuccess(() -> Component.translatable("Killed player %s by %s with reason %s (Spawn body: %s)",
+            victim.getDisplayName(), (killer == null ? Component.literal("System") : killer.getDisplayName()),
+            Component.translatable("death_reason." + deathReason), (spawnBody ? "Yes" : "No")), true);
+    return 1;
   }
 
   public static int executeBlackout(CommandContext<CommandSourceStack> context, int time) {
     var wbc = WorldBlackoutComponent.KEY.get(context.getSource().getLevel());
     if (time != 0) {
       wbc.triggerBlackout();
-    }else{
+      context.getSource()
+          .sendSuccess(() -> Component.translatable("Triggered Blackout!"), true);
+
+    } else {
+      context.getSource()
+          .sendSuccess(() -> Component.translatable("Stopped All Blackouts!"), true);
       wbc.reset();
     }
+
     return 1;
   }
 
@@ -63,6 +112,9 @@ public class GameFunctionsCommand {
     roundComponent.CustomWinnerTitle = null;
     roundComponent.setWinStatus(WinStatus.CUSTOM);
     roundComponent.sync();
+    context.getSource()
+        .sendSuccess(() -> Component.translatable("Stop the game with custom winner id [%s] (CUSTOM)", id), true);
+
     GameFunctions.stopGame(context.getSource().getLevel());
     return 1;
   }
@@ -95,6 +147,9 @@ public class GameFunctionsCommand {
     roundComponent.CustomWinnerTitle = title;
     roundComponent.setWinStatus(WinStatus.CUSTOM_COMPONENT);
     roundComponent.sync();
+    context.getSource().sendSuccess(
+        () -> Component.translatable("Stop the game with custom winner id [%s] (CUSTOM_COMPONENT)", id), true);
+
     GameFunctions.stopGame(context.getSource().getLevel());
     return 1;
   }
