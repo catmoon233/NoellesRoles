@@ -20,9 +20,9 @@ import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+// import net.minecraft.nbt.ListTag;
+// import net.minecraft.nbt.StringTag;
+// import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -87,7 +87,7 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
     public void setAvailableRoles(List<ResourceLocation> roles) {
         this.availableRoles = roles;
         this.rolesInitialized = true;
-        ModComponents.RECORDER.sync(this.player);
+        // ModComponents.RECORDER.sync(this.player);
     }
 
     public void addGuess(UUID targetUuid, ResourceLocation roleId) {
@@ -238,32 +238,32 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         if (!(player.level() instanceof net.minecraft.server.level.ServerLevel))
             return;
 
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
-        List<ResourceLocation> roles = new ArrayList<>();
-        for (Player p : player.level().players()) {
-            if (p.getUUID().equals(player.getUUID()))
-                continue;
+        // GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
+        // List<ResourceLocation> roles = new ArrayList<>();
+        // for (Player p : player.level().players()) {
+        //     if (p.getUUID().equals(player.getUUID()))
+        //         continue;
 
-            Role role = gameWorld.getRole(p);
-            if (role != null) {
-                if (!roles.contains(role.identifier())) {
-                    roles.add(role.identifier());
-                }
-            }
-        }
+        //     Role role = gameWorld.getRole(p);
+        //     if (role != null) {
+        //         if (!roles.contains(role.identifier())) {
+        //             roles.add(role.identifier());
+        //         }
+        //     }
+        // }
 
-        setAvailableRoles(roles);
+        // setAvailableRoles(roles);
     }
 
     @Override
     public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
-        availableRoles.clear();
-        if (tag.contains("availableRoles")) {
-            ListTag list = tag.getList("availableRoles", Tag.TAG_STRING);
-            for (int i = 0; i < list.size(); i++) {
-                availableRoles.add(ResourceLocation.tryParse(list.getString(i)));
-            }
-        }
+        // availableRoles.clear();
+        // if (tag.contains("availableRoles")) {
+        //     ListTag list = tag.getList("availableRoles", Tag.TAG_STRING);
+        //     for (int i = 0; i < list.size(); i++) {
+        //         availableRoles.add(ResourceLocation.tryParse(list.getString(i)));
+        //     }
+        // }
 
         guesses.clear();
         if (tag.contains("guesses")) {
@@ -303,13 +303,13 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
 
     @Override
     public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
-        ListTag list = new ListTag();
-        for (ResourceLocation id : availableRoles) {
-            if (id != null) {
-                list.add(StringTag.valueOf(id.toString()));
-            }
-        }
-        tag.put("availableRoles", list);
+        // ListTag list = new ListTag();
+        // for (ResourceLocation id : availableRoles) {
+        //     if (id != null) {
+        //         list.add(StringTag.valueOf(id.toString()));
+        //     }
+        // }
+        // tag.put("availableRoles", list);
 
         CompoundTag guessesTag = new CompoundTag();
         for (Map.Entry<UUID, ResourceLocation> entry : guesses.entrySet()) {

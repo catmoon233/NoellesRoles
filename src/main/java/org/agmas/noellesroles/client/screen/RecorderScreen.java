@@ -9,6 +9,7 @@ import org.agmas.noellesroles.packet.RecorderC2SPacket;
 import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -267,8 +268,8 @@ public class RecorderScreen extends Screen {
             return;
 
         // 从组件获取当前局有的身份
-        RecorderPlayerComponent recorder = ModComponents.RECORDER.get(minecraft.player);
-        List<ResourceLocation> availableRoleIds = recorder.getAvailableRoles();
+        // RecorderPlayerComponent recorder = ModComponents.RECORDER.get(minecraft.player);
+        var availableRoleIds = TMMRoles.ROLES.keySet();
 
         roles.clear();
         for (ResourceLocation id : availableRoleIds) {
