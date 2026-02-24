@@ -572,7 +572,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
 
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registryLookup) {
-        honorCost = tag.getInt("honorCost");
+        honorCost = tag.contains("honorCost") ? tag.getInt("honorCost") : -1;
         this.cooldown = tag.getInt("Cooldown");
         this.currentMode = tag.getInt("CurrentMode");
         this.isInSelectionMode = tag.getBoolean("IsInSelectionMode");
