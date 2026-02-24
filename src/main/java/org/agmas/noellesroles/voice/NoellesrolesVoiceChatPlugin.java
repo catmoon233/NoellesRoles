@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.component.PlayerVolumeComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 
@@ -24,6 +25,47 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
     @Override
     public void initialize(VoicechatApi api) {
         VoicechatPlugin.super.initialize(api);
+    }
+
+    public void vtMode(MicrophonePacketEvent event) {
+        // VoicechatServerApi api = event.getVoicechat();
+        var sconnection = event.getSenderConnection();
+        var connection = event.getReceiverConnection();
+        if (connection == null)
+            return;
+        if (connection != null && connection.isInstalled() && connection.isConnected()) {
+            var vcplayer = connection.getPlayer();
+            if (vcplayer != null) {
+                var vctplayer = vcplayer.getPlayer();
+                if (vctplayer != null) {
+                    ServerPlayer reciever = (ServerPlayer) vctplayer;
+                    if (reciever != null) {
+                        var pvc = PlayerVolumeComponent.KEY.get(reciever);
+                        if (pvc.vtMode) {
+                            if (sconnection != null && sconnection.isInstalled() && sconnection.isConnected()) {
+                                var svcplayer = sconnection.getPlayer();
+                                if (svcplayer != null) {
+                                    var svctplayer = svcplayer.getPlayer();
+                                    if (svctplayer != null) {
+                                        ServerPlayer sender = (ServerPlayer) svctplayer;
+                                        if (sender != null && sender.isSpectator()) {
+                                            event.cancel();
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // ServerPlayer players = ((ServerPlayer)
+        // event.getSenderConnection().getPlayer().getPlayer());
+
+        // if (players.interactionManager.getGameMode().equals(GameMode.SPECTATOR)) {
+
+        // }
     }
 
     public void paranoidEvent(MicrophonePacketEvent event) {
@@ -75,6 +117,7 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
     @Override
     public void registerEvents(EventRegistration registration) {
         registration.registerEvent(MicrophonePacketEvent.class, this::paranoidEvent);
+        registration.registerEvent(MicrophonePacketEvent.class, this::vtMode);
         VoicechatPlugin.super.registerEvents(registration);
     }
 }
