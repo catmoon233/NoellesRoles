@@ -949,6 +949,6 @@
   "BUY": "购买",
   "Collect": "收集口",
   "screen.vending_machine.click_to_pick":"点击收集口取走商品",
-  "message.noellesroles.vt_mode.enabled":"已启用主播模式。你无法听到旁观者的讨论。",
-  "message.noellesroles.vt_mode.disabled":"已关闭主播模式。你无法听到旁观者的讨论。"
+  "message.noellesroles.vt_mode.enabled":"已为 %s 启用主播模式。Ta将无法听到旁观者的讨论。",
+  "message.noellesroles.vt_mode.disabled":"已为 %s 关闭主播模式。"
 }

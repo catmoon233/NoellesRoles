@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.commands;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
@@ -19,7 +20,9 @@ public class VTCommand {
             dispatcher.register(Commands.literal("vt_mode").executes(VTCommand::executeWithOutPlayer)
                     .then(Commands.argument("player", EntityArgument.player())
                             .requires(source -> source.hasPermission(2))
-                            .executes(VTCommand::executeWithPlayer)));
+                            .executes(VTCommand::executeWithPlayer)
+                            .then(Commands.argument("status", BoolArgumentType.bool())
+                                    .executes(VTCommand::executeWithPlayerAndStatus))));
         });
     }
 
@@ -27,6 +30,40 @@ public class VTCommand {
         try {
             ServerPlayer player = EntityArgument.getPlayer(context, "player");
             return execute(context, player);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(Component.literal("ERROR: " + e.getMessage()));
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private static int executeWithPlayerAndStatus(CommandContext<CommandSourceStack> context) {
+        try {
+            ServerPlayer player = EntityArgument.getPlayer(context, "player");
+            Boolean enabled = BoolArgumentType.getBool(context, "status");
+            if (player == null)
+                return 0;
+            try {
+                PlayerVolumeComponent component = PlayerVolumeComponent.KEY.get(player);
+                component.vtMode = enabled;
+                if (component.vtMode) {
+                    Component MSG = Component
+                            .translatable("message.noellesroles.vt_mode.enabled", player.getDisplayName())
+                            .withStyle(ChatFormatting.YELLOW);
+                    player.sendSystemMessage(MSG);
+                    context.getSource().sendSuccess(() -> MSG, true);
+                } else {
+                    Component MSG = Component
+                            .translatable("message.noellesroles.vt_mode.disabled", player.getDisplayName())
+                            .withStyle(ChatFormatting.GREEN);
+                    player.sendSystemMessage(MSG);
+                    context.getSource().sendSuccess(() -> MSG, true);
+                }
+
+                return Command.SINGLE_SUCCESS;
+            } catch (Exception e) {
+                return 0;
+            }
         } catch (CommandSyntaxException e) {
             context.getSource().sendFailure(Component.literal("ERROR: " + e.getMessage()));
             e.printStackTrace();
@@ -46,11 +83,15 @@ public class VTCommand {
             PlayerVolumeComponent component = PlayerVolumeComponent.KEY.get(player);
             component.vtMode = !component.vtMode;
             if (component.vtMode) {
-                context.getSource().sendSuccess(() -> Component.translatable("message.noellesroles.vt_mode.enabled")
-                        .withStyle(ChatFormatting.YELLOW), true);
+                Component MSG = Component.translatable("message.noellesroles.vt_mode.enabled", player.getDisplayName())
+                        .withStyle(ChatFormatting.YELLOW);
+                player.sendSystemMessage(MSG);
+                context.getSource().sendSuccess(() -> MSG, true);
             } else {
-                context.getSource().sendSuccess(() -> Component.translatable("message.noellesroles.vt_mode.disabled")
-                        .withStyle(ChatFormatting.GREEN), true);
+                Component MSG = Component.translatable("message.noellesroles.vt_mode.disabled", player.getDisplayName())
+                        .withStyle(ChatFormatting.GREEN);
+                player.sendSystemMessage(MSG);
+                context.getSource().sendSuccess(() -> MSG, true);
             }
 
             return Command.SINGLE_SUCCESS;
