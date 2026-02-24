@@ -354,7 +354,8 @@ public class LootInfoScreen extends AbstractPixelScreen {
                 centerY + totalHeight / 2,
                 sketchBgColor.getRGB()
         );
-        poolSketch.render(guiGraphics, mouseX, mouseY, delta);
+        if (poolSketch != null)
+            poolSketch.render(guiGraphics, mouseX, mouseY, delta);
         for (PoolButton poolBtn : poolButtons) {
             poolBtn.render(guiGraphics, mouseX, mouseY, delta);
         }
