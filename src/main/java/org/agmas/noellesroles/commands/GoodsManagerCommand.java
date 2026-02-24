@@ -112,7 +112,7 @@ private static int executesAddItem(CommandContext<CommandSourceStack> context) {
       // 获取参数
       BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "pos");
       int itemCount = IntegerArgumentType.getInteger(context, "count");
-      ItemStack itemStack = ItemArgument.getItem(context, "item").createItemStack(itemCount, false);
+      ItemStack itemStack = ItemArgument.getItem(context, "item").createItemStack(itemCount, true);
       int price = IntegerArgumentType.getInteger(context, "price");
 
       // 获取方块实体
@@ -221,11 +221,11 @@ private static int executesAddItem(CommandContext<CommandSourceStack> context) {
             .withColor(ChatFormatting.GREEN);
         result.append(
             Component
-                .translatable("[%s](%s): %s",
+                .translatable("\n%s(%s): %s",
                     Component.literal("").append(it.stack().getDisplayName())
                         .withStyle(itemHoverStyle),
                     it.stack().getCount(),
-                    Component.literal(it.price() + " \uE781").withStyle(ChatFormatting.YELLOW))
+                    Component.literal(it.price() + "\uE781").withStyle(ChatFormatting.YELLOW))
                 .withStyle(ChatFormatting.AQUA));
       }
       // 发送成功消息

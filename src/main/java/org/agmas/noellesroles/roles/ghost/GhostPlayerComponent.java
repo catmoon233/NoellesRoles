@@ -211,7 +211,7 @@ public class GhostPlayerComponent implements RoleComponent, ServerTickingCompone
                 continue;
             }
             // 检查是否是平民阵营（isInnocent = true 且 canUseKiller = false）
-            if (role.isInnocent() && !role.canUseKiller()) {
+            if (role.isInnocent() && !role.canUseKiller() && !role.isNeutrals()) {
                 aliveCivilianCount++;
                 if (gameWorld.isRole(p, ModRoles.GHOST)) {
                     hasGhost = true;
