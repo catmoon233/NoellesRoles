@@ -30,7 +30,8 @@
         "noellesroles:conspirator",
         "noellesroles:morphling",
         "noellesroles:phantom",
-        "noellesroles:swapper"
+        "noellesroles:swapper",
+        "noellesroles:bandit"
       ],
       "disabled": [
         "noellesroles:better_vigilante",
@@ -66,6 +67,7 @@
         "noellesroles:chef",
         "noellesroles:fortuneteller",
         "noellesroles:ghost",
+        "noellesroles:thief",
         "noellesroles:manipulator"
       ]
     },
@@ -119,7 +121,7 @@
         "noellesroles:morphling",
         "noellesroles:phantom",
         "noellesroles:swapper",
-        "noellesroles:thief",
+        "noellesroles:bandit",
         "noellesroles:photographer",
         "noellesroles:avenger",
         "noellesroles:engineer",
@@ -144,6 +146,7 @@
         "stupid_express:necromancer"
       ],
       "disabled": [
+        "noellesroles:thief",
         "noellesroles:puppeteer",
         "noellesroles:commander",
         "noellesroles:nianshou",
@@ -212,6 +215,7 @@
         "noellesroles:morphling",
         "noellesroles:phantom",
         "noellesroles:swapper",
+        "noellesroles:bandit",
         "noellesroles:thief",
         "noellesroles:photographer",
         "noellesroles:avenger",
