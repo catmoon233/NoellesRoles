@@ -42,8 +42,8 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
 
         NoellesRolesAbilityPlayerComponent abilityPlayerComponent = NoellesRolesAbilityPlayerComponent.KEY
                 .get(this.player);
-        Player player1 = player.level().getPlayerByUUID(target1);
-        Player player2 = player.level().getPlayerByUUID(target2);
+        Player player1 = player.level().getPlayerByUUID(t1);
+        Player player2 = player.level().getPlayerByUUID(t2);
         if (!GameFunctions.isPlayerAliveAndSurvival(player1)) {
             this.player.displayClientMessage(
                     Component.translatable("message.swapper.failed.died", player1.getDisplayName()), true);
