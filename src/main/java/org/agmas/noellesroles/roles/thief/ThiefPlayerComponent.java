@@ -564,7 +564,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         tag.putInt("Cooldown", this.cooldown);
         tag.putInt("CurrentMode", this.currentMode);
         tag.putBoolean("IsInSelectionMode", this.isInSelectionMode);
-        var gameC = GameWorldComponent.KEY.get(this.player);
+        var gameC = GameWorldComponent.KEY.get(this.player.level());
         if (gameC.isRole(this.player, ModRoles.THIEF)) {
             tag.putInt("honorCost", honorCost);
         }
