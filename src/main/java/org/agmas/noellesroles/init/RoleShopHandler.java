@@ -71,6 +71,8 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> MAGICIAN_SHOP = new ArrayList<>();
     // ==================== 强盗商店 ====================
     public static ArrayList<ShopEntry> BANDIT_SHOP = new ArrayList<>();
+    // ==================== 仇杀客商店 ====================
+    public static ArrayList<ShopEntry> BLOOD_FEUDIST_SHOP = new ArrayList<>();
     // ==================== 小偷商店 ====================
     public static ArrayList<ShopEntry> THIEF_SHOP = new ArrayList<>();
 
@@ -84,6 +86,35 @@ public class RoleShopHandler {
                 .add(new FramingShopEntry(ModItems.DELUSION_VIAL.getDefaultInstance(), 30, ShopEntry.Type.POISON));
         FRAMING_ROLES_SHOP.add(new FramingShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), 5, ShopEntry.Type.TOOL));
         FRAMING_ROLES_SHOP.add(new FramingShopEntry(TMMItems.NOTE.getDefaultInstance(), 5, ShopEntry.Type.TOOL));
+
+        // 初始化仇杀客商店
+        initializeBloodFeudistShop();
+    }
+
+    /**
+     * 初始化仇杀客商店
+     * - 撬棍：35金币
+     * - 开锁器：80金币
+     * - 疯狂模式：275金币（冷却30秒）
+     */
+    public static void initializeBloodFeudistShop() {
+        // 撬棍 - 35金币
+        BLOOD_FEUDIST_SHOP.add(new ShopEntry(
+                TMMItems.CROWBAR.getDefaultInstance(),
+                35,
+                ShopEntry.Type.TOOL));
+
+        // 开锁器 - 80金币
+        BLOOD_FEUDIST_SHOP.add(new ShopEntry(
+                TMMItems.LOCKPICK.getDefaultInstance(),
+                80,
+                ShopEntry.Type.TOOL));
+
+        // 疯狂模式 - 275金币
+        BLOOD_FEUDIST_SHOP.add(new ShopEntry(
+                TMMItems.PSYCHO_MODE.getDefaultInstance(),
+                275,
+                ShopEntry.Type.WEAPON));
     }
 
     public static void shopRegister() {
@@ -204,6 +235,10 @@ public class RoleShopHandler {
 
         ShopContent.customEntries.put(
                 ModRoles.SWAPPER_ID, ShopContent.defaultEntries);
+
+        // 仇杀客商店
+        ShopContent.customEntries.put(
+                ModRoles.BLOOD_FEUDIST_ID, BLOOD_FEUDIST_SHOP);
 
         // ShopContent.customEntries.put(
         // POISONER_ID, ShopContent.defaultEntries

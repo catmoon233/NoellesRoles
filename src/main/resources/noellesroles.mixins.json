@@ -9,6 +9,7 @@
     "MagicianKillerCountMixin",
     "MagicianPlayerEntityMixin",
     "PlayerPsychoComponentMixin",
+    "PlayerPsychoComponentCooldownMixin",
     "DecServerJoinPlayer",
     "EntityClear",
     "MasterKeyDoorMixin",
