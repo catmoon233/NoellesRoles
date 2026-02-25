@@ -2,6 +2,7 @@ package org.agmas.noellesroles;
 
 import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.BomberPlayerComponent;
+import org.agmas.noellesroles.component.ClockmakerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
@@ -260,6 +261,11 @@ public class AbilityHandler {
                 // 普通按技能键：使用技能
                 thiefComponent.useAbility();
             }
+            return;
+        }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.CLOCKMAKER)) {
+            ClockmakerPlayerComponent clockmakerComponent = ModComponents.CLOCKMAKER.get(context.player());
+            clockmakerComponent.useSkill();
             return;
         }
     }

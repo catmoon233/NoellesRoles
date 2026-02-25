@@ -131,6 +131,14 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(SERoles.ARSONIST, 0);
             }
+
+            // 钟表匠数量 - 仅在12人以上对局出现
+            if (players_count >= 12) {
+                Harpymodloader.setRoleMaximum(ModRoles.CLOCKMAKER_ID, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.CLOCKMAKER_ID, 0);
+            }
+
             // 特殊警卫数量
             {
                 int allSpecialPoliceCount = 0;

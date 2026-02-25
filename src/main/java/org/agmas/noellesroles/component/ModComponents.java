@@ -183,6 +183,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "blood_feudist"),
             BloodFeudistPlayerComponent.class);
 
+    public static final ComponentKey<ClockmakerPlayerComponent> CLOCKMAKER = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "clockmaker"),
+            ClockmakerPlayerComponent.class);
+
     public ModComponents() {
         // CCA 需要无参构造函数
     }
@@ -384,6 +388,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, BLOOD_FEUDIST)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(BloodFeudistPlayerComponent::new);
+
+        // 注册钟表匠组件
+        registry.beginRegistration(Player.class, CLOCKMAKER)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(ClockmakerPlayerComponent::new);
 
         // ==================== 示例：注册更多组件 ====================
         //

@@ -106,6 +106,7 @@ public class ModRoles {
     public static ResourceLocation WIND_YAOSE_ID = Noellesroles.id("wind_yaose");
     public static ResourceLocation CHEF_ID = Noellesroles.id("chef");
     public static ResourceLocation MAGICIAN_ID = Noellesroles.id("magician");
+    public static ResourceLocation CLOCKMAKER_ID = Noellesroles.id("clockmaker");
 
     // 杀手阵营角色 ID
     public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
@@ -599,6 +600,21 @@ public class ModRoles {
     public static Role MAGICIAN;
 
     /**
+     * 钟表匠角色 - 好人阵营
+     * - 好人阵营 (isInnocent = true)
+     * - 不能使用杀手能力 (canUseKiller = false)
+     * - 真实心情系统
+     * - 标准冲刺时间
+     * - 在计分板上显示
+     * - 特殊能力：
+     * - 能看到游戏时间
+     * - 按下技能键花费125金币，减少游戏时间45秒
+     * - 世界时间加快2000tick
+     * - 游戏时间最多减少至1分30秒
+     */
+    public static Role CLOCKMAKER;
+
+    /**
      * 强盗角色 - 杀手阵营
      * - 杀手阵营 (isInnocent = false, canUseKiller = true)
      * - 假心情系统
@@ -915,6 +931,17 @@ public class ModRoles {
                 true // 隐藏计分板
         )).setComponentKey(ModComponents.BLOOD_FEUDIST).setCanSeeCoin(true);
 
+        // 钟表匠角色 - 好人阵营
+        CLOCKMAKER = TMMRoles.registerRole(new NoramlRole(
+                CLOCKMAKER_ID, // 角色 ID
+                new Color(218, 165, 32).getRGB(), // 金色 - 代表钟表与时间
+                true, // isInnocent = 好人阵营
+                false, // canUseKiller = 无杀手能力
+                Role.MoodType.REAL, // 真实心情
+                TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+                true // 不显示计分板
+        )).setComponentKey(ClockmakerPlayerComponent.KEY).setCanSeeTime(true).setCanSeeCoin(true);
+
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
         // 复仇者每局只能有 1 个
@@ -1004,6 +1031,9 @@ public class ModRoles {
 
         // 仇杀客 - 仅在12人及以上对局生成
         Harpymodloader.setRoleMaximum(BLOOD_FEUDIST_ID, 1);
+
+        // 钟表匠 - 仅在12人及以上对局生成
+        // 注意：具体限制在 InitModRolesMax 中设置
 
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
