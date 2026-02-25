@@ -5,6 +5,7 @@ import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.effect.MobEffects;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.roles.manipulator.InControlCCA;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,21 +24,32 @@ public abstract class ChairWheelKeyMappingMixin {
     private boolean shouldSuppressKey() {
         if (TMM.isLobby)
             return false;
-        if (Minecraft.getInstance() == null)
+        Minecraft instance = Minecraft.getInstance();
+        if (instance == null)
             return false;
-        if (Minecraft.getInstance().player == null)
+        if (instance.player == null)
             return false;
         if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRunning() && TMMClient.isPlayerAliveAndInSurvival() &&TMMClient.gameComponent.getGameMode() instanceof ChairWheelRaceGame) {
-                return this.same(Minecraft.getInstance().options.keySwapOffhand) ||
-                        this.same(Minecraft.getInstance().options.keyJump) ||
-                        this.same(Minecraft.getInstance().options.keyTogglePerspective) ||
-                        this.same(Minecraft.getInstance().options.keyDrop) ||
-                        this.same(Minecraft.getInstance().options.keyAttack) ||
-                        this.same(Minecraft.getInstance().options.keyShift) ||
-                        this.same(Minecraft.getInstance().options.keyInventory) ||
-                        this.same(Minecraft.getInstance().options.keyDrop) ||
-                        this.same(Minecraft.getInstance().options.keyAdvancements);
+            boolean b = this.same(instance.options.keySwapOffhand) ||
+                    this.same(instance.options.keyJump) ||
+                    this.same(instance.options.keyTogglePerspective) ||
+                    this.same(instance.options.keyDrop) ||
+                    this.same(instance.options.keyAttack) ||
+                    this.same(instance.options.keyShift) ||
+                    this.same(instance.options.keyInventory) ||
+                    this.same(instance.options.keyDrop) ||
+                    this.same(instance.options.keyAdvancements);
+            boolean a =false;
+            if (instance.player!=null){
+                if (instance.player.hasEffect(MobEffects.BAD_OMEN)){
+                    a =     this.same(instance.options.keyUp) ||
+                            this.same(instance.options.keyRight) ||
+                            this.same(instance.options.keyDown) ||
+                            this.same(instance.options.keyLeft) ;
+                }
             }
+            return b||a;
+        }
 
         return false;
     }
