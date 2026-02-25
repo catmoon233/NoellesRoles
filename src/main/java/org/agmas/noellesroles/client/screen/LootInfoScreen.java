@@ -321,10 +321,6 @@ public class LootInfoScreen extends AbstractPixelScreen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        if (this.startPoolBtn == null) {
-            onClose();
-            return;
-        }
         if (!initialized) {
             if (animationTimeLineManager.isFinished()) {
                 initialized = true;
@@ -358,7 +354,8 @@ public class LootInfoScreen extends AbstractPixelScreen {
         for (PoolButton poolBtn : poolButtons) {
             poolBtn.render(guiGraphics, mouseX, mouseY, delta);
         }
-        startPoolBtn.render(guiGraphics, mouseX, mouseY, delta);
+        if (startPoolBtn != null)
+            startPoolBtn.render(guiGraphics, mouseX, mouseY, delta);
     }
 
     public void switchToPool(int poolD) {
