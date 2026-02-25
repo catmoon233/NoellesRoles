@@ -72,6 +72,7 @@ public abstract class PlayerResetMixin {
         RoleUtils.RemoveAllPlayerAttributes(player);
         RoleUtils.RemoveAllEffects(player);
         player.setLastHurtMob(null);
+        BloodFeudistPlayerComponent.KEY.get(player).clear();
         SplitPersonalityComponent.KEY.get(player).clear();
         SkinSplitPersonalityComponent.KEY.get(player).clear();
         SkinSplitPersonalityComponent.KEY.get(player).sync();
