@@ -34,7 +34,7 @@ import java.util.List;
 
 public class ChairWheelRaceGame extends GameMode {
     public static final ResourceLocation identifier = ResourceLocation.tryBuild("noellesroles", "chair_wheel_race");
-    public static final int defaultStartTime = 5;
+    public static final int defaultStartTime = 8;
     public static final int minPlayerCount = 2;
 
     public ChairWheelRaceGame() {

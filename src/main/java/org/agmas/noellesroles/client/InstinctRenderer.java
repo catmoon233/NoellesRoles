@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.client;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
@@ -256,7 +257,9 @@ public class InstinctRenderer {
                 if (TMMClient.gameComponent.isRole(self, ModRoles.CHEF)) {
                     // LoggerFactory.getLogger("renderer").info("glowTick {}",
                     // bartenderPlayerComponent.glowTicks);
-                    if (bartenderPlayerComponent.glowTicks.getOrDefault(1, 0) > 0) {
+                    int t = bartenderPlayerComponent.glowTicks.getOrDefault(1, 0);
+                    Noellesroles.LOGGER.info("Time:"+t);
+                    if (t > 0) {
                         return (Color.GREEN.getRGB());
                     }
                 }
