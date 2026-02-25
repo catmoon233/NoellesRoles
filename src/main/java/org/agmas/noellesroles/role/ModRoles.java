@@ -896,7 +896,7 @@ public class ModRoles {
         Integer.MAX_VALUE, // 无限冲刺时间
         true // 隐藏计分板
     )).setComponentKey(ThiefPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true)
-        .setNeutralForKiller(true).setCanSeeTeammateKiller(false);
+        .setCanSeeTeammateKiller(false);
 
     // 魔术师角色 - 好人阵营
     MAGICIAN = TMMRoles.registerRole(new NoramlRole(
