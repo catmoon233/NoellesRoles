@@ -17,12 +17,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+
+import org.agmas.harpymodloader.events.GameInitializeEvent;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.init.ModEntities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ChairWheelRaceGame extends GameMode {
     public static final ResourceLocation identifier = ResourceLocation.tryBuild("noellesroles", "chair_wheel_race");
@@ -75,6 +76,7 @@ public class ChairWheelRaceGame extends GameMode {
     }
     @Override
     public void initializeGame(ServerLevel serverLevel, GameWorldComponent gameWorldComponent, List<ServerPlayer> list) {
+        GameInitializeEvent.EVENT.invoker().initializeGame(serverLevel, gameWorldComponent, list);
         ((TrainWorldComponent)TrainWorldComponent.KEY.get(serverLevel)).setTimeOfDay(TrainWorldComponent.TimeOfDay.DAY);
         isWin.clear();
         executeFunction(serverLevel.getServer().createCommandSourceStack(), "harpymodloader:chair_wheel_race/init");

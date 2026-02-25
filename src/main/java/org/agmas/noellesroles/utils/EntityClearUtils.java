@@ -1,19 +1,20 @@
 package org.agmas.noellesroles.utils;
 
+import org.agmas.harpymodloader.events.GameInitializeEvent;
 import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
-import dev.doctor4t.trainmurdermystery.event.OnTrainAreaHaveReseted;
+
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.item.ItemEntity;
 
 public class EntityClearUtils {
     public static void registerResetEvent() {
-        OnTrainAreaHaveReseted.EVENT.register((serverLevel) -> {
+        GameInitializeEvent.EVENT.register((serverLevel, gameWorldComponent, players) -> {
             clearAllEntities(serverLevel);
         });
     }
