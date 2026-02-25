@@ -33,12 +33,12 @@ public class LootInfoScreen extends AbstractPixelScreen {
             void onRelease(PoolButton button);
         }
         public static final ResourceLocation[] poolBtnTextures = {
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/poolBtnIdle.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/poolBtnHover.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/poolBtnPressed.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/poolBtnIdleSelected.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/poolBtnHoverSelected.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/poolBtnPressedSelected.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/pool_btn_idle.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/pool_btn_hover.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/pool_btn_pressed.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/pool_btn_idle_selected.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/pool_btn_hover_selected.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/pool_btn_pressed_selected.png"),
         };
         private static final int poolBtnWidth = 32;
         private static final int poolBtnHeight = 18;
@@ -200,7 +200,7 @@ public class LootInfoScreen extends AbstractPixelScreen {
                     sketchWidth, sketchHeight,
                     sketchWidth, sketchHeight,
                     ResourceLocation.fromNamespaceAndPath(
-                            "noellesroles", "textures/gui/poolBg" +
+                            "noellesroles", "textures/gui/pool_bg" +
                                     curPool.getPoolID()
                                     + ".png"
                     )
@@ -367,10 +367,7 @@ public class LootInfoScreen extends AbstractPixelScreen {
         LotteryManager.LotteryPool nextPool = LotteryManager.getInstance().getLotteryPool(poolD);
         if (nextPool == null)
             return;
-        poolSketch.setTEXTURE(
-                ResourceLocation.fromNamespaceAndPath(
-                        "noellesroles", "textures/gui/poolBg" + nextPool.getPoolID() + ".png"
-                ));
+        poolSketch.setTEXTURE(getPoolSketchTexture(nextPool.getPoolID()));
         // 添加位移和透明度动画
         poolSketch.setY(centerY - totalHeight / 2 + sketchEdge);
         animationStack.add(
@@ -426,6 +423,11 @@ public class LootInfoScreen extends AbstractPixelScreen {
             if (nextPoolBtn != null)
                 nextPoolBtn.poolBtnTextureWidgets.get(i).setTEXTURE(PoolButton.poolBtnTextures[i + 3]);
         }
+    }
+    private ResourceLocation getPoolSketchTexture(int poolID) {
+        return ResourceLocation.fromNamespaceAndPath(
+                "noellesroles", "textures/gui/loot/pool_bg" + poolID + ".png"
+        );
     }
 
     private static final Color poolBtnBgColor = new Color(0xFF555555, true);
