@@ -105,7 +105,8 @@ import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPer
 public class ModEventsRegister {
     private static AttributeModifier noJumpingAttribute = new AttributeModifier(
             Noellesroles.id("no_jumping"), -1.0f, AttributeModifier.Operation.ADD_VALUE);
-
+    private static AttributeModifier oldmanAttribute = new AttributeModifier(
+            Noellesroles.id("oldman"), -0.4f, AttributeModifier.Operation.ADD_VALUE);
     private static AttributeModifier windYaoseScaleAttribute = new AttributeModifier(
             Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_VALUE);
 
@@ -807,14 +808,7 @@ public class ModEventsRegister {
                 return;
             }
             if (role.identifier().equals(ModRoles.OLDMAN.identifier())) {
-                player.addEffect(new MobEffectInstance(
-                        MobEffects.MOVEMENT_SLOWDOWN, // ID
-                        -1, // 持续时间（tick）
-                        1, // 等级（0 = 速度 I）
-                        false, // ambient（环境效果，如信标）
-                        false, // showParticles（显示粒子）
-                        false // showIcon（显示图标）
-                ));
+                player.getAttribute(Attributes.MOVEMENT_SPEED).addOrReplacePermanentModifier(oldmanAttribute);
                 return;
             }
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
