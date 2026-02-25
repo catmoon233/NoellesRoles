@@ -22,7 +22,6 @@
         "noellesroles:star",
         "noellesroles:jester",
         "noellesroles:vulture",
-        "noellesroles:clockmaker",
         "noellesroles:blood_feudist",
         "stupid_express:arsonist",
         "stupid_express:amnesiac",
@@ -37,6 +36,7 @@
       ],
       "disabled": [
         "noellesroles:better_vigilante",
+        "noellesroles:clockmaker",
         "noellesroles:photographer",
         "noellesroles:avenger",
         "noellesroles:engineer",
