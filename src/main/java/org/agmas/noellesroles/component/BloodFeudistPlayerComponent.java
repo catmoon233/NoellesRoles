@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -11,6 +12,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.harpymodloader.events.ModdedRoleAssigned;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.tick.CommonTickingComponent;
@@ -91,15 +93,21 @@ public class BloodFeudistPlayerComponent implements RoleComponent, CommonTicking
         if (player.level().isClientSide) {
             return;
         }
-
+        var gwc = GameWorldComponent.KEY.get(this.player.level());
+        if (!gwc.isRole(player, ModRoles.BLOOD_FEUDIST))
+            return;
         // 根据开关状态应用药水效果
         if (gotSpeed2 && speedEnabled) {
-            if (!player.hasEffect(MobEffects.MOVEMENT_SPEED) || player.getEffect(MobEffects.MOVEMENT_SPEED).getAmplifier() != 1) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1, false, false, true));
+            if (!player.hasEffect(MobEffects.MOVEMENT_SPEED)
+                    || player.getEffect(MobEffects.MOVEMENT_SPEED).getAmplifier() != 1) {
+                player.addEffect(
+                        new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1, false, false, true));
             }
         } else if (gotSpeed1 && speedEnabled) {
-            if (!player.hasEffect(MobEffects.MOVEMENT_SPEED) || player.getEffect(MobEffects.MOVEMENT_SPEED).getAmplifier() != 0) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 0, false, false, true));
+            if (!player.hasEffect(MobEffects.MOVEMENT_SPEED)
+                    || player.getEffect(MobEffects.MOVEMENT_SPEED).getAmplifier() != 0) {
+                player.addEffect(
+                        new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 0, false, false, true));
             }
         } else {
             // 如果开关关闭，移除速度效果
@@ -129,13 +137,13 @@ public class BloodFeudistPlayerComponent implements RoleComponent, CommonTicking
      * 清除负面效果
      */
     private void clearNegativeEffects() {
-        player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);  // 缓慢
-        player.removeEffect(MobEffects.DIG_SLOWDOWN);      // 挖掘疲劳
-        player.removeEffect(MobEffects.CONFUSION);          // 反胃
-        player.removeEffect(MobEffects.BLINDNESS);         // 失明
-        player.removeEffect(MobEffects.DARKNESS);          // 黑暗
-        player.removeEffect(MobEffects.UNLUCK);            // 霉运
-        player.removeEffect(MobEffects.GLOWING);           // 发光
+        player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN); // 缓慢
+        player.removeEffect(MobEffects.DIG_SLOWDOWN); // 挖掘疲劳
+        player.removeEffect(MobEffects.CONFUSION); // 反胃
+        player.removeEffect(MobEffects.BLINDNESS); // 失明
+        player.removeEffect(MobEffects.DARKNESS); // 黑暗
+        player.removeEffect(MobEffects.UNLUCK); // 霉运
+        player.removeEffect(MobEffects.GLOWING); // 发光
     }
 
     /**
@@ -164,7 +172,8 @@ public class BloodFeudistPlayerComponent implements RoleComponent, CommonTicking
         // 1人误杀：永久速度1
         if (accidentalKillCount >= 1 && !gotSpeed1) {
             gotSpeed1 = true;
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 0, false, false, true));
+            player.addEffect(
+                    new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 0, false, false, true));
             if (player instanceof ServerPlayer sp) {
                 sp.sendSystemMessage(Component.translatable("message.noellesroles.blood_feudist.speed1")
                         .withStyle(net.minecraft.ChatFormatting.GREEN));
@@ -196,7 +205,8 @@ public class BloodFeudistPlayerComponent implements RoleComponent, CommonTicking
         if (accidentalKillCount >= 4 && !gotSpeed2) {
             gotSpeed2 = true;
             player.removeEffect(MobEffects.MOVEMENT_SPEED);
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1, false, false, true));
+            player.addEffect(
+                    new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1, false, false, true));
             if (player instanceof ServerPlayer sp) {
                 sp.sendSystemMessage(Component.translatable("message.noellesroles.blood_feudist.speed2")
                         .withStyle(net.minecraft.ChatFormatting.GREEN));
@@ -221,7 +231,8 @@ public class BloodFeudistPlayerComponent implements RoleComponent, CommonTicking
         ModdedRoleAssigned.EVENT.register((player, role) -> {
             if (role.equals(TMMRoles.ROLES.get(org.agmas.noellesroles.role.ModRoles.BLOOD_FEUDIST_ID))) {
                 // 初始化时确保有负面效果免疫
-                BloodFeudistPlayerComponent comp = org.agmas.noellesroles.component.ModComponents.BLOOD_FEUDIST.get(player);
+                BloodFeudistPlayerComponent comp = org.agmas.noellesroles.component.ModComponents.BLOOD_FEUDIST
+                        .get(player);
                 if (comp.gotImmunity) {
                     comp.clearNegativeEffects();
                 }
