@@ -289,6 +289,7 @@ public class ModItems {
                 .title(Component.translatable("item_group.noellesroles.misc")).icon(() -> {
                     return new ItemStack(ModItems.WHEELCHAIR);
                 }).build());
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.PAN);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.SMOKE_GRENADE);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.BLANK_CARTRIDGE);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.ALARM_TRAP);
