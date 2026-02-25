@@ -5,6 +5,7 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerAFKComponent;
 import dev.doctor4t.trainmurdermystery.cca.TrainWorldComponent;
 import dev.doctor4t.trainmurdermystery.event.OnGameTrueStarted;
 import dev.doctor4t.trainmurdermystery.event.OnTrainAreaHaveReseted;
@@ -16,7 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -51,6 +51,11 @@ public class ChairWheelRaceGame extends GameMode {
     @Override
     public void tickServerGameLoop(ServerLevel serverLevel, GameWorldComponent gameWorldComponent) {
         // 倒计时逻辑
+        if(serverLevel.getGameTime()%60 == 0){
+            for (ServerPlayer player : serverLevel.players()) {
+                PlayerAFKComponent.KEY.get(player).updateActivity();
+            }
+        }
         if (gamePrepareTime > 0) {
             gamePrepareTime--;
             if (gamePrepareTime % 20 == 0) { // 每秒执行一次
