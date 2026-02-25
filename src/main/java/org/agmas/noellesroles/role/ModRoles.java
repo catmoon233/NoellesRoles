@@ -160,7 +160,7 @@ public class ModRoles {
       .setVigilanteTeam(true).setCanSeeCoin(true).setCanPickUpRevolver(false);
   public static Role WIND_YAOSE = TMMRoles.registerRole(
       new NormalRole(WIND_YAOSE_ID, new Color(106, 255, 179).getRGB(),
-          true, false, Role.MoodType.REAL,
+          false, false, Role.MoodType.REAL,
           TMMRoles.CIVILIAN.getMaxSprintTime(), false))
       .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setCanUseInstinct(true)
       .setNeutralForKiller(true);
