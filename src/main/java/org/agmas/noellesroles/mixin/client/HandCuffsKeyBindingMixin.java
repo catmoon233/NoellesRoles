@@ -31,12 +31,13 @@ public abstract class HandCuffsKeyBindingMixin {
                 && TMMClient.isPlayerAliveAndInSurvival()) {
             final var player = (Minecraft.getInstance().player);
             if (player.getOffhandItem().is(ModItems.HANDCUFFS)) {
-                
+
                 if (this.same(Minecraft.getInstance().options.keySwapOffhand) ||
                         this.same(Minecraft.getInstance().options.keyJump) ||
                         this.same(Minecraft.getInstance().options.keyTogglePerspective) ||
                         this.same(Minecraft.getInstance().options.keyDrop) ||
                         this.same(Minecraft.getInstance().options.keyAttack) ||
+                        this.same(Minecraft.getInstance().options.keyUse) ||
                         this.same(Minecraft.getInstance().options.keyDrop) ||
                         this.same(Minecraft.getInstance().options.keyAdvancements))
                     return true;
