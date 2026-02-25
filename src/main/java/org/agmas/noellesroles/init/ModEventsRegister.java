@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.init;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
