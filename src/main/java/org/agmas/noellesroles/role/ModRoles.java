@@ -122,6 +122,7 @@ public class ModRoles {
     public static final ResourceLocation BOMBER_ID = Noellesroles.id("bomber");
     public static final ResourceLocation MANIPULATOR_ID = Noellesroles.id("manipulator");
     public static final ResourceLocation BANDIT_ID = Noellesroles.id("bandit");
+    public static final ResourceLocation BLOOD_FEUDIST_ID = Noellesroles.id("blood_feudist");
 
     // 中立阵营
     public static final ResourceLocation STALKER_ID = Noellesroles.id("stalker");
@@ -614,6 +615,7 @@ public class ModRoles {
      * - 无疯狂模式、无开锁器和撬棍
      */
     public static Role BANDIT;
+    public static Role BLOOD_FEUDIST;
 
     // ==================== 其他变量定义 ====================
     public static ArrayList<Role> SHOW_MONEY_ROLES = new ArrayList<>();
@@ -902,6 +904,17 @@ public class ModRoles {
                 true // 隐藏计分板
         )).setComponentKey(ModComponents.BANDIT);
 
+        // 仇杀客角色 - 杀手阵营
+        BLOOD_FEUDIST = TMMRoles.registerRole(new NoramlRole(
+                BLOOD_FEUDIST_ID, // 角色 ID
+                new Color(178, 34, 34).getRGB(), // 暗红色 - 代表复仇与愤怒
+                false, // isInnocent = 非乘客阵营
+                true, // canUseKiller = 有杀手能力
+                Role.MoodType.FAKE, // 假心情
+                Integer.MAX_VALUE, // 无限冲刺时间
+                true // 隐藏计分板
+        )).setComponentKey(ModComponents.BLOOD_FEUDIST).setCanSeeCoin(true);
+
         // ==================== 设置角色数量限制 ====================
         // 某些角色可能需要限制每局游戏中的数量
         // 复仇者每局只能有 1 个
@@ -988,6 +1001,9 @@ public class ModRoles {
 
         // 强盗
         Harpymodloader.setRoleMaximum(BANDIT_ID, 1);
+
+        // 仇杀客 - 仅在12人及以上对局生成
+        Harpymodloader.setRoleMaximum(BLOOD_FEUDIST_ID, 1);
 
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
         PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());

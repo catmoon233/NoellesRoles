@@ -1,5 +1,6 @@
 package org.agmas.noellesroles;
 
+import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.BomberPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
@@ -131,6 +132,11 @@ public class AbilityHandler {
             org.agmas.noellesroles.roles.ghost.GhostPlayerComponent ghostPlayerComponent = org.agmas.noellesroles.roles.ghost.GhostPlayerComponent.KEY
                     .get(context.player());
             ghostPlayerComponent.useAbility();
+            return;
+        }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.BLOOD_FEUDIST)) {
+            BloodFeudistPlayerComponent bfComponent = ModComponents.BLOOD_FEUDIST.get(context.player());
+            bfComponent.toggleEffects();
             return;
         }
 
