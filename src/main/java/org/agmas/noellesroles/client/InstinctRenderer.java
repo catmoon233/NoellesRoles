@@ -104,7 +104,7 @@ public class InstinctRenderer {
             if (GameFunctions.isPlayerSpectatingOrCreative(Minecraft.getInstance().player))
                 return -1;
             Player player = Minecraft.getInstance().player;
-            if (TMMClient.gameComponent.isRole(Minecraft.getInstance().player, SERoles.INITIATE)) {
+            if (!TMMClient.gameComponent.isRole(Minecraft.getInstance().player, SERoles.INITIATE)) {
                 return -1;
             }
             if (TMMItemUtils.hasItem(player, TMMItems.KNIFE) <= 0) {
@@ -112,7 +112,6 @@ public class InstinctRenderer {
             }
             if (target instanceof Player targettedPlayer) {
                 if (TMMClient.gameComponent.isRole(targettedPlayer, SERoles.INITIATE)) {
-
                     return (SERoles.INITIATE.color());
                 }
             }

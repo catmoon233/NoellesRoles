@@ -59,6 +59,7 @@ public class WheelchairEntity extends Mob {
                 AABB box = this.getBoundingBox().inflate(0.1);
                 List<Player> otherPlayers = this.level().getEntitiesOfClass(Player.class, box,
                         p -> p != controller && p.isAlive());
+                otherPlayers.removeIf((p) -> p.isSpectator() || p.isCreative());
                 if (!otherPlayers.isEmpty()) {
 
                     Vec3 knockbackDir = this.getForward();

@@ -31,6 +31,7 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
+import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
@@ -40,6 +41,7 @@ import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
 import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.utils.EntityClearUtils;
 import org.agmas.noellesroles.utils.MapScanner;
@@ -747,8 +749,8 @@ public class ModEventsRegister {
 
             if (role.identifier().equals(ModRoles.THIEF.identifier())) {
                 int totalPlayers = player.level().players().size();
-                org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent
-                        .getHonorCost(totalPlayers);
+                var tpc = ThiefPlayerComponent.KEY.get(player);
+                tpc.updateHonorCost(totalPlayers);
             }
             if (role.identifier().equals(ModRoles.WAYFARER.identifier())) {
                 player.getInventory().clearContent();
@@ -1037,7 +1039,10 @@ public class ModEventsRegister {
         });
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
+
             serverLevel.players().forEach(p -> {
+
                 p.addEffect(new MobEffectInstance(
                         MobEffects.WATER_BREATHING,
                         (int) (5 * 20), // 持续时间 5s（tick）
@@ -1047,8 +1052,10 @@ public class ModEventsRegister {
                         false // showIcon（显示图标）
                 ));
             });
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(player -> {
+                if (gameWorldComponent.isRole(player, ModRoles.THIEF)) {
+                    ThiefPlayerComponent.KEY.get(player).updateHonorCost(serverLevel.players().size());
+                }
                 if (!gameWorldComponent.isJumpAvailable() && GameFunctions.isPlayerAliveAndSurvival(player)) {
                     // NO JUMPING! For everyone who hasn't permissions
                     if (!player.hasPermissions(2)) {
@@ -1178,7 +1185,15 @@ public class ModEventsRegister {
     }
 
     public static void registerPredicate() {
-
+        OnPlayerDeath.EVENT.register((victim, deathReason) -> {
+            TMMItemUtils.clearItem(victim, ModItems.BOMB);
+            var gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
+            if (victim.getVehicle() instanceof WheelchairEntity we) {
+                if (gameWorldComponent.isRole(victim, ModRoles.OLDMAN)) {
+                    we.discard();
+                }
+            }
+        });
         // 设置谓词
         TMM.canUseChatHud.add((role -> role.getIdentifier()
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));

@@ -13,6 +13,7 @@ import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 
 import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.ChatFormatting;
@@ -217,8 +218,10 @@ public class ClientHudRenderer {
         // 小偷HUD
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             var client = Minecraft.getInstance();
-            if (client == null) return;
-            if (client.player == null) return;
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
             if (TMMClient.gameComponent == null || !TMMClient.gameComponent.isRole(client.player, ModRoles.THIEF)) {
                 return;
             }
@@ -230,9 +233,14 @@ public class ClientHudRenderer {
             int xOffset = screenWidth - 10; // 距离右边缘
 
             var thiefComponent = ThiefPlayerComponent.KEY.maybeGet(client.player).orElse(null);
-            if (thiefComponent == null) return;
+            if (thiefComponent == null)
+                return;
 
             // 显示当前模式
+            Component progress = Component.literal("");
+            var shopC = PlayerShopComponent.KEY.get(client.player);
+            progress = Component.translatable("message.thief.honor_cost", shopC.balance, thiefComponent.honorCost)
+                    .withStyle(ChatFormatting.GOLD);
             Component modeText;
             if (thiefComponent.currentMode == ThiefPlayerComponent.MODE_STEAL_MONEY) {
                 modeText = Component.translatable("hud.thief.mode.money").withStyle(ChatFormatting.GOLD);
@@ -243,27 +251,38 @@ public class ClientHudRenderer {
             // 显示冷却或就绪状态
             int dy = yOffset - font.lineHeight - 4;
             if (thiefComponent.cooldown > 0) {
-                var cdText = Component.translatable("hud.thief.cooldown", thiefComponent.cooldown / 20).withStyle(ChatFormatting.RED);
+                var cdText = Component.translatable("hud.thief.cooldown", thiefComponent.cooldown / 20)
+                        .withStyle(ChatFormatting.RED);
                 guiGraphics.drawString(font, cdText, xOffset - font.width(cdText), dy, Color.WHITE.getRGB());
                 dy -= font.lineHeight;
             } else {
-                var readyText = Component.translatable("hud.thief.ready", NoellesrolesClient.abilityBind.getTranslatedKeyMessage()).withStyle(ChatFormatting.GREEN);
+                var readyText = Component
+                        .translatable("hud.thief.ready", NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                        .withStyle(ChatFormatting.GREEN);
                 guiGraphics.drawString(font, readyText, xOffset - font.width(readyText), dy, Color.WHITE.getRGB());
                 dy -= font.lineHeight;
             }
 
             // 显示模式信息
             var modeInfo = Component.translatable("hud.thief.current_mode").withStyle(ChatFormatting.WHITE);
-            guiGraphics.drawString(font, modeInfo, xOffset - font.width(modeInfo) - font.width(modeText), dy, Color.WHITE.getRGB());
+            guiGraphics.drawString(font, modeInfo, xOffset - font.width(modeInfo) - font.width(modeText), dy,
+                    Color.WHITE.getRGB());
             guiGraphics.drawString(font, modeText, xOffset - font.width(modeText), dy, Color.WHITE.getRGB());
+
+            dy -= font.lineHeight + 8;
+
+            guiGraphics.drawString(font, progress, xOffset - font.width(progress), dy, Color.WHITE.getRGB());
         });
 
         // 仇杀客HUD
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             var client = Minecraft.getInstance();
-            if (client == null) return;
-            if (client.player == null) return;
-            if (TMMClient.gameComponent == null || !TMMClient.gameComponent.isRole(client.player, ModRoles.BLOOD_FEUDIST)) {
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null
+                    || !TMMClient.gameComponent.isRole(client.player, ModRoles.BLOOD_FEUDIST)) {
                 return;
             }
 
@@ -274,24 +293,25 @@ public class ClientHudRenderer {
             int xOffset = screenWidth - 10; // 距离右边缘
 
             BloodFeudistPlayerComponent bfComponent = ModComponents.BLOOD_FEUDIST.maybeGet(client.player).orElse(null);
-            if (bfComponent == null) return;
+            if (bfComponent == null)
+                return;
 
             int dy = yOffset;
 
             // 显示误杀人数
-            var killText = Component.translatable("hud.blood_feudist.accidental_kills", bfComponent.getAccidentalKillCount())
+            var killText = Component
+                    .translatable("hud.blood_feudist.accidental_kills", bfComponent.getAccidentalKillCount())
                     .withStyle(ChatFormatting.RED);
             guiGraphics.drawString(font, killText, xOffset - font.width(killText), dy, Color.WHITE.getRGB());
             dy -= font.lineHeight - 2;
 
             // 显示速度状态
             if (bfComponent.hasSpeed1() || bfComponent.hasSpeed2()) {
-                Component speedLabel = bfComponent.hasSpeed2() ?
-                        Component.translatable("hud.blood_feudist.speed2") :
-                        Component.translatable("hud.blood_feudist.speed1");
-                Component speedStatus = bfComponent.isSpeedEnabled() ?
-                        Component.translatable("hud.blood_feudist.enabled").withStyle(ChatFormatting.GREEN) :
-                        Component.translatable("hud.blood_feudist.disabled").withStyle(ChatFormatting.GRAY);
+                Component speedLabel = bfComponent.hasSpeed2() ? Component.translatable("hud.blood_feudist.speed2")
+                        : Component.translatable("hud.blood_feudist.speed1");
+                Component speedStatus = bfComponent.isSpeedEnabled()
+                        ? Component.translatable("hud.blood_feudist.enabled").withStyle(ChatFormatting.GREEN)
+                        : Component.translatable("hud.blood_feudist.disabled").withStyle(ChatFormatting.GRAY);
                 Component speedText = Component.literal("").append(speedLabel).append(speedStatus);
                 guiGraphics.drawString(font, speedText, xOffset - font.width(speedText), dy, Color.WHITE.getRGB());
                 dy -= font.lineHeight - 2;
@@ -300,16 +320,18 @@ public class ClientHudRenderer {
             // 显示急迫状态
             if (bfComponent.hasHaste2()) {
                 Component hasteLabel = Component.translatable("hud.blood_feudist.haste2");
-                Component hasteStatus = bfComponent.isHasteEnabled() ?
-                        Component.translatable("hud.blood_feudist.enabled").withStyle(ChatFormatting.GREEN) :
-                        Component.translatable("hud.blood_feudist.disabled").withStyle(ChatFormatting.GRAY);
+                Component hasteStatus = bfComponent.isHasteEnabled()
+                        ? Component.translatable("hud.blood_feudist.enabled").withStyle(ChatFormatting.GREEN)
+                        : Component.translatable("hud.blood_feudist.disabled").withStyle(ChatFormatting.GRAY);
                 Component hasteText = Component.literal("").append(hasteLabel).append(hasteStatus);
                 guiGraphics.drawString(font, hasteText, xOffset - font.width(hasteText), dy, Color.WHITE.getRGB());
                 dy -= font.lineHeight - 2;
             }
 
             // 显示技能提示
-            var readyText = Component.translatable("hud.blood_feudist.toggle_effects", NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+            var readyText = Component
+                    .translatable("hud.blood_feudist.toggle_effects",
+                            NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
                     .withStyle(ChatFormatting.YELLOW);
             guiGraphics.drawString(font, readyText, xOffset - font.width(readyText), dy, Color.WHITE.getRGB());
         });

@@ -115,13 +115,13 @@ public class RoleShopHandler {
         BLOOD_FEUDIST_SHOP.add(new ShopEntry(
                 TMMItems.PSYCHO_MODE.getDefaultInstance(),
                 275,
-                ShopEntry.Type.WEAPON){
-                    @Override
-                    public boolean onBuy(Player player){
-                        var psycc = PlayerPsychoComponent.KEY.get(player);
-                        return psycc.startPsycho();
-                    }
-                });
+                ShopEntry.Type.WEAPON) {
+            @Override
+            public boolean onBuy(Player player) {
+                var psycc = PlayerPsychoComponent.KEY.get(player);
+                return psycc.startPsycho();
+            }
+        });
     }
 
     public static void shopRegister() {
@@ -333,7 +333,6 @@ public class RoleShopHandler {
         {
             var shopEntries = new ArrayList<ShopEntry>();
             shopEntries.add(new ShopEntry(TMMItems.KNIFE.getDefaultInstance(), 200, ShopEntry.Type.TOOL));
-            shopEntries.add(new ShopEntry(TMMItems.CROWBAR.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
             shopEntries.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
             shopEntries.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), 500, ShopEntry.Type.TOOL));
             shopEntries.add(new ShopEntry(TMMItems.NOTE.getDefaultInstance(), 15, ShopEntry.Type.TOOL));
@@ -753,33 +752,29 @@ public class RoleShopHandler {
 
         // 小偷商店
         // 小偷的荣誉（金锭） - 根据人数动态计算价格
-        ShopEntry THIEF_SHOP_ENTRY = new ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
-                0, // 价格在onBuy中动态计算
-                ShopEntry.Type.TOOL) {
-            @Override
-            public int price() {
-                return org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost;
-            }
+        // ShopEntry THIEF_SHOP_ENTRY = new ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
+        //         0, // 价格在onBuy中动态计算
+        //         ShopEntry.Type.TOOL) {
+        //     @Override
+        //     public int price() {
+        //         return 0;
+        //     }
 
-            @Override
-            public boolean onBuy(@NotNull Player player) {
-                // 获取游戏总人数
-                int totalPlayers = player.level().players().size();
-                org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent
-                        .getHonorCost(totalPlayers);
-                ThiefPlayerComponent.KEY.get(player).sync();
-                int cost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost;
+        //     @Override
+        //     public boolean onBuy(@NotNull Player player) {
+        //         var tpc = ThiefPlayerComponent.KEY.get(player);
+        //         int cost = tpc.honorCost;
+        //         // 扣除金币并给予金锭
+        //         shop.addToBalance(-cost);
 
-                // 扣除金币并给予金锭
-                // shop.addToBalance(-cost);
-
-                player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
-                player.displayClientMessage(
-                        Component.translatable("message.noellesroles.thief.honor_purchased", cost).withStyle(ChatFormatting.GOLD),
-                        true);
-                return true;
-            }
-        };
-        THIEF_SHOP.add(THIEF_SHOP_ENTRY);
+        //         player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
+        //         player.displayClientMessage(
+        //                 Component.translatable("message.noellesroles.thief.honor_purchased", cost)
+        //                         .withStyle(ChatFormatting.GOLD),
+        //                 true);
+        //         return true;
+        //     }
+        // };
+        // THIEF_SHOP.add(THIEF_SHOP_ENTRY);
     }
 }

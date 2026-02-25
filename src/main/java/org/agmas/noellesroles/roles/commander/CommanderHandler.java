@@ -81,6 +81,9 @@ public class CommanderHandler {
         ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, serverPlayer, bound) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.level());
             if (gameWorldComponent.isRole(serverPlayer, ModRoles.COMMANDER)) {
+                if (!GameFunctions.isPlayerAliveAndSurvival(serverPlayer)) {
+                    return true;
+                }
                 var napc = NoellesRolesAbilityPlayerComponent.KEY.get(serverPlayer);
                 if (napc.status == 1) { // 杀手频道
                     var broadcastMessage = Component

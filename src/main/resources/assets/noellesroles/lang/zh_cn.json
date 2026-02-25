@@ -222,6 +222,8 @@
   "announcement.role.poisoner": "毒师",
   "message.noellesroles.thief.honor_purchased": "购买了小偷的荣誉！花费 %s 金币",
   "message.noellesroles.thief.not_enough_money_to_buy_honor": "金币不足！需要 %s 金币",
+  "message.thief.honor_cost": "小偷的荣誉：%s / %s",
+  "message.thief.honor_got": "你获得了小偷的荣誉！",
   "message.thief.honor_purchased": "购买了小偷的荣誉！",
   "message.thief.stole": "偷到了 %s 个金币！",
   "message.noellesroles.thief.mode.money": "模式：偷钱",

@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -45,9 +47,9 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 手持小偷的荣誉（金锭）回房间睡觉则独立胜利
  * - 小偷的荣誉所需金币数 = 游戏开始总人数 * 75
  */
-public class ThiefPlayerComponent implements RoleComponent, ServerTickingComponent {
+public class ThiefPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 
-    public static int honorCost = 0;
+    public int honorCost = 0;
     /** 组件键 */
     public static final ComponentKey<ThiefPlayerComponent> KEY = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "thief"),
@@ -102,6 +104,11 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
     @Override
     public void clear() {
         this.reset();
+    }
+
+    public void updateHonorCost(int allPlayer) {
+        this.honorCost = getHonorCost(allPlayer);
+        sync();
     }
 
     /**
@@ -547,11 +554,30 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
     @Override
     public void serverTick() {
         // 减少冷却
+        var gwc = GameWorldComponent.KEY.get(player.level());
+        if (!gwc.isRole(player, ModRoles.THIEF))
+            return;
+        var psc = PlayerShopComponent.KEY.get(player);
+        if (player.level().getGameTime() % 20 == 0) {
+            if (psc.balance >= this.honorCost) {
+                if (RoleUtils.insertStackInFreeSlot(player, Items.GOLD_INGOT.getDefaultInstance())) {
+                    psc.addToBalance(-honorCost);
+                    player.displayClientMessage(
+                            Component.translatable("message.thief.honor_got").withStyle(ChatFormatting.GOLD), true);
+                }
+            }
+        }
         if (this.cooldown > 0) {
             this.cooldown--;
-            if (this.cooldown % 20 == 0 || this.cooldown == 0) {
+            if (this.cooldown % 60 == 0 || this.cooldown == 0) {
                 this.sync();
             }
+        }
+    }
+
+    public void clientTick() {
+        if (this.cooldown > 1) {
+            this.cooldown--;
         }
     }
 
@@ -564,10 +590,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         tag.putInt("Cooldown", this.cooldown);
         tag.putInt("CurrentMode", this.currentMode);
         tag.putBoolean("IsInSelectionMode", this.isInSelectionMode);
-        var gameC = GameWorldComponent.KEY.get(this.player.level());
-        if (gameC.isRole(this.player, ModRoles.THIEF)) {
-            tag.putInt("honorCost", honorCost);
-        }
+
+        tag.putInt("honorCost", honorCost);
     }
 
     @Override
