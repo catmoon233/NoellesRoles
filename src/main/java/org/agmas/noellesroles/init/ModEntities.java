@@ -21,7 +21,7 @@ public class ModEntities {
     public static final EntityType<WheelchairEntity> WHEELCHAIR = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             Noellesroles.id("wheelchair"),
-            EntityType.Builder.of(WheelchairEntity::new, MobCategory.MISC).sized(0.8f, 1.5f)
+            EntityType.Builder.of(WheelchairEntity::new, MobCategory.MISC).sized(0.8f, 0.2f)
                     .build("wheelchair"));
 
     @SuppressWarnings("deprecation")

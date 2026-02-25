@@ -97,7 +97,7 @@ public abstract class PlayerResetMixin {
         stalkerComp.clearAll();
         InControlCCA inControlCCA = InControlCCA.KEY.get(player);
         inControlCCA.clear();
-
+        ModComponents.MAGICIAN.get(player).clear();
         ManipulatorPlayerComponent manipulatorComp = ManipulatorPlayerComponent.KEY.get(player);
         manipulatorComp.clear();
         // 清除惩罚组件状态

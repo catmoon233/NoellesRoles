@@ -171,6 +171,8 @@ public class InstinctRenderer {
             }
             if (targetPlayer.distanceTo(self) <= 5) {
                 var awpc = AwesomePlayerComponent.KEY.get(targetPlayer);
+                if (awpc.nearByDeathTime <= 1)
+                    return -1;
                 int redDepth = (int) (255
                         * ((float) awpc.nearByDeathTime
                                 / (float) AwesomePlayerComponent.nearByDeathTimeRecordTime));

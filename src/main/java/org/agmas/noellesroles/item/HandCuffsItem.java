@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 
 public class HandCuffsItem extends Item {
     public HandCuffsItem(Item.Properties settings) {
-        super(settings.durability(10));
+        super(settings.durability(5));
     }
 
     @Override
@@ -29,7 +29,7 @@ public class HandCuffsItem extends Item {
                     player.addEffect(new MobEffectInstance(
                             MobEffects.MOVEMENT_SLOWDOWN,
                             (int) (20), // 持续时间（tick）
-                            6, // 等级（0 = 速度 I）
+                            2, // 等级（0 = 速度 I）
                             false, // ambient（环境效果，如信标）
                             true, // showParticles（显示粒子）
                             true // showIcon（显示图标）

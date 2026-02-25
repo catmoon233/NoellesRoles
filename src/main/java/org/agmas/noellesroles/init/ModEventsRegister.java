@@ -744,6 +744,37 @@ public class ModEventsRegister {
             }
         });
         ModdedRoleAssigned.EVENT.register((player, role) -> {
+
+            // 魔术师角色初始化
+            if (role.identifier().equals(ModRoles.MAGICIAN.identifier())) {
+                var magicianComponent = ModComponents.MAGICIAN.maybeGet(player).orElse(null);
+                if (magicianComponent != null) {
+                    // 停止疯狂模式（如果之前存在）
+                    var psychoComponent = PlayerPsychoComponent.KEY.get(player);
+                    if (psychoComponent != null) {
+                        psychoComponent.reset();
+                    }
+
+                    // 随机分配一个杀手身份给魔术师（原版杀手、毒师和清道夫除外）
+                    magicianComponent.startDisguiseRandomRole();
+                }
+                // 检查是否有指挥官，如果有则加入指挥官频道
+                boolean hasCommander = player.getServer().getPlayerList().getPlayers().stream()
+                        .anyMatch(p -> {
+                            GameWorldComponent gw = GameWorldComponent.KEY.get(p.level());
+                            var ro = gw.getRole(p);
+                            if (ro != null) {
+                                return ro.identifier().equals(ModRoles.COMMANDER_ID);
+                            }
+                            return false;
+                        });
+                if (hasCommander) {
+                    // 魔术师加入指挥官频道
+                    player.sendSystemMessage(Component.translatable("message.magician.commander_present_joined_channel")
+                            .withStyle(ChatFormatting.GOLD));
+                }
+            }
+
             // 初始化仇杀客事件
             BloodFeudistPlayerComponent.registerEvents();
 
@@ -900,49 +931,6 @@ public class ModEventsRegister {
                 PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(player);
                 shopComponent.setBalance(45);
                 return;
-            }
-
-            // 魔术师角色初始化
-            if (role.equals(ModRoles.MAGICIAN)) {
-                var magicianComponent = ModComponents.MAGICIAN.get(player);
-                if (magicianComponent != null) {
-                    // 停止疯狂模式（如果之前存在）
-                    var psychoComponent = PlayerPsychoComponent.KEY.get(player);
-                    if (psychoComponent != null) {
-                        psychoComponent.reset();
-                    }
-
-                    // 随机分配一个杀手身份给魔术师（原版杀手、毒师和清道夫除外）
-                    List<ResourceLocation> killerRoles = new ArrayList<>();
-                    for (var entry : dev.doctor4t.trainmurdermystery.api.TMMRoles.ROLES.entrySet()) {
-                        Role r = entry.getValue();
-                        if (r.canUseKiller()
-                                && !r.identifier()
-                                        .equals(dev.doctor4t.trainmurdermystery.api.TMMRoles.KILLER.identifier())
-                                && !r.identifier().equals(ModRoles.POISONER_ID)
-                                && !r.identifier().equals(ModRoles.CLEANER_ID)) {
-                            killerRoles.add(r.identifier());
-                        }
-                    }
-                    if (!killerRoles.isEmpty()) {
-                        ResourceLocation disguiseRole = killerRoles.get(player.getRandom().nextInt(killerRoles.size()));
-                        magicianComponent.setDisguiseRoleId(disguiseRole);
-                        player.displayClientMessage(Component.translatable("message.magician.you_are_playing_as")
-                                .append(Component.translatable("announcement.role." + disguiseRole.getPath()))
-                                .withStyle(ChatFormatting.GOLD), true);
-                    }
-                }
-                // 检查是否有指挥官，如果有则加入指挥官频道
-                boolean hasCommander = player.getServer().getPlayerList().getPlayers().stream()
-                        .anyMatch(p -> {
-                            GameWorldComponent gw = GameWorldComponent.KEY.get(p.level());
-                            return gw.getRole(p).identifier().equals(ModRoles.COMMANDER_ID);
-                        });
-                if (hasCommander) {
-                    // 魔术师加入指挥官频道
-                    player.sendSystemMessage(Component.translatable("message.magician.commander_present_joined_channel")
-                            .withStyle(ChatFormatting.GOLD));
-                }
             }
 
             // 纵火犯物品初始化
@@ -1192,6 +1180,7 @@ public class ModEventsRegister {
                 if (gameWorldComponent.isRole(victim, ModRoles.OLDMAN)) {
                     we.discard();
                 }
+                victim.stopRiding();
             }
         });
         // 设置谓词
