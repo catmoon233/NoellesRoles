@@ -71,7 +71,6 @@ public class LootScreen extends AbstractPixelScreen {
     /** 减速时间 */
     private int slowDownTime = 0;
 
-    // TODO : 使卡片能适配物品大小，以及卡片框边距适配
     public static class Card extends AbstractWidget
     {
         // skin: 16*16 ; bg: 18*18

@@ -255,10 +255,10 @@ public class LotteryManager {
     private final ArrayList<LotteryPool> lotteryPoolList = new ArrayList<>();
     private final String defaultPoolItem = "coin_common";
     private static final ResourceLocation[] qualityBgList = {
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/common_skin.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/uncommon_skin.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/rare_skin.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/epic_skin.png"),
-            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/legendary_skin.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/common_skin.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/uncommon_skin.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/rare_skin.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/epic_skin.png"),
+            ResourceLocation.fromNamespaceAndPath("noellesroles", "textures/gui/loot/legendary_skin.png"),
     };
 }
