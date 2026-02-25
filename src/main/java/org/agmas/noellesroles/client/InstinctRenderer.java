@@ -258,7 +258,6 @@ public class InstinctRenderer {
                     // LoggerFactory.getLogger("renderer").info("glowTick {}",
                     // bartenderPlayerComponent.glowTicks);
                     int t = bartenderPlayerComponent.glowTicks.getOrDefault(1, 0);
-                    Noellesroles.LOGGER.info("Time:"+t);
                     if (t > 0) {
                         return (Color.GREEN.getRGB());
                     }
