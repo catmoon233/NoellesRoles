@@ -194,7 +194,7 @@ public class WheelchairEntity extends Mob {
             if (gameComp != null) {
                 this.gameWorldComponent = gameComp;
             } else {
-                return 0.6F;
+                return 0.5F;
             }
         }
         if (gameWorldComponent.isJumpAvailable()) {

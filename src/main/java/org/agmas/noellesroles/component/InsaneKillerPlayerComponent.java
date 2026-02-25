@@ -83,7 +83,7 @@ public class InsaneKillerPlayerComponent
     }
 
     public static void registerEvent() {
-        
+
         AfterShieldAllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
             if (GameWorldComponent.KEY.get(playerEntity.level()).isRole(playerEntity,
                     ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
@@ -99,6 +99,7 @@ public class InsaneKillerPlayerComponent
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 99999, 4));
                     playerEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 99999, 4));
                     // insaneKillerPlayerComponent.sync();
+                    playerEntity.stopRiding();
                     return false;
                 }
             }

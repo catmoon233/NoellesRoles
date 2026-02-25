@@ -256,7 +256,7 @@ public class InitModRolesMax {
         }
 
         /// KNIGHT
-        if (players >= 12 && random.nextInt(0, 100) < 30) {
+        if (players >= 12 && random.nextInt(0, 100) < 10) {
             StupidExpress.LOGGER.info("Modifier [Knight] enabled in this round!");
             Harpymodloader.MODIFIER_MAX.put(StupidExpress.id("knight"), 1);
         } else {

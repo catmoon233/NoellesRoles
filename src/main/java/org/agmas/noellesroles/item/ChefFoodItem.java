@@ -121,6 +121,7 @@ public class ChefFoodItem extends Item {
                     if (mm2 != null) {
                         mm2.tasks.clear();
                         mm2.generateTask();
+                        mm2.sync();
                     }
                     break;
                 case 6:

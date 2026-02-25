@@ -907,7 +907,7 @@ public class ModRoles {
         Role.MoodType.REAL, // 真实心情
         TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
         false // 不显示计分板
-    )).setCanPickUpRevolver(true).setComponentKey(ModComponents.MAGICIAN).setCanSeeCoin(true)
+    )).setCanPickUpRevolver(true).setCanSeeCoin(true)
         .setNeutralForKiller(true).setCanSeeTeammateKiller(false).setNeutrals(false);
 
     // 强盗角色 - 杀手阵营

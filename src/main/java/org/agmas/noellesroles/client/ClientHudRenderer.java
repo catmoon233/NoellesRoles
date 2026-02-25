@@ -13,6 +13,7 @@ import org.agmas.noellesroles.roles.commander.CommanderHudRender;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.BartenderPlayerComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -34,25 +35,26 @@ public class ClientHudRenderer {
                 return;
             if (TMMClient.gameComponent == null
                     || !TMMClient.gameComponent.isRole(client.player, ModRoles.CLOCKMAKER)) {
-                int screenWidth = guiGraphics.guiWidth();
-                int screenHeight = guiGraphics.guiHeight();
-                var font = client.font;
-                int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
-                int xOffset = screenWidth - 10; // 距离右边缘
-                var abpc = ClockmakerPlayerComponent.KEY.get(client.player);
-                Component text = Component
-                        .translatable("hud.noellesroles.clockmaker.use",
-                                NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
-                        .withStyle(ChatFormatting.GOLD);
-                if (abpc.isUsingSkill) {
-                    text = Component.translatable("hud.noellesroles.clockmaker.already_using")
-                            .withStyle(ChatFormatting.DARK_AQUA);
-                }
-                // 按下技能键可花费125金币，减少游戏时间45秒并使世界时间加快2000tick。
-                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
-                        Color.WHITE.getRGB());
                 return;
             }
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+            var abpc = ClockmakerPlayerComponent.KEY.get(client.player);
+            Component text = Component
+                    .translatable("hud.noellesroles.clockmaker.use",
+                            NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                    .withStyle(ChatFormatting.GOLD);
+            if (abpc.isUsingSkill) {
+                text = Component.translatable("hud.noellesroles.clockmaker.already_using")
+                        .withStyle(ChatFormatting.DARK_AQUA);
+            }
+            // 按下技能键可花费125金币，减少游戏时间45秒并使世界时间加快2000tick。
+            guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                    Color.WHITE.getRGB());
+            return;
         });
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             // 渲染清道夫的提示
@@ -203,7 +205,8 @@ public class ClientHudRenderer {
                 return;
             if (client.player == null)
                 return;
-            if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRole(client.player, ModRoles.BARTENDER)) {
+            if (TMMClient.gameComponent != null && (TMMClient.gameComponent.isRole(client.player, ModRoles.BARTENDER)
+                    || TMMClient.gameComponent.isRole(client.player, TMMRoles.LOOSE_END))) {
                 var comc = BartenderPlayerComponent.KEY.maybeGet(client.player).orElse(null);
                 if (comc == null)
                     return;

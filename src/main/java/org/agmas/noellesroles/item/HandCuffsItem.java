@@ -29,7 +29,7 @@ public class HandCuffsItem extends Item {
                     player.addEffect(new MobEffectInstance(
                             MobEffects.MOVEMENT_SLOWDOWN,
                             (int) (20), // 持续时间（tick）
-                            6, // 等级（0 = 速度 I）
+                            3, // 等级（0 = 速度 I）
                             false, // ambient（环境效果，如信标）
                             true, // showParticles（显示粒子）
                             true // showIcon（显示图标）

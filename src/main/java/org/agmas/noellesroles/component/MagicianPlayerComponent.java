@@ -5,14 +5,25 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.network.TriggerStatusBarPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
+
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 
 /**
@@ -23,10 +34,12 @@ import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 public class MagicianPlayerComponent implements RoleComponent, ServerTickingComponent {
 
     /** 组件键 */
-    public static final ComponentKey<MagicianPlayerComponent> KEY = ModComponents.MAGICIAN;
+    public static final ComponentKey<MagicianPlayerComponent> KEY = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "magician"),
+            MagicianPlayerComponent.class);
 
     private final Player player;
-    private ResourceLocation disguiseRoleId = null; // 伪装的角色ID
+    public ResourceLocation disguiseRoleId = null; // 伪装的角色ID
 
     @Override
     public Player getPlayer() {
@@ -39,22 +52,13 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
 
     @Override
     public boolean shouldSyncWith(ServerPlayer sp) {
-        // 同步给魔术师自己和杀手阵营（让他们能看到伪装身份）
-        if (this.player == sp) {
-            return true; // 魔术师自己
-        }
-        
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(sp.level());
-        if (gameWorld.isRunning()) {
-            return true; // 杀手阵营可以看到
-        }
-        
-        return false; // 其他人不需要知道
+        return true;
     }
 
     /**
      * 启动假疯狂模式(使用原版疯狂模式但给假球棒)
      * 注意：商店会先给假球棒，这里只启动疯狂模式
+     * 
      * @return 是否成功启动
      */
     public boolean startFakePsycho() {
@@ -67,19 +71,19 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         // 直接设置疯狂模式状态（不给球棒，因为商店已经给了假球棒）
         psychoComponent.setPsychoTicks(GameConstants.getPsychoTimer());
         psychoComponent.setArmour(GameConstants.getPsychoModeArmour());
-        
+
         // 更新疯狂模式计数
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
         gameWorldComponent.setPsychosActive(gameWorldComponent.getPsychosActive() + 1);
-        
+
         // 发送状态栏
         if (player instanceof ServerPlayer serverPlayer) {
             ServerPlayNetworking.send(serverPlayer, new TriggerStatusBarPayload("Psycho"));
         }
-        
+
         // 同步魔术师组件状态到客户端
-        MagicianPlayerComponent.KEY.sync(this.player);
-        
+        sync();
+
         return true;
     }
 
@@ -90,12 +94,36 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         return disguiseRoleId;
     }
 
+    public void startDisguiseRandomRole() {
+        ArrayList<ResourceLocation> killerRoles = new ArrayList<>();
+        for (var r : dev.doctor4t.trainmurdermystery.api.TMMRoles.ROLES.values()) {
+            if (r.canUseKiller()
+                    && !r.identifier()
+                            .equals(dev.doctor4t.trainmurdermystery.api.TMMRoles.KILLER.identifier())
+                    && !r.identifier().equals(ModRoles.POISONER_ID)
+                    && !r.identifier().equals(ModRoles.CLEANER_ID)) {
+                killerRoles.add(r.identifier());
+            }
+        }
+        if (!killerRoles.isEmpty()) {
+            Collections.shuffle(killerRoles);
+            ResourceLocation disguiseRole = killerRoles.getFirst();
+            this.setDisguiseRoleId(disguiseRole);
+            // Noellesroles.LOGGER.info(this.player.level().isClientSide ? "Client" :
+            // "Server");
+            player.displayClientMessage(Component.translatable("message.magician.you_are_playing_as")
+                    .append(Component.translatable("announcement.role." + disguiseRole.getPath()))
+                    .withStyle(ChatFormatting.GOLD), true);
+        }
+        sync();
+    }
+
     /**
      * 设置伪装的角色ID
      */
     public void setDisguiseRoleId(ResourceLocation roleId) {
         this.disguiseRoleId = roleId;
-        MagicianPlayerComponent.KEY.sync(this.player);
+        this.sync();
     }
 
     @Override
@@ -106,21 +134,25 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         if (tag.contains("DisguiseRoleId")) {
-            disguiseRoleId = ResourceLocation.tryParse(tag.getString("DisguiseRoleId"));
+            this.disguiseRoleId = ResourceLocation.tryParse(tag.getString("DisguiseRoleId"));
         }
     }
 
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
-        if (disguiseRoleId != null) {
-            tag.putString("DisguiseRoleId", disguiseRoleId.toString());
+        if (this.disguiseRoleId != null) {
+            tag.putString("DisguiseRoleId", this.disguiseRoleId.toString());
         }
     }
 
     @Override
     public void reset() {
         disguiseRoleId = null;
-        MagicianPlayerComponent.KEY.sync(this.player);
+        sync();
+    }
+
+    public void sync() {
+        KEY.sync(this.player);
     }
 
     @Override
@@ -128,5 +160,3 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         this.reset();
     }
 }
-
-

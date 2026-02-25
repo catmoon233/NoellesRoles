@@ -425,7 +425,10 @@ public class NoellesrolesClient implements ClientModInitializer {
                 return null;
             if (TMMClient.gameComponent != null) {
                 if (TMMClient.gameComponent.isRole(player, ModRoles.MAGICIAN)) {
-                    return RoleUtils.getRoleName(MagicianPlayerComponent.KEY.get(player).getDisguiseRoleId());
+                    var roleR = MagicianPlayerComponent.KEY.get(player).getDisguiseRoleId();
+
+                    // Noellesroles.LOGGER.info("mag player: "+player.getDisplayName().getString()+(roleR!=null?" "+roleR:" Null role"));
+                    return RoleUtils.getRoleName(roleR);
                 }
             }
             return null;
