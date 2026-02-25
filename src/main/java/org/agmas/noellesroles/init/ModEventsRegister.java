@@ -31,6 +31,7 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
+import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
@@ -53,6 +54,7 @@ import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
@@ -1180,6 +1182,10 @@ public class ModEventsRegister {
         // 设置谓词
         TMM.canUseChatHud.add((role -> role.getIdentifier()
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
+        TMM.canUseChatHudPlayer.add(player -> {
+            return TMMClient.gameComponent != null && TMMClient.gameComponent.isRunning()
+                    && TMMClient.gameComponent.getGameMode() instanceof ChairWheelRaceGame;
+        });
         TMM.canUseOtherPerson.add((role -> role.getIdentifier()
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
         TMM.canUseOtherPerson.add((role -> role.getIdentifier()
