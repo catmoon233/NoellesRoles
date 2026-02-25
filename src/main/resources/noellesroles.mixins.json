@@ -123,7 +123,8 @@
     "client.roles.vulture.VultureHudMixin",
     "client.roles.magician.MagicianDisguiseHudMixin",
     "roles.photographer.BlindnessEffectMixin",
-    "client.roles.wayfarer.TargetEntityHudmixin"
+    "client.roles.wayfarer.TargetEntityHudmixin",
+    "client.game.ChairWheelKeyMappingMixin"
   ],
   "overwrites": {
     "requireAnnotations": true
