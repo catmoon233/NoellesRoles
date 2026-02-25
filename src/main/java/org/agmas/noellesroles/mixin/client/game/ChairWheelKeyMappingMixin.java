@@ -31,7 +31,6 @@ public abstract class ChairWheelKeyMappingMixin {
         if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRunning() && TMMClient.isPlayerAliveAndInSurvival() &&TMMClient.gameComponent.getGameMode() instanceof ChairWheelRaceGame) {
             boolean b = this.same(instance.options.keySwapOffhand) ||
                     this.same(instance.options.keyJump) ||
-                    this.same(instance.options.keyTogglePerspective) ||
                     this.same(instance.options.keyDrop) ||
                     this.same(instance.options.keyAttack) ||
                     this.same(instance.options.keyShift) ||

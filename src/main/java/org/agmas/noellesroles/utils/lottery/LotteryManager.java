@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.utils.lottery;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -19,20 +20,20 @@ import java.util.List;
 public class LotteryManager {
     public static class LotteryPool {
         public LotteryPool(int poolID, String name, String type,
-                           List<LotteryPoolsConfig.PoolConfig.QualityListItemConfig> qualityListGroupConfigs) {
+                List<LotteryPoolsConfig.PoolConfig.QualityListItemConfig> qualityListGroupConfigs) {
             this.poolID = poolID;
             this.name = name;
             this.type = type;
             this.qualityListGroupConfigs = new ArrayList<>();
-            for(LotteryPoolsConfig.PoolConfig.QualityListItemConfig qualityListItemConfig : qualityListGroupConfigs)
-            {
+            for (LotteryPoolsConfig.PoolConfig.QualityListItemConfig qualityListItemConfig : qualityListGroupConfigs) {
                 this.qualityListGroupConfigs.add(
-                        new Pair<>(qualityListItemConfig.getProbability(), qualityListItemConfig.getItemList())
-                );
+                        new Pair<>(qualityListItemConfig.getProbability(), qualityListItemConfig.getItemList()));
             }
         }
+
         /** 使用已有卡池类构造，为了防止形参冲突，与读取配置的构造相区别，可以接受不同的列表 */
-        public LotteryPool(String name, int poolID, String type, List<Pair<Double, List<String>>> qualityListGroupConfigs) {
+        public LotteryPool(String name, int poolID, String type,
+                List<Pair<Double, List<String>>> qualityListGroupConfigs) {
             this.poolID = poolID;
             this.name = name;
             this.type = type;
@@ -60,26 +61,31 @@ public class LotteryManager {
                     LotteryRecordStorage.getInstance().updatePlayerLotteryData(player.getUUID(),
                             lotteryRecordData -> lotteryRecordData.lotteryItems.add(
                                     new LotteryRecordData.LotteryItemData(
-                                            this.poolID, resultQuality, curQualityList.get(resultIdx), System.currentTimeMillis())
-                            ));
+                                            this.poolID, resultQuality, curQualityList.get(resultIdx),
+                                            System.currentTimeMillis())));
                     return new Pair<>(resultQuality, resultIdx);
                 }
             }
             Noellesroles.LOGGER.warn("[LootSys] 玩家UUID:" + player.getUUID() + "抽奖失败");
             return new Pair<>(-1, -1);
         }
+
         public int getPoolID() {
             return poolID;
         }
+
         public String getName() {
             return name;
         }
+
         public String getType() {
             return type;
         }
+
         public List<Pair<Double, List<String>>> getQualityListGroupConfigs() {
             return qualityListGroupConfigs;
         }
+
         private final int poolID;
         private final String name;
         private final String type;
@@ -100,14 +106,17 @@ public class LotteryManager {
             return qualityBgList[qualityBgList.length - 1];
         return qualityBgList[index];
     }
-    /** 检查玩家的抽奖次数 > 0*/
+
+    /** 检查玩家的抽奖次数 > 0 */
     public boolean canRoll(ServerPlayer player) {
-        if(player == null)
+        if (player == null)
             return false;
 
-        LotteryRecordData lotteryRecordData = LotteryRecordStorage.getInstance().getPlayerLotteryRecord(player.getUUID());
+        LotteryRecordData lotteryRecordData = LotteryRecordStorage.getInstance()
+                .getPlayerLotteryRecord(player.getUUID());
         return lotteryRecordData.lotteryChance > 0;
     }
+
     /** 添加抽奖机会 */
     public void addOrDegreeLotteryChance(ServerPlayer player, int chance) {
         LotteryRecordStorage.getInstance().updatePlayerLotteryData(player.getUUID(),
@@ -118,105 +127,96 @@ public class LotteryManager {
     /**
      * 添加卡池
      * <p>
-     *     NOTE:
-     *      该函数用于客户端初次同步服务端卡池，而不是用来运行时添加卡池的；具体而言：
-     *          指客户端首次打开抽奖界面会发送完整卡池信息，客户端保存缓存（仅内存），下次访问卡池信息时会从缓存中读取而不用再发送卡池信息
-     *     TODO:未来需要将卡池信息缓存为本地文件，每次启动自动读取，调用时与服务器卡池信息文件hash值进行对比同步，进一步减少发包
+     * NOTE:
+     * 该函数用于客户端初次同步服务端卡池，而不是用来运行时添加卡池的；具体而言：
+     * 指客户端首次打开抽奖界面会发送完整卡池信息，客户端保存缓存（仅内存），下次访问卡池信息时会从缓存中读取而不用再发送卡池信息
+     * TODO:未来需要将卡池信息缓存为本地文件，每次启动自动读取，调用时与服务器卡池信息文件hash值进行对比同步，进一步减少发包
      * </p>
      */
-    public void addLotteryPool(LotteryPool lotteryPool)
-    {
+    public void addLotteryPool(LotteryPool lotteryPool) {
         lotteryPoolList.add(lotteryPool);
     }
-    public List<Integer> getPoolIDs(){
+
+    public List<Integer> getPoolIDs() {
         List<Integer> poolIDs = new ArrayList<>();
-        for(LotteryPool lotteryPool : lotteryPoolList)
-        {
+        for (LotteryPool lotteryPool : lotteryPoolList) {
             poolIDs.add(lotteryPool.getPoolID());
         }
         return poolIDs;
     }
+
     /** 获取指定 ID的卡池 */
-    public LotteryPool getLotteryPool(int poolID)
-    {
-        for(LotteryPool lotteryPool : lotteryPoolList)
-        {
-            if(lotteryPool.getPoolID() == poolID)
-            {
+    public LotteryPool getLotteryPool(int poolID) {
+        for (LotteryPool lotteryPool : lotteryPoolList) {
+            if (lotteryPool.getPoolID() == poolID) {
                 return lotteryPool;
             }
         }
         return null;
     }
-    public List<LotteryPool> getLotteryPools()
-    {
+
+    public List<LotteryPool> getLotteryPools() {
         return lotteryPoolList;
     }
-    public void setLotteryPoolByID(int poolID, LotteryPool lotteryPool)
-    {
-        for(int i = 0; i < lotteryPoolList.size(); ++i)
-        {
-            if(lotteryPoolList.get(i).poolID == poolID)
-            {
+
+    public void setLotteryPoolByID(int poolID, LotteryPool lotteryPool) {
+        for (int i = 0; i < lotteryPoolList.size(); ++i) {
+            if (lotteryPoolList.get(i).poolID == poolID) {
                 lotteryPoolList.set(i, lotteryPool);
                 return;
             }
         }
     }
+
     public void sortPools() {
         lotteryPoolList.sort(Comparator.comparingInt(LotteryPool::getPoolID));
     }
-    // TODO : 会优先读取本地数据，理论上没有人有本地配置因此不影响向服务器请求，但是如果本地真有配置，就会顶掉对应id的卡池，甚至有服务器不存在的卡池会导致未知情况
-    private void init()
-    {
+
+    // TODO :
+    // 会优先读取本地数据，理论上没有人有本地配置因此不影响向服务器请求，但是如果本地真有配置，就会顶掉对应id的卡池，甚至有服务器不存在的卡池会导致未知情况
+    private void init() {
         // 为了让单人测试也生效，暂时让客户端也能读取配置，并且未来可以加入本地数据存储，进行卡池信息hash值对比更新，也能减少数据传输量
-//        // 仅运行在服务端
-//        if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-//        {
-//            return;
-//        }
+        // // 仅运行在服务端
+        // if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+        // {
+        // return;
+        // }
         // 配置文件应该存放在主目录lottery_data目录下的lottery_pool.json文件中
         Path configPath = LotteryRecordStorage.getInstance().getLotteryDataDir().resolve("lottery_pool.json");
         LotteryPoolsConfig lotteryPoolsConfig = LotteryPoolsConfigParser.parse(configPath);
-        if(lotteryPoolsConfig == null || lotteryPoolsConfig.getPools().isEmpty())
-        {
+        if (lotteryPoolsConfig == null || lotteryPoolsConfig.getPools().isEmpty()) {
             Noellesroles.LOGGER.error("[LootSys] No valid pool configuration found.Path:{}", configPath);
             return;
         }
-        for (LotteryPoolsConfig.PoolConfig poolConfig : lotteryPoolsConfig.getPools())
-        {
+        for (LotteryPoolsConfig.PoolConfig poolConfig : lotteryPoolsConfig.getPools()) {
             // 验证配置数据
-            try{
-                if(!poolConfig.isEnable())
+            try {
+                if (!poolConfig.isEnable())
                     continue;
-                if(poolConfig.getPoolName() == null || poolConfig.getPoolName().isEmpty())
-                {
+                if (poolConfig.getPoolName() == null || poolConfig.getPoolName().isEmpty()) {
                     Noellesroles.LOGGER.error("[LootSys] Pool name is null or empty.");
                     continue;
                 }
-                if(poolConfig.getPoolType() == null || poolConfig.getPoolType().isEmpty())
-                {
+                if (poolConfig.getPoolType() == null || poolConfig.getPoolType().isEmpty()) {
                     Noellesroles.LOGGER.error("[LootSys] Pool type is null or empty.");
                     continue;
                 }
                 Double sumProbability = 0.0;
-                for(LotteryPoolsConfig.PoolConfig.QualityListItemConfig qualityListItemConfig : poolConfig.getQualityListGroup())
-                {
-                    if(qualityListItemConfig.getItemList() == null || qualityListItemConfig.getItemList().isEmpty())
-                    {
+                for (LotteryPoolsConfig.PoolConfig.QualityListItemConfig qualityListItemConfig : poolConfig
+                        .getQualityListGroup()) {
+                    if (qualityListItemConfig.getItemList() == null || qualityListItemConfig.getItemList().isEmpty()) {
                         Noellesroles.LOGGER.error("[LootSys] Quality list is null or empty.");
                         continue;
                     }
-                    if(qualityListItemConfig.getProbability() == null || qualityListItemConfig.getProbability() <= 0)
-                    {
+                    if (qualityListItemConfig.getProbability() == null || qualityListItemConfig.getProbability() <= 0) {
                         Noellesroles.LOGGER.error("[LootSys] Quality list probability is null or <= 0.");
                         continue;
                     }
                     sumProbability += qualityListItemConfig.getProbability();
                 }
-                if(sumProbability < 0.999 || sumProbability > 1.001)
-                {
-                    Noellesroles.LOGGER.error("[LootSys] Quality list probability sum({}) is not equal to 1.", sumProbability);
+                if (sumProbability < 0.999 || sumProbability > 1.001) {
+                    Noellesroles.LOGGER.error("[LootSys] Quality list probability sum({}) is not equal to 1.",
+                            sumProbability);
                     continue;
                 }
                 LotteryPool pool = new LotteryPool(
@@ -224,20 +224,21 @@ public class LotteryManager {
                         poolConfig.getQualityListGroup());
                 // 将卡池添加进列表
                 this.lotteryPoolList.add(pool);
-                Noellesroles.LOGGER.info("[LootSys] Loaded pool:ID:{},Name{},Type{}", pool.poolID, pool.name, pool.type);
-            }
-            catch (Exception e){
+                Noellesroles.LOGGER.info("[LootSys] Loaded pool:ID:{},Name{},Type{}", pool.poolID, pool.name,
+                        pool.type);
+            } catch (Exception e) {
                 Noellesroles.LOGGER.error("[LootSys] Failed to parse pool config : {}", poolConfig.getPoolName(), e);
             }
         }
         Noellesroles.LOGGER.info("[LootSys] Loaded {} pools.", lotteryPoolList.size());
     }
 
-    private LotteryManager(){
+    private LotteryManager() {
         init();
     };
-    public static LotteryManager getInstance(){
-        if(instance == null)
+
+    public static LotteryManager getInstance() {
+        if (instance == null)
             instance = new LotteryManager();
         return instance;
     }
