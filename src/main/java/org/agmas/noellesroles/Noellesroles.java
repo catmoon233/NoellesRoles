@@ -1,11 +1,13 @@
 package org.agmas.noellesroles;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.init.*;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
@@ -123,6 +125,8 @@ public class Noellesroles implements ModInitializer {
 
         // 注册方块
         ModBlocks.initialize();
+
+        TMMGameModes.registerGameMode(ChairWheelRaceGame.identifier, new ChairWheelRaceGame());
 
         // 注册血液粒子工厂
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, Noellesroles.id("deathblood"),

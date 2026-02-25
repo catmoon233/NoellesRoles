@@ -179,6 +179,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "bandit"),
             BanditPlayerComponent.class);
 
+    public static final ComponentKey<BloodFeudistPlayerComponent> BLOOD_FEUDIST = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "blood_feudist"),
+            BloodFeudistPlayerComponent.class);
+
     public ModComponents() {
         // CCA 需要无参构造函数
     }
@@ -375,6 +379,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, BANDIT)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(BanditPlayerComponent::new);
+
+        // 注册仇杀客组件
+        registry.beginRegistration(Player.class, BLOOD_FEUDIST)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(BloodFeudistPlayerComponent::new);
 
         // ==================== 示例：注册更多组件 ====================
         //

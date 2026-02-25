@@ -14,6 +14,7 @@ import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.BoxerPlayerComponent;
 import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
+import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
@@ -506,6 +507,16 @@ public class ModEventsRegister {
                                 || deathReason.getPath().equals("knife_stab")
                                 || deathReason.getPath().equals("fell_out_of_train")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
+
+                            // 仇杀客事件：误杀发生时强化仇杀客
+                            for (Player player : victim.level().players()) {
+                                if (gameWorldComponent.isRole(player, ModRoles.BLOOD_FEUDIST)) {
+                                    BloodFeudistPlayerComponent bfComp = ModComponents.BLOOD_FEUDIST.get(player);
+                                    if (bfComp != null) {
+                                        bfComp.onAccidentalKill();
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -729,6 +740,9 @@ public class ModEventsRegister {
             }
         });
         ModdedRoleAssigned.EVENT.register((player, role) -> {
+            // 初始化仇杀客事件
+            BloodFeudistPlayerComponent.registerEvents();
+
             if (role.identifier().equals(ModRoles.THIEF.identifier())) {
                 int totalPlayers = player.level().players().size();
                 org.agmas.noellesroles.roles.thief.ThiefPlayerComponent.honorCost = org.agmas.noellesroles.roles.thief.ThiefPlayerComponent

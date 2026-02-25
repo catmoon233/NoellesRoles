@@ -19,7 +19,7 @@ import net.minecraft.world.phys.HitResult;
 public class AntidoteChargeItem implements ChargeableItem {
     @Override
     public int getMaxChargeTime(ItemStack itemStack, Player player) {
-        return 10;
+        return 6;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class AntidoteChargeItem implements ChargeableItem {
 
     @Override
     public float getMaxStamina(ItemStack stack, Player player) {
-        return 10;
+        return 6;
     }
 
     @Override

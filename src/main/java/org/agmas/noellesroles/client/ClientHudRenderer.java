@@ -3,7 +3,9 @@ package org.agmas.noellesroles.client;
 import java.awt.Color;
 
 import org.agmas.noellesroles.AttendantHandler;
+import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
+import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHudRender;
@@ -254,6 +256,62 @@ public class ClientHudRenderer {
             var modeInfo = Component.translatable("hud.thief.current_mode").withStyle(ChatFormatting.WHITE);
             guiGraphics.drawString(font, modeInfo, xOffset - font.width(modeInfo) - font.width(modeText), dy, Color.WHITE.getRGB());
             guiGraphics.drawString(font, modeText, xOffset - font.width(modeText), dy, Color.WHITE.getRGB());
+        });
+
+        // 仇杀客HUD
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            var client = Minecraft.getInstance();
+            if (client == null) return;
+            if (client.player == null) return;
+            if (TMMClient.gameComponent == null || !TMMClient.gameComponent.isRole(client.player, ModRoles.BLOOD_FEUDIST)) {
+                return;
+            }
+
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+
+            BloodFeudistPlayerComponent bfComponent = ModComponents.BLOOD_FEUDIST.maybeGet(client.player).orElse(null);
+            if (bfComponent == null) return;
+
+            int dy = yOffset;
+
+            // 显示误杀人数
+            var killText = Component.translatable("hud.blood_feudist.accidental_kills", bfComponent.getAccidentalKillCount())
+                    .withStyle(ChatFormatting.RED);
+            guiGraphics.drawString(font, killText, xOffset - font.width(killText), dy, Color.WHITE.getRGB());
+            dy -= font.lineHeight - 2;
+
+            // 显示速度状态
+            if (bfComponent.hasSpeed1() || bfComponent.hasSpeed2()) {
+                Component speedLabel = bfComponent.hasSpeed2() ?
+                        Component.translatable("hud.blood_feudist.speed2") :
+                        Component.translatable("hud.blood_feudist.speed1");
+                Component speedStatus = bfComponent.isSpeedEnabled() ?
+                        Component.translatable("hud.blood_feudist.enabled").withStyle(ChatFormatting.GREEN) :
+                        Component.translatable("hud.blood_feudist.disabled").withStyle(ChatFormatting.GRAY);
+                Component speedText = Component.literal("").append(speedLabel).append(speedStatus);
+                guiGraphics.drawString(font, speedText, xOffset - font.width(speedText), dy, Color.WHITE.getRGB());
+                dy -= font.lineHeight - 2;
+            }
+
+            // 显示急迫状态
+            if (bfComponent.hasHaste2()) {
+                Component hasteLabel = Component.translatable("hud.blood_feudist.haste2");
+                Component hasteStatus = bfComponent.isHasteEnabled() ?
+                        Component.translatable("hud.blood_feudist.enabled").withStyle(ChatFormatting.GREEN) :
+                        Component.translatable("hud.blood_feudist.disabled").withStyle(ChatFormatting.GRAY);
+                Component hasteText = Component.literal("").append(hasteLabel).append(hasteStatus);
+                guiGraphics.drawString(font, hasteText, xOffset - font.width(hasteText), dy, Color.WHITE.getRGB());
+                dy -= font.lineHeight - 2;
+            }
+
+            // 显示技能提示
+            var readyText = Component.translatable("hud.blood_feudist.toggle_effects", NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                    .withStyle(ChatFormatting.YELLOW);
+            guiGraphics.drawString(font, readyText, xOffset - font.width(readyText), dy, Color.WHITE.getRGB());
         });
     }
 
