@@ -747,5 +747,7 @@
   "BUY": "BUY",
   "Collect": "Collect",
   "gui.vendingmachine.knob.tooltip": "%s",
-  "gui.vendingmachine.collect.tooltip": "%s"
+  "gui.vendingmachine.collect.tooltip": "%s",
+  "game.win.chair_wheel_race": "§a%s 赢得了比赛!",
+  "game.win.chair_wheel_race.subtitle": "§7有人达到了终点，比赛结束！"
 }

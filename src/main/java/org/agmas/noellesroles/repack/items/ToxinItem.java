@@ -38,7 +38,7 @@ public class ToxinItem extends Item {
 
     public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
         if (!user.isSpectator()) {
-            if (remainingUseTicks < this.getUseDuration(stack, user) - 1 && user instanceof Player) {
+            if (remainingUseTicks < this.getUseDuration(stack, user) - 6 && user instanceof Player) {
                 Player attacker = (Player) user;
                 if (!world.isClientSide) {
                     HitResult collision = getToxinTarget(attacker);
@@ -91,7 +91,7 @@ public class ToxinItem extends Item {
 
             var10000 = false;
             return var10000;
-        }, (double) 12.0F);
+        }, (double) 15.0F);
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
