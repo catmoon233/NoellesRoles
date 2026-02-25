@@ -86,10 +86,8 @@ public class RoleInitialItems {
         looseItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
         looseItems.add(() -> TMMItems.DERRINGER.getDefaultInstance());
         looseItems.add(() -> TMMItems.KNIFE.getDefaultInstance());
-        looseItems.add(() -> TMMItems.DEFENSE_VIAL.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(TMMRoles.LOOSE_END, looseItems);
 
-        // // 红尘客
         // List<Supplier<ItemStack>> wayfarerItems = new ArrayList<>();
         // wayfarerItems.add(() -> ModItems.FAKE_REVOLVER.getDefaultInstance());
         // INITIAL_ITEMS_MAP.put(ModRoles.WAYFARER, wayfarerItems);
