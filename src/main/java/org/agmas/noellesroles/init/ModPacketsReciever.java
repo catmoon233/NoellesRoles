@@ -60,7 +60,6 @@ public class ModPacketsReciever {
             context.server().execute(() -> {
                 try {
 
-
                     ServerPlayer player = context.player();
                     ServerLevel serverLevel = player.serverLevel();
                     BlockEntity blockEntity = serverLevel.getBlockEntity(payload.blockPos());
@@ -74,45 +73,67 @@ public class ModPacketsReciever {
                         }).findFirst().ifPresent(entry -> {
                             PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(player);
                             if (playerShopComponent.balance < entry.price()) {
-                                player.displayClientMessage(Component.translatable("noellesroles.not_enough_money").withStyle(ChatFormatting.RED), true);
-                                ServerPlayNetworking.send(player, new VendingBuyMessageCallBackS2CPacket("not_enough_money"));
-                                player.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY_FAIL), SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F, 0.9F + player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
-                                player.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY), SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F, 0.9F + player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
-                                TMM.REPLAY_MANAGER.recordStoreBuy(player.getUUID(), BuiltInRegistries.ITEM.getKey(entry.stack().getItem()), entry.stack().getCount(), entry.price());
+                                player.displayClientMessage(Component.translatable("noellesroles.not_enough_money")
+                                        .withStyle(ChatFormatting.RED), true);
+                                ServerPlayNetworking.send(player,
+                                        new VendingBuyMessageCallBackS2CPacket("not_enough_money"));
+                                player.connection.send(new ClientboundSoundPacket(
+                                        BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY_FAIL),
+                                        SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F,
+                                        0.9F + player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
+                                player.connection.send(new ClientboundSoundPacket(
+                                        BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY),
+                                        SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F,
+                                        0.9F + player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
+                                TMM.REPLAY_MANAGER.recordStoreBuy(player.getUUID(),
+                                        BuiltInRegistries.ITEM.getKey(entry.stack().getItem()),
+                                        entry.stack().getCount(), entry.price());
                                 return;
                             } else {
                                 if (entry.onBuy(player)) {
                                     playerShopComponent.addToBalance(-entry.price());
-                                    player.displayClientMessage(Component.translatable("noellesroles.bought_item").withStyle(ChatFormatting.GREEN), true);
-                                    ServerPlayNetworking.send(player, new VendingBuyMessageCallBackS2CPacket("noellesroles.bought_item"));
+                                    player.displayClientMessage(Component.translatable("noellesroles.bought_item")
+                                            .withStyle(ChatFormatting.GREEN), true);
+                                    ServerPlayNetworking.send(player,
+                                            new VendingBuyMessageCallBackS2CPacket("noellesroles.bought_item"));
 
                                 } else {
-                                    player.displayClientMessage(Component.translatable("noellesroles.cant_buy_item").withStyle(ChatFormatting.RED), true);
-                                    ServerPlayNetworking.send(player, new VendingBuyMessageCallBackS2CPacket("noellesroles.cant_buy_item"));
-                                    player.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY_FAIL), SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F, 0.9F +player.getRandom().nextFloat() * 0.2F, player.getRandom().nextLong()));
+                                    player.displayClientMessage(Component.translatable("noellesroles.cant_buy_item")
+                                            .withStyle(ChatFormatting.RED), true);
+                                    ServerPlayNetworking.send(player,
+                                            new VendingBuyMessageCallBackS2CPacket("noellesroles.cant_buy_item"));
+                                    player.connection.send(new ClientboundSoundPacket(
+                                            BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY_FAIL),
+                                            SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F,
+                                            0.9F + player.getRandom().nextFloat() * 0.2F,
+                                            player.getRandom().nextLong()));
 
                                 }
                             }
 
                         });
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         });
         ServerPlayNetworking.registerGlobalReceiver(ChefCookC2SPacket.ID, (payload, context) -> {
             final var player = context.player();
-            TMMItemUtils.clearItem(player, (food) -> {
+            int foodT = TMMItemUtils.clearItem(player, (food) -> {
                 if (food.getItem() instanceof CocktailItem)
                     return false;
                 if (food.has(ModDataComponentTypes.COOKED))
                     return false;
                 return food.has(DataComponents.FOOD);
             }, 1);
-            TMMItemUtils.clearItem(player, ModItems.FOOD_STUFF, 1);
+            int stuffT = TMMItemUtils.clearItem(player, ModItems.FOOD_STUFF, 2);
+            if (!(foodT >= 1 && stuffT >= 2)) {
+                player.displayClientMessage(Component.translatable("screen.noellesroles.chef.not_enough_food_stuff").withStyle(ChatFormatting.RED), true);
+                return;
+            }
             var cooked_food = ModItems.COOKED_FOOD.getDefaultInstance();
-            cooked_food.set(ModDataComponentTypes.COOKED,ModDataComponentTypes.cookedFood(payload.cookInfo()));
+            cooked_food.set(ModDataComponentTypes.COOKED, ModDataComponentTypes.cookedFood(payload.cookInfo()));
             ChefFoodItem.randomModel(cooked_food);
             RoleUtils.insertStackInFreeSlot(player, cooked_food);
         });
@@ -243,7 +264,7 @@ public class ModPacketsReciever {
                 if (payload.player() != null && payload.player2() != null) {
                     if (context.player().level().getPlayerByUUID(payload.player()) != null &&
                             context.player().level().getPlayerByUUID(payload.player2()) != null) {
-                        
+
                         SwapperPlayerComponent swapperComponent = ModComponents.SWAPPER.get(context.player());
                         if (!swapperComponent.isSwapping) {
                             swapperComponent.startSwap(payload.player(), payload.player2());
