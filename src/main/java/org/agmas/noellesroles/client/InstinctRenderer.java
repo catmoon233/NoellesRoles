@@ -104,12 +104,15 @@ public class InstinctRenderer {
             if (GameFunctions.isPlayerSpectatingOrCreative(Minecraft.getInstance().player))
                 return -1;
             Player player = Minecraft.getInstance().player;
+            if (TMMClient.gameComponent.isRole(Minecraft.getInstance().player, SERoles.INITIATE)) {
+                return -1;
+            }
             if (TMMItemUtils.hasItem(player, TMMItems.KNIFE) <= 0) {
-                return -2;
+                return -1;
             }
             if (target instanceof Player targettedPlayer) {
-                if (TMMClient.gameComponent.isRole(targettedPlayer, SERoles.INITIATE)
-                        && TMMClient.gameComponent.isRole(Minecraft.getInstance().player, SERoles.INITIATE)) {
+                if (TMMClient.gameComponent.isRole(targettedPlayer, SERoles.INITIATE)) {
+
                     return (SERoles.INITIATE.color());
                 }
             }
@@ -225,11 +228,6 @@ public class InstinctRenderer {
             }
             if (target instanceof Player target_player) {
                 // 不开直觉，默认有
-                // 风精灵
-                if (TMMClient.gameComponent.isRole(self, ModRoles.WIND_YAOSE)) {
-                    return ModRoles.WIND_YAOSE.getColor();
-                }
-
                 // 红尘客
                 if (TMMClient.gameComponent.isRole(self, ModRoles.WAYFARER)) {
                     if (GameFunctions.isPlayerAliveAndSurvival(target_player)) {
@@ -326,6 +324,10 @@ public class InstinctRenderer {
                 // 直觉看不到旁观
                 if ((target_player).isSpectator())
                     return -2;
+                // 风精灵
+                if (TMMClient.gameComponent.isRole(self, ModRoles.WIND_YAOSE)) {
+                    return ModRoles.WIND_YAOSE.getColor();
+                }
                 // 傀儡师
                 PuppeteerPlayerComponent selfPuppeteerComp = ModComponents.PUPPETEER.get(self);
                 if (selfPuppeteerComp.isPuppeteerMarked && TMMClient.isPlayerAliveAndInSurvival()
@@ -406,7 +408,7 @@ public class InstinctRenderer {
                         }
                         if (target_player.distanceTo(self) <= 5) {
                             var role = TMMClient.gameComponent.getRole(target_player);
-                            if (role!=null && role.isVigilanteTeam()) {
+                            if (role != null && role.isVigilanteTeam()) {
                                 return new Color(63, 72, 204).getRGB();
                             }
                         }
