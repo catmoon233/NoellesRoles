@@ -193,7 +193,7 @@ public class ViewLotteryPoolScreen extends AbstractPixelScreen{
         return true;
     }
     public static final ResourceLocation VIEW_POOL_BG_RESOURCE_LOCATION = ResourceLocation.fromNamespaceAndPath(
-            "noellesroles","textures/gui/view_pool_bg.png"
+            "noellesroles","textures/gui/loot/view_pool_bg.png"
     );
     @Override
     public void onClose() {
