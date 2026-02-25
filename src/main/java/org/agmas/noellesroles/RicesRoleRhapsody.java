@@ -8,6 +8,7 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -355,7 +356,7 @@ public class RicesRoleRhapsody implements ModInitializer {
                 offHand.shrink(1);
             }
         });
-        
+
         // 处理邮差传递包
         ServerPlayNetworking.registerGlobalReceiver(POSTMAN_PACKET, (payload, context) -> {
             // 验证玩家存活
@@ -1083,27 +1084,7 @@ public class RicesRoleRhapsody implements ModInitializer {
      */
     private static void consumeDeliveryBox(Player postmanPlayer) {
         // 先检查主手
-        ItemStack mainHand = postmanPlayer.getMainHandItem();
-        if (mainHand.is(ModItems.DELIVERY_BOX)) {
-            mainHand.shrink(1);
-            return;
-        }
-
-        // 再检查副手
-        ItemStack offHand = postmanPlayer.getOffhandItem();
-        if (offHand.is(ModItems.DELIVERY_BOX)) {
-            offHand.shrink(1);
-            return;
-        }
-
-        // 最后遍历背包
-        for (int i = 0; i < postmanPlayer.getInventory().getContainerSize(); i++) {
-            ItemStack stack = postmanPlayer.getInventory().getItem(i);
-            if (stack.is(ModItems.DELIVERY_BOX)) {
-                stack.shrink(1);
-                return;
-            }
-        }
+        TMMItemUtils.clearItem(postmanPlayer, ModItems.DELIVERY_BOX, 1);
     }
 
     /**
