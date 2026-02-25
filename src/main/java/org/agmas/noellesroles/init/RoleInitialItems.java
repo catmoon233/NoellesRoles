@@ -83,10 +83,9 @@ public class RoleInitialItems {
 
         // 亡命徒初始物品
         List<Supplier<ItemStack>> looseItems = new ArrayList<>();
-        looseItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
-        looseItems.add(() -> TMMItems.DERRINGER.getDefaultInstance());
-        looseItems.add(() -> TMMItems.KNIFE.getDefaultInstance());
-        looseItems.add(() -> TMMItems.DEFENSE_VIAL.getDefaultInstance());
+        looseItems.add(TMMItems.CROWBAR::getDefaultInstance);
+        looseItems.add(TMMItems.DERRINGER::getDefaultInstance);
+        looseItems.add(TMMItems.KNIFE::getDefaultInstance);
         INITIAL_ITEMS_MAP.put(TMMRoles.LOOSE_END, looseItems);
 
         // // 红尘客
