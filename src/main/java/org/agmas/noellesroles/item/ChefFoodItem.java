@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.agmas.noellesroles.ModDataComponentTypes;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 
 import dev.doctor4t.trainmurdermystery.cca.AbilityPlayerComponent;
@@ -45,6 +46,7 @@ public class ChefFoodItem extends Item {
     @Override
     public ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
         var map = ModDataComponentTypes.getCookedFoodInfo(itemStack.get(ModDataComponentTypes.COOKED));
+        Noellesroles.LOGGER.info("Size" + map.size());
         // buff1 发光
         // buff2 回san
         // buff3 减少技能冷却

@@ -26,7 +26,7 @@ public interface ModDataComponentTypes {
    public static Map<Integer, Float> getCookedFoodInfo(CompoundTag tag) {
       Map<Integer, Float> map = new HashMap<>();
       if (tag.contains("effects", Tag.TAG_LIST)) {
-         ListTag listTag = tag.getList("effects", Tag.TAG_LIST);
+         ListTag listTag = tag.getList("effects", Tag.TAG_COMPOUND);
          for (Tag i : listTag) {
             if (i.getId() == CompoundTag.TAG_COMPOUND) {
                CompoundTag _t = (CompoundTag) i;
@@ -43,8 +43,8 @@ public interface ModDataComponentTypes {
    public static CompoundTag cookedFood(Map<Integer, Float> map) {
       var tag = new CompoundTag();
       var listTag = new ListTag();
-      var _tag = new CompoundTag();
       for (var it : map.entrySet()) {
+         var _tag = new CompoundTag();
          _tag.putInt("id", it.getKey());
          _tag.putFloat("time", it.getValue());
          listTag.add(_tag);

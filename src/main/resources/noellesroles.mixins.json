@@ -39,6 +39,7 @@
     "roles.host.MoneyIncreaseMixin",
     "roles.insanekiller.PlayerNoBoxMixin",
     "roles.insanekiller.ProjectileUtilMixin",
+    "roles.insanekiller.InsaneShopMixin",
     "roles.jester.FakeRevolverMixin",
     "roles.jester.JesterItemEntityMixin",
     "roles.jester.JesterJestMixin",
@@ -75,7 +76,6 @@
     "client.roles.ConspiratorHudMixin",
     "client.roles.DetectiveHudMixin",
     "client.roles.GamblerHudMixin",
-
     "client.roles.MonitorHudMixin",
     "client.roles.PsychologistHudMixin",
     "client.roles.PuppeteerHudMixin",
@@ -124,6 +124,7 @@
     "client.roles.vulture.VultureEatenBodyMixin",
     "client.roles.vulture.VultureHudMixin",
     "client.roles.wayfarer.TargetEntityHudmixin",
+    "client.game.ChairWheelKeyMappingMixin",
     "roles.photographer.BlindnessEffectMixin"
   ],
   "overwrites": {

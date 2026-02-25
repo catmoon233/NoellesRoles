@@ -54,14 +54,14 @@ public class ChefStartGameScreen extends Screen {
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
         int buttonY = maxHeight / 2;
-        if (TMMItemUtils.hasItem(this.minecraft.player, ModItems.FOOD_STUFF) > 0
+        if (TMMItemUtils.hasItem(this.minecraft.player, ModItems.FOOD_STUFF) >= 2
                 && TMMItemUtils.hasItem(this.minecraft.player, (food) -> {
                     if (food.getItem() instanceof CocktailItem)
                         return false;
                     if (food.has(ModDataComponentTypes.COOKED))
                         return false;
                     return food.has(DataComponents.FOOD);
-                }) > 0) {
+                }) >= 1) {
             hasItem = true;
         }
         btn = Button.builder(Component.translatable("screen.noellesroles.chef.start"), (bbtn) -> {

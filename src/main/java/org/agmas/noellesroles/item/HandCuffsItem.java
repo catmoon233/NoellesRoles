@@ -48,7 +48,11 @@ public class HandCuffsItem extends Item {
             InteractionHand hand) {
         if (user.getOffhandItem().is(ModItems.HANDCUFFS))
             return InteractionResult.PASS;
-        if(user.level().isClientSide) return InteractionResult.SUCCESS;
+        if (user.getCooldowns().isOnCooldown(ModItems.HANDCUFFS))
+            return InteractionResult.PASS;
+        user.getCooldowns().addCooldown(ModItems.HANDCUFFS, 20);
+        if (user.level().isClientSide)
+            return InteractionResult.SUCCESS;
         if (entity instanceof Player target) {
             if (!target.getOffhandItem().isEmpty()) {
                 user.displayClientMessage(
