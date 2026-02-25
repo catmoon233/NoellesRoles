@@ -134,7 +134,7 @@ public class RoleShopHandler {
             // 老人的商店
             var SHOP = new ArrayList<ShopEntry>();
 
-            SHOP.add(new ShopEntry(ModItems.WHEELCHAIR.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            SHOP.add(new ShopEntry(ModItems.WHEELCHAIR.getDefaultInstance(), 150, ShopEntry.Type.TOOL));
             ShopContent.customEntries.put(ModRoles.OLDMAN.getIdentifier(), SHOP);
         }
         {
@@ -332,7 +332,7 @@ public class RoleShopHandler {
         }
         {
             var shopEntries = new ArrayList<ShopEntry>();
-            shopEntries.add(new ShopEntry(TMMItems.KNIFE.getDefaultInstance(), 200, ShopEntry.Type.TOOL));
+            shopEntries.add(new ShopEntry(TMMItems.KNIFE.getDefaultInstance(), 220, ShopEntry.Type.TOOL));
             shopEntries.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
             shopEntries.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), 500, ShopEntry.Type.TOOL));
             shopEntries.add(new ShopEntry(TMMItems.NOTE.getDefaultInstance(), 15, ShopEntry.Type.TOOL));
