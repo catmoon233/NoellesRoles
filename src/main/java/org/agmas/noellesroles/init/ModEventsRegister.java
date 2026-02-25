@@ -1184,6 +1184,8 @@ public class ModEventsRegister {
                     && TMMClient.gameComponent.getGameMode() instanceof ChairWheelRaceGame;
         });
         TMM.canUseOtherPerson.add((role -> role.getIdentifier()
+                .equals(TMMRoles.DISCOVERY_CIVILIAN.getIdentifier())));
+        TMM.canUseOtherPerson.add((role -> role.getIdentifier()
                 .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID)));
         TMM.canUseOtherPerson.add((role -> role.getIdentifier()
                 .equals(ModRoles.MANIPULATOR_ID)));
