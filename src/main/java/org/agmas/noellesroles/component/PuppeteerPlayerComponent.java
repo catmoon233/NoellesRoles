@@ -373,6 +373,8 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
         final var availableKillerRoles = getAvailableKillerRoles();
         availableKillerRoles.removeIf(a -> a.getIdentifier().equals(ModRoles.STALKER_ID));
         availableKillerRoles.removeIf(a -> a.getIdentifier().equals(ModRoles.POISONER_ID));
+        availableKillerRoles.removeIf(a -> a.getIdentifier()
+                .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID));
 
         if (availableKillerRoles.isEmpty()) {
             // 如果没有可用的杀手角色，使用原版杀手
