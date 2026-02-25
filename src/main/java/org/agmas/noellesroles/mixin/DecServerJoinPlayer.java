@@ -4,6 +4,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.ConfigWorldComponent;
@@ -40,6 +41,7 @@ public class DecServerJoinPlayer {
         (InsaneKillerPlayerComponent.KEY.get(serverPlayer)).reset();
         ((PlayerMoodComponent) PlayerMoodComponent.KEY.get(serverPlayer)).reset();
         ((PlayerShopComponent) PlayerShopComponent.KEY.get(serverPlayer)).reset();
+        (SplitPersonalityComponent.KEY.get(serverPlayer)).clear();
         ((PlayerPoisonComponent) PlayerPoisonComponent.KEY.get(serverPlayer)).reset();
         ((PlayerPsychoComponent) PlayerPsychoComponent.KEY.get(serverPlayer)).reset();
         ((PlayerNoteComponent) PlayerNoteComponent.KEY.get(serverPlayer)).reset();

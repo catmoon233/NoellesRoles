@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -114,7 +115,13 @@ public class RoleShopHandler {
         BLOOD_FEUDIST_SHOP.add(new ShopEntry(
                 TMMItems.PSYCHO_MODE.getDefaultInstance(),
                 275,
-                ShopEntry.Type.WEAPON));
+                ShopEntry.Type.WEAPON){
+                    @Override
+                    public boolean onBuy(Player player){
+                        var psycc = PlayerPsychoComponent.KEY.get(player);
+                        return psycc.startPsycho();
+                    }
+                });
     }
 
     public static void shopRegister() {

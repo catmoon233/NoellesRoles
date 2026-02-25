@@ -379,15 +379,12 @@ public class InstinctRenderer {
                     // 强盗直觉：只能透视半径10格内的玩家，透视杀手队友无距离限制
                     if (TMMClient.gameComponent.isRole(self, ModRoles.BANDIT)) {
                         // 检查目标是否是杀手队友
-                        if (target_role != null && target_role.canUseKiller()) {
+                        if (target_role != null && TMMClient.gameComponent.isKillerTeamRole(target_role)) {
                             // 杀手队友无距离限制
-                            return getRoleColor(target_role);
                         } else {
                             // 普通玩家只能透视10格内
-                            if (target_player.distanceTo(self) <= 10) {
-                                return getRoleColor(target_role);
-                            } else {
-                                return -1;
+                            if (target_player.distanceTo(self) >= 10) {
+                                return -2;
                             }
                         }
                     }
