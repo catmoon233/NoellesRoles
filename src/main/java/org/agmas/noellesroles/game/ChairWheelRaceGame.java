@@ -36,9 +36,11 @@ public class ChairWheelRaceGame extends GameMode {
     public static final ResourceLocation identifier = ResourceLocation.tryBuild("noellesroles", "chair_wheel_race");
     public static final int defaultStartTime = 5;
     public static final int minPlayerCount = 2;
+
     public ChairWheelRaceGame() {
         super(identifier, defaultStartTime, minPlayerCount);
     }
+
     private static void executeFunction(CommandSourceStack source, String function) {
         try {
             source.getServer().getCommands().performPrefixedCommand(source, "function " + function);
@@ -46,12 +48,13 @@ public class ChairWheelRaceGame extends GameMode {
             Log.warn(LogCategory.GENERAL, "Failed to execute function: " + function + ", error: " + e.getMessage());
         }
     }
-    public List<ServerPlayer> isWin = new ArrayList<>() ;
+
+    public List<ServerPlayer> isWin = new ArrayList<>();
 
     @Override
     public void tickServerGameLoop(ServerLevel serverLevel, GameWorldComponent gameWorldComponent) {
         // 倒计时逻辑
-        if(serverLevel.getGameTime()%60 == 0){
+        if (serverLevel.getGameTime() % 60 == 0) {
             for (ServerPlayer player : serverLevel.players()) {
                 PlayerAFKComponent.KEY.get(player).updateActivity();
             }
@@ -61,17 +64,14 @@ public class ChairWheelRaceGame extends GameMode {
             if (gamePrepareTime % 20 == 0) { // 每秒执行一次
                 int secondsLeft = gamePrepareTime / 20;
                 serverLevel.getServer().getCommands().performPrefixedCommand(
-                    serverLevel.getServer().createCommandSourceStack(),
-                    "title @a times 5 40 5"
-                );
+                        serverLevel.getServer().createCommandSourceStack(),
+                        "title @a times 5 40 5");
                 serverLevel.getServer().getCommands().performPrefixedCommand(
-                    serverLevel.getServer().createCommandSourceStack(),
-                    "title @a subtitle {\"text\":\"游戏即将开始: " + secondsLeft + " 秒\",\"color\":\"yellow\"}"
-                );
+                        serverLevel.getServer().createCommandSourceStack(),
+                        "title @a subtitle {\"text\":\"游戏即将开始: " + secondsLeft + " 秒\",\"color\":\"yellow\"}");
                 serverLevel.getServer().getCommands().performPrefixedCommand(
-                    serverLevel.getServer().createCommandSourceStack(),
-                    "title @a title {\"text\":\"准备!\"}"
-                );
+                        serverLevel.getServer().createCommandSourceStack(),
+                        "title @a title {\"text\":\"准备!\"}");
             }
         }
 
@@ -88,27 +88,32 @@ public class ChairWheelRaceGame extends GameMode {
                             op.playNotifySound(SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 1.0F, 1.0F);
                         });
                         serverLevel.getServer().getCommands().performPrefixedCommand(
-                            serverLevel.getServer().createCommandSourceStack(),
-                            "broadcast @a \"\\u00a76玩家 " + player.getScoreboardName() + " 到达了终点！ 排名" + (isWin.indexOf(player) + 1) + "\""
-                        );
-                        executeFunction(serverLevel.getServer().createCommandSourceStack(), "harpymodloader:chair_wheel_race/win");
+                                serverLevel.getServer().createCommandSourceStack(),
+                                "broadcast @a \"\\u00a76玩家 " + player.getScoreboardName() + " 到达了终点！ 排名"
+                                        + (isWin.indexOf(player) + 1) + "\"");
+                        executeFunction(serverLevel.getServer().createCommandSourceStack(),
+                                "harpymodloader:chair_wheel_race/win");
                     }
                 }
             }
         });
 
-        if (!((GameTimeComponent) GameTimeComponent.KEY.get(serverLevel)).hasTime() || isWin.size() >= serverLevel.getPlayers(GameFunctions::isPlayerAliveAndSurvival).size()) {
+        if (!((GameTimeComponent) GameTimeComponent.KEY.get(serverLevel)).hasTime()
+                || isWin.size() >= serverLevel.getPlayers(GameFunctions::isPlayerAliveAndSurvival).size()) {
             endGame(serverLevel, gameWorldComponent);
         }
     }
+
     int gamePrepareTime = 0;
-    public void endGame(ServerLevel serverLevel, GameWorldComponent gameWorldComponent){
+
+    public void endGame(ServerLevel serverLevel, GameWorldComponent gameWorldComponent) {
         var roundComponent = GameRoundEndComponent.KEY.get(serverLevel);
         roundComponent.CustomWinnerID = "chiar_wheel_race";
         // roundComponent
         var player = isWin.isEmpty() ? null : isWin.getFirst();
         roundComponent.CustomWinnerSubtitle = Component.translatable("game.win.chair_wheel_race.subtitle");
-        roundComponent.CustomWinnerTitle = Component.translatable("game.win.chair_wheel_race",player == null ? "滚木" : player.getScoreboardName());
+        roundComponent.CustomWinnerTitle = Component.translatable("game.win.chair_wheel_race",
+                player == null ? "滚木" : player.getScoreboardName());
         roundComponent.setWinStatus(GameFunctions.WinStatus.CUSTOM_COMPONENT);
         roundComponent.sync();
         executeFunction(serverLevel.getServer().createCommandSourceStack(), "harpymodloader:chair_wheel_race/over");
@@ -116,19 +121,21 @@ public class ChairWheelRaceGame extends GameMode {
     }
 
     @Override
-    public void initializeGame(ServerLevel serverLevel, GameWorldComponent gameWorldComponent, List<ServerPlayer> list) {
+    public void initializeGame(ServerLevel serverLevel, GameWorldComponent gameWorldComponent,
+            List<ServerPlayer> list) {
         GameInitializeEvent.EVENT.invoker().initializeGame(serverLevel, gameWorldComponent, list);
-        ((TrainWorldComponent)TrainWorldComponent.KEY.get(serverLevel)).setTimeOfDay(TrainWorldComponent.TimeOfDay.DAY);
+        ((TrainWorldComponent) TrainWorldComponent.KEY.get(serverLevel))
+                .setTimeOfDay(TrainWorldComponent.TimeOfDay.DAY);
         isWin.clear();
-        gamePrepareTime = 20*5;
+        gamePrepareTime = 20 * 5;
         executeFunction(serverLevel.getServer().createCommandSourceStack(), "harpymodloader:chair_wheel_race/init");
-        for(ServerPlayer player : list) {
+        for (ServerPlayer player : list) {
             player.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 20 * 5));
             gameWorldComponent.addRole(player, TMMRoles.DISCOVERY_CIVILIAN);
             var chair = new WheelchairEntity(ModEntities.WHEELCHAIR, serverLevel);
             chair.setPos(player.getX(), player.getY(), player.getZ());
             serverLevel.addFreshEntity(chair);
-            player.startRiding(chair,true);
+            player.startRiding(chair, true);
         }
     }
 }
