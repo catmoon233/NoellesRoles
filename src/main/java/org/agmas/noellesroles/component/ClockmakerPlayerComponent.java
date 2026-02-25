@@ -85,7 +85,7 @@ public class ClockmakerPlayerComponent implements RoleComponent, ServerTickingCo
      * @return 是否成功使用
      */
     public boolean useSkill() {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
+        if (!(player instanceof ServerPlayer)) {
             return false;
         }
 
