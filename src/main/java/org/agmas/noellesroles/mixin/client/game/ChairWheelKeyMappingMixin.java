@@ -35,7 +35,6 @@ public abstract class ChairWheelKeyMappingMixin {
                         this.same(Minecraft.getInstance().options.keyAttack) ||
                         this.same(Minecraft.getInstance().options.keyShift) ||
                         this.same(Minecraft.getInstance().options.keyInventory) ||
-                        this.same(Minecraft.getInstance().options.keyUse) ||
                         this.same(Minecraft.getInstance().options.keyDrop) ||
                         this.same(Minecraft.getInstance().options.keyAdvancements);
             }
