@@ -322,7 +322,7 @@ public class LootInfoScreen extends AbstractPixelScreen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         if (this.startPoolBtn == null) {
-            Minecraft.getInstance().setScreen(null);
+            onClose();
             return;
         }
         if (!initialized) {
