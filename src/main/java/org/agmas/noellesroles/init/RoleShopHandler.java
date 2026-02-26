@@ -637,6 +637,11 @@ public class RoleShopHandler {
                 HSRItems.ANTIDOTE.getDefaultInstance(),
                 75,
                 ShopEntry.Type.TOOL));
+        // 净化弹 - 300金币
+        DOCTOR_SHOP.add(new ShopEntry(
+                ModItems.PURIFY_BOMB.getDefaultInstance(),
+                300,
+                ShopEntry.Type.TOOL));
 
         // 乘务员商店
         // 乘务员钥匙 - 75金币

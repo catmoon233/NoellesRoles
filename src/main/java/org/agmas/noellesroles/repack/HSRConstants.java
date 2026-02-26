@@ -4,6 +4,7 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import org.jetbrains.annotations.NotNull;
+import org.agmas.noellesroles.init.ModItems;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ public class HSRConstants {
         POISONER_SHOP_ENTRIES.add(new ShopEntry(TMMItems.FIRECRACKER.getDefaultInstance(), 10, ShopEntry.Type.TOOL));
         // 开锁器/100
         POISONER_SHOP_ENTRIES.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+        // 氯气弹/350
+        POISONER_SHOP_ENTRIES.add(new ShopEntry(ModItems.CHLORINE_BOMB.getDefaultInstance(), 350, ShopEntry.Type.POISON));
         // 黑暗降临/150
         POISONER_SHOP_ENTRIES.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 150, ShopEntry.Type.TOOL) {
             public boolean onBuy(@NotNull Player player) {

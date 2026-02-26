@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.init;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
@@ -355,7 +356,7 @@ public class ModEventsRegister {
     }
 
     /**
-     * 处理医生死亡 - 将针管传递给另一名存活的平民
+     * 处理医生死亡 - 将针管和净化弹传递给另一名存活的平民
      */
     private static void handleDoctorDeath(Player victim) {
         if (victim == null || victim.level().isClientSide())
@@ -365,18 +366,20 @@ public class ModEventsRegister {
         if (!gameWorld.isRole(victim, ModRoles.DOCTOR))
             return;
 
-        // 查找医生背包中的针管
-        ItemStack antidote = null;
+        // 查找医生背包中的针管和净化弹
+        ArrayList<ItemStack> itemsToTransfer = new ArrayList<>();
         for (int i = 0; i < victim.getInventory().getContainerSize(); i++) {
             ItemStack stack = victim.getInventory().getItem(i);
             if (stack.getItem() == org.agmas.noellesroles.repack.HSRItems.ANTIDOTE) {
-                antidote = stack.copy();
+                itemsToTransfer.add(stack.copy());
                 victim.getInventory().setItem(i, ItemStack.EMPTY);
-                break;
+            } else if (stack.getItem() == org.agmas.noellesroles.init.ModItems.PURIFY_BOMB) {
+                itemsToTransfer.add(stack.copy());
+                victim.getInventory().setItem(i, ItemStack.EMPTY);
             }
         }
 
-        if (antidote == null || antidote.isEmpty())
+        if (itemsToTransfer.isEmpty())
             return;
 
         // 查找另一名存活的平民
@@ -394,12 +397,14 @@ public class ModEventsRegister {
             }
         }
 
-        // 如果找到存活的平民，传递针管
+        // 如果找到存活的平民，传递物品
         if (targetPlayer != null) {
-            targetPlayer.addItem(antidote);
+            for (ItemStack item : itemsToTransfer) {
+                targetPlayer.addItem(item);
+            }
             if (targetPlayer instanceof ServerPlayer serverTarget) {
                 serverTarget.displayClientMessage(
-                        Component.translatable("message.noellesroles.doctor.antidote_inherited",
+                        Component.translatable("message.noellesroles.doctor.items_inherited",
                                 victim.getName().getString())
                                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
                         true);

@@ -692,6 +692,7 @@
   "message.noellesroles.monitor.cooldown": "Skill on cooldown: %ss",
   "message.noellesroles.monitor.no_target": "Please aim at a player!",
   "message.noellesroles.doctor.antidote_inherited": "You inherited syringe from %s!",
+  "message.noellesroles.doctor.items_inherited": "You inherited items from %s!",
   "message.noellesroles.doctor.someone_toxin": "Someone near you is poisoned!",
   "message.noellesroles.monitor.target_not_found": "Target invalid or already dead!",
   "message.noellesroles.swapper.swapped": "Your position was swapped by Swapper!",
