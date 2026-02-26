@@ -12,6 +12,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -28,13 +29,14 @@ public class GameFunctionsCommand {
     CommandRegistrationCallback.EVENT.register(
         (dispatcher, registryAccess, environment) -> {
           dispatcher.register(Commands.literal("tmm:game").requires(source -> source.hasPermission(2))
-              .then(Commands.literal("win").then(Commands.argument("id", StringArgumentType.string())
+              .then(Commands.literal("win").then(Commands.argument("id", StringArgumentType.id()).then(
+              Commands.argument("color", ModColorArgument.color())
                   .executes(GameFunctionsCommand::executeWinWithOnlyId)
                   .then(Commands.argument("title", ComponentArgument.textComponent(registryAccess))
                       .then(Commands
                           .argument(
                               "subtitle", ComponentArgument.textComponent(registryAccess))
-                          .executes(GameFunctionsCommand::executeWinWithIdAndTitle)))))
+                          .executes(GameFunctionsCommand::executeWinWithIdAndTitle))))))
               .then(Commands.literal("reset").then(Commands.literal("normal").executes((context) -> {
                 GameFunctions.tryAutoTrainReset(context.getSource().getLevel());
                 context.getSource().sendSuccess(() -> Component.literal("Normal Reset(copy)!"), true);

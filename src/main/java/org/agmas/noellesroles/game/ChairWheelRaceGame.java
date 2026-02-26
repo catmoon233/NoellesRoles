@@ -7,8 +7,6 @@ import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerAFKComponent;
 import dev.doctor4t.trainmurdermystery.cca.TrainWorldComponent;
-import dev.doctor4t.trainmurdermystery.event.OnGameTrueStarted;
-import dev.doctor4t.trainmurdermystery.event.OnTrainAreaHaveReseted;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
@@ -87,6 +85,7 @@ public class ChairWheelRaceGame extends GameMode {
                             op.playNotifySound(SoundEvents.FIREWORK_ROCKET_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
                             op.playNotifySound(SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 1.0F, 1.0F);
                         });
+                        Component.translatable("announcement.wheelgame.win.prefix").append(Component.translatable("announcement.wheelgame.win.rank"));
                         serverLevel.getServer().getCommands().performPrefixedCommand(
                                 serverLevel.getServer().createCommandSourceStack(),
                                 "broadcast @a \"\\u00a76玩家 " + player.getScoreboardName() + " 到达了终点！ 排名"

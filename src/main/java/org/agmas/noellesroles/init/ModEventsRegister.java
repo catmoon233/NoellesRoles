@@ -34,7 +34,6 @@ import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.repack.HSRItems;
-import org.agmas.noellesroles.repack.items.BanditRevolverItem;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
@@ -51,7 +50,6 @@ import org.agmas.noellesroles.utils.ServerManager;
 import org.slf4j.LoggerFactory;
 
 import dev.doctor4t.trainmurdermystery.TMM;
-import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -1025,10 +1023,12 @@ public class ModEventsRegister {
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(p -> {
-                p.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, TMMConfig.revolverCooldown * 20);
+                p.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, 30 * 20);
+                p.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, 30 * 20);
+
                 p.addEffect(new MobEffectInstance(
                         MobEffects.WATER_BREATHING,
-                        (int) (5 * 20), // 持续时间 5s（tick）
+                        (int) (8 * 20), // 持续时间 5s（tick）
                         0, // 等级（0 = 速度 I）
                         true, // ambient（环境效果，如信标）
                         false, // showParticles（显示粒子）
@@ -1215,7 +1215,8 @@ public class ModEventsRegister {
         });
         TMM.cantPushableBy.add(entity -> {
             if (entity instanceof Player serverPlayer) {
-                if (serverPlayer.hasEffect(MobEffects.INVISIBILITY)) {
+                if (serverPlayer.hasEffect(MobEffects.INVISIBILITY)
+                        || serverPlayer.hasEffect(MobEffects.WATER_BREATHING)) {
                     return true;
                 } else {
                     var modifiers = WorldModifierComponent.KEY.get(serverPlayer.level());
@@ -1238,20 +1239,6 @@ public class ModEventsRegister {
             }
             return false;
         });
-        TMM.cantPushableBy.add(
-                entity -> {
-                    if (entity instanceof ServerPlayer serverPlayer) {
-                        var gameComp = GameWorldComponent.KEY.get(serverPlayer.level());
-                        if (gameComp != null) {
-                            if (gameComp.isRole(serverPlayer, ModRoles.GHOST)) {
-                                GhostPlayerComponent ghostPlayerComponent = GhostPlayerComponent.KEY.get(serverPlayer);
-                                return ghostPlayerComponent.isActive;
-                            }
-                        }
-
-                    }
-                    return false;
-                });
         TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
         });
