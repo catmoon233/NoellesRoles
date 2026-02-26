@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -41,6 +42,18 @@ public class HandCuffsItem extends Item {
                 }
             }
         }
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player user, InteractionHand interactionHand) {
+
+        if (user.getOffhandItem().is(ModItems.HANDCUFFS))
+            return InteractionResultHolder.pass(user.getItemInHand(interactionHand));
+        if (user.getCooldowns().isOnCooldown(ModItems.HANDCUFFS))
+            return InteractionResultHolder.pass(user.getItemInHand(interactionHand));
+        user.getCooldowns().addCooldown(ModItems.HANDCUFFS, 20);
+
+        return super.use(level, user, interactionHand);
     }
 
     @Override
