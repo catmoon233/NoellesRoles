@@ -410,7 +410,7 @@ public class ModEventsRegister {
         }
     }
 
-    private static boolean isEnabled = true;
+    private static boolean isEnabled = false;
 
     public static void registerEvents() {
         UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
