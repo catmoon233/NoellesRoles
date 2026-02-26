@@ -7,6 +7,9 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
 import org.agmas.noellesroles.utils.RoleUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.OptionalInt;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -243,6 +246,16 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
     /**
      * 偷物品（仿照StupidExpress2的小偷）
      */
+    public static class StolenableItemInfo {
+        public int slot;
+        public ItemStack itemStack;
+
+        public StolenableItemInfo(int slot, ItemStack itemStack) {
+            this.slot = slot;
+            this.itemStack = itemStack;
+        }
+    }
+
     private boolean stealItem(Player target) {
         if (!(player instanceof ServerPlayer serverPlayer) || !(target instanceof ServerPlayer targetPlayer)) {
             return false;
@@ -258,15 +271,18 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         }
 
         // 统计可偷取物品数量
-        int count = 0;
-        for (ItemStack stack : target.getInventory().items) {
-            if (!stack.isEmpty() && canStealItem(stack)) {
-                count++;
+        var gameWorldComponent = GameWorldComponent.KEY.get(target.level());
+
+        ArrayList<StolenableItemInfo> arr = new ArrayList<>();
+        for (int i = 0; i < target.getInventory().items.size(); i++) {
+            ItemStack stack = target.getInventory().items.get(i);
+            if (!stack.isEmpty() && canStealItem(stack, target, gameWorldComponent)) {
+                arr.add(new StolenableItemInfo(i, stack));
             }
         }
 
         // 如果没有可偷物品
-        if (count == 0) {
+        if (arr.size() <= 0) {
             serverPlayer.displayClientMessage(
                     Component.translatable("message.noellesroles.thief.no_stealable_items",
                             target.getDisplayName())
@@ -274,60 +290,33 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                     true);
             return true; // 没有物品可偷，不进入冷却
         }
+        Collections.shuffle(arr);
 
-        // 随机选择一个物品
-        int targetIndex = player.getRandom().nextInt(count);
-        int currentIndex = 0;
-        int slotIndex = -1;
-        ItemStack stolenItem = ItemStack.EMPTY;
+        StolenableItemInfo stoleninfo = arr.getFirst();
 
-        for (int i = 0; i < target.getInventory().items.size(); i++) {
-            ItemStack stack = target.getInventory().items.get(i);
-            if (!stack.isEmpty() && canStealItem(stack)) {
-                if (currentIndex == targetIndex) {
-                    slotIndex = i;
-                    stolenItem = stack.copy();
-                    break;
-                }
-                currentIndex++;
-            }
-        }
-
-        if (slotIndex == -1 || stolenItem.isEmpty()) {
+        if (stoleninfo.slot == -1 || stoleninfo.itemStack.isEmpty()) {
             return true;
         }
 
         // 先获取物品名称（在移除之前）
-        Component itemName = stolenItem.getDisplayName();
-
-        // 从目标物品栏移除物品
-        target.getInventory().items.set(slotIndex, ItemStack.EMPTY);
+        Component itemName = stoleninfo.itemStack.getDisplayName();
 
         // 检查小偷背包是否有空间
-        boolean canAdd = false;
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack slot = player.getInventory().getItem(i);
-            if (slot.isEmpty()) {
-                canAdd = true;
-                break;
-            }
+        if (stoleninfo.itemStack.is(TMMItems.BAT)) {
+            stoleninfo.itemStack = ItemStack.EMPTY;
         }
+        boolean canAdd = RoleUtils.insertStackInFreeSlot(targetPlayer, stoleninfo.itemStack.copy());
 
         if (!canAdd) {
             // 背包满了，归还物品给目标
-            target.getInventory().items.set(slotIndex, stolenItem);
             serverPlayer.displayClientMessage(
                     Component.translatable("message.noellesroles.thief.inventory_full")
                             .withStyle(ChatFormatting.RED),
                     true);
             return true; // 失败不进入冷却
+        } else {
+            target.getInventory().items.set(stoleninfo.slot, ItemStack.EMPTY);
         }
-
-        // 给小偷物品
-        if (stolenItem.is(TMMItems.BAT)) {
-            stolenItem = ItemStack.EMPTY;
-        }
-        RoleUtils.insertStackInFreeSlot(targetPlayer, stolenItem);
         // 通知小偷
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.stole_item",
@@ -335,7 +324,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                         itemName)
                         .withStyle(ChatFormatting.AQUA),
                 true);
-        if (stolenItem.equals(ItemStack.EMPTY)) {
+        if (stoleninfo.itemStack.equals(ItemStack.EMPTY)) {
             serverPlayer.displayClientMessage(
                     Component.translatable("message.noellesroles.thief.stole_item_failed",
                             target.getDisplayName(),
@@ -361,7 +350,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
      * 判断物品是否可以被偷取
      * 只允许偷取指定的武器和道具
      */
-    private boolean canStealItem(ItemStack stack) {
+    private boolean canStealItem(ItemStack stack, Player target, GameWorldComponent gameWorldComponent) {
         if (stack.isEmpty())
             return false;
 
@@ -369,7 +358,6 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         // 金锭（小偷的荣誉）
         if (stack.is(Items.GOLD_INGOT))
             return false;
-
         // 只允许偷取以下物品：
 
         // 枪械类
@@ -378,8 +366,12 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             return true; // 匪徒手枪
         if (stack.is(ModItems.ONCE_REVOLVER))
             return true; // 一次性手枪
-        if (stack.is(TMMItemTags.GUNS))
-            return false; // 左轮手枪
+        if (stack.is(TMMItemTags.GUNS)) {
+            if (gameWorldComponent.isKillerTeam(target)) {
+                return true;
+            }
+            return false;
+        }
 
         // 武器类
         if (stack.is(TMMItems.KNIFE))
