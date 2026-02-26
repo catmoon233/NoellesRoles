@@ -100,6 +100,7 @@ import net.minecraft.world.item.Items;
 import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
+import pro.fazeclan.river.stupid_express.modifier.refugee.cca.PlayerStatsBeforeRefugee;
 import pro.fazeclan.river.stupid_express.modifier.refugee.cca.RefugeeComponent;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
@@ -413,6 +414,9 @@ public class ModEventsRegister {
     private static boolean isEnabled = true;
 
     public static void registerEvents() {
+        PlayerStatsBeforeRefugee.beforeLoadFunc = (player)->{
+            ModComponents.DEATH_PENALTY.get(player).reset();
+        };
         UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
             var gameC = GameWorldComponent.KEY.get(level);
             if (!gameC.isRole(player, TMMRoles.VIGILANTE))
@@ -815,7 +819,14 @@ public class ModEventsRegister {
                 return;
             }
             if (role.identifier().equals(ModRoles.OLDMAN.identifier())) {
-                player.getAttribute(Attributes.MOVEMENT_SPEED).addOrReplacePermanentModifier(oldmanAttribute);
+                player.addEffect(new MobEffectInstance(
+                        MobEffects.MOVEMENT_SLOWDOWN,
+                        -1, // 持续时间 5s（tick）
+                        1, // 等级（0 = 速度 I）
+                        true, // ambient（环境效果，如信标）
+                        false, // showParticles（显示粒子）
+                        true // showIcon（显示图标）
+                ));
                 return;
             }
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY

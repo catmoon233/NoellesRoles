@@ -132,11 +132,11 @@ public class GameFunctionsCommand {
     roundComponent.CustomWinnerSubtitle = null;
     roundComponent.CustomWinnerTitle = null;
     roundComponent.CustomWinnerColor = color;
-    roundComponent.setWinStatus(WinStatus.CUSTOM);
+    roundComponent.setRoundEndData(context.getSource().getLevel().players(), WinStatus.CUSTOM);
+
     roundComponent.sync();
     context.getSource()
         .sendSuccess(() -> Component.translatable("Stop the game with custom winner id [%s] (CUSTOM)", id), true);
-
     GameFunctions.stopGame(context.getSource().getLevel());
     return 1;
   }
@@ -169,7 +169,8 @@ public class GameFunctionsCommand {
     roundComponent.CustomWinnerColor = color;
     roundComponent.CustomWinnerSubtitle = subtitle;
     roundComponent.CustomWinnerTitle = title;
-    roundComponent.setWinStatus(WinStatus.CUSTOM_COMPONENT);
+    roundComponent.setRoundEndData(context.getSource().getLevel().players(), WinStatus.CUSTOM_COMPONENT);
+
     roundComponent.sync();
     context.getSource().sendSuccess(
         () -> Component.translatable("Stop the game with custom winner id [%s] (CUSTOM_COMPONENT)", id), true);
