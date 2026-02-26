@@ -309,6 +309,8 @@
   "item.noellesroles.blank_cartridge.tooltip": "右键对目标玩家使用，使其手中枪械进入30秒冷却",
   "item.noellesroles.smoke_grenade": "烟雾弹",
   "item.noellesroles.smoke_grenade.tooltip": "投掷形成烟雾区域，进入者失明；直接命中清空目标san值",
+  "item.noellesroles.chlorine_bomb": "氯气弹",
+  "item.noellesroles.chlorine_bomb.tooltip": "投掷，落地时使半径3格内玩家中毒（持续30秒）",
   "item.noellesroles.reinforcement": "维修工具",
   "item.noellesroles.reinforcement.tooltip": "右键门加固，防御一次撬棍；蹲下右键解除卡住取出道具",
   "item.noellesroles.alarm_trap": "警报陷阱",

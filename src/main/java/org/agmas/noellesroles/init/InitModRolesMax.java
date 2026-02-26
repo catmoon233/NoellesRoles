@@ -140,6 +140,13 @@ public class InitModRolesMax {
                 Harpymodloader.setRoleMaximum(ModRoles.CLOCKMAKER_ID, 0);
             }
 
+            // 仇杀客数量 - 仅在12人以上对局出现
+            if (players_count >= 12) {
+                Harpymodloader.setRoleMaximum(ModRoles.BLOOD_FEUDIST_ID, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.BLOOD_FEUDIST_ID, 0);
+            }
+
             // 特殊警卫数量
             {
                 int allSpecialPoliceCount = 0;

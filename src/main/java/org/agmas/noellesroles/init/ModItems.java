@@ -162,6 +162,16 @@ public class ModItems {
             "smoke_grenade");
 
     /**
+     * 氯气弹
+     * - 可投掷物品
+     * - 右键投掷，落地时使半径5格内玩家中毒
+     * - 落地时播放岩浆熄灭声
+     */
+    public static final Item CHLORINE_BOMB = register(
+            new ChlorineBombItem(new Item.Properties().stacksTo(8)),
+            "chlorine_bomb");
+
+    /**
      * 加固门道具
      * - 工程师专属物品
      * - 在商店以75金币购买
