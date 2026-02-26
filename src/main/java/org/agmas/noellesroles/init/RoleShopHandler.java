@@ -76,6 +76,8 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> BLOOD_FEUDIST_SHOP = new ArrayList<>();
     // ==================== 小偷商店 ====================
     public static ArrayList<ShopEntry> THIEF_SHOP = new ArrayList<>();
+    // ==================== 钟表匠商店 ====================
+    public static ArrayList<ShopEntry> CLOCKMAKER_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -411,6 +413,11 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.THIEF_ID, THIEF_SHOP);
+        }
+        // 钟表匠商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.CLOCKMAKER_ID, CLOCKMAKER_SHOP);
         }
         // 风精灵
         {
@@ -776,5 +783,18 @@ public class RoleShopHandler {
         //     }
         // };
         // THIEF_SHOP.add(THIEF_SHOP_ENTRY);
+
+        // 钟表匠商店
+        // 时钟（原版） - 50金币
+        CLOCKMAKER_SHOP.add(new ShopEntry(
+                Items.CLOCK.getDefaultInstance(),
+                50,
+                ShopEntry.Type.TOOL));
+
+        // 怀表 - 100金币
+        CLOCKMAKER_SHOP.add(new ShopEntry(
+                ModItems.POCKET_WATCH.getDefaultInstance(),
+                100,
+                ShopEntry.Type.TOOL));
     }
 }
