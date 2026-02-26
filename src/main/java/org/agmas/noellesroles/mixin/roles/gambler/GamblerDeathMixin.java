@@ -130,7 +130,8 @@ public class GamblerDeathMixin {
 							player -> {
 								player.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.2F, 1.4F);
 							});
-					RoleUtils.customWinnerWin(serverWorld, GameFunctions.WinStatus.GAMBLER, null, null);
+					// 补充 CustomWinnerID: gambler
+					RoleUtils.customWinnerWin(serverWorld, GameFunctions.WinStatus.GAMBLER, "gambler", null);
 				}
 				return;
 			}

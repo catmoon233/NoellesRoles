@@ -2,6 +2,7 @@ package org.agmas.noellesroles;
 
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
@@ -48,6 +49,8 @@ public class CustomWinnerClass {
                 for (var player : players) {
                     if (GameFunctions.isPlayerAliveAndSurvival(player))
                         if (gameComponent.isRole(player, ModRoles.NIAN_SHOU)) {
+                            // 年兽存活时，使用 RoleUtils.customWinnerWin 设置 CustomWinnerID
+                            RoleUtils.customWinnerWin(serverLevel, WinStatus.NIAN_SHOU, "nianshou", null);
                             return WinStatus.NIAN_SHOU;
                         }
                 }
