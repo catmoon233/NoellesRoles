@@ -162,6 +162,47 @@ public class ModItems {
             "smoke_grenade");
 
     /**
+     * 氯气弹
+     * - 可投掷物品
+     * - 右键投掷，落地时使半径3格内玩家中毒
+     * - 落地时播放火熄灭声
+     */
+    public static final Item CHLORINE_BOMB = register(
+            new ChlorineBombItem(new Item.Properties().stacksTo(8)),
+            "chlorine_bomb");
+
+    /**
+     * 净化弹
+     * - 可投掷物品
+     * - 右键投掷，落地时取消半径3格内玩家的中毒状态
+     * - 落地时播放守卫者激光射击声
+     * - 粒子效果为气泡
+     */
+    public static final Item PURIFY_BOMB = register(
+            new PurifyBombItem(new Item.Properties().stacksTo(8)),
+            "purify_bomb");
+
+    /**
+     * 闪光弹
+     * - 可投掷物品
+     * - 右键投掷，落地时使半径6格内有闪光弹的玩家获得试炼之兆效果（WEAVING）3秒
+     * - 落地时播放火熄灭声
+     */
+    public static final Item FLASH_GRENADE = register(
+            new FlashGrenadeItem(new Item.Properties().stacksTo(8)),
+            "flash_grenade");
+
+    /**
+     * 诱饵弹
+     * - 可投掷物品
+     * - 右键投掷，落地时不会产生粒子效果
+     * - 在落地处发生5声左轮手枪射击的声音（时间间隔不一）
+     */
+    public static final Item DECOY_GRENADE = register(
+            new DecoyGrenadeItem(new Item.Properties().stacksTo(8)),
+            "decoy_grenade");
+
+    /**
      * 加固门道具
      * - 工程师专属物品
      * - 在商店以75金币购买
@@ -310,6 +351,9 @@ public class ModItems {
         TMMItems.INVISIBLE_ITEMS.add(ModItems.DEFIBRILLATOR);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.BOMB);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.WRITTEN_NOTE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.FLASH_GRENADE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.DECOY_GRENADE);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.PURIFY_BOMB);
         // TMMItems.INVISIBLE_ITEMS.add(TMMItems.KNIFE);
 
         TMMItems.INIT_ITEMS.LETTER = LETTER_ITEM;

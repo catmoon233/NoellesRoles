@@ -4,6 +4,8 @@ import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -71,6 +73,11 @@ public class Noellesroles implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ArgumentTypeRegistry.registerArgumentType(
+                Noellesroles.id("color"), // 唯一 ID
+                ModColorArgument.class, // 你的参数类
+                SingletonArgumentInfo.contextFree(ModColorArgument::color) // 工厂方法
+        );
         HSRConstants.init();
         Harpymodloader.HIDDEN_MODIFIERS.add(SEModifiers.REFUGEE.identifier().getPath());
         TMMRoles.DISCOVERY_CIVILIAN.setNeutrals(true);

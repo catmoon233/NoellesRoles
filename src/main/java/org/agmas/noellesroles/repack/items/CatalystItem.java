@@ -1,9 +1,7 @@
 package org.agmas.noellesroles.repack.items;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
-import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +27,6 @@ public class CatalystItem extends Item {
                 return InteractionResultHolder.fail(itemStack);
             }
 
-            boolean activated = false;
             // 遍历所有玩家
             for (Player target : level.players()) {
                 if (GameFunctions.isPlayerAliveAndSurvival(target)) {
@@ -38,7 +35,6 @@ public class CatalystItem extends Item {
                     if (((PlayerPoisonComponentAccessor) poisonComponent).getPoisonTicks() > 0) {
                         // 立即杀死玩家
                         poisonComponent.setPoisonTicks(1, player.getUUID());
-                        activated = true;
                     }
                 }
             }

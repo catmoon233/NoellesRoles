@@ -618,6 +618,18 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
         // 烟雾弹实体渲染器 - 使用飞行物品渲染器
         EntityRendererRegistry.register(ModEntities.SMOKE_GRENADE, ThrownItemRenderer::new);
 
+        // 氯气弹实体渲染器 - 使用飞行物品渲染器
+        EntityRendererRegistry.register(ModEntities.CHLORINE_BOMB, ThrownItemRenderer::new);
+
+        // 净化弹实体渲染器 - 使用飞行物品渲染器
+        EntityRendererRegistry.register(ModEntities.PURIFY_BOMB, ThrownItemRenderer::new);
+
+        // 闪光弹实体渲染器 - 使用飞行物品渲染器
+        EntityRendererRegistry.register(ModEntities.FLASH_GRENADE, ThrownItemRenderer::new);
+
+        // 诱饵弹实体渲染器 - 使用飞行物品渲染器
+        EntityRendererRegistry.register(ModEntities.DECOY_GRENADE, ThrownItemRenderer::new);
+
         // 灾厄印记实体渲染器 - 使用自定义渲染器（对设陷者半透明可见）
         EntityRendererRegistry.register(ModEntities.CALAMITY_MARK, CalamityMarkEntityRenderer::new);
 

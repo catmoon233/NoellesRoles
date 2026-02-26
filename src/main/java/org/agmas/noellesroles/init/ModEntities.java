@@ -35,6 +35,32 @@ public class ModEntities {
                     .build());
 
     /**
+     * 氯气弹实体 - 可投掷物品，落地时使范围内玩家中毒
+     */
+    @SuppressWarnings("deprecation")
+    public static final EntityType<ChlorineBombEntity> CHLORINE_BOMB = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "chlorine_bomb"),
+            FabricEntityTypeBuilder.<ChlorineBombEntity>create(MobCategory.MISC, ChlorineBombEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
+                    .trackRangeBlocks(4)
+                    .trackedUpdateRate(10)
+                    .build());
+
+    /**
+     * 净化弹实体 - 可投掷物品，落地时取消范围内玩家中毒状态
+     */
+    @SuppressWarnings("deprecation")
+    public static final EntityType<PurifyBombEntity> PURIFY_BOMB = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "purify_bomb"),
+            FabricEntityTypeBuilder.<PurifyBombEntity>create(MobCategory.MISC, PurifyBombEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
+                    .trackRangeBlocks(4)
+                    .trackedUpdateRate(10)
+                    .build());
+
+    /**
      * 灾厄印记实体 - 设陷者专属隐形陷阱
      */
     @SuppressWarnings("deprecation")
@@ -84,6 +110,32 @@ public class ModEntities {
             FabricEntityTypeBuilder.<LockEntity>create(MobCategory.MISC, LockEntity::new)
                     .dimensions(EntityDimensions.fixed(0.2F, 0.2F))
                     .trackRangeBlocks(32)
+                    .build());
+
+    /**
+     * 闪光弹实体 - 可投掷物品，落地时使范围内玩家致盲
+     */
+    @SuppressWarnings("deprecation")
+    public static final EntityType<FlashGrenadeEntity> FLASH_GRENADE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "flash_grenade"),
+            FabricEntityTypeBuilder.<FlashGrenadeEntity>create(MobCategory.MISC, FlashGrenadeEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
+                    .trackRangeBlocks(4)
+                    .trackedUpdateRate(10)
+                    .build());
+
+    /**
+     * 诱饵弹实体 - 可投掷物品，落地时播放5声左轮手枪射击声
+     */
+    @SuppressWarnings("deprecation")
+    public static final EntityType<DecoyGrenadeEntity> DECOY_GRENADE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "decoy_grenade"),
+            FabricEntityTypeBuilder.<DecoyGrenadeEntity>create(MobCategory.MISC, DecoyGrenadeEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
+                    .trackRangeBlocks(4)
+                    .trackedUpdateRate(10)
                     .build());
 
     /**

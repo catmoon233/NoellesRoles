@@ -75,7 +75,7 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
         this.target2 = t2;
         this.isSwapping = true;
         this.swapTimer = 50; // 2.5秒 = 50 ticks
-        
+
         ModComponents.SWAPPER.sync(player);
     }
 
@@ -95,7 +95,13 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
             return;
         if (player1 != null && player2 != null) {
             player1.stopRiding();
+            if (player1.isSleeping()) {
+                player1.stopSleeping();
+            }
             player2.stopRiding();
+            if (player2.isSleeping()) {
+                player2.stopSleeping();
+            }
             Vec3 pos1 = player1.position();
             Vec3 pos2 = player2.position();
             // 检查碰撞（可选，根据原逻辑）

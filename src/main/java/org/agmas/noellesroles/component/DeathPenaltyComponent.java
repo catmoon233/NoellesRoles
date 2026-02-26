@@ -38,7 +38,6 @@ public class DeathPenaltyComponent implements RoleComponent, ServerTickingCompon
                 if (limitCameraUUID != null) {
                     Player cameraPlayer = this.player.level().getPlayerByUUID(limitCameraUUID);
                     if (cameraPlayer != null && GameFunctions.isPlayerAliveAndSurvival(cameraPlayer)) {
-
                         return;
                     }
                 }
@@ -130,7 +129,7 @@ public class DeathPenaltyComponent implements RoleComponent, ServerTickingCompon
         if (!player.level().isClientSide) {
             if (limitCameraUUID != null) {
                 if (player instanceof ServerPlayer sp) {
-                    sp.setCamera(sp);
+                    sp.setCamera(null);
                 }
             }
         }
@@ -161,15 +160,14 @@ public class DeathPenaltyComponent implements RoleComponent, ServerTickingCompon
                 if (limitCameraUUID != null) {
                     if (!sp.getCamera().getUUID().equals(limitCameraUUID)) {
                         var target = sp.level().getPlayerByUUID(limitCameraUUID);
-                        if (target != null) {
+                        if (target != null && GameFunctions.isPlayerAliveAndSurvival(target)) {
                             sp.setCamera(target);
                         } else {
-                            sp.setCamera(sp);
+                            sp.setCamera(null);
                         }
                     }
                 }
             }
         }
-
     }
 }

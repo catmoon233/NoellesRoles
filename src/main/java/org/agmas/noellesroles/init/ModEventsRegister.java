@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.init;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
@@ -33,6 +34,7 @@ import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
+import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
@@ -98,6 +100,7 @@ import net.minecraft.world.item.Items;
 import pro.fazeclan.river.stupid_express.constants.SEItems;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
+import pro.fazeclan.river.stupid_express.modifier.refugee.cca.PlayerStatsBeforeRefugee;
 import pro.fazeclan.river.stupid_express.modifier.refugee.cca.RefugeeComponent;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
@@ -352,7 +355,7 @@ public class ModEventsRegister {
     }
 
     /**
-     * 处理医生死亡 - 将针管传递给另一名存活的平民
+     * 处理医生死亡 - 将针管和净化弹传递给另一名存活的平民
      */
     private static void handleDoctorDeath(Player victim) {
         if (victim == null || victim.level().isClientSide())
@@ -362,18 +365,20 @@ public class ModEventsRegister {
         if (!gameWorld.isRole(victim, ModRoles.DOCTOR))
             return;
 
-        // 查找医生背包中的针管
-        ItemStack antidote = null;
+        // 查找医生背包中的针管和净化弹
+        ArrayList<ItemStack> itemsToTransfer = new ArrayList<>();
         for (int i = 0; i < victim.getInventory().getContainerSize(); i++) {
             ItemStack stack = victim.getInventory().getItem(i);
             if (stack.getItem() == org.agmas.noellesroles.repack.HSRItems.ANTIDOTE) {
-                antidote = stack.copy();
+                itemsToTransfer.add(stack.copy());
                 victim.getInventory().setItem(i, ItemStack.EMPTY);
-                break;
+            } else if (stack.getItem() == org.agmas.noellesroles.init.ModItems.PURIFY_BOMB) {
+                itemsToTransfer.add(stack.copy());
+                victim.getInventory().setItem(i, ItemStack.EMPTY);
             }
         }
 
-        if (antidote == null || antidote.isEmpty())
+        if (itemsToTransfer.isEmpty())
             return;
 
         // 查找另一名存活的平民
@@ -391,12 +396,14 @@ public class ModEventsRegister {
             }
         }
 
-        // 如果找到存活的平民，传递针管
+        // 如果找到存活的平民，传递物品
         if (targetPlayer != null) {
-            targetPlayer.addItem(antidote);
+            for (ItemStack item : itemsToTransfer) {
+                targetPlayer.addItem(item);
+            }
             if (targetPlayer instanceof ServerPlayer serverTarget) {
                 serverTarget.displayClientMessage(
-                        Component.translatable("message.noellesroles.doctor.antidote_inherited",
+                        Component.translatable("message.noellesroles.doctor.items_inherited",
                                 victim.getName().getString())
                                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
                         true);
@@ -404,9 +411,12 @@ public class ModEventsRegister {
         }
     }
 
-    private static boolean isEnabled = false;
+    private static boolean isEnabled = true;
 
     public static void registerEvents() {
+        PlayerStatsBeforeRefugee.beforeLoadFunc = (player)->{
+            ModComponents.DEATH_PENALTY.get(player).reset();
+    };
         UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
             var gameC = GameWorldComponent.KEY.get(level);
             if (!gameC.isRole(player, TMMRoles.VIGILANTE))
@@ -415,6 +425,8 @@ public class ModEventsRegister {
                 return InteractionResult.PASS;
             if (entity instanceof Player target) {
                 if (target.getOffhandItem().is(ModItems.HANDCUFFS)) {
+                    if (!player.getMainHandItem().isEmpty())
+                        return InteractionResult.PASS;
                     RoleUtils.insertStackInFreeSlot(player, target.getOffhandItem().copy());
                     target.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
                     player.displayClientMessage(
@@ -807,7 +819,14 @@ public class ModEventsRegister {
                 return;
             }
             if (role.identifier().equals(ModRoles.OLDMAN.identifier())) {
-                player.getAttribute(Attributes.MOVEMENT_SPEED).addOrReplacePermanentModifier(oldmanAttribute);
+                player.addEffect(new MobEffectInstance(
+                        MobEffects.MOVEMENT_SLOWDOWN,
+                        -1, // 持续时间 5s（tick）
+                        1, // 等级（0 = 速度 I）
+                        true, // ambient（环境效果，如信标）
+                        false, // showParticles（显示粒子）
+                        true // showIcon（显示图标）
+                ));
                 return;
             }
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
@@ -1021,12 +1040,13 @@ public class ModEventsRegister {
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
-
             serverLevel.players().forEach(p -> {
+                p.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, 30 * 20);
+                p.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, 30 * 20);
 
                 p.addEffect(new MobEffectInstance(
                         MobEffects.WATER_BREATHING,
-                        (int) (5 * 20), // 持续时间 5s（tick）
+                        (int) (8 * 20), // 持续时间 5s（tick）
                         0, // 等级（0 = 速度 I）
                         true, // ambient（环境效果，如信标）
                         false, // showParticles（显示粒子）
@@ -1213,7 +1233,8 @@ public class ModEventsRegister {
         });
         TMM.cantPushableBy.add(entity -> {
             if (entity instanceof Player serverPlayer) {
-                if (serverPlayer.hasEffect(MobEffects.INVISIBILITY)) {
+                if (serverPlayer.hasEffect(MobEffects.INVISIBILITY)
+                        || serverPlayer.hasEffect(MobEffects.WATER_BREATHING)) {
                     return true;
                 } else {
                     var modifiers = WorldModifierComponent.KEY.get(serverPlayer.level());
@@ -1236,20 +1257,6 @@ public class ModEventsRegister {
             }
             return false;
         });
-        TMM.cantPushableBy.add(
-                entity -> {
-                    if (entity instanceof ServerPlayer serverPlayer) {
-                        var gameComp = GameWorldComponent.KEY.get(serverPlayer.level());
-                        if (gameComp != null) {
-                            if (gameComp.isRole(serverPlayer, ModRoles.GHOST)) {
-                                GhostPlayerComponent ghostPlayerComponent = GhostPlayerComponent.KEY.get(serverPlayer);
-                                return ghostPlayerComponent.isActive;
-                            }
-                        }
-
-                    }
-                    return false;
-                });
         TMM.canCollideEntity.add(entity -> {
             return entity instanceof PuppeteerBodyEntity;
         });
