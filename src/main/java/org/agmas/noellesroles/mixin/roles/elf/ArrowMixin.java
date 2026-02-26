@@ -27,7 +27,7 @@ import java.util.List;
 
 @Mixin(AbstractArrow.class)
 public class ArrowMixin {
-    @Inject(method = "onHitEntity", at = @At("HEAD"))
+    @Inject(method = "onHitEntity", at = @At("HEAD"), cancellable = true)
     private void noellesroles$onHitEntity(EntityHitResult entityHitResult, CallbackInfo ci) {
         if (TMM.isLobby)
             return;

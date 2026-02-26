@@ -1,6 +1,8 @@
 package org.agmas.noellesroles.mixin;
 
+import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.minecraft.world.entity.player.Player;
 import org.agmas.noellesroles.role.ModRoles;
@@ -22,7 +24,7 @@ public class PlayerPsychoComponentCooldownMixin {
      * 拦截usePsychoMode方法，为仇杀客设置自定义的疯狂模式冷却时间
      * 在方法开头注入，这样后续的原方法调用会使用我们设置的CD
      */
-    @Inject(method = "usePsychoMode", at = @At("HEAD"), remap = false)
+    @Inject(method = "usePsychoMode", at = @At("TAIL"), remap = false)
     private static void noellesroles$modifyBloodFeudistPsychoCooldown(@NotNull Player player, CallbackInfoReturnable<Boolean> cir) {
         // 只在服务端处理
         if (player.level().isClientSide()) {
@@ -34,7 +36,9 @@ public class PlayerPsychoComponentCooldownMixin {
         if (gameWorld != null && gameWorld.isRole(player, ModRoles.BLOOD_FEUDIST)) {
             // 仇杀客的疯狂模式冷却时间改为30秒（600 ticks）
             // 原版CD为300秒（6000 ticks）
-            player.getCooldowns().addCooldown(TMMItems.PSYCHO_MODE, 30 * 20);
+            player.getCooldowns().addCooldown(TMMItems.PSYCHO_MODE, 15 * 20+TMMConfig.psychoModeCooldown);
+            PlayerPsychoComponent psychoComponent = PlayerPsychoComponent.KEY.get(player);
+            psychoComponent.setPsychoTicks(20 * 22);
         }
     }
 }
