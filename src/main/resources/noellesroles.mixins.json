@@ -37,9 +37,9 @@
     "roles.host.MasterKeySmallDoorMixin",
     "roles.host.MasterKeyTrainDoorMixin",
     "roles.host.MoneyIncreaseMixin",
+    "roles.insanekiller.InsaneShopMixin",
     "roles.insanekiller.PlayerNoBoxMixin",
     "roles.insanekiller.ProjectileUtilMixin",
-    "roles.insanekiller.InsaneShopMixin",
     "roles.jester.FakeRevolverMixin",
     "roles.jester.JesterItemEntityMixin",
     "roles.jester.JesterJestMixin",
@@ -62,12 +62,14 @@
     "defaultRequire": 1
   },
   "client": [
+    "roles.insanekiller.CrossHairFixer",
     "LivingEntityAccessor",
     "client.HandCuffsKeyBindingMixin",
     "client.InstinctMixin",
     "client.LamBugFix",
     "client.LobbyCreditsHudMixin",
     "client.SimpleHudMixin",
+    "client.game.ChairWheelKeyMappingMixin",
     "client.general.InventoryIntroductionRenderer",
     "client.general.MessageBelowMoney",
     "client.roles.AvengerHudMixin",
@@ -124,7 +126,6 @@
     "client.roles.vulture.VultureEatenBodyMixin",
     "client.roles.vulture.VultureHudMixin",
     "client.roles.wayfarer.TargetEntityHudmixin",
-    "client.game.ChairWheelKeyMappingMixin",
     "roles.photographer.BlindnessEffectMixin"
   ],
   "overwrites": {
