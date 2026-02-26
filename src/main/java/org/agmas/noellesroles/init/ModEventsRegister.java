@@ -416,7 +416,7 @@ public class ModEventsRegister {
     public static void registerEvents() {
         PlayerStatsBeforeRefugee.beforeLoadFunc = (player)->{
             ModComponents.DEATH_PENALTY.get(player).reset();
-        };
+    };
         UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
             var gameC = GameWorldComponent.KEY.get(level);
             if (!gameC.isRole(player, TMMRoles.VIGILANTE))

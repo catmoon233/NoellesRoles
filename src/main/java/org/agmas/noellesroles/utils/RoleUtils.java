@@ -21,7 +21,6 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
-import io.github.mortuusars.exposure.util.color.Color;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -314,7 +313,7 @@ public class RoleUtils {
         } else if (role instanceof Modifier m) {
             return m.color();
         } else {
-            return Color.WHITE.getRGB();
+            return java.awt.Color.WHITE.getRGB();
         }
     }
 
