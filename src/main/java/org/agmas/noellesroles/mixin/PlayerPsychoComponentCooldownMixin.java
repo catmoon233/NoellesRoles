@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * PlayerShopComponentCooldownMixin
- * - 修改仇杀客的疯狂模式冷却时间为30秒
- * - 原版CD为300秒（5分钟），仇杀客改为30秒
+ * - 修改仇杀客的疯狂模式冷却时间为60秒
+ * - 原版CD为300秒（5分钟），仇杀客改为60秒
  */
 @Mixin(targets = "dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent")
 public class PlayerPsychoComponentCooldownMixin {
@@ -32,9 +32,9 @@ public class PlayerPsychoComponentCooldownMixin {
         // 检查玩家角色
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         if (gameWorld != null && gameWorld.isRole(player, ModRoles.BLOOD_FEUDIST)) {
-            // 仇杀客的疯狂模式冷却时间改为30秒（600 ticks）
+            // 仇杀客的疯狂模式冷却时间改为60秒（1200 ticks）
             // 原版CD为300秒（6000 ticks）
-            player.getCooldowns().addCooldown(TMMItems.PSYCHO_MODE, 30 * 20);
+            player.getCooldowns().addCooldown(TMMItems.PSYCHO_MODE, 60 * 20);
         }
     }
 }
