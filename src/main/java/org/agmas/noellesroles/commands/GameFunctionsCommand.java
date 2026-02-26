@@ -43,14 +43,15 @@ public class GameFunctionsCommand {
     CommandRegistrationCallback.EVENT.register(
         (dispatcher, registryAccess, environment) -> {
           dispatcher.register(Commands.literal("tmm:game").requires(source -> source.hasPermission(2))
-              .then(Commands.literal("win").then(Commands.argument("color", ModColorArgument.color()).then(
-                  Commands.argument("id", StringArgumentType.string())
-                      .executes(GameFunctionsCommand::executeWinWithOnlyId)))
-                  .then(Commands.argument("title", ComponentArgument.textComponent(registryAccess))
-                      .then(Commands
-                          .argument(
-                              "subtitle", ComponentArgument.textComponent(registryAccess))
-                          .executes(GameFunctionsCommand::executeWinWithIdAndTitle))))
+              .then(Commands.literal("win")
+                  .then(Commands.argument("color", ModColorArgument.color()).then(
+                      Commands.argument("id", StringArgumentType.string())
+                          .executes(GameFunctionsCommand::executeWinWithOnlyId))
+                      .then(Commands.argument("title", ComponentArgument.textComponent(registryAccess))
+                          .then(Commands
+                              .argument(
+                                  "subtitle", ComponentArgument.textComponent(registryAccess))
+                              .executes(GameFunctionsCommand::executeWinWithIdAndTitle)))))
               .then(Commands.literal("reset").then(Commands.literal("normal").executes((context) -> {
                 GameFunctions.tryAutoTrainReset(context.getSource().getLevel());
                 context.getSource().sendSuccess(() -> Component.literal("Normal Reset(copy)!"), true);
