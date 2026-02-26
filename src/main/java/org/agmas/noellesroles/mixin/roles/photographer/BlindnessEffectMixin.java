@@ -23,5 +23,10 @@ public class BlindnessEffectMixin {
             //屏幕变红（30%透明度）
             guiGraphics.fill(0,0, Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), 0x4DFF0000);
         }
+        if (player.hasEffect(MobEffects.RAID_OMEN)){
+            // 试炼之兆效果 - 屏幕变白（仿照低san值时的效果）
+            guiGraphics.fill(0,0, Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), 0xFFFFFFFF);
+        }
     }
 }
+

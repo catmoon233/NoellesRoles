@@ -312,6 +312,8 @@
   "item.noellesroles.smoke_grenade.tooltip": "投掷形成烟雾区域，进入者失明；直接命中清空目标san值",
   "item.noellesroles.chlorine_bomb": "氯气弹",
   "item.noellesroles.chlorine_bomb.tooltip": "投掷，落地时使半径3格内玩家中毒（持续30秒）",
+  "item.noellesroles.flash_grenade": "闪光弹",
+  "item.noellesroles.flash_grenade.tooltip": "投掷，落地时使视野半径6格内有闪光弹的玩家致盲（持续3秒）",
   "item.noellesroles.reinforcement": "维修工具",
   "item.noellesroles.reinforcement.tooltip": "右键门加固，防御一次撬棍；蹲下右键解除卡住取出道具",
   "item.noellesroles.alarm_trap": "警报陷阱",
