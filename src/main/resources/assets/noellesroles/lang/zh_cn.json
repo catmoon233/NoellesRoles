@@ -151,6 +151,7 @@
   "death_reason.noellesroles.insane_killer_death": "到达不了那个地方",
   "death_reason.trainmurdermystery.insane_killer_death": "到达不了那个地方",
   "death_reason.trainmurdermystery.arrow": "被箭射死",
+  "death_reason.noellesroles.arrow": "被箭射死",
   "death_reason.trainmurdermystery.voodoo": "巫毒魔法",
   "hud.coroner.death_info": "死于 %s秒前，死因是",
   "hud.coroner.role_info": "身份为",

@@ -24,6 +24,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 
 import org.agmas.harpymodloader.events.GameInitializeEvent;
+import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.init.ModEntities;
 
@@ -85,12 +86,13 @@ public class ChairWheelRaceGame extends GameMode {
                             op.playNotifySound(SoundEvents.FIREWORK_ROCKET_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
                             op.playNotifySound(SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 1.0F, 1.0F);
                         });
-                        Component.translatable("announcement.wheelgame.win.prefix").append(Component.translatable("announcement.wheelgame.win.rank"));
-                        serverLevel.getServer().getCommands().performPrefixedCommand(
-                                serverLevel.getServer().createCommandSourceStack(),
-                                "broadcast @a \"\\u00a76玩家 " + player.getScoreboardName() + " 到达了终点！ 排名"
-                                        + (isWin.indexOf(player) + 1) + "\"");
-                        executeFunction(serverLevel.getServer().createCommandSourceStack(),
+                        Component msg = Component.translatable("announcement.wheelgame.win.prefix")
+                                .append(Component.translatable("announcement.wheelgame.win.rank",
+                                        player.getScoreboardName(), isWin.indexOf(player) + 1));
+                        serverLevel.players().forEach((o) -> {
+                            BroadcastCommand.BroadcastMessage(player, msg);
+                        });
+                        executeFunction(player.createCommandSourceStack(),
                                 "harpymodloader:chair_wheel_race/win");
                     }
                 }

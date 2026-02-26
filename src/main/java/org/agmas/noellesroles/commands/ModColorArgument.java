@@ -7,6 +7,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+
+import dev.doctor4t.trainmurdermystery.api.Role;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -14,6 +17,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+
+import org.agmas.noellesroles.utils.RoleUtils;
 
 public class ModColorArgument implements ArgumentType<Integer> {
     private static final Collection<String> EXAMPLES = Arrays.asList("0", "123", "red", "dark_green");
@@ -66,15 +71,32 @@ public class ModColorArgument implements ArgumentType<Integer> {
 
         // 尝试匹配颜色名称（忽略大小写）
         String lowerInput = input.toLowerCase(Locale.ROOT);
-        for (ChatFormatting format : ChatFormatting.values()) {
-            Integer color = format.getColor();
-            if (color != null && format.getName().equalsIgnoreCase(lowerInput)) {
-                if (color < minimum || color > maximum) {
-                    reader.setCursor(start);
-                    throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.integerTooLow().createWithContext(reader, color,
-                            minimum);
+        if (lowerInput.startsWith("role_") && lowerInput.length() >= 6) {
+            lowerInput = lowerInput.substring("role_".length());
+            for (Role role : TMMRoles.ROLES.values()) {
+                Integer color = role.getColor();
+                if (color != null && role.identifier().getPath().equalsIgnoreCase(lowerInput)) {
+                    if (color < minimum || color > maximum) {
+                        reader.setCursor(start);
+                        throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.integerTooLow().createWithContext(reader,
+                                color,
+                                minimum);
+                    }
+                    return color;
                 }
-                return color;
+            }
+        } else {
+            for (ChatFormatting format : ChatFormatting.values()) {
+                Integer color = format.getColor();
+                if (color != null && format.getName().equalsIgnoreCase(lowerInput)) {
+                    if (color < minimum || color > maximum) {
+                        reader.setCursor(start);
+                        throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.integerTooLow().createWithContext(reader,
+                                color,
+                                minimum);
+                    }
+                    return color;
+                }
             }
         }
 
@@ -94,18 +116,39 @@ public class ModColorArgument implements ArgumentType<Integer> {
             if (color != null) {
                 String name = format.getName();
                 if (name.toLowerCase(Locale.ROOT).startsWith(remaining)) {
-                    builder.suggest(name, Component.literal("Color Value: " + color));
+                    builder.suggest(name,
+                            Component.literal("Value: " + color).append(Component.literal(" [■]").withColor(color)));
                 }
             }
         }
-
-        // 2. 建议常见数字示例（可选）
-        if (remaining.isEmpty() || "0".startsWith(remaining)) {
-            builder.suggest("0", Component.literal("black"));
+        // 2. 建议所有职业
+        for (Role role : TMMRoles.ROLES.values()) {
+            Integer color = role.getColor();
+            if (color != null) {
+                String name = "role_" + role.identifier().getPath();
+                if (name.toLowerCase(Locale.ROOT).startsWith(remaining)) {
+                    builder.suggest(name,
+                            Component.literal("").append(RoleUtils.getRoleOrModifierNameWithColor(role)).append(
+                                    Component.literal(" | Value: " + color)));
+                }
+            }
         }
+        // 3. 建议常见数字示例（可选）
         if (remaining.isEmpty() || "16777215".startsWith(remaining)) {
-            builder.suggest("16777215", Component.literal("white"));
+            builder.suggest("16777215",
+                    Component.literal("(Also white) ").append(Component.literal("[■]").withColor(16777215)));
         }
+        // boolean correct = false;
+        // int remaingcolor = 0;
+        // try {
+        // remaingcolor = Integer.parseInt(remaining);
+        // correct = true;
+        // } catch (NumberFormatException e) {
+        // }
+        // if (correct) {
+        // builder.suggest(remaining, Component.literal("
+        // ").append(Component.literal("[■]").withColor(remaingcolor)));
+        // }
         // 可以添加更多常见颜色值
 
         return builder.buildFuture();

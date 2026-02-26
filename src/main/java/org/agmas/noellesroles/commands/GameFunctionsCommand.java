@@ -6,6 +6,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.api.replay.GameReplayUtils;
 import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -42,8 +43,8 @@ public class GameFunctionsCommand {
     CommandRegistrationCallback.EVENT.register(
         (dispatcher, registryAccess, environment) -> {
           dispatcher.register(Commands.literal("tmm:game").requires(source -> source.hasPermission(2))
-              .then(Commands.literal("win").then(Commands.argument("id", StringArgumentType.string()).then(
-                  Commands.argument("color", ModColorArgument.color())
+              .then(Commands.literal("win").then(Commands.argument("color", ModColorArgument.color()).then(
+                  Commands.argument("id", StringArgumentType.string())
                       .executes(GameFunctionsCommand::executeWinWithOnlyId)))
                   .then(Commands.argument("title", ComponentArgument.textComponent(registryAccess))
                       .then(Commands
@@ -142,8 +143,8 @@ public class GameFunctionsCommand {
   public static int executeWinWithIdAndTitle(CommandContext<CommandSourceStack> context) {
     Component title = ComponentArgument.getComponent(context, "title");
     Component subtitle = ComponentArgument.getComponent(context, "subtitle");
-    String id = StringArgumentType.getString(context, "id");
-    int color = -1;
+    String id = "custom";
+    int color = ModColorArgument.getColor(context, "color");
 
     ServerPlayer serverPlayer = context.getSource().getPlayer();
     if (serverPlayer != null) {
@@ -226,7 +227,12 @@ public class GameFunctionsCommand {
             .forEach(suggestions::add);
       }
       // 最后批量建议
-      suggestions.forEach(builder::suggest);
+      suggestions.forEach((s) -> {
+        var t = ResourceLocation.tryParse(s);
+        if (t != null) {
+          builder.suggest(s, GameReplayUtils.getItemDisplayName(t));
+        }
+      });
 
       return builder.buildFuture();
     }
