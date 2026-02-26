@@ -687,7 +687,6 @@
   "message.noellesroles.recorder.win": "记录员 %s 完成了所有记录，获得胜利！",
   "death_reason.noellesroles.recorder_mistake": "因记录错误而死",
   "death_reason.trainmurdermystery.recorder_mistake": "因记录错误而死",
-  "item.noellesroles.mint_candies.tooltip": "食用后恢复35%%的san值",
   "==================== 亡语杀手角色 ====================": "",
   "message.noellesroles.insane_killer.ability_deactivated": "伪装已关闭，进入冷却...",
   "message.noellesroles.insane_killer.ability_activated": "伪装已激活！",
