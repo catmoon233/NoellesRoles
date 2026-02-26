@@ -189,7 +189,8 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
 
         if (correctGuesses >= requiredCorrect) {
             if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-                RoleUtils.customWinnerWin(serverLevel, GameFunctions.WinStatus.RECORDER, null, null);
+                // 补充 CustomWinnerID: recorder
+                RoleUtils.customWinnerWin(serverLevel, GameFunctions.WinStatus.RECORDER, "recorder", null);
             }
 
             // 广播胜利消息
