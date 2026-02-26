@@ -63,7 +63,6 @@ public class InitModRolesMax {
     public static void registerDynamic() {
         GameInitializeEvent.EVENT.register((serverLevel, gameWorldComponent, players) -> {
             final int players_count = serverLevel.getServer().getPlayerCount();
-
             {
                 // 杀手中立
                 var neutralRoles = new ArrayList<Role>(TMMRoles.ROLES.values());
@@ -77,7 +76,7 @@ public class InitModRolesMax {
                     Harpymodloader.setRoleMaximum(r, 0);
                 }
                 int neutralForKillers = 0;
-                neutralForKillers = players_count / 8;
+                neutralForKillers = players_count / 6;
                 for (int i = 0; i < neutralForKillers && i < neutralRoles.size(); i++) {
                     Harpymodloader.setRoleMaximum(neutralRoles.get(i), 1);
                 }

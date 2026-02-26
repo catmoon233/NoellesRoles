@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.roles.thief;
 
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -95,7 +96,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
 
     @Override
     public void reset() {
-        this.cooldown = 0;
+        this.cooldown = ABILITY_COOLDOWN;
         this.currentMode = MODE_STEAL_MONEY;
         this.isInSelectionMode = false;
         this.sync();
@@ -161,7 +162,6 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (!gameWorld.isRole(player, ModRoles.THIEF)) {
             return false;
         }
-
         // 获取当前看向的目标玩家
         Player target = getLookedAtPlayer();
         if (target == null) {
@@ -324,8 +324,10 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         }
 
         // 给小偷物品
-        player.getInventory().add(stolenItem);
-
+        if (stolenItem.is(TMMItems.BAT)) {
+            stolenItem = ItemStack.EMPTY;
+        }
+        RoleUtils.insertStackInFreeSlot(targetPlayer, stolenItem);
         // 通知小偷
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.stole_item",
@@ -333,7 +335,14 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                         itemName)
                         .withStyle(ChatFormatting.AQUA),
                 true);
-
+        if (stolenItem.equals(ItemStack.EMPTY)) {
+            serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.thief.stole_item_failed",
+                            target.getDisplayName(),
+                            itemName)
+                            .withStyle(ChatFormatting.AQUA),
+                    true);
+        }
         // 通知被偷者
         targetPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.item_stolen",
@@ -364,16 +373,13 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         // 只允许偷取以下物品：
 
         // 枪械类
-        if (stack.is(TMMItems.REVOLVER))
-            return true; // 左轮手枪
+
         if (stack.is(HSRItems.BANDIT_REVOLVER))
             return true; // 匪徒手枪
-        if (stack.is(ModItems.PATROLLER_REVOLVER))
-            return true; // 巡警手枪
-        if (stack.is(TMMItems.DERRINGER))
-            return true; // 德林加手枪
         if (stack.is(ModItems.ONCE_REVOLVER))
             return true; // 一次性手枪
+        if (stack.is(TMMItemTags.GUNS))
+            return false; // 左轮手枪
 
         // 武器类
         if (stack.is(TMMItems.KNIFE))
@@ -443,6 +449,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (stack.is(TMMItems.DEFENSE_VIAL))
             return true; // 护盾试剂
 
+        if (stack.is(TMMItems.KEY))
+            return true;
         // 万能钥匙和乘务员钥匙
         if (stack.is(ModItems.MASTER_KEY))
             return true;
