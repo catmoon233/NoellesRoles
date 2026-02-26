@@ -421,6 +421,8 @@ public class ModEventsRegister {
                 return InteractionResult.PASS;
             if (entity instanceof Player target) {
                 if (target.getOffhandItem().is(ModItems.HANDCUFFS)) {
+                    if (!player.getMainHandItem().isEmpty())
+                        return InteractionResult.PASS;
                     RoleUtils.insertStackInFreeSlot(player, target.getOffhandItem().copy());
                     target.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
                     player.displayClientMessage(
