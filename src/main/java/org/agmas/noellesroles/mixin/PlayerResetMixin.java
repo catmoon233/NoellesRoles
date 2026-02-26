@@ -28,6 +28,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SkinSplitPersonalityComponent;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
@@ -51,6 +52,7 @@ public abstract class PlayerResetMixin {
         if (ModComponents.DEFIBRILLATOR.get(player) != null) {
             ModComponents.DEFIBRILLATOR.get(player).clear();
         }
+        player.getInventory().offhand.set(0, ItemStack.EMPTY);
         ServerPlayNetworking.send(player, new PlayerResetS2CPacket());
         TMMItemUtils.clearItem(player, (s) -> true);
     }
