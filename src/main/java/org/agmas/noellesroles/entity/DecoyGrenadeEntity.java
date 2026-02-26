@@ -37,7 +37,9 @@ public class DecoyGrenadeEntity extends ThrowableItemProjectile {
 
     @Override
     protected void onHit(net.minecraft.world.phys.HitResult hitResult) {
-        // 不调用 super.onHit() 以避免父类可能播放的声音
+        // 调用父类方法以处理碰撞，使实体停止
+        super.onHit(hitResult);
+
         if (!this.level().isClientSide) {
             // 设置第一次射击延迟
             nextShootDelay = MIN_DELAY + this.random.nextInt(MAX_DELAY - MIN_DELAY);

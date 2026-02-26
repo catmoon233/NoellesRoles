@@ -1,7 +1,6 @@
 package org.agmas.noellesroles.entity;
 
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,11 +9,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.init.ModItems;
 
@@ -24,11 +25,13 @@ import java.util.List;
  * 闪光弹实体
  * - 落地时播放FIREWORK_LARGE_BLAST（烟花爆炸声）
  * - 检测玩家视野，让视野内有闪光弹的玩家获得试炼之兆效果（RAID_OMEN）3秒（60 ticks）
+ * - 视野判定参考巡警实现：距离检查 + 视野角度检查 + 射线检测
+ * - 视野角度：70度扇形（半角35度）
  */
 public class FlashGrenadeEntity extends ThrowableItemProjectile {
 
-    // 闪光半径：6格
-    private static final double FLASH_RADIUS = 6.0;
+    // 闪光半径：8格
+    private static final double FLASH_RADIUS = 8.0;
     // 效果持续时间：3秒（60 ticks）
     private static final int EFFECT_DURATION = 60;
 
@@ -62,6 +65,7 @@ public class FlashGrenadeEntity extends ThrowableItemProjectile {
 
     /**
      * 检测玩家视野，让视野内有闪光弹的玩家给予试炼之兆效果（RAID_OMEN）3秒
+     * 参考巡警的视野判定实现
      */
     private void applyFlashToPlayersWithLineOfSight(ServerLevel world) {
         // 在大范围内查找玩家（视野范围）
@@ -79,7 +83,7 @@ public class FlashGrenadeEntity extends ThrowableItemProjectile {
         Vec3 flashPos = this.position().add(0, 1.0, 0);
 
         for (ServerPlayer player : players) {
-            // 检查玩家视线是否能看到闪光弹
+            // 检查玩家视线是否能看到闪光弹（参考巡警的视野判定）
             if (canSeeFlash(player, flashPos, world)) {
                 // 给予试炼之兆效果（RAID_OMEN）3秒
                 player.addEffect(new MobEffectInstance(
@@ -96,36 +100,35 @@ public class FlashGrenadeEntity extends ThrowableItemProjectile {
 
     /**
      * 检查玩家视线是否能看到闪光弹位置
+     * 参考巡警的视野判定实现（PatrollerKillMixin.isBoundTargetVisible）
      */
     private boolean canSeeFlash(ServerPlayer player, Vec3 flashPos, ServerLevel world) {
         Vec3 eyePos = player.getEyePosition();
-        Vec3 direction = flashPos.subtract(eyePos).normalize();
-        
+        Vec3 lookDir = player.getViewVector(1.0f);
+
         // 检查距离
         double distance = eyePos.distanceTo(flashPos);
         if (distance > FLASH_RADIUS) {
             return false;
         }
 
-        // 射线检测，检查是否有方块遮挡
-        // 玩家到闪光弹的路径上是否有不透明的方块
-        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        double stepSize = 0.1;
-        Vec3 currentPos = eyePos;
-        
-        for (double d = 0; d < distance; d += stepSize) {
-            blockPos.set(currentPos.x, currentPos.y, currentPos.z);
-            
-            if (!world.getBlockState(blockPos).isSuffocating(world, blockPos)) {
-                // 方块不遮挡视线，继续检查
-                currentPos = currentPos.add(direction.scale(stepSize));
-            } else {
-                // 有方块遮挡视线
-                return false;
-            }
+        // 视野角度检查（参考巡警：使用点积判断）
+        Vec3 toFlash = flashPos.subtract(eyePos).normalize();
+        double dot = lookDir.dot(toFlash);
+        // 60度扇形视野（半角30度）
+        if (dot < Math.cos(Math.toRadians(30.0))) {
+            return false;
         }
-        
-        return true;
+
+        // 射线检测（参考巡警：使用 ClipContext）
+        net.minecraft.world.level.ClipContext context = new net.minecraft.world.level.ClipContext(
+                eyePos, flashPos,
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                net.minecraft.world.level.ClipContext.Fluid.NONE,
+                player);
+        net.minecraft.world.phys.BlockHitResult hit = world.clip(context);
+        return hit.getType() == net.minecraft.world.phys.HitResult.Type.MISS ||
+                hit.getLocation().distanceTo(flashPos) < 1.0;
     }
 
     /**
