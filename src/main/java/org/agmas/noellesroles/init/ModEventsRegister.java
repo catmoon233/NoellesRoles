@@ -1260,7 +1260,9 @@ public class ModEventsRegister {
                 "exposure:stacked_photographs",
                 "exposure:album",
                 "exposure:photograph",
-                "noellesroles:mint_candies"));
+                "noellesroles:mint_candies",
+                "noellesroles:pocket_watch",
+                "minecraft:clock"));
 
     }
 

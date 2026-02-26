@@ -257,6 +257,16 @@ public class ModItems {
             new LockItem(6, 0.1f, new Item.Properties().stacksTo(1)),
             "lock");
 
+    /**
+     * 怀表
+     * - 右键使用查看当前局内游戏时间
+     * - 使用后进入60秒冷却
+     * - 钟表匠商店可用100金币购买
+     */
+    public static final Item POCKET_WATCH = register(
+            new PocketWatchItem(new Item.Properties().stacksTo(1)),
+            "pocket_watch");
+
     static {
         ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
         ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());

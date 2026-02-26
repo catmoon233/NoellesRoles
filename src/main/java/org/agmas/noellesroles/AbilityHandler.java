@@ -72,8 +72,9 @@ public class AbilityHandler {
                 for (var it : items) {
                     it.discard();
                 }
-                player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1f,
-                        1f);
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.5F,
+                        1.0F + player.level().random.nextFloat() * 0.1F - 0.05F);
                 context.player().displayClientMessage(Component.translatable(
                         "message.noellesroles.cleaner.cleanned", items.size())
                         .withStyle(ChatFormatting.GOLD), true);
