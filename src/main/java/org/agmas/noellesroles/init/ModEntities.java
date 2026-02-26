@@ -100,6 +100,19 @@ public class ModEntities {
                     .build());
 
     /**
+     * 闪光弹实体 - 可投掷物品，落地时使范围内玩家致盲
+     */
+    @SuppressWarnings("deprecation")
+    public static final EntityType<FlashGrenadeEntity> FLASH_GRENADE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "flash_grenade"),
+            FabricEntityTypeBuilder.<FlashGrenadeEntity>create(MobCategory.MISC, FlashGrenadeEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
+                    .trackRangeBlocks(4)
+                    .trackedUpdateRate(10)
+                    .build());
+
+    /**
      * 初始化实体
      * 注册实体属性（LivingEntity 需要）
      */
