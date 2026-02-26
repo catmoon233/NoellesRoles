@@ -261,6 +261,8 @@
   "item.noellesroles.blank_cartridge.tooltip": "Right-click on target player to use, puts their gun on 30s cooldown",
   "item.noellesroles.smoke_grenade": "Smoke Grenade",
   "item.noellesroles.smoke_grenade.tooltip": "Throw to create smoke area, entrants become blinded; direct hit clears target's sanity",
+  "item.noellesroles.chlorine_bomb": "Chlorine Bomb",
+  "item.noellesroles.chlorine_bomb.tooltip": "Throw, on impact poisons players within 3 blocks (30s duration)",
   "item.noellesroles.reinforcement": "Maintenance Tool",
   "item.noellesroles.reinforcement.tooltip": "Right-click on door to reinforce, defends against one crowbar attack; crouch right-click to unjam and remove item",
   "item.noellesroles.alarm_trap": "Alarm Trap",
