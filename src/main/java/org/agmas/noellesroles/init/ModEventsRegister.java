@@ -33,6 +33,8 @@ import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
+import org.agmas.noellesroles.repack.HSRItems;
+import org.agmas.noellesroles.repack.items.BanditRevolverItem;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
@@ -49,6 +51,7 @@ import org.agmas.noellesroles.utils.ServerManager;
 import org.slf4j.LoggerFactory;
 
 import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -1021,9 +1024,8 @@ public class ModEventsRegister {
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
-
             serverLevel.players().forEach(p -> {
-
+                p.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, TMMConfig.revolverCooldown * 20);
                 p.addEffect(new MobEffectInstance(
                         MobEffects.WATER_BREATHING,
                         (int) (5 * 20), // 持续时间 5s（tick）
