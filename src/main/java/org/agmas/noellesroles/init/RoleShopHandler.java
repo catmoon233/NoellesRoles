@@ -502,6 +502,8 @@ public class RoleShopHandler {
                 return PlayerShopComponent.useBlackout(player);
             }
         });
+        柜子区的商店.add(new ShopEntry(ModItems.FLASH_GRENADE.getDefaultInstance(), 150, ShopEntry.Type.TOOL));
+        柜子区的商店.add(new ShopEntry(ModItems.DECOY_GRENADE.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
 
         // 阴谋家商店
         CONSPIRATOR_SHOP.add(new ShopEntry(
