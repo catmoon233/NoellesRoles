@@ -9,7 +9,6 @@ import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
-import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.jetbrains.annotations.NotNull;
 
 import dev.doctor4t.trainmurdermystery.TMMConfig;

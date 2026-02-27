@@ -1,5 +1,41 @@
 package org.agmas.noellesroles.init;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import org.agmas.harpymodloader.Harpymodloader;
+import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
+import org.agmas.noellesroles.AbilityHandler;
+import org.agmas.noellesroles.ModDataComponentTypes;
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.block_entity.VendingMachinesBlockEntity;
+import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
+import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
+import org.agmas.noellesroles.component.ModComponents;
+import org.agmas.noellesroles.component.MonitorPlayerComponent;
+import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
+import org.agmas.noellesroles.component.SwapperPlayerComponent;
+import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.events.OnVendingMachinesBuyItems;
+import org.agmas.noellesroles.item.ChefFoodItem;
+import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
+import org.agmas.noellesroles.packet.ChefCookC2SPacket;
+import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
+import org.agmas.noellesroles.packet.RecorderC2SPacket;
+import org.agmas.noellesroles.packet.VendingBuyMessageCallBackS2CPacket;
+import org.agmas.noellesroles.packet.VendingMachinesBuyC2SPacket;
+import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
+import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
+import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
+import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
+import org.agmas.noellesroles.utils.RoleUtils;
+
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
@@ -27,31 +63,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import org.agmas.harpymodloader.Harpymodloader;
-import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
-import org.agmas.noellesroles.AbilityHandler;
-import org.agmas.noellesroles.ModDataComponentTypes;
-import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.block_entity.VendingMachinesBlockEntity;
-import org.agmas.noellesroles.packet.*;
-import org.agmas.noellesroles.role.ModRoles;
-import org.agmas.noellesroles.config.NoellesRolesConfig;
-import org.agmas.noellesroles.item.ChefFoodItem;
-import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
-import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
-import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
-import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
-import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
-import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
-import org.agmas.noellesroles.utils.RoleUtils;
-import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
-import java.util.*;
-import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
-import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
-import org.agmas.noellesroles.component.ModComponents;
-import org.agmas.noellesroles.component.MonitorPlayerComponent;
-import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
-import org.agmas.noellesroles.component.SwapperPlayerComponent;
 
 public class ModPacketsReciever {
 
@@ -90,12 +101,21 @@ public class ModPacketsReciever {
                                         entry.stack().getCount(), entry.price());
                                 return;
                             } else {
-                                if (entry.onBuy(player)) {
+                                if (entry.onBuy(player)
+                                        && OnVendingMachinesBuyItems.EVENT.invoker().allowBuy(player, entry)) {
                                     playerShopComponent.addToBalance(-entry.price());
                                     player.displayClientMessage(Component.translatable("noellesroles.bought_item")
                                             .withStyle(ChatFormatting.GREEN), true);
                                     ServerPlayNetworking.send(player,
                                             new VendingBuyMessageCallBackS2CPacket("noellesroles.bought_item"));
+                                    player.connection.send(new ClientboundSoundPacket(
+                                            BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TMMSounds.UI_SHOP_BUY),
+                                            SoundSource.PLAYERS, player.getX(), player.getY(), player.getZ(), 1.0F,
+                                            0.9F + player.getRandom().nextFloat() * 0.2F,
+                                            player.getRandom().nextLong()));
+                                    TMM.REPLAY_MANAGER.recordStoreBuy(player.getUUID(),
+                                            BuiltInRegistries.ITEM.getKey(entry.stack().getItem()),
+                                            entry.stack().getCount(), entry.price());
 
                                 } else {
                                     player.displayClientMessage(Component.translatable("noellesroles.cant_buy_item")
@@ -129,7 +149,8 @@ public class ModPacketsReciever {
             }, 1);
             int stuffT = TMMItemUtils.clearItem(player, ModItems.FOOD_STUFF, 2);
             if (!(foodT >= 1 && stuffT >= 2)) {
-                player.displayClientMessage(Component.translatable("screen.noellesroles.chef.not_enough_food_stuff").withStyle(ChatFormatting.RED), true);
+                player.displayClientMessage(Component.translatable("screen.noellesroles.chef.not_enough_food_stuff")
+                        .withStyle(ChatFormatting.RED), true);
                 return;
             }
             var cooked_food = ModItems.COOKED_FOOD.getDefaultInstance();
