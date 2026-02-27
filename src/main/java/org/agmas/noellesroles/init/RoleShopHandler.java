@@ -143,6 +143,20 @@ public class RoleShopHandler {
             ShopContent.customEntries.put(ModRoles.OLDMAN.getIdentifier(), SHOP);
         }
         {
+            // 监察员的商店
+            var SHOP = new ArrayList<ShopEntry>();
+            var displayer = Items.BARRIER.getDefaultInstance();
+            displayer.set(DataComponents.ITEM_NAME,
+                    Component.translatable("gui.noellesroles.monitor.cooldown_item").withStyle(ChatFormatting.RED));
+            SHOP.add(new ShopEntry(displayer, 0, ShopEntry.Type.TOOL) {
+                @Override
+                public boolean onBuy(Player player) {
+                    return false;
+                }
+            });
+            ShopContent.customEntries.put(ModRoles.MONITOR.getIdentifier(), SHOP);
+        }
+        {
             // 死灵法师的商店
             var NECROMANCER_SHOP = new ArrayList<ShopEntry>();
 
