@@ -502,6 +502,7 @@ public class NoellesrolesClient implements ClientModInitializer {
         ItemTooltipCallback.EVENT.register(((itemStack, tooltipContext, tooltipType, list) -> {
             tooltipHelper(TMMItems.DEFENSE_VIAL, itemStack, list);
             tooltipHelper(ModItems.DELUSION_VIAL, itemStack, list);
+            tooltipHelper(ModItems.ONCE_REVOLVER, itemStack, list);
         }));
         // registerKeyBindings();
 
