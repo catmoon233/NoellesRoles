@@ -12,6 +12,7 @@ import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions.WinStatus;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ComponentArgument;
@@ -34,6 +35,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
+import org.agmas.noellesroles.utils.MapScanner;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -60,6 +63,13 @@ public class GameFunctionsCommand {
                 GameFunctions.tryResetTrainOnlySomeBlock(context.getSource().getLevel());
                 context.getSource().sendSuccess(() -> Component.literal("Clean Reset (clean only)!"), true);
 
+                return 1;
+              })).then(Commands.literal("scan").executes((context) -> {
+                MapScanner.scanAllTaskBlocks(context.getSource().getLevel());
+                context.getSource().sendSuccess(() -> Component.literal("Scanned Task points!"), true);
+                for (var player : context.getSource().getLevel().players()) {
+                  ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
+                }
                 return 1;
               })))
               .then(Commands.literal("blackout").executes((context) -> {
