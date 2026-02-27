@@ -18,6 +18,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
@@ -28,10 +29,12 @@ import pro.fazeclan.river.stupid_express.StupidExpress;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
 import org.agmas.noellesroles.Noellesroles;
@@ -66,7 +69,13 @@ public class GameFunctionsCommand {
                 return 1;
               })).then(Commands.literal("scan").executes((context) -> {
                 MapScanner.scanAllTaskBlocks(context.getSource().getLevel());
-                context.getSource().sendSuccess(() -> Component.literal("Scanned Task points!"), true);
+                HashMap<Integer, Boolean> map = new HashMap<>();
+                for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
+                  map.putIfAbsent(entry.getValue(), true);
+                }
+                context.getSource().sendSuccess(
+                    () -> Component.translatable("Scanned Task points! Total %s types!", map.size()), true);
+
                 for (var player : context.getSource().getLevel().players()) {
                   ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
                 }
