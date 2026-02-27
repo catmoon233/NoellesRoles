@@ -120,7 +120,11 @@ public class RoleShopHandler {
             @Override
             public boolean onBuy(Player player) {
                 var psycc = PlayerPsychoComponent.KEY.get(player);
-                return psycc.startPsycho();
+                boolean success = psycc.startPsycho();
+                if (success) {
+                    player.getCooldowns().addCooldown(TMMItems.PSYCHO_MODE, 20 * 60);
+                }
+                return success;
             }
         });
     }
@@ -763,28 +767,29 @@ public class RoleShopHandler {
 
         // 小偷商店
         // 小偷的荣誉（金锭） - 根据人数动态计算价格
-        // ShopEntry THIEF_SHOP_ENTRY = new ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
-        //         0, // 价格在onBuy中动态计算
-        //         ShopEntry.Type.TOOL) {
-        //     @Override
-        //     public int price() {
-        //         return 0;
-        //     }
+        // ShopEntry THIEF_SHOP_ENTRY = new
+        // ShopEntry(Items.GOLD_INGOT.getDefaultInstance(),
+        // 0, // 价格在onBuy中动态计算
+        // ShopEntry.Type.TOOL) {
+        // @Override
+        // public int price() {
+        // return 0;
+        // }
 
-        //     @Override
-        //     public boolean onBuy(@NotNull Player player) {
-        //         var tpc = ThiefPlayerComponent.KEY.get(player);
-        //         int cost = tpc.honorCost;
-        //         // 扣除金币并给予金锭
-        //         shop.addToBalance(-cost);
+        // @Override
+        // public boolean onBuy(@NotNull Player player) {
+        // var tpc = ThiefPlayerComponent.KEY.get(player);
+        // int cost = tpc.honorCost;
+        // // 扣除金币并给予金锭
+        // shop.addToBalance(-cost);
 
-        //         player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
-        //         player.displayClientMessage(
-        //                 Component.translatable("message.noellesroles.thief.honor_purchased", cost)
-        //                         .withStyle(ChatFormatting.GOLD),
-        //                 true);
-        //         return true;
-        //     }
+        // player.addItem(Items.GOLD_INGOT.getDefaultInstance().copy());
+        // player.displayClientMessage(
+        // Component.translatable("message.noellesroles.thief.honor_purchased", cost)
+        // .withStyle(ChatFormatting.GOLD),
+        // true);
+        // return true;
+        // }
         // };
         // THIEF_SHOP.add(THIEF_SHOP_ENTRY);
 

@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.agmas.noellesroles.AttendantHandler;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
+import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.ClockmakerPlayerComponent;
 import org.agmas.noellesroles.entity.WheelchairEntity;
@@ -27,6 +28,38 @@ public class ClientHudRenderer {
     public static void registerRenderersEvent() {
         CommanderHudRender.register();
         WayfarerHudRenderer.registerRendererEvent();
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            // 记录员
+            var client = Minecraft.getInstance();
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null
+                    || !TMMClient.gameComponent.isRole(client.player, ModRoles.RECORDER)) {
+                return;
+            }
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+            var abpc = RecorderPlayerComponent.KEY.get(client.player);
+            // hud.noellesroles.recorder.process
+            Component text = Component
+                    .translatable("hud.noellesroles.recorder.requirement",
+                            abpc.requiredCorrectCount)
+                    .withStyle(ChatFormatting.GOLD);
+            Component text2 = Component
+                    .translatable("hud.noellesroles.recorder.process",
+                            abpc.getCorrectGuesses(), abpc.requiredCorrectCount)
+                    .withStyle(ChatFormatting.YELLOW);
+            guiGraphics.drawString(font, text2, xOffset - font.width(text2), yOffset - font.lineHeight - 4,
+                    Color.WHITE.getRGB());
+            guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight * 2 - 8,
+                    Color.WHITE.getRGB());
+            return;
+        });
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             var client = Minecraft.getInstance();
             if (client == null)

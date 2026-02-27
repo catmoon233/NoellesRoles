@@ -41,7 +41,6 @@ import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
-import org.agmas.noellesroles.roles.ghost.GhostPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
@@ -108,10 +107,10 @@ import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPer
 public class ModEventsRegister {
     private static AttributeModifier noJumpingAttribute = new AttributeModifier(
             Noellesroles.id("no_jumping"), -1.0f, AttributeModifier.Operation.ADD_VALUE);
-    private static AttributeModifier oldmanAttribute = new AttributeModifier(
-            Noellesroles.id("oldman"), -0.4f, AttributeModifier.Operation.ADD_VALUE);
-    private static AttributeModifier windYaoseScaleAttribute = new AttributeModifier(
-            Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_VALUE);
+    // private static AttributeModifier oldmanAttribute = new AttributeModifier(
+    //         Noellesroles.id("oldman"), -0.4f, AttributeModifier.Operation.ADD_VALUE);
+    // private static AttributeModifier windYaoseScaleAttribute = new AttributeModifier(
+    //         Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_VALUE);
 
     /**
      * 处理拳击手无敌反制
@@ -804,7 +803,11 @@ public class ModEventsRegister {
 
             // 初始化仇杀客事件
             BloodFeudistPlayerComponent.registerEvents();
-
+            // 初始化记录员
+            if (role.identifier().equals(ModRoles.RECORDER.identifier())) {
+                var tpc = RecorderPlayerComponent.KEY.get(player);
+                tpc.initRecorder();
+            }
             if (role.identifier().equals(ModRoles.THIEF.identifier())) {
                 int totalPlayers = player.level().players().size();
                 var tpc = ThiefPlayerComponent.KEY.get(player);

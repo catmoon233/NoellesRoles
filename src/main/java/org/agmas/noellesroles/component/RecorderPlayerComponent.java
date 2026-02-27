@@ -45,7 +45,8 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
     // private int MAX_WRONG_GUESSES = 10;
     private int MAX_WRONG_GUESSES = 10;
     private boolean rolesInitialized = false;
-    private boolean wasRunning = false;
+    // private boolean wasRunning = false;
+    public int requiredCorrectCount = 0;
 
     public RecorderPlayerComponent(Player player) {
         this.player = player;
@@ -65,6 +66,13 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
             this.MAX_WRONG_GUESSES = Mth.clamp(5, 20, this.MAX_WRONG_GUESSES);
         }
         ModComponents.RECORDER.sync(this.player);
+    }
+
+    public void initRecorder() {
+        var players = player.level().players();
+        int totalPlayers = players.size();
+        this.requiredCorrectCount = getRequiredCorrectCount(totalPlayers);
+        this.sync();
     }
 
     @Override
@@ -159,8 +167,27 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         return guesses;
     }
 
+    public int getCorrectGuesses() {
+        int correctGuesses = 0;
+        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
+
+        for (Map.Entry<UUID, ResourceLocation> entry : guesses.entrySet()) {
+            UUID targetUuid = entry.getKey();
+            ResourceLocation guessedRoleId = entry.getValue();
+
+            Player target = player.level().getPlayerByUUID(targetUuid);
+            if (target != null) {
+                Role actualRole = gameWorld.getRole(target);
+                if (actualRole != null && actualRole.identifier().equals(guessedRoleId)) {
+                    correctGuesses++;
+                }
+            }
+        }
+        return correctGuesses;
+    }
+
     private void checkWinCondition() {
-        if (!(player instanceof ServerPlayer serverPlayer))
+        if (!(player instanceof ServerPlayer))
             return;
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
@@ -179,14 +206,23 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
             }
         }
 
-        int totalPlayers = player.level().players().size();
-        int requiredCorrect = (int) Math.ceil(totalPlayers * 0.3);
+        var players = player.level().players();
+        int totalPlayers = 0;
+        for (Player pplayer : players) {
+            if (gameWorld.getRole(pplayer) != null) {
+                totalPlayers++;
+            }
+        }
+        int requiredCorrect = this.requiredCorrectCount;
 
         if (requiredCorrect < 2)
             requiredCorrect = 2;
         if (requiredCorrect > totalPlayers - 1)
             requiredCorrect = totalPlayers - 1;
-
+        if (this.requiredCorrectCount != requiredCorrect) {
+            this.requiredCorrectCount = requiredCorrect;
+            this.sync();
+        }
         if (correctGuesses >= requiredCorrect) {
             if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
                 // 补充 CustomWinnerID: recorder
@@ -201,6 +237,21 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
                         true);
             }
         }
+    }
+
+    public int getRequiredCorrectCount(int totalPlayers) {
+        if (totalPlayers <= 8)
+            return 5;
+        if (totalPlayers <= 18) {
+            return (int) 6;
+        }
+        if (totalPlayers > 18 && totalPlayers <= 24) {
+            return 7;
+        }
+        if (totalPlayers > 24 && totalPlayers <= 32) {
+            return 8;
+        }
+        return totalPlayers / 4;
     }
 
     @Override
@@ -242,15 +293,15 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         // GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         // List<ResourceLocation> roles = new ArrayList<>();
         // for (Player p : player.level().players()) {
-        //     if (p.getUUID().equals(player.getUUID()))
-        //         continue;
+        // if (p.getUUID().equals(player.getUUID()))
+        // continue;
 
-        //     Role role = gameWorld.getRole(p);
-        //     if (role != null) {
-        //         if (!roles.contains(role.identifier())) {
-        //             roles.add(role.identifier());
-        //         }
-        //     }
+        // Role role = gameWorld.getRole(p);
+        // if (role != null) {
+        // if (!roles.contains(role.identifier())) {
+        // roles.add(role.identifier());
+        // }
+        // }
         // }
 
         // setAvailableRoles(roles);
@@ -260,11 +311,12 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
     public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
         // availableRoles.clear();
         // if (tag.contains("availableRoles")) {
-        //     ListTag list = tag.getList("availableRoles", Tag.TAG_STRING);
-        //     for (int i = 0; i < list.size(); i++) {
-        //         availableRoles.add(ResourceLocation.tryParse(list.getString(i)));
-        //     }
+        // ListTag list = tag.getList("availableRoles", Tag.TAG_STRING);
+        // for (int i = 0; i < list.size(); i++) {
+        // availableRoles.add(ResourceLocation.tryParse(list.getString(i)));
         // }
+        // }
+        requiredCorrectCount = tag.contains("requiredCorrectCount") ? tag.getInt("requiredCorrectCount") : 10;
 
         guesses.clear();
         if (tag.contains("guesses")) {
@@ -306,9 +358,9 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
     public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
         // ListTag list = new ListTag();
         // for (ResourceLocation id : availableRoles) {
-        //     if (id != null) {
-        //         list.add(StringTag.valueOf(id.toString()));
-        //     }
+        // if (id != null) {
+        // list.add(StringTag.valueOf(id.toString()));
+        // }
         // }
         // tag.put("availableRoles", list);
 
@@ -328,7 +380,9 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
 
         tag.putInt("wrongGuessCount", wrongGuessCount);
         tag.putInt("MAX_WRONG_GUESSES", MAX_WRONG_GUESSES);
+        tag.putInt("requiredCorrectCount", requiredCorrectCount);
         tag.putBoolean("rolesInitialized", rolesInitialized);
+
     }
 
     @Override

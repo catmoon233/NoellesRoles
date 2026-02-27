@@ -248,7 +248,7 @@ public class TrapperPlayerComponent implements RoleComponent, ServerTickingCompo
      */
     public void onTrapTriggered(Player victim, Vec3 trapPos) {
         if (victim == null || victim.level().isClientSide()) return;
-        
+        victim.stopRiding();
         // 获取该玩家的触发次数
         UUID victimUuid = victim.getUUID();
         int count = triggerCounts.getOrDefault(victimUuid, 0) + 1;

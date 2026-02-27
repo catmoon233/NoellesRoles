@@ -94,7 +94,7 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
             }
-            if (random.nextInt(0, 100) < 20) {
+            if (random.nextInt(0, 100) <= 25) {
                 Harpymodloader.setRoleMaximum(ModRoles.MAGICIAN_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.MAGICIAN_ID, 0);
