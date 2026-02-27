@@ -67,7 +67,7 @@ public record BanditRevolverShootPayload(int target) implements CustomPacketPayl
                         if (game.isInnocent(target) && !player.isCreative() && mainHandStack.is(banditrevolver)) {
                             //
 
-                            if (player.getRandom().nextFloat() <= 0.2F) {
+                            if (player.getRandom().nextFloat() <= 0.5F) {
                                 Scheduler.schedule(() -> {
                                     if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
                                         player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1,

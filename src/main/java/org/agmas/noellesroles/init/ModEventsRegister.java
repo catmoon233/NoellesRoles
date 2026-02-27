@@ -32,6 +32,7 @@ import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.agmas.noellesroles.entity.WheelchairEntity;
+import org.agmas.noellesroles.events.OnVendingMachinesBuyItems;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.repack.HSRItems;
@@ -414,9 +415,23 @@ public class ModEventsRegister {
     private static boolean isEnabled = true;
 
     public static void registerEvents() {
-        PlayerStatsBeforeRefugee.beforeLoadFunc = (player)->{
+        PlayerStatsBeforeRefugee.beforeLoadFunc = (player) -> {
             ModComponents.DEATH_PENALTY.get(player).reset();
-    };
+        };
+        OnVendingMachinesBuyItems.EVENT.register((player, itemStack) -> {
+            var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+            if (itemStack.stack().is(ModItems.ONCE_REVOLVER)) {
+                var role = gameWorldComponent.getRole(player);
+                if (role != null) {
+                    if (role.isInnocent() && role.canPickUpRevolver() && !role.isNeutrals()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        });
         UseEntityCallback.EVENT.register((player, level, interactionHand, entity, entityHitResult) -> {
             var gameC = GameWorldComponent.KEY.get(level);
             if (!gameC.isRole(player, TMMRoles.VIGILANTE))

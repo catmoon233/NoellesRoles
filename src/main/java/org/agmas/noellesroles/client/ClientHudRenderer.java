@@ -335,7 +335,7 @@ public class ClientHudRenderer {
                     .translatable("hud.blood_feudist.accidental_kills", bfComponent.getAccidentalKillCount())
                     .withStyle(ChatFormatting.RED);
             guiGraphics.drawString(font, killText, xOffset - font.width(killText), dy, Color.WHITE.getRGB());
-            dy -= font.lineHeight - 2;
+            dy -= font.lineHeight + 2;
 
             // 显示速度状态
             if (bfComponent.hasSpeed1() || bfComponent.hasSpeed2()) {
@@ -346,7 +346,7 @@ public class ClientHudRenderer {
                         : Component.translatable("hud.blood_feudist.disabled").withStyle(ChatFormatting.GRAY);
                 Component speedText = Component.literal("").append(speedLabel).append(speedStatus);
                 guiGraphics.drawString(font, speedText, xOffset - font.width(speedText), dy, Color.WHITE.getRGB());
-                dy -= font.lineHeight - 2;
+                dy -= font.lineHeight + 2;
             }
 
             // 显示急迫状态
@@ -357,7 +357,7 @@ public class ClientHudRenderer {
                         : Component.translatable("hud.blood_feudist.disabled").withStyle(ChatFormatting.GRAY);
                 Component hasteText = Component.literal("").append(hasteLabel).append(hasteStatus);
                 guiGraphics.drawString(font, hasteText, xOffset - font.width(hasteText), dy, Color.WHITE.getRGB());
-                dy -= font.lineHeight - 2;
+                dy -= font.lineHeight + 2;
             }
 
             // 显示技能提示

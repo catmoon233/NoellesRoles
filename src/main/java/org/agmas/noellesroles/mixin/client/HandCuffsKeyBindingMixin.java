@@ -6,9 +6,7 @@ import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.init.ModItems;
-import org.agmas.noellesroles.role.ModRoles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,8 +25,12 @@ public abstract class HandCuffsKeyBindingMixin {
             return false;
         if (Minecraft.getInstance().player == null)
             return false;
-        if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRunning()
-                && TMMClient.isPlayerAliveAndInSurvival()) {
+        if (TMMClient.gameComponent != null && TMMClient.gameComponent.isRunning()) {
+            if (this.same(Minecraft.getInstance().options.keySpectatorOutlines))
+                return true;
+            if(!TMMClient.isPlayerAliveAndInSurvival()){
+                return false;
+            }
             final var player = (Minecraft.getInstance().player);
             if (player.getOffhandItem().is(ModItems.HANDCUFFS)) {
 
