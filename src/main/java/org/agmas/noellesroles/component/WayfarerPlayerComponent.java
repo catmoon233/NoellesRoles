@@ -158,6 +158,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
 
+        RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_KNIFE.getDefaultInstance());
         RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());
         player.displayClientMessage(
                 Component.translatable("message.noellesroles.wayfarer.killer_died").withStyle(ChatFormatting.RED),
@@ -293,6 +294,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
 
+        RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_KNIFE.getDefaultInstance());
         RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());
         player.displayClientMessage(
                 Component.translatable("message.noellesroles.wayfarer.phase.2.finish").withStyle(ChatFormatting.GOLD),
@@ -324,6 +326,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_REVOLVER);
 
+        RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_KNIFE.getDefaultInstance());
         RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());
         player.displayClientMessage(
                 Component.translatable("message.noellesroles.wayfarer.phase.1.finish").withStyle(ChatFormatting.GOLD),
