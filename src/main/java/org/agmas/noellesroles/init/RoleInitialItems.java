@@ -88,10 +88,10 @@ public class RoleInitialItems {
         looseItems.add(TMMItems.KNIFE::getDefaultInstance);
         INITIAL_ITEMS_MAP.put(TMMRoles.LOOSE_END, looseItems);
 
-        // // 红尘客
-        // List<Supplier<ItemStack>> wayfarerItems = new ArrayList<>();
-        // wayfarerItems.add(() -> ModItems.FAKE_REVOLVER.getDefaultInstance());
-        // INITIAL_ITEMS_MAP.put(ModRoles.WAYFARER, wayfarerItems);
+        // 红尘客
+        List<Supplier<ItemStack>> wayfarerItems = new ArrayList<>();
+        wayfarerItems.add(() -> ModItems.FAKE_KNIFE.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.WAYFARER, wayfarerItems);
 
         // 乘务员初始物品
         List<Supplier<ItemStack>> attendantItems = new ArrayList<>();
