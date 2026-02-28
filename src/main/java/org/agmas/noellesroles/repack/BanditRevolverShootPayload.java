@@ -24,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 
 public record BanditRevolverShootPayload(int target) implements CustomPacketPayload {
@@ -65,9 +66,14 @@ public record BanditRevolverShootPayload(int target) implements CustomPacketPayl
                         Item banditrevolver = HSRItems.BANDIT_REVOLVER;
                         boolean backfire = false;
                         if (game.isInnocent(target) && !player.isCreative() && mainHandStack.is(banditrevolver)) {
-                            //
-
-                            if (player.getRandom().nextFloat() <= 0.5F) {
+                            // \
+                            boolean shouldDrop = false;
+                            if (game.isRole(player, ModRoles.BANDIT)) {
+                                shouldDrop = player.getRandom().nextFloat() <= 0.75F;
+                            } else {
+                                shouldDrop = player.getRandom().nextFloat() <= 0.4F;
+                            }
+                            if (shouldDrop) {
                                 Scheduler.schedule(() -> {
                                     if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
                                         player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1,
