@@ -7,6 +7,7 @@ import java.util.Random;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.events.GameInitializeEvent;
 import org.agmas.harpymodloader.modded_murder.RoleAssignmentManager;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.role.ModRoles;
 
@@ -279,6 +280,24 @@ public class InitModRolesMax {
             Harpymodloader.MODIFIER_MAX.put(StupidExpress.id("split_personality"), 1);
         } else {
             Harpymodloader.MODIFIER_MAX.put(StupidExpress.id("split_personality"), 0);
+        }
+
+        /// EXPEDITION (远征队)
+        // 50%概率生成
+        if (random.nextInt(0, 100) < 50) {
+            StupidExpress.LOGGER.info("Modifier [Expedition] enabled in this round!");
+            Harpymodloader.MODIFIER_MAX.put(Noellesroles.id("expedition"), 1); 
+        } else {
+            Harpymodloader.MODIFIER_MAX.put(Noellesroles.id("expedition"), 0);
+        }
+
+        /// BEST_VIGILANTE (更好的义警)
+        // 仅在12人及以上对局中，0.1%概率生成
+        if (players >= 12 && random.nextInt(0, 10000) < 10) {
+            StupidExpress.LOGGER.info("Role [Best Vigilante] enabled in this round!");
+            Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 1);
+        } else {
+            Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 0);
         }
     }
 }

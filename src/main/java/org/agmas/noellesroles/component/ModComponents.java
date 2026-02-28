@@ -187,6 +187,13 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "clockmaker"),
             ClockmakerPlayerComponent.class);
 
+    public static final ComponentKey<BestVigilantePlayerComponent> BEST_VIGILANTE = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "best_vigilante"),
+            BestVigilantePlayerComponent.class);
+
+    public static final ComponentKey<org.agmas.noellesroles.modifier.expedition.ExpeditionComponent> EXPEDITION =
+            org.agmas.noellesroles.modifier.expedition.ExpeditionComponent.KEY;
+
     public ModComponents() {
         // CCA 需要无参构造函数
     }
@@ -393,6 +400,16 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, CLOCKMAKER)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(ClockmakerPlayerComponent::new);
+
+        // 注册更好的义警组件
+        registry.beginRegistration(Player.class, BEST_VIGILANTE)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(BestVigilantePlayerComponent::new);
+
+        // 注册远征队组件
+        registry.beginRegistration(Player.class, EXPEDITION)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(org.agmas.noellesroles.modifier.expedition.ExpeditionComponent::new);
 
         // ==================== 示例：注册更多组件 ====================
         //

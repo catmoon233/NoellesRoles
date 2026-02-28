@@ -79,6 +79,7 @@ public class GamblerDeathMixin {
 						vigilanteRoles.add(role);
 					}
 				}
+				vigilanteRoles.removeIf(role -> role.identifier().equals(ModRoles.BEST_VIGILANTE_ID));
 				if (vigilanteRoles.isEmpty()) {
 					vigilanteRoles.add(TMMRoles.VIGILANTE);
 				}

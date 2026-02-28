@@ -36,6 +36,7 @@
       ],
       "disabled": [
         "noellesroles:better_vigilante",
+        "noellesroles:best_vigilante",
         "noellesroles:clockmaker",
         "noellesroles:photographer",
         "noellesroles:avenger",
@@ -82,6 +83,7 @@
         "stupid_express:allergist"
       ],
       "disabled": [
+        "noellesroles:expedition",
         "stupid_express:refugee",
         "stupid_express:split_personality",
         "stupid_express:magnate",
@@ -147,7 +149,8 @@
         "noellesroles:elf",
         "stupid_express:initiate",
         "stupid_express:avaricious",
-        "stupid_express:necromancer"
+        "stupid_express:necromancer",
+        "noellesroles:best_vigilante"
       ],
       "disabled": [
         "noellesroles:thief",
@@ -168,6 +171,7 @@
     },
     "modifiers": {
       "enabled": [
+        "noellesroles:expedition",
         "stupid_express:lovers",
         "stupid_express:tiny",
         "stupid_express:tall",
@@ -240,6 +244,7 @@
         "noellesroles:cleaner",
         "stupid_express:necromancer",
         "noellesroles:better_vigilante",
+        "noellesroles:best_vigilante",
         "noellesroles:patroller",
         "noellesroles:elf",
         "noellesroles:puppeteer",
@@ -260,6 +265,7 @@
     },
     "modifiers": {
       "enabled": [
+        "noellesroles:expedition",
         "stupid_express:lovers",
         "stupid_express:tiny",
         "stupid_express:tall",

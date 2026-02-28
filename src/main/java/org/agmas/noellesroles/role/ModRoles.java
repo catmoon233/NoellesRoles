@@ -81,7 +81,8 @@ public class ModRoles {
   public static ResourceLocation AWESOME_BINGLUS_ID = Noellesroles.id("awesome_binglus");
   public static ResourceLocation VOODOO_ID = Noellesroles.id("voodoo");
   public static ResourceLocation RECALLER_ID = Noellesroles.id("recaller");
-  public static ResourceLocation BETTER_VIGILANTE_ID = Noellesroles.id("better_vigilante");
+  public static final ResourceLocation BETTER_VIGILANTE_ID = Noellesroles.id("better_vigilante");
+  public static final ResourceLocation BEST_VIGILANTE_ID = Noellesroles.id("best_vigilante");
   public static ResourceLocation BROADCASTER_ID = Noellesroles.id("broadcaster");
   public static ResourceLocation GHOST_ID = Noellesroles.id("ghost");
   public static ResourceLocation DOCTOR_ID = Noellesroles.id("doctor");
@@ -222,6 +223,17 @@ public class ModRoles {
           dev.doctor4t.trainmurdermystery.game.GameConstants.getInTicks(0, 10), false)
           .setVigilanteTeam(true).setComponentKey(PatrollerPlayerComponent.KEY))
       .setCanPickUpRevolver(true);
+
+  /**
+   * 更好的义警角色
+   * - 属于警长阵营 (isInnocent = true, setVigilanteTeam = true)
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 在计分板上显示
+   * - 技能：开局自带一颗手榴弹
+   */
+  public static Role BEST_VIGILANTE;
 
   // 杀手阵营角色
   public static Role CLEANER = TMMRoles
@@ -943,6 +955,17 @@ public class ModRoles {
         true // 不显示计分板
     )).setComponentKey(ClockmakerPlayerComponent.KEY).setCanSeeTime(true).setCanSeeCoin(true);
 
+    // 更好的义警角色 - 警长阵营
+    BEST_VIGILANTE = TMMRoles.registerRole(new NoramlRole(
+        BEST_VIGILANTE_ID, // 角色 ID
+        new Color(0, 128, 128).getRGB(), // 深青色 - 代表更强悍的义警
+        true, // isInnocent = 警长阵营
+        false, // canUseKiller = 无杀手能力
+        Role.MoodType.REAL, // 真实心情
+        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+        false // 显示计分板
+    )).setVigilanteTeam(true).setCanPickUpRevolver(true).setComponentKey(ModComponents.BEST_VIGILANTE);
+
     // ==================== 设置角色数量限制 ====================
     // 某些角色可能需要限制每局游戏中的数量
     // 复仇者每局只能有 1 个
@@ -1035,6 +1058,12 @@ public class ModRoles {
 
     // 钟表匠 - 仅在12人及以上对局生成
     // 注意：具体限制在 InitModRolesMax 中设置
+
+    // 更好的义警 - 仅在12人及以上对局生成，0.5%概率
+    Harpymodloader.setRoleMaximum(BEST_VIGILANTE_ID, 0); // 默认为0，在 InitModRolesMax 中动态设置
+
+    // 红海军 - 设置为0（不会自然生成，只能通过远征队修饰符获得）
+    Harpymodloader.setRoleMaximum(BETTER_VIGILANTE_ID, 0);
 
     PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
     PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());

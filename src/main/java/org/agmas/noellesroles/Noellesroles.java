@@ -11,6 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.init.*;
+import org.agmas.noellesroles.modifier.NRModifiers;
 import pro.fazeclan.river.stupid_express.constants.SEModifiers;
 
 import org.agmas.harpymodloader.Harpymodloader;
@@ -85,6 +86,8 @@ public class Noellesroles implements ModInitializer {
         TMMRoles.DISCOVERY_CIVILIAN.setCanUseInstinct(true);
         // 初始化模组角色列表
         ModRoles.init();
+        // 初始化修饰符
+        NRModifiers.init();
         // 初始化初始物品映射
         RoleInitialItems.initializeInitialItems();
 
