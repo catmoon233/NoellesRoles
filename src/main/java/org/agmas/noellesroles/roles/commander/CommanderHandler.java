@@ -113,6 +113,8 @@ public class CommanderHandler {
         // 杀手说话
         ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, serverPlayer, bound) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.level());
+            if(GameFunctions.isPlayerSpectatingOrCreative(serverPlayer))
+                return true;
             if (gameWorldComponent.isRole(serverPlayer, ModRoles.COMMANDER))
                 return true;
             var role = gameWorldComponent.getRole(serverPlayer.getUUID());
