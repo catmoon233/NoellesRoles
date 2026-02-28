@@ -177,9 +177,17 @@ public class InitModRolesMax {
                         ELF_COUNT = 0;
                     Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, PATROLLER_COUNT);
                     Harpymodloader.setRoleMaximum(ModRoles.ELF, ELF_COUNT);
+
+                    // BEST_VIGILANTE (更好的义警) - 0.1%概率生成
+                    if (random.nextInt(0, 10000) < 10) {
+                        Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 1);
+                    } else {
+                        Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 0);
+                    }
                 } else {
                     Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
                     Harpymodloader.setRoleMaximum(ModRoles.ELF, 0);
+                    Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 0);
                 }
 
             }
@@ -286,18 +294,9 @@ public class InitModRolesMax {
         // 50%概率生成
         if (random.nextInt(0, 100) < 50) {
             StupidExpress.LOGGER.info("Modifier [Expedition] enabled in this round!");
-            Harpymodloader.MODIFIER_MAX.put(Noellesroles.id("expedition"), 1); 
+            Harpymodloader.MODIFIER_MAX.put(Noellesroles.id("expedition"), 1);
         } else {
             Harpymodloader.MODIFIER_MAX.put(Noellesroles.id("expedition"), 0);
-        }
-
-        /// BEST_VIGILANTE (更好的义警)
-        // 仅在12人及以上对局中，0.1%概率生成
-        if (players >= 12 && random.nextInt(0, 10000) < 10) {
-            StupidExpress.LOGGER.info("Role [Best Vigilante] enabled in this round!");
-            Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 1);
-        } else {
-            Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 0);
         }
     }
 }
