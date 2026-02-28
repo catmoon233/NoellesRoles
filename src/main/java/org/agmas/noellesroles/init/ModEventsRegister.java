@@ -261,7 +261,7 @@ public class ModEventsRegister {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(victim.level());
         boolean doctorAlive = false;
         boolean looseEndAlive = false;
-        boolean INSANE_alive = false;
+        // boolean INSANE_alive = false;
         boolean CONSPIRATOR_alive = false;
         boolean limitView = false;
         var refugeeComponent = RefugeeComponent.KEY.get(victim.level());
@@ -278,15 +278,12 @@ public class ModEventsRegister {
                 doctorAlive = true;
             } else if (gameWorldComponent.isRole(player, ModRoles.CONSPIRATOR)) {
                 CONSPIRATOR_alive = true;
-            } else if (gameWorldComponent.isRole(player,
-                    ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
-                INSANE_alive = true;
             }
-            if (doctorAlive && INSANE_alive && CONSPIRATOR_alive) {
+            if (doctorAlive || CONSPIRATOR_alive) {
                 break;
             }
         }
-        if (INSANE_alive && CONSPIRATOR_alive) {
+        if (CONSPIRATOR_alive) {
             limitView = true;
         }
         if (looseEndAlive) {

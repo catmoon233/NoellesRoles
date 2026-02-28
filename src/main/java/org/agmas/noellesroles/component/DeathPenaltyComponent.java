@@ -41,18 +41,14 @@ public class DeathPenaltyComponent implements RoleComponent, ServerTickingCompon
                         return;
                     }
                 }
-                boolean INSANE_alive = false;
+                // boolean INSANE_alive = false;
                 boolean CONSPIRATOR_alive = false;
                 for (Player p : player.level().players()) {
                     if (gameWorldComponent.isRole(p, ModRoles.CONSPIRATOR)
                             && GameFunctions.isPlayerAliveAndSurvival(p)) {
                         CONSPIRATOR_alive = true;
-                    } else if (gameWorldComponent.isRole(p,
-                            ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)
-                            && GameFunctions.isPlayerAliveAndSurvival(p)) {
-                        INSANE_alive = true;
                     }
-                    if (INSANE_alive && CONSPIRATOR_alive) {
+                    if (CONSPIRATOR_alive) {
                         if (this.penaltyExpiry == -2) {
                             this.penaltyExpiry = -1;
                             player.sendSystemMessage(
