@@ -2,9 +2,8 @@ package org.agmas.noellesroles.modifier;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.level.ServerPlayer;
-import org.agmas.harpymodloader.Harpymodloader;
+import org.agmas.harpymodloader.events.ModdedRoleAssigned;
 import org.agmas.harpymodloader.events.ModifierAssigned;
 import org.agmas.harpymodloader.events.ModifierRemoved;
 import org.agmas.harpymodloader.events.ResetPlayerEvent;
@@ -67,6 +66,31 @@ public class NRModifiers {
                 }
             } else {
                 Noellesroles.LOGGER.info("Expedition modifier not assigned to killer/neutral: " + player.getName().getString());
+            }
+        });
+
+        // 角色分配事件 - 检查是否需要移除远征队修饰符
+        ModdedRoleAssigned.EVENT.register((player, role) -> {
+            if (!(player instanceof ServerPlayer)) {
+                return;
+            }
+
+            // 检查玩家是否有远征队修饰符
+            var expeditionComponent = ExpeditionComponent.KEY.get(player);
+            if (expeditionComponent != null && expeditionComponent.isExpedition()) {
+                // 检查新角色是否是好人阵营
+                // 如果不是好人阵营（是杀手或中立），则清除远征队组件
+                if (role != null && (!role.isInnocent() || role.canUseKiller() || role.isNeutrals())) {
+                    // 清除远征队组件
+                    expeditionComponent.clear();
+                    expeditionComponent.sync();
+
+                    // 注意：由于 Harpymodloader 的修饰符系统限制，我们只能清除组件功能
+                    // 修饰符本身仍然保留在系统中，但不会生效
+                    // 这是为了防止某些角色（如赌徒、慕恋者）变成杀手后仍保留远征队能力
+
+                    Noellesroles.LOGGER.info("Expedition modifier effect disabled for player due to role change: " + player.getName().getString() + ", new role: " + role.identifier());
+                }
             }
         });
 
