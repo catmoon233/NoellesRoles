@@ -322,6 +322,10 @@ public class InstinctRenderer {
                 // 需要开启直觉
                 if (!hasInstinct)
                     return -1;
+                var deathPenalty = org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(self);
+                if (deathPenalty.hasPenalty()) {
+                    return java.awt.Color.WHITE.getRGB();
+                }
                 if (GameFunctions.isPlayerSpectatingOrCreative(self))
                     return -1; // 旁观默认高亮
                 // 直觉看不到旁观

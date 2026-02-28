@@ -36,14 +36,14 @@ public abstract class InstinctMixin {
             cir.cancel();
             return;
         }
-        var deathPenalty = org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(player);
+        // var deathPenalty = org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(player);
         // 检查死亡惩罚
-        if (deathPenalty != null)
-            if (deathPenalty.hasPenalty()) {
-                cir.setReturnValue(false);
-                cir.cancel();
-                return;
-            }
+        // if (deathPenalty != null)
+        //     if (deathPenalty.hasPenalty()) {
+        //         cir.setReturnValue(false);
+        //         cir.cancel();
+        //         return;
+        //     }
 
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
         if (gameWorldComponent.isRole(player, ModRoles.JESTER)
