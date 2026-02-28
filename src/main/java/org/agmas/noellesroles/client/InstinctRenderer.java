@@ -40,6 +40,24 @@ import pro.fazeclan.river.stupid_express.role.arsonist.cca.DousedPlayerComponent
 
 public class InstinctRenderer {
     public static void registerInstinctEvents() {
+        //
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            if (Minecraft.getInstance() == null)
+                return -1;
+            var self = Minecraft.getInstance().player;
+            if (GameFunctions.isPlayerAliveAndSurvival(self))
+                return -1;
+            if (self == null)
+                return -1;
+            if (hasInstinct) {
+                var deathPenalty = org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(self);
+                if (deathPenalty.hasPenalty()) {
+                    return -2;
+                }
+            }
+            return -1;
+
+        });
         // 验尸官
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
             if (Minecraft.getInstance() == null)
@@ -322,10 +340,6 @@ public class InstinctRenderer {
                 // 需要开启直觉
                 if (!hasInstinct)
                     return -1;
-                var deathPenalty = org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(self);
-                if (deathPenalty.hasPenalty()) {
-                    return java.awt.Color.WHITE.getRGB();
-                }
                 if (GameFunctions.isPlayerSpectatingOrCreative(self))
                     return -1; // 旁观默认高亮
                 // 直觉看不到旁观
