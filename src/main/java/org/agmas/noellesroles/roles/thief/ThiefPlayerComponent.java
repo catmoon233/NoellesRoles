@@ -326,8 +326,11 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         // 先获取物品名称（在移除之前）
         Component itemName = stoleninfo.itemStack.getDisplayName();
 
+        // 检查是否是球棒（需要特殊处理）
+        boolean isBat = stoleninfo.itemStack.is(TMMItems.BAT);
+
         // 检查小偷背包是否有空间
-        if (stoleninfo.itemStack.is(TMMItems.BAT)) {
+        if (isBat) {
             stoleninfo.itemStack = ItemStack.EMPTY;
         }
         boolean canAdd = RoleUtils.insertStackInFreeSlot(targetPlayer, stoleninfo.itemStack.copy());
@@ -339,9 +342,32 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                             .withStyle(ChatFormatting.RED),
                     true);
             return true; // 失败不进入冷却
-        } else {
-            target.getInventory().items.set(stoleninfo.slot, ItemStack.EMPTY);
         }
+
+        // 检查是否真正偷到了物品（不是EMPTY）
+        if (stoleninfo.itemStack.isEmpty()) {
+            // 没有真正偷到物品
+            if (isBat) {
+                // 偷到了球棒，显示球棒氧化消息
+                serverPlayer.displayClientMessage(
+                        Component.translatable("message.noellesroles.thief.stole_item_failed",
+                                target.getDisplayName(),
+                                itemName)
+                                .withStyle(ChatFormatting.AQUA),
+                        true);
+            } else {
+                // 其他情况显示偷取失败
+                serverPlayer.displayClientMessage(
+                        Component.translatable("message.noellesroles.thief.steal_failed",
+                                target.getDisplayName())
+                                .withStyle(ChatFormatting.RED),
+                        true);
+            }
+            return true; // 失败不进入冷却，不通知被偷者
+        }
+
+        // 成功从目标背包移除物品
+        target.getInventory().items.set(stoleninfo.slot, ItemStack.EMPTY);
         // 通知小偷
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.stole_item",
@@ -349,14 +375,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                         itemName)
                         .withStyle(ChatFormatting.AQUA),
                 true);
-        if (stoleninfo.itemStack.equals(ItemStack.EMPTY)) {
-            serverPlayer.displayClientMessage(
-                    Component.translatable("message.noellesroles.thief.stole_item_failed",
-                            target.getDisplayName(),
-                            itemName)
-                            .withStyle(ChatFormatting.AQUA),
-                    true);
-        }
+
         // 延迟10秒通知被偷者
         pendingNotifications.add(new PendingNotification(
                 targetPlayer,

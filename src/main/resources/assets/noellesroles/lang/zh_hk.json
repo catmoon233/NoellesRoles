@@ -250,6 +250,7 @@
   "message.noellesroles.thief.stole_item": "從 %s 處偷取了 %s！",
   "message.noellesroles.thief.stole_item_failed": "從 %s 處偷取了 %s！但它氧化了！所以你獲得空氣。",
   "message.noellesroles.thief.item_stolen": "你的 %s 被偷走了！",
+  "message.noellesroles.thief.steal_failed": "偷取失敗",
   "message.noellesroles.thief.kill_reward": "擊殺了一名玩家！獲得 %d 金幣！",
   "message.noellesroles.thief.inventory_full": "你的背包已滿！無法偷取物品！",
   "announcement.role.illusionist": "迷幻師",
