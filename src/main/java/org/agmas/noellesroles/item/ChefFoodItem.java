@@ -10,6 +10,7 @@ import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 
 import dev.doctor4t.trainmurdermystery.cca.AbilityPlayerComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent.TrainTask;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -120,7 +121,12 @@ public class ChefFoodItem extends Item {
                     var mm2 = PlayerMoodComponent.KEY.maybeGet(livingEntity).orElse(null);
                     if (mm2 != null) {
                         mm2.tasks.clear();
-                        mm2.generateTask();
+                        TrainTask task = mm2.generateTask();
+                        if (task != null) {
+                            mm2.tasks.put(task.getType(), task);
+                            mm2.timesGotten.putIfAbsent(task.getType(), 1);
+                            mm2.timesGotten.put(task.getType(), (Integer) mm2.timesGotten.get(task.getType()) + 1);
+                        }
                         mm2.sync();
                     }
                     break;
@@ -172,7 +178,7 @@ public class ChefFoodItem extends Item {
                     break;
             }
         }
-        
+
         return itemStack;
     };
 }

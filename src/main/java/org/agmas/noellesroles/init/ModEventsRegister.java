@@ -57,6 +57,8 @@ import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent.TrainTask;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -1181,9 +1183,28 @@ public class ModEventsRegister {
             handleGlitchRobotDeath(victim);
         });
 
-        // 服务器Tick事件 - 处理复活
+        // 服务器Tick事件 - 处理复活/老人跑步事件
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            var gameWorldComponent = GameWorldComponent.KEY.maybeGet(server.overworld()).orElse(null);
+            if (gameWorldComponent == null || !gameWorldComponent.isRunning()) {
+                return;
+            }
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                if (server.overworld().getGameTime() % 20 == 0) {
+                    if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                        if (gameWorldComponent.isRole(player, ModRoles.OLDMAN)) {
+                            var pmc = PlayerMoodComponent.KEY.get(player);
+                            if (!(pmc.tasks.isEmpty())
+                                    && pmc.tasks.getOrDefault(PlayerMoodComponent.Task.EXERCISE, null) != null) {
+                                if (pmc.tasks.get(
+                                        PlayerMoodComponent.Task.EXERCISE) instanceof PlayerMoodComponent.ExerciseTask et) {
+                                    et.timer = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 DefibrillatorComponent component = ModComponents.DEFIBRILLATOR.get(player);
                 if (component.isDead && player.isSpectator()
                         && player.level().getGameTime() >= component.resurrectionTime) {
