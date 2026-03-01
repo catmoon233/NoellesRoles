@@ -39,7 +39,7 @@ import pro.fazeclan.river.stupid_express.role.arsonist.cca.DousedPlayerComponent
 
 public class InstinctRenderer {
     public static void registerInstinctEvents() {
-        //
+        //死亡惩罚
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
             if (Minecraft.getInstance() == null)
                 return -1;

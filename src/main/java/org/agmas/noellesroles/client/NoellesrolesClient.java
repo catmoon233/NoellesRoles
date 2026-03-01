@@ -64,7 +64,6 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowNameRender;
-import dev.doctor4t.trainmurdermystery.event.AllowOtherCameraType;
 import dev.doctor4t.trainmurdermystery.event.OnKillerCohortDisplay;
 import dev.doctor4t.trainmurdermystery.event.OnRoundStartWelcomeTimmer;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
