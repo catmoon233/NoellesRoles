@@ -1,7 +1,8 @@
 package org.agmas.noellesroles.component;
 
-import  org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -32,43 +33,44 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
     public Player getPlayer() {
         return player;
     }
+
     /** 组件键 - 用于从玩家获取此组件 */
     public static final ComponentKey<StarPlayerComponent> KEY = ModComponents.STAR;
-    
+
     // ==================== 常量定义 ====================
-    
+
     /** 发光持续时间（2秒 = 40 tick） */
     public static final int GLOW_DURATION = 40;
-    
+
     /** 主动技能冷却时间（60秒 = 1200 tick） */
     public static final int ABILITY_COOLDOWN = 1200;
-    
+
     /** 技能范围（10格） */
     public static final double ABILITY_RANGE = 15.0;
-    
+
     // ==================== 状态变量 ====================
-    
+
     private final Player player;
-    
+
     /** 是否正在发光（主动技能触发） */
     public boolean isGlowing = false;
-    
+
     /** 发光剩余时间（tick） */
     public int glowTicksRemaining = 0;
-    
+
     /** 主动技能冷却时间（tick） */
     public int abilityCooldown = 0;
-    
+
     /** 是否已激活（角色分配后） */
     public boolean isActive = false;
-    
+
     /**
      * 构造函数
      */
     public StarPlayerComponent(Player player) {
         this.player = player;
     }
-    
+
     /**
      * 重置组件状态
      * 在游戏开始时或角色分配时调用
@@ -86,7 +88,7 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
     public void clear() {
         clearAll();
     }
-    
+
     /**
      * 清除所有状态
      */
@@ -101,16 +103,17 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
         }
         this.sync();
     }
-    
+
     /**
      * 检查是否为激活的明星角色
      */
     public boolean isActiveStar() {
-        if (!isActive || player == null || player.level().isClientSide()) return false;
+        if (!isActive || player == null || player.level().isClientSide())
+            return false;
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
         return gameWorld.isRole(player, ModRoles.STAR);
     }
-    
+
     /**
      * 检查主动技能是否可用
      * 注意：此方法在客户端和服务端都可以调用
@@ -119,124 +122,130 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
         // 客户端只检查冷却和激活状态，服务端安全检查在网络包处理器中进行
         return abilityCooldown <= 0 && isActive;
     }
-    
+
     /**
      * 使用主动技能 - 让10格范围内的玩家视野都看向自己
+     * 
      * @return 是否成功使用
      */
     public boolean useAbility() {
         if (!canUseAbility()) {
             return false;
         }
-        
+
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return false;
         }
-        
+
         ServerLevel world = serverPlayer.serverLevel();
         int affectedCount = 0;
-        
+
         // 遍历范围内的所有玩家
         for (Player target : world.players()) {
-            if (target.equals(player)) continue;
-            if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
-            
+            if (target.equals(player))
+                continue;
+            if (!GameFunctions.isPlayerAliveAndSurvival(target))
+                continue;
+
             double distance = target.distanceToSqr(player);
-            if (distance > ABILITY_RANGE * ABILITY_RANGE) continue;
-            
+            if (distance > ABILITY_RANGE * ABILITY_RANGE)
+                continue;
+
             // 让目标玩家看向明星
             if (target instanceof ServerPlayer serverTarget) {
                 // 计算目标应该看向的方向
                 double dx = player.getX() - target.getX();
-                double dy = (player.getY() + player.getEyeHeight(player.getPose())) - (target.getY() + target.getEyeHeight(target.getPose()));
+                double dy = (player.getY() + player.getEyeHeight(player.getPose()))
+                        - (target.getY() + target.getEyeHeight(target.getPose()));
                 double dz = player.getZ() - target.getZ();
-                
+
                 double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
                 float yaw = (float) (Math.toDegrees(Math.atan2(dz, dx)) - 90);
                 float pitch = (float) -Math.toDegrees(Math.atan2(dy, horizontalDistance));
-                
+
                 // 设置玩家视角
                 serverTarget.connection.teleport(
-                    target.getX(), target.getY(), target.getZ(),
-                    yaw, pitch
-                );
-                
+                        target.getX(), target.getY(), target.getZ(),
+                        yaw, pitch);
+
                 // 给目标玩家发送提示
                 serverTarget.displayClientMessage(
-                    Component.translatable("message.noellesroles.star.attracted")
-                        .withStyle(ChatFormatting.GOLD),
-                    true
-                );
-                
+                        Component.translatable("message.noellesroles.star.attracted")
+                                .withStyle(ChatFormatting.GOLD),
+                        true);
+
                 affectedCount++;
             }
         }
-        
+
         // 设置冷却
         this.abilityCooldown = ABILITY_COOLDOWN;
-        
+
         // 播放音效
         world.playSound(null, player.blockPosition(),
-            SoundEvents.PLAYER_LEVELUP,
-            SoundSource.PLAYERS, 1.0F, 1.2F);
-        
+                SoundEvents.PLAYER_LEVELUP,
+                SoundSource.PLAYERS, 1.0F, 1.2F);
+
         // 给明星发光2秒以突出效果
         startGlowing();
-        
+        int balanceAwardCount = affectedCount * 10;
+        if (balanceAwardCount >= 150)
+            balanceAwardCount = 150;
+        PlayerShopComponent.KEY.get(serverPlayer).addToBalance(150);
         // 发送消息给明星玩家
         serverPlayer.displayClientMessage(
-            Component.translatable("message.noellesroles.star.ability_used", affectedCount)
-                .withStyle(ChatFormatting.GOLD),
-            true
-        );
-        
+                Component.translatable("message.noellesroles.star.ability_used", affectedCount)
+                        .withStyle(ChatFormatting.GOLD),
+                true);
+
         this.sync();
         return true;
     }
-    
+
     /**
      * 开始发光
      */
     private void startGlowing() {
-        if (player == null) return;
-        
+        if (player == null)
+            return;
+
         this.isGlowing = true;
         this.glowTicksRemaining = GLOW_DURATION;
-        
+
         // 添加发光效果
         player.addEffect(new MobEffectInstance(
-            MobEffects.GLOWING,
-            GLOW_DURATION + 5, // 稍微多一点以确保效果
-            0,
-            false,  // ambient
-            false,  // showParticles
-            true    // showIcon
+                MobEffects.GLOWING,
+                GLOW_DURATION + 5, // 稍微多一点以确保效果
+                0,
+                false, // ambient
+                false, // showParticles
+                true // showIcon
         ));
-        
+
         this.sync();
     }
-    
+
     /**
      * 停止发光
      */
     private void stopGlowing() {
         this.isGlowing = false;
         this.glowTicksRemaining = 0;
-        
+
         if (player != null) {
             player.removeEffect(MobEffects.GLOWING);
         }
-        
+
         this.sync();
     }
-    
+
     /**
      * 获取冷却时间（秒）
      */
     public float getCooldownSeconds() {
         return abilityCooldown / 20.0f;
     }
-    
+
     /**
      * 同步到客户端
      */
@@ -245,13 +254,14 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
             ModComponents.STAR.sync(this.player);
         }
     }
-    
+
     // ==================== Tick 处理 ====================
-    
+
     @Override
     public void serverTick() {
-        if (!isActiveStar()) return;
-        
+        if (!isActiveStar())
+            return;
+
         // 减少主动技能冷却时间
         if (this.abilityCooldown > 0) {
             this.abilityCooldown--;
@@ -260,7 +270,7 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
                 this.sync();
             }
         }
-        
+
         // 处理主动技能触发的发光状态
         if (this.isGlowing) {
             this.glowTicksRemaining--;
@@ -269,9 +279,9 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
             }
         }
     }
-    
+
     // ==================== NBT 序列化 ====================
-    
+
     @Override
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putBoolean("isGlowing", this.isGlowing);
@@ -279,7 +289,7 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
         tag.putInt("abilityCooldown", this.abilityCooldown);
         tag.putBoolean("isActive", this.isActive);
     }
-    
+
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.isGlowing = tag.contains("isGlowing") && tag.getBoolean("isGlowing");
