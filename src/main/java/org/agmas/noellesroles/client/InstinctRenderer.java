@@ -1,7 +1,6 @@
 package org.agmas.noellesroles.client;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
-import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
@@ -52,7 +51,7 @@ public class InstinctRenderer {
             if (hasInstinct) {
                 var deathPenalty = org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(self);
                 if (deathPenalty.hasPenalty()) {
-                    return -2;
+                    return new java.awt.Color(253, 253, 253).getRGB();
                 }
             }
             return -1;

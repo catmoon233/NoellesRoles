@@ -408,7 +408,7 @@ public class ModEventsRegister {
         }
     }
 
-    private static boolean isEnabled = true;
+    private static boolean isEnabled = false;
 
     public static void registerEvents() {
         PlayerStatsBeforeRefugee.beforeLoadFunc = (player) -> {
