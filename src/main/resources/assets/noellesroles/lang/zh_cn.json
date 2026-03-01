@@ -379,7 +379,7 @@
   "tip.noellesroles.avenger.activated": "复仇已激活！凶手：%s",
   "tip.noellesroles.avenger.waiting": "等待绑定目标...",
   "==================== 阴谋家消息 ====================": "",
-  "message.noellesroles.conspirator.correct": "你猜对了！%s 将在20秒后死亡...",
+  "message.noellesroles.conspirator.correct": "你猜对了！%s 将因心脏骤停而死...",
   "message.noellesroles.conspirator.wrong": "你猜错了！%s 并不是这个角色。",
   "message.noellesroles.conspirator.wrong_with_count": "你猜错了！%s 并不是这个角色。（剩余 %s 次机会）",
   "message.noellesroles.conspirator.too_many_wrong": "你猜错太多次了！阴谋反噬...",
