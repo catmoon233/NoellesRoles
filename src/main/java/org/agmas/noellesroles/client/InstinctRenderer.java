@@ -51,7 +51,13 @@ public class InstinctRenderer {
             if (hasInstinct) {
                 var deathPenalty = org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(self);
                 if (deathPenalty.hasPenalty()) {
-                    return new java.awt.Color(253, 253, 253).getRGB();
+                    if (target instanceof Player target_player) {
+                        if (target_player.isSpectator())
+                            return -2;
+                        return new java.awt.Color(253, 253, 253).getRGB();
+                    } else {
+                        return -2;
+                    }
                 }
             }
             return -1;
