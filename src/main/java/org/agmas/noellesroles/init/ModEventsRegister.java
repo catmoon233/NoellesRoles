@@ -34,6 +34,8 @@ import org.agmas.noellesroles.entity.SmokeAreaManager;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.events.OnVendingMachinesBuyItems;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
+import org.agmas.noellesroles.modifier.NRModifiers;
+import org.agmas.noellesroles.modifier.expedition.ExpeditionComponent;
 import org.agmas.noellesroles.packet.BloodConfigS2CPacket;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.role.ModRoles;
@@ -108,9 +110,10 @@ public class ModEventsRegister {
     private static AttributeModifier noJumpingAttribute = new AttributeModifier(
             Noellesroles.id("no_jumping"), -1.0f, AttributeModifier.Operation.ADD_VALUE);
     // private static AttributeModifier oldmanAttribute = new AttributeModifier(
-    //         Noellesroles.id("oldman"), -0.4f, AttributeModifier.Operation.ADD_VALUE);
-    // private static AttributeModifier windYaoseScaleAttribute = new AttributeModifier(
-    //         Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_VALUE);
+    // Noellesroles.id("oldman"), -0.4f, AttributeModifier.Operation.ADD_VALUE);
+    // private static AttributeModifier windYaoseScaleAttribute = new
+    // AttributeModifier(
+    // Noellesroles.id("wind_yaose"), -0.2f, AttributeModifier.Operation.ADD_VALUE);
 
     /**
      * 处理拳击手无敌反制
@@ -1063,7 +1066,29 @@ public class ModEventsRegister {
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
+            WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(p -> {
+                if (worldModifierComponent.isModifier(p, NRModifiers.EXPEDITION)) {
+                    Role role = gameWorldComponent.getRole(p);
+                    var expeditionComponent = ExpeditionComponent.KEY.get(p);
+                    if (expeditionComponent != null && expeditionComponent.isExpedition()) {
+                        // 检查新角色是否是好人阵营
+                        // 如果不是好人阵营（是杀手或中立），则清除远征队组件
+                        if (role != null && (!role.isInnocent() || role.canUseKiller() || role.isNeutrals())) {
+                            // 清除远征队组件
+                            expeditionComponent.clear();
+                            expeditionComponent.sync();
+
+                            // 注意：由于 Harpymodloader 的修饰符系统限制，我们只能清除组件功能
+                            // 修饰符本身仍然保留在系统中，但不会生效
+                            // 这是为了防止某些角色（如赌徒、慕恋者）变成杀手后仍保留远征队能力
+                            worldModifierComponent.removeModifier(p.getUUID(), NRModifiers.EXPEDITION);
+                            Noellesroles.LOGGER
+                                    .info("Expedition modifier effect disabled for player due to role change: "
+                                            + p.getName().getString() + ", new role: " + role.identifier());
+                        }
+                    }
+                }
                 p.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, 30 * 20);
                 p.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, 30 * 20);
 
