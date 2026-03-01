@@ -74,6 +74,9 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
     /** 偷物品模式 */
     public static final int MODE_STEAL_ITEM = 1;
 
+    /** 通知延迟时间（10秒 = 200 tick） */
+    public static final int NOTIFICATION_DELAY = 10 * 20;
+
     private final Player player;
 
     /** 技能冷却 */
@@ -84,6 +87,26 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
 
     /** 是否在偷取选择界面（蹲下状态） */
     public boolean isInSelectionMode = false;
+
+    /** 待通知的被偷取信息列表 */
+    public java.util.List<PendingNotification> pendingNotifications = new java.util.ArrayList<>();
+
+    /**
+     * 待通知的被偷取信息
+     */
+    public static class PendingNotification {
+        public ServerPlayer targetPlayer;
+        public String messageKey;
+        public Object[] messageArgs;
+        public int delayTicks;
+
+        public PendingNotification(ServerPlayer targetPlayer, String messageKey, Object[] messageArgs, int delayTicks) {
+            this.targetPlayer = targetPlayer;
+            this.messageKey = messageKey;
+            this.messageArgs = messageArgs;
+            this.delayTicks = delayTicks;
+        }
+    }
 
     /**
      * 构造函数
@@ -108,6 +131,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
     @Override
     public void clear() {
         this.reset();
+        this.pendingNotifications.clear();
     }
 
     public void updateHonorCost(int allPlayer) {
@@ -229,12 +253,13 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                         .withStyle(ChatFormatting.GOLD),
                 true);
 
-        // 通知被偷者
-        targetPlayer.displayClientMessage(
-                Component.translatable("message.noellesroles.thief.money_stolen",
-                        STEAL_MONEY_AMOUNT)
-                        .withStyle(ChatFormatting.RED),
-                true);
+        // 延迟10秒通知被偷者
+        pendingNotifications.add(new PendingNotification(
+                targetPlayer,
+                "message.noellesroles.thief.money_stolen",
+                new Object[]{STEAL_MONEY_AMOUNT},
+                NOTIFICATION_DELAY
+        ));
 
         // 成功偷取，进入冷却
         this.cooldown = ABILITY_COOLDOWN;
@@ -301,11 +326,14 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         // 先获取物品名称（在移除之前）
         Component itemName = stoleninfo.itemStack.getDisplayName();
 
+        // 检查是否是球棒（需要特殊处理）
+        boolean isBat = stoleninfo.itemStack.is(TMMItems.BAT);
+
         // 检查小偷背包是否有空间
-        if (stoleninfo.itemStack.is(TMMItems.BAT)) {
+        if (isBat) {
             stoleninfo.itemStack = ItemStack.EMPTY;
         }
-        boolean canAdd = RoleUtils.insertStackInFreeSlot(targetPlayer, stoleninfo.itemStack.copy());
+        boolean canAdd = RoleUtils.insertStackInFreeSlot(serverPlayer, stoleninfo.itemStack.copy());
 
         if (!canAdd) {
             // 背包满了，归还物品给目标
@@ -314,9 +342,32 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                             .withStyle(ChatFormatting.RED),
                     true);
             return true; // 失败不进入冷却
-        } else {
-            target.getInventory().items.set(stoleninfo.slot, ItemStack.EMPTY);
         }
+
+        // 检查是否真正偷到了物品（不是EMPTY）
+        if (stoleninfo.itemStack.isEmpty()) {
+            // 没有真正偷到物品
+            if (isBat) {
+                // 偷到了球棒，显示球棒氧化消息
+                serverPlayer.displayClientMessage(
+                        Component.translatable("message.noellesroles.thief.stole_item_failed",
+                                target.getDisplayName(),
+                                itemName)
+                                .withStyle(ChatFormatting.AQUA),
+                        true);
+            } else {
+                // 其他情况显示偷取失败
+                serverPlayer.displayClientMessage(
+                        Component.translatable("message.noellesroles.thief.steal_failed",
+                                target.getDisplayName())
+                                .withStyle(ChatFormatting.RED),
+                        true);
+            }
+            return true; // 失败不进入冷却，不通知被偷者
+        }
+
+        // 成功从目标背包移除物品
+        target.getInventory().items.set(stoleninfo.slot, ItemStack.EMPTY);
         // 通知小偷
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.thief.stole_item",
@@ -324,20 +375,14 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                         itemName)
                         .withStyle(ChatFormatting.AQUA),
                 true);
-        if (stoleninfo.itemStack.equals(ItemStack.EMPTY)) {
-            serverPlayer.displayClientMessage(
-                    Component.translatable("message.noellesroles.thief.stole_item_failed",
-                            target.getDisplayName(),
-                            itemName)
-                            .withStyle(ChatFormatting.AQUA),
-                    true);
-        }
-        // 通知被偷者
-        targetPlayer.displayClientMessage(
-                Component.translatable("message.noellesroles.thief.item_stolen",
-                        itemName)
-                        .withStyle(ChatFormatting.RED),
-                true);
+
+        // 延迟10秒通知被偷者
+        pendingNotifications.add(new PendingNotification(
+                targetPlayer,
+                "message.noellesroles.thief.item_stolen",
+                new Object[]{itemName},
+                NOTIFICATION_DELAY
+        ));
 
         // 成功偷取，进入冷却
         this.cooldown = ABILITY_COOLDOWN;
@@ -436,6 +481,16 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             return true; // 夜视镜
         if (stack.is(ModItems.WHEELCHAIR))
             return true; // 轮椅
+
+        // 投掷物
+        if (stack.is(ModItems.CHLORINE_BOMB))
+            return true; // 毒气弹
+        if (stack.is(ModItems.PURIFY_BOMB))
+            return true; // 净化弹
+        if (stack.is(ModItems.FLASH_GRENADE))
+            return true; // 闪光弹
+        if (stack.is(ModItems.DECOY_GRENADE))
+            return true; // 诱饵弹
 
         // 护盾试剂（来自TMM）
         if (stack.is(TMMItems.DEFENSE_VIAL))
@@ -571,6 +626,24 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             this.cooldown--;
             if (this.cooldown % 60 == 0 || this.cooldown == 0) {
                 this.sync();
+            }
+        }
+
+        // 处理延迟通知
+        if (!pendingNotifications.isEmpty()) {
+            java.util.Iterator<PendingNotification> iterator = pendingNotifications.iterator();
+            while (iterator.hasNext()) {
+                PendingNotification notification = iterator.next();
+                notification.delayTicks--;
+                if (notification.delayTicks <= 0) {
+                    if (notification.targetPlayer != null && !GameFunctions.isPlayerEliminated(notification.targetPlayer)) {
+                        notification.targetPlayer.displayClientMessage(
+                                Component.translatable(notification.messageKey, notification.messageArgs)
+                                        .withStyle(ChatFormatting.RED),
+                                true);
+                    }
+                    iterator.remove();
+                }
             }
         }
     }
