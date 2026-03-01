@@ -333,7 +333,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (isBat) {
             stoleninfo.itemStack = ItemStack.EMPTY;
         }
-        boolean canAdd = RoleUtils.insertStackInFreeSlot(targetPlayer, stoleninfo.itemStack.copy());
+        boolean canAdd = RoleUtils.insertStackInFreeSlot(serverPlayer, stoleninfo.itemStack.copy());
 
         if (!canAdd) {
             // 背包满了，归还物品给目标
