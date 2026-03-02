@@ -2,6 +2,8 @@ package org.agmas.noellesroles.utils;
 
 import java.util.HashMap;
 
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 
 import dev.doctor4t.trainmurdermystery.TMM;
@@ -14,6 +16,7 @@ import dev.doctor4t.trainmurdermystery.block.TrimmedBedBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.event.OnTrainAreaHaveReseted;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.item.CocktailItem;
@@ -33,6 +36,10 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 public class MapScanner {
     public static void registerMapScanEvent() {
         OnTrainAreaHaveReseted.EVENT.register((serverLevel) -> {
+            if (GameWorldComponent.KEY.get(serverLevel).getGameMode() instanceof ChairWheelRaceGame) {
+                Noellesroles.LOGGER.info("Skip scanner (wheel game)");
+                return;
+            }
             scanAllTaskBlocks(serverLevel);
             for (var player : serverLevel.players()) {
                 ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
