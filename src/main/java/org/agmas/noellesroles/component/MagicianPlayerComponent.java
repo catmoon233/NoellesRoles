@@ -108,19 +108,8 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         }
 
         // 排除 StupidExpress 的死灵法师
-        try {
-            Class<?> SERolesClass = Class.forName("pro.fazeclan.river.stupid_express.constants.SERoles");
-            if (SERolesClass != null) {
-                Object necromancerRole = SERolesClass.getField("NECROMANCER").get(null);
-                if (necromancerRole != null) {
-                    ResourceLocation necromancerId = (ResourceLocation) necromancerRole.getClass()
-                            .getMethod("getIdentifier").invoke(necromancerRole);
-                    killerRoles.removeIf(id -> id.equals(necromancerId));
-                }
-            }
-        } catch (Exception e) {
-            // StupidExpress 未加载或出错，忽略
-        }
+        ResourceLocation necromancerId = ResourceLocation.fromNamespaceAndPath("stupid_express", "necromancer");
+        killerRoles.removeIf(id -> id.equals(necromancerId));
 
         if (!killerRoles.isEmpty()) {
             Collections.shuffle(killerRoles);
