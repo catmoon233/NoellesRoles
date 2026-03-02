@@ -66,13 +66,16 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
     public static final int STEAL_MONEY_AMOUNT = 100;
 
     /** 购买小偷的荣誉所需的金币基数 */
-    public static final int HONOR_COST_PER_PLAYER = 75;
+    public static final int HONOR_COST_PER_PLAYER = 60;
 
     /** 偷钱模式 */
     public static final int MODE_STEAL_MONEY = 0;
 
     /** 偷物品模式 */
     public static final int MODE_STEAL_ITEM = 1;
+
+    /** 卖物品模式 */
+    public static final int MODE_SELL_ITEM = 2;
 
     /** 通知延迟时间（10秒 = 200 tick） */
     public static final int NOTIFICATION_DELAY = 10 * 20;
@@ -149,6 +152,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
 
         if (this.currentMode == MODE_STEAL_MONEY) {
             this.currentMode = MODE_STEAL_ITEM;
+        } else if (this.currentMode == MODE_STEAL_ITEM) {
+            this.currentMode = MODE_SELL_ITEM;
         } else {
             this.currentMode = MODE_STEAL_MONEY;
         }
@@ -158,9 +163,12 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             if (this.currentMode == MODE_STEAL_MONEY) {
                 message = Component.translatable("message.noellesroles.thief.mode.money")
                         .withStyle(ChatFormatting.GOLD);
-            } else {
+            } else if (this.currentMode == MODE_STEAL_ITEM) {
                 message = Component.translatable("message.noellesroles.thief.mode.item")
                         .withStyle(ChatFormatting.AQUA);
+            } else {
+                message = Component.translatable("message.noellesroles.thief.mode.sell")
+                        .withStyle(ChatFormatting.GREEN);
             }
             serverPlayer.displayClientMessage(message, true);
         }
@@ -170,7 +178,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
 
     /**
      * 尝试使用技能（按技能键释放）
-     * 
+     *
      * @return 是否成功释放技能
      */
     public boolean useAbility() {
@@ -178,8 +186,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             return false;
         }
 
-        // 检查冷却
-        if (this.cooldown > 0) {
+        // 检查冷却（卖物品模式不需要冷却）
+        if (this.cooldown > 0 && this.currentMode != MODE_SELL_ITEM) {
             return false;
         }
 
@@ -189,6 +197,11 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (!gameWorld.isRole(player, ModRoles.THIEF)) {
             return false;
         }
+
+        if (this.currentMode == MODE_SELL_ITEM) {
+            return sellItem();
+        }
+
         // 获取当前看向的目标玩家
         Player target = getLookedAtPlayer();
         if (target == null) {
@@ -509,6 +522,46 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
     }
 
     /**
+     * 卖物品（手上的物品卖50金币）
+     */
+    private boolean sellItem() {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return false;
+        }
+
+        // 获取手持物品
+        ItemStack heldItem = player.getMainHandItem();
+
+        // 检查是否空手
+        if (heldItem.isEmpty()) {
+            serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.thief.no_item_to_sell")
+                            .withStyle(ChatFormatting.RED),
+                    true);
+            return false;
+        }
+
+        // 移除物品
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+
+        // 给予50金币
+        PlayerShopComponent thiefShop = PlayerShopComponent.KEY.get(player);
+        thiefShop.balance += 50;
+        thiefShop.sync();
+
+        // 获取物品名称
+        Component itemName = heldItem.getDisplayName();
+
+        // 通知小偷
+        serverPlayer.displayClientMessage(
+                Component.translatable("message.noellesroles.thief.item_sold", itemName, 50)
+                        .withStyle(ChatFormatting.GREEN),
+                true);
+
+        return true;
+    }
+
+    /**
      * 获取当前看向的玩家
      */
     private Player getLookedAtPlayer() {
@@ -533,7 +586,7 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
     }
 
     /**
-     * 处理小偷击杀目标（获得100金币）
+     * 处理小偷击杀目标（获得200金币）
      */
     public void handleKilledVictim(Player victim) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
@@ -545,14 +598,14 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             return;
         }
 
-        // 给予100金币
+        // 给予200金币
         PlayerShopComponent thiefShop = PlayerShopComponent.KEY.get(player);
-        thiefShop.balance += 100;
+        thiefShop.balance += 200;
         thiefShop.sync();
 
         // 通知小偷
         serverPlayer.displayClientMessage(
-                Component.translatable("message.noellesroles.thief.kill_reward", 100)
+                Component.translatable("message.noellesroles.thief.kill_reward", 200)
                         .withStyle(ChatFormatting.GOLD),
                 true);
     }
