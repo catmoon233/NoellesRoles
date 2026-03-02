@@ -33,6 +33,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -228,6 +230,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
                         wayC.startPhaseTwo();
                         return;
                     } else {
+                        wayC.reset();
                         GameFunctions.killPlayer(killer, true, null, Noellesroles.id("wayfarer_error"));
                         return;
                     }
@@ -273,6 +276,9 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         this.phase = 3;
         this.killer = null;
         this.deathReason = null;
+        // 播放音效：2阶段进3阶段用末地传送门开启的音效
+        player.level().playSound(null, player.blockPosition(),
+                SoundEvents.END_PORTAL_SPAWN, SoundSource.MASTER, 1.0F, 1.0F);
         // 隐身并且不动
         this.player.addEffect(new MobEffectInstance(
                 MobEffects.INVISIBILITY,
@@ -321,6 +327,9 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     public void startPhaseTwo() {
         this.phase = 2;
         this.killer = null;
+        // 播放音效：1阶段进2阶段用信标激活的声音
+        player.level().playSound(null, player.blockPosition(),
+                SoundEvents.BEACON_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
 
         TMMItemUtils.clearItem(player, TMMItems.KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
@@ -378,6 +387,9 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         RoleUtils.insertStackInFreeSlot(player, TMMItems.KNIFE.getDefaultInstance());
         this.phase = 1;
         this.killer = targetKiller.getUUID();
+        // 播放音效：0阶段进1阶段用潮涌核心激活的声音
+        player.level().playSound(null, player.blockPosition(),
+                SoundEvents.CONDUIT_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
         this.player.displayClientMessage(Component.translatable("", targetKiller.getDisplayName()), true);
         this.deathReason = ResourceLocation.tryParse(be.getDeathReason());
         this.sync();
