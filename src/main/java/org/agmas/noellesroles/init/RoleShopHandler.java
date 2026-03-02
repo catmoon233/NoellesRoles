@@ -664,35 +664,17 @@ public class RoleShopHandler {
 
         // 乘务员商店
         // 乘务员钥匙 - 50金币
-        ATTENDANT_SHOP.add(new ShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 50, ShopEntry.Type.TOOL) {
-            @Override
-            public boolean onBuy(@NotNull Player player) {
-                player.addItem(ModItems.MASTER_KEY_P.getDefaultInstance().copy());
-                return true;
-            }
-        });
+        ATTENDANT_SHOP.add(new ShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
 
         // 铁门钥匙 - 75金币
-        ATTENDANT_SHOP.add(new ShopEntry(dev.doctor4t.trainmurdermystery.index.TMMItems.IRON_DOOR_KEY.getDefaultInstance(), 75, ShopEntry.Type.TOOL) {
-            @Override
-            public boolean onBuy(@NotNull Player player) {
-                player.addItem(dev.doctor4t.trainmurdermystery.index.TMMItems.IRON_DOOR_KEY.getDefaultInstance().copy());
-                return true;
-            }
-        });
+        ATTENDANT_SHOP.add(new ShopEntry(dev.doctor4t.trainmurdermystery.index.TMMItems.IRON_DOOR_KEY.getDefaultInstance(), 75, ShopEntry.Type.TOOL));
         // 手电筒（moonlight_lamp） - 150金币
         if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("handheldmoon:moonlight_lamp"))) {
             final var moonlightLampItem = BuiltInRegistries.ITEM
                     .get(ResourceLocation.parse("handheldmoon:moonlight_lamp"));
             if (moonlightLampItem != null) {
                 final var defaultInstance = moonlightLampItem.getDefaultInstance();
-                ATTENDANT_SHOP.add(new ShopEntry(defaultInstance, 150, ShopEntry.Type.TOOL) {
-                    @Override
-                    public boolean onBuy(@NotNull Player player) {
-                        player.addItem(defaultInstance.copy());
-                        return true;
-                    }
-                });
+                ATTENDANT_SHOP.add(new ShopEntry(defaultInstance, 150, ShopEntry.Type.TOOL));
             }
         }
 

@@ -10,6 +10,7 @@ import dev.doctor4t.trainmurdermystery.cca.TrainWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -87,10 +88,12 @@ public class ChairWheelRaceGame extends GameMode {
                             op.playNotifySound(SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 1.0F, 1.0F);
                         });
                         Component msg = Component.translatable("announcement.wheelgame.win.prefix")
+                                .withStyle(ChatFormatting.GOLD)
                                 .append(Component.translatable("announcement.wheelgame.win.rank",
-                                        player.getScoreboardName(), isWin.indexOf(player) + 1));
+                                        player.getScoreboardName(), isWin.indexOf(player) + 1))
+                                .withStyle(ChatFormatting.AQUA);
                         serverLevel.players().forEach((o) -> {
-                            BroadcastCommand.BroadcastMessage(player, msg);
+                            BroadcastCommand.BroadcastMessage(o, msg);
                         });
                         executeFunction(player.createCommandSourceStack(),
                                 "harpymodloader:chair_wheel_race/win");
