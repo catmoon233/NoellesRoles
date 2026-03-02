@@ -282,7 +282,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         // 隐身并且不动
         this.player.addEffect(new MobEffectInstance(
                 MobEffects.INVISIBILITY,
-                200, // 持续时间（tick）
+                100, // 持续时间（tick）
                 1, // 等级（0 = 速度 I）
                 false, // ambient（环境效果，如信标）
                 false, // showParticles（显示粒子）
@@ -290,7 +290,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         ));
         this.player.addEffect(new MobEffectInstance(
                 MobEffects.MOVEMENT_SLOWDOWN,
-                200, // 持续时间（tick）
+                150, // 持续时间（tick）
                 10, // 等级（0 = 速度 I）
                 false, // ambient（环境效果，如信标）
                 false, // showParticles（显示粒子）
