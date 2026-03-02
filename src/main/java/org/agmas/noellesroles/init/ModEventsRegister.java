@@ -818,6 +818,7 @@ public class ModEventsRegister {
             if (role.identifier().equals(ModRoles.WAYFARER.identifier())) {
                 player.getInventory().clearContent();
                 RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_REVOLVER.getDefaultInstance());
+                RoleUtils.insertStackInFreeSlot(player, ModItems.FAKE_KNIFE.getDefaultInstance());
                 // (WayfarerPlayerComponent.KEY.get(player)).reset();
                 return;
             }

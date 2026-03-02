@@ -17,14 +17,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.role.ModRoles;
-import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 
 /**
  * 魔术师玩家组件
@@ -98,19 +97,18 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         ArrayList<ResourceLocation> killerRoles = new ArrayList<>();
         for (var r : dev.doctor4t.trainmurdermystery.api.TMMRoles.ROLES.values()) {
             if (r.canUseKiller()
-                    && !r.identifier()
-                            .equals(dev.doctor4t.trainmurdermystery.api.TMMRoles.KILLER.identifier())
-                    && !r.identifier().equals(ModRoles.POISONER_ID)
-                    && !r.identifier().equals(ModRoles.CLEANER_ID)
-                    && !r.identifier().equals(ModRoles.MANIPULATOR_ID)) {
+                    && !r.identifier().getPath()
+                            .equals("killer")
+                    && !r.identifier().getPath().equals("poisoner")
+                    && !r.identifier().getPath().equals("cleaner")
+                    && !r.identifier().getPath().equals("manipulator")
+                    && !r.identifier().getPath().equals("necromancer")) {
                 killerRoles.add(r.identifier());
             }
         }
-
-        // 排除 StupidExpress 的死灵法师
-        ResourceLocation necromancerId = ResourceLocation.fromNamespaceAndPath("stupid_express", "necromancer");
-        killerRoles.removeIf(id -> id.equals(necromancerId));
-
+        if (killerRoles.isEmpty()) {
+            killerRoles.add(TMMRoles.KILLER.identifier());
+        }
         if (!killerRoles.isEmpty()) {
             Collections.shuffle(killerRoles);
             ResourceLocation disguiseRole = killerRoles.getFirst();
