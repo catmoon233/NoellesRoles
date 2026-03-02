@@ -253,6 +253,7 @@
   "message.noellesroles.thief.item_stolen": "你的 %s 被偷走了！",
   "message.noellesroles.thief.steal_failed": "偷取失败",
   "message.noellesroles.thief.no_item_to_sell": "你手上没有物品可以出售！",
+  "message.noellesroles.thief.cannot_sell_item": "这个物品不能出售！只能出售可偷取的物品！",
   "message.noellesroles.thief.item_sold": "出售了 %s！获得 %d 金币！",
   "message.noellesroles.thief.kill_reward": "击杀了一名玩家！获得 %d 金币！",
   "message.noellesroles.thief.inventory_full": "你的背包已满！无法偷取物品！",

@@ -190,6 +190,7 @@
   "message.noellesroles.thief.stole_item": "Stole %s from %s!",
   "message.noellesroles.thief.item_stolen": "Your %s was stolen!",
   "message.noellesroles.thief.no_item_to_sell": "You don't have an item to sell!",
+  "message.noellesroles.thief.cannot_sell_item": "This item cannot be sold! You can only sell stealable items!",
   "message.noellesroles.thief.item_sold": "Sold %s! Gained %d coins!",
   "message.noellesroles.thief.kill_reward": "Killed a player! Gained %d coins!",
   "message.noellesroles.thief.inventory_full": "Your inventory is full! Cannot steal item!",
