@@ -780,7 +780,7 @@
   "gui.noellesroles.noisemaker.ready": "大嗓门：G键",
   "gui.noellesroles.noisemaker.during": "大嗓门激活中（x6声音距离）",
   "announcement.role.discovery_civilian": "游客",
-  "gui.noellesroles.noisemaker.ability": "大嗓门发动了技能",
+  "gui.noellesroles.noisemaker.ability": "大嗓门发动了技能 (6s)",
   "screen.noellesroles.guess_role.title": "身份猜测笔记",
   "screen.noellesroles.guess_role.reset": "身份猜测笔记已重置！",
   "screen.noellesroles.search.placeholder": "搜索...",

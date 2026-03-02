@@ -189,9 +189,10 @@ public class StarPlayerComponent implements RoleComponent, ServerTickingComponen
         // 给明星发光2秒以突出效果
         startGlowing();
         int balanceAwardCount = affectedCount * 10;
-        if (balanceAwardCount >= 150)
+        if (balanceAwardCount >= 150) {
             balanceAwardCount = 150;
-        PlayerShopComponent.KEY.get(serverPlayer).addToBalance(150);
+        }
+        PlayerShopComponent.KEY.get(serverPlayer).addToBalance(balanceAwardCount);
         // 发送消息给明星玩家
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.star.ability_used", affectedCount)
