@@ -1006,6 +1006,8 @@
   "item.noellesroles.fake_lockpick": "假开锁器",
   "item.noellesroles.fake_crowbar": "假撬棍",
   "item.noellesroles.fake_body_bag": "假裹尸袋",
+  "item.noellesroles.problem_set": "习题集",
+  "item.noellesroles.problem_set.tooltip": "来自蓝色大妖精的疑惑\n\u00a78\u00a7n\u00a7o\u00a7m（这是啥子动漫？）\u00a7r",
   "block.noellesroles.vending_machines": "自动售货机",
   "announcement.role.magician": "魔术师",
   "announcement.goals.magician": "用你的魔术技巧迷惑杀手，保护乘客！",

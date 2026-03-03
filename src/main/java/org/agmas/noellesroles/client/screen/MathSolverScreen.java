@@ -19,7 +19,7 @@ import java.util.List;
 public class MathSolverScreen extends Screen {
     private final List<MathProblem> MathProblems = new ArrayList<>();
     private final int totalPages = 10;
-    private final int maxTime = 20 * 20; // 20s
+    private int maxTime = 20 * 20; // 20s
 
     private int currentIndex = 0;
 
@@ -31,12 +31,26 @@ public class MathSolverScreen extends Screen {
     private boolean failed = false;
 
     public MathSolverScreen() {
-        super(Component.translatable("gui.noellesroles.gambler.title"));
+        super(Component.translatable("screen.math_solver.title"));
         this.MathProblems.clear();
         MathProblemsManager manager = new MathProblemsManager();
+        int maxT = 4;
         for (int i = 0; i < totalPages; i++) {
-            this.MathProblems.add(manager.generateProblem());
+            var newP = manager.generateProblem();
+            switch (newP.getType()) {
+                case 1:
+                    maxT += 2;
+                    break;
+                case 2:
+                    maxT += 5;
+                    break;
+                default:
+                    maxT += 2;
+                    break;
+            }
+            this.MathProblems.add(newP);
         }
+        this.maxTime = maxT * 20;
         hasStarted = false;
         currentIndex = -1;
         startTime = 0;
@@ -61,7 +75,7 @@ public class MathSolverScreen extends Screen {
 
     @Override
     public void tick() {
-        if (!this.failed && this.currentIndex < this.totalPages
+        if (this.currentIndex >= 0 && this.hasStarted && !this.failed && this.currentIndex < this.totalPages
                 && this.startTime + this.maxTime <= this.minecraft.level.getGameTime()) {
             solveFailed();
         }
@@ -93,6 +107,8 @@ public class MathSolverScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        this.clearWidgets();
+
         if (this.currentIndex == -1) {
             initStart();
         } else if (this.currentIndex == -2 && this.failed) {
@@ -105,6 +121,8 @@ public class MathSolverScreen extends Screen {
     }
 
     private void initFailed() {
+        this.clearWidgets();
+
         int maxWidth = this.width;
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
@@ -116,14 +134,16 @@ public class MathSolverScreen extends Screen {
     }
 
     private void initDuring() {
+        this.clearWidgets();
+
         if (currentIndex < 0 || currentIndex >= this.MathProblems.size()) {
             return;
         }
 
         int maxWidth = this.width;
         int maxHeight = this.height;
-        int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
-        int buttonY = maxHeight / 2;
+        int buttonX = maxWidth / 2;
+        int buttonY = maxHeight / 2 - 20;
 
         var opts = this.MathProblems.get(currentIndex);
         int i = 0;
@@ -132,7 +152,10 @@ public class MathSolverScreen extends Screen {
             final int nowSelectionID = i;
             Button btn = Button.builder(Component.translatable(opt), (bbtn) -> {
                 this.selectedSelection(nowSelectionID);
-            }).bounds(buttonX, buttonY - 30, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+            }).bounds(buttonX + (i % 2 == 1 ? (-BUTTON_WIDTH - 10) : (10)),
+                    buttonY + (BUTTON_HEIGHT + 5) * (((i - 1) / 2)),
+                    BUTTON_WIDTH,
+                    BUTTON_HEIGHT).build();
             btn.setTooltip(
                     Tooltip.create(Component.translatable("screen.math_solver.option_btn.tooltip", nowSelectionID)));
             this.addRenderableWidget(btn);
@@ -140,17 +163,20 @@ public class MathSolverScreen extends Screen {
     }
 
     private void initFinished() {
+        this.clearWidgets();
         int maxWidth = this.width;
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
         int buttonY = maxHeight / 2;
-        Button btn = Button.builder(Component.translatable("screen.noellesroles.close"), (bbtn) -> {
+        Button btn = Button.builder(Component.translatable("screen.math_solver.close"), (bbtn) -> {
             this.onClose();
-        }).bounds(buttonX, buttonY - 30, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        }).bounds(buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(btn);
     }
 
     private void initStart() {
+        this.clearWidgets();
+
         int maxWidth = this.width;
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
@@ -189,7 +215,7 @@ public class MathSolverScreen extends Screen {
             Component pageInfo = Component.translatable("screen.math_solver.page_info",
                     currentIndex + 1, totalPages)
                     .withStyle(ChatFormatting.YELLOW);
-            guiGraphics.drawCenteredString(font, pageInfo, width / 2, 60, 0xFFFFFF);
+            guiGraphics.drawCenteredString(font, pageInfo, width / 2, 40, 0xFFFFFF);
         }
         // 绘制题目信息
         if (totalPages > 0 && currentIndex >= 0 && currentIndex < this.totalPages
@@ -199,16 +225,17 @@ public class MathSolverScreen extends Screen {
                     .withStyle(ChatFormatting.WHITE);
             Component mathInfoTitle = Component.translatable("screen.math_solver.please_solve")
                     .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
-            guiGraphics.drawCenteredString(font, mathInfoTitle, width / 2, height / 2 - 20, 0xFFFFFF);
-            guiGraphics.drawCenteredString(font, mathInfo, width / 2, height / 2 - 10, 0xFFFFFF);
+            guiGraphics.drawCenteredString(font, mathInfoTitle, width / 2, height / 2 - 50, 0xFFFFFF);
+            guiGraphics.drawCenteredString(font, mathInfo, width / 2, height / 2 - 40, 0xFFFFFF);
         }
-        if (startTime > 0) {
-            long spendTime = (this.minecraft.level.getGameTime() - this.startTime) / 20;
-            long leftTime = maxTime - spendTime;
+        if (startTime > 0 && this.hasStarted && !this.failed && this.currentIndex >= 0
+                && this.currentIndex < this.totalPages) {
+            long spendTime = (this.minecraft.level.getGameTime() - this.startTime);
+            long leftTime = (maxTime - spendTime) / 20;
             Component timeInfo = Component.translatable("screen.math_solver.time_info",
                     Component.literal("" + leftTime).withStyle(ChatFormatting.GOLD))
                     .withStyle(ChatFormatting.AQUA);
-            guiGraphics.drawCenteredString(font, timeInfo, width / 2, 70, 0xFFFFFF);
+            guiGraphics.drawCenteredString(font, timeInfo, width / 2, 50, 0xFFFFFF);
         }
 
         if (this.currentIndex >= this.totalPages) {

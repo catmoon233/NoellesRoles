@@ -16,7 +16,7 @@ public class MathProblemsManager {
      */
     public MathProblem generateProblem() {
         // 随机选择题目类型：0 表示加减乘除，1 表示简单求导
-        int type = random.nextInt(50);
+        int type = random.nextInt(40);
         return type == 0 ? generateDerivativeProblem() : generateArithmeticProblem();
     }
 
@@ -28,55 +28,63 @@ public class MathProblemsManager {
         int num2 = random.nextInt(-16, 17); // 1~10
         char op = OPERATORS[random.nextInt(OPERATORS.length)];
         int result;
-
+        String opDisplay = "";
         switch (op) {
             case '+':
                 result = num1 + num2;
+                opDisplay = "+";
                 break;
             case '-':
                 // 保证结果非负（适合小学题目）
                 result = num1 - num2;
+                opDisplay = "-";
                 break;
             case '*':
                 result = num1 * num2;
+                opDisplay = "×";
                 break;
             case '/':
                 // 保证整除：num1 调整为 num2 的倍数
                 int multiplier = random.nextInt(5) + 1; // 1~5 倍
                 num1 = num2 * multiplier;
                 result = multiplier;
+                opDisplay = "÷";
                 break;
             default:
                 result = 0;
         }
 
-        String question = num1 + " " + op + " " + num2 + " = ";
+        String question = num1 + " " + opDisplay + " " + (num2 < 0 ? " (" + num2 + ")" : num2) + " = ";
 
         // 生成四个选项（一个正确，三个随机错误）
         List<String> options = new ArrayList<>();
+        List<String> woptions = new ArrayList<>();
         options.add(String.valueOf(result)); // 正确答案
 
         // 生成三个不同的错误选项
-        while (options.size() < 4) {
+        woptions.add(String.valueOf(result * -1));
+
+        while (woptions.size() <= 5) {
             // 策略一：在正确答案附近 ±3 范围内生成
             int wrong = result + random.nextInt(7) - 3;
-            if (wrong >= 0 && wrong <= 20 && !options.contains(String.valueOf(wrong))) {
-                options.add(String.valueOf(wrong));
-            }
-            // 策略二：如果策略一失败，则放宽到 0~20 随机
-            if (options.size() < 4) {
-                wrong = random.nextInt(21);
-                if (!options.contains(String.valueOf(wrong))) {
-                    options.add(String.valueOf(wrong));
+            if (!woptions.contains(String.valueOf(wrong)) && !options.contains(String.valueOf(wrong))) {
+                woptions.add(String.valueOf(wrong));
+            } else {
+                wrong = random.nextInt(-100, 100);
+                if (!woptions.contains(String.valueOf(wrong)) && !options.contains(String.valueOf(wrong))) {
+                    woptions.add(String.valueOf(wrong));
                 }
             }
         }
-
         // 打乱选项顺序
+        Collections.shuffle(woptions);
+        for (int i = 0; i < 3; i++) {
+            options.add(woptions.get(i));
+        }
         Collections.shuffle(options);
         int correctIndex = options.indexOf(String.valueOf(result));
 
-        return new MathProblem(question, options, correctIndex);
+        return new MathProblem(question, options, correctIndex, 1);
     }
 
     /**
@@ -84,28 +92,42 @@ public class MathProblemsManager {
      * 例如 (2,2) -> "2x²", (1,1) -> "x", (3,0) -> "3"
      */
     private String formatTerm(int coeff, int exp) {
+        if (coeff == 0) {
+            return "0";
+        }
+
+        // 系数部分：系数为1且指数非0时省略系数
+        String coeffPart = (coeff == 1 && exp != 0) ? "" : String.valueOf(coeff);
+
+        // 指数部分
         if (exp == 0) {
-            return String.valueOf(coeff); // 常数项
-        }
-        // 指数非零，处理系数部分
-        String coeffPart = (coeff == 1) ? "" : String.valueOf(coeff);
-        // 处理指数部分（上标）
-        String expPart;
-        if (exp == 1) {
-            expPart = ""; // 指数1省略
-        } else if (exp == 2) {
-            expPart = "²";
-        } else if (exp == 3) {
-            expPart = "³";
+            // 常数项：只返回系数（此时系数不省略，即使coeff=1也显示"1"）
+            return String.valueOf(coeff);
+        } else if (exp == 1) {
+            // 一次项：系数 + "x"（系数已按规则省略）
+            return coeffPart + "x";
         } else {
-            expPart = "^" + exp; // 其他指数回退到 ^n
+            // 高次项：需要将指数转换为上标
+            String[] powers = { "⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹" };
+            StringBuilder expPart = new StringBuilder();
+            int tmp = exp;
+            // 将指数的每一位数字转为上标并收集
+            java.util.ArrayList<String> digits = new java.util.ArrayList<>();
+            while (tmp > 0) {
+                digits.add(powers[tmp % 10]);
+                tmp /= 10;
+            }
+            // 反转顺序（原循环是从低位到高位，需要反转得到高位到低位）
+            for (int i = digits.size() - 1; i >= 0; i--) {
+                expPart.append(digits.get(i));
+            }
+            return coeffPart + "x" + expPart.toString();
         }
-        return coeffPart + "x" + expPart;
     }
 
     private MathProblem generateDerivativeProblem() {
-        int coefficient = random.nextInt(5) + 1; // 系数 1~5
-        int exponent = random.nextInt(3) + 1; // 指数 1~3
+        int coefficient = random.nextInt(-10, 10); // 系数 -10~9
+        int exponent = random.nextInt(1, 16); // 指数 0~15
 
         // 原函数表达式（使用上标）
         String function = formatTerm(coefficient, exponent);
@@ -127,11 +149,13 @@ public class MathProblemsManager {
         // 1. 系数变化 (±1, ±2)
         for (int delta : new int[] { 1, -1, 2, -2 }) {
             int wrongCoeff = newCoeff + delta;
-            if (wrongCoeff > 0) {
-                wrongCandidates.add(formatTerm(wrongCoeff, newExp));
-            }
+            wrongCandidates.add(formatTerm(wrongCoeff, newExp));
         }
-
+        // 1[5]. 符号变化 (±1, ±2)
+        {
+            int wrongCoeff = newCoeff * -1;
+            wrongCandidates.add(formatTerm(wrongCoeff, newExp));
+        }
         // 2. 指数变化 (±1)
         for (int delta : new int[] { 1, -1 }) {
             int wrongExp = newExp + delta;
@@ -187,7 +211,7 @@ public class MathProblemsManager {
         Collections.shuffle(options);
         int correctIndex = options.indexOf(derivative);
 
-        return new MathProblem(question, options, correctIndex);
+        return new MathProblem(question, options, correctIndex, 2);
     }
 
     /**
@@ -198,11 +222,17 @@ public class MathProblemsManager {
         private final String question; // 题目名称，例如 "3 + 5 = "
         private final List<String> options; // 四个选项
         private final int correctIndex; // 正确选项在列表中的索引（0~3）
+        private final int type; // 问题类型
 
-        public MathProblem(String question, List<String> options, int correctIndex) {
+        public MathProblem(String question, List<String> options, int correctIndex, int type) {
             this.question = question;
             this.options = options;
             this.correctIndex = correctIndex;
+            this.type = type;
+        }
+
+        public int getType() {
+            return this.type;
         }
 
         public String getQuestion() {

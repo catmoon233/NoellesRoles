@@ -42,7 +42,7 @@ public class ModEntities {
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "chlorine_bomb"),
             FabricEntityTypeBuilder.<ChlorineBombEntity>create(MobCategory.MISC, ChlorineBombEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
+                    .dimensions(EntityDimensions.fixed(0.6F, 0.6F))
                     .trackRangeBlocks(4)
                     .trackedUpdateRate(10)
                     .build());

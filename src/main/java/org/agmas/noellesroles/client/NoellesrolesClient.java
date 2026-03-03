@@ -21,6 +21,7 @@ import net.minecraft.client.CameraType;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.agmas.noellesroles.block_entity.VendingMachinesBlockEntity;
+import org.agmas.noellesroles.init.FunnyItems;
 import org.agmas.noellesroles.init.ModBlocks;
 import org.agmas.noellesroles.init.ModEntities;
 import org.agmas.noellesroles.init.ModItems;
@@ -512,6 +513,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             tooltipHelper(TMMItems.DEFENSE_VIAL, itemStack, list);
             tooltipHelper(ModItems.DELUSION_VIAL, itemStack, list);
             tooltipHelper(ModItems.ONCE_REVOLVER, itemStack, list);
+            tooltipHelper(FunnyItems.PROBLEM_SET, itemStack, list);
         }));
         // registerKeyBindings();
 
