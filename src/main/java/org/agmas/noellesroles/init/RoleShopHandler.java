@@ -502,14 +502,14 @@ public class RoleShopHandler {
         柜子区的商店.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), TMMConfig.grenadePrice, ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), TMMConfig.blackoutPrice, ShopEntry.Type.TOOL) {
             public boolean onBuy(@NotNull Player player) {
+                player.getCooldowns().addCooldown(TMMItems.BLACKOUT,
+                        Math.min((Integer) GameConstants.ITEM_COOLDOWNS.getOrDefault(TMMItems.BLACKOUT, 0), 60));
                 boolean triggered = ((WorldBlackoutComponent) WorldBlackoutComponent.KEY.get(player.level()))
                         .triggerBlackout();
                 if (triggered) {
                     TMM.REPLAY_MANAGER.recordSkillUsed(player.getUUID(),
                             BuiltInRegistries.ITEM.getKey(TMMItems.BLACKOUT));
                 }
-                player.getCooldowns().addCooldown(TMMItems.BLACKOUT,
-                        Math.min((Integer) GameConstants.ITEM_COOLDOWNS.getOrDefault(TMMItems.BLACKOUT, 0), 45));
                 return triggered;
             }
         });
