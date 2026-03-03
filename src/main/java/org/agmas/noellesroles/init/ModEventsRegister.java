@@ -538,7 +538,8 @@ public class ModEventsRegister {
                                 || deathReason.getPath().equals("gun_shot")
                                 || deathReason.getPath().equals("arrow")
                                 || deathReason.getPath().equals("knife_stab")
-                                || deathReason.getPath().equals("fell_out_of_train")) {
+                                || deathReason.getPath().equals("fell_out_of_train")
+                                || deathReason.getPath().equals("fire_axe")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
 
                             // 仇杀客事件：误杀发生时强化仇杀客

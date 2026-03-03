@@ -2,13 +2,13 @@ package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
-import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.agmas.noellesroles.Noellesroles;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,6 +45,9 @@ public class FireAxeItem extends Item implements AdventureUsable {
     private static final int PRY_COOLDOWN = 30 * 20; // 30秒
     private static final int CHARGE_TIME = 2 * 20; // 2秒
     private static final int KILL_COOLDOWN = 60 * 20; // 60秒冷却，防止连续使用
+
+    // 消防斧死因
+    public static final ResourceLocation DEATH_REASON_FIRE_AXE = Noellesroles.id("fire_axe");
 
     public FireAxeItem(Properties settings) {
         super(settings);
@@ -195,9 +199,9 @@ public class FireAxeItem extends Item implements AdventureUsable {
                     player.getCooldowns().addCooldown(this, KILL_COOLDOWN);
                 }
 
-                // 击杀并计入误杀惩罚
+                // 击杀并计入误杀惩罚，使用消防斧自定义死因
                 GameFunctions.killPlayer(targetPlayer, true, player,
-                        GameConstants.DeathReasons.BAT);
+                        DEATH_REASON_FIRE_AXE);
 
                 // 回放记录
                 if (TMM.REPLAY_MANAGER != null) {
