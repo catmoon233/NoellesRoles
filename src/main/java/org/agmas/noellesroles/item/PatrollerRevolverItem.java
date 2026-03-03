@@ -11,7 +11,7 @@ import dev.doctor4t.trainmurdermystery.client.render.TMMRenderLayers;
 import dev.doctor4t.trainmurdermystery.compat.CrosshairaddonsCompat;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
-import dev.doctor4t.trainmurdermystery.util.GunShootPayload;
+import dev.doctor4t.trainmurdermystery.network.tmm.GunShootPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;

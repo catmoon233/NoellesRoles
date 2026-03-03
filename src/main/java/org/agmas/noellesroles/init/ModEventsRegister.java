@@ -58,7 +58,6 @@ import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
-import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent.TrainTask;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -533,6 +532,7 @@ public class ModEventsRegister {
                     }
                     if (NoellesRolesConfig.HANDLER.instance().accidentalKillPunishment) {
                         if (deathReason.getPath().equals("revolver_shot")
+                                || deathReason.getPath().equals("sniper_rifle")
                                 || deathReason.getPath().equals("bat_hit")
                                 || deathReason.getPath().equals("gun_shot")
                                 || deathReason.getPath().equals("arrow")

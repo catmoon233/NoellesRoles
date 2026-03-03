@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.item.RevolverItem;
-import dev.doctor4t.trainmurdermystery.util.GunShootPayload;
+import dev.doctor4t.trainmurdermystery.network.tmm.GunShootPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;

@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.mixin;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.util.AnnounceWelcomePayload;
+import dev.doctor4t.trainmurdermystery.network.tmm.AnnounceWelcomePayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.agmas.noellesroles.role.ModRoles;
