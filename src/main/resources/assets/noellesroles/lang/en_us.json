@@ -771,5 +771,13 @@
   "gui.vendingmachine.knob.tooltip": "%s",
   "gui.vendingmachine.collect.tooltip": "%s",
   "game.win.chair_wheel_race": "§a%s 赢得了比赛!",
-  "game.win.chair_wheel_race.subtitle": "§7比赛结束！"
+  "game.win.chair_wheel_race.subtitle": "§7比赛结束！",
+  "item.noellesroles.fire_axe": "Fire Axe",
+  "item.noellesroles.fire_axe.tooltip.durability": "Durability: %s/%s",
+  "item.noellesroles.fire_axe.tooltip.pry": "Shift+Right Click: Pry open door, consumes 1 durability",
+  "item.noellesroles.fire_axe.tooltip.kill": "Right Click: Raise axe and charge for 2 seconds, kill target player (requires full durability)",
+  "item.noellesroles.fire_axe.no_durability": "Not enough durability!",
+  "item.noellesroles.fire_axe.not_full_durability": "Not enough durability to kill!",
+  "item.noellesroles.fire_axe.on_cooldown": "Fire axe is on cooldown!",
+  "item.noellesroles.fire_axe.target_dead": "Target is already dead!"
 }
