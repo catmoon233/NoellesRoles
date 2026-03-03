@@ -11,10 +11,13 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.framing.FramingShopEntry;
 import org.jetbrains.annotations.NotNull;
 
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
+import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.ShopContent;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
@@ -499,7 +502,15 @@ public class RoleShopHandler {
         柜子区的商店.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), TMMConfig.grenadePrice, ShopEntry.Type.TOOL));
         柜子区的商店.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), TMMConfig.blackoutPrice, ShopEntry.Type.TOOL) {
             public boolean onBuy(@NotNull Player player) {
-                return PlayerShopComponent.useBlackout(player);
+                boolean triggered = ((WorldBlackoutComponent) WorldBlackoutComponent.KEY.get(player.level()))
+                        .triggerBlackout();
+                if (triggered) {
+                    TMM.REPLAY_MANAGER.recordSkillUsed(player.getUUID(),
+                            BuiltInRegistries.ITEM.getKey(TMMItems.BLACKOUT));
+                }
+                player.getCooldowns().addCooldown(TMMItems.BLACKOUT,
+                        Math.min((Integer) GameConstants.ITEM_COOLDOWNS.getOrDefault(TMMItems.BLACKOUT, 0), 45));
+                return triggered;
             }
         });
         柜子区的商店.add(new ShopEntry(ModItems.FLASH_GRENADE.getDefaultInstance(), 150, ShopEntry.Type.TOOL));
@@ -667,7 +678,9 @@ public class RoleShopHandler {
         ATTENDANT_SHOP.add(new ShopEntry(ModItems.MASTER_KEY_P.getDefaultInstance(), 50, ShopEntry.Type.TOOL));
 
         // 铁门钥匙 - 75金币
-        ATTENDANT_SHOP.add(new ShopEntry(dev.doctor4t.trainmurdermystery.index.TMMItems.IRON_DOOR_KEY.getDefaultInstance(), 75, ShopEntry.Type.TOOL));
+        ATTENDANT_SHOP
+                .add(new ShopEntry(dev.doctor4t.trainmurdermystery.index.TMMItems.IRON_DOOR_KEY.getDefaultInstance(),
+                        75, ShopEntry.Type.TOOL));
         // 手电筒（moonlight_lamp） - 150金币
         if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("handheldmoon:moonlight_lamp"))) {
             final var moonlightLampItem = BuiltInRegistries.ITEM
