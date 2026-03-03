@@ -6,9 +6,9 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
-import dev.doctor4t.trainmurdermystery.util.GunDropPayload;
+import dev.doctor4t.trainmurdermystery.network.tmm.GunDropPayload;
+import dev.doctor4t.trainmurdermystery.network.tmm.ShootMuzzleS2CPayload;
 import dev.doctor4t.trainmurdermystery.util.Scheduler;
-import dev.doctor4t.trainmurdermystery.util.ShootMuzzleS2CPayload;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
