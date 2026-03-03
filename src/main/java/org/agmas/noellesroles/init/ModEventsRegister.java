@@ -533,6 +533,7 @@ public class ModEventsRegister {
                     }
                     if (NoellesRolesConfig.HANDLER.instance().accidentalKillPunishment) {
                         if (deathReason.getPath().equals("revolver_shot")
+                                || deathReason.getPath().equals("sniper_rifle")
                                 || deathReason.getPath().equals("bat_hit")
                                 || deathReason.getPath().equals("gun_shot")
                                 || deathReason.getPath().equals("arrow")
