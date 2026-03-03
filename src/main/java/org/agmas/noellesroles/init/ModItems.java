@@ -310,6 +310,42 @@ public class ModItems {
             "pocket_watch");
 
     /**
+     * 肾上腺素
+     * - 一次性道具
+     * - 对目标使用后增加体力上限
+     */
+    public static final Item ADRENALINE = register(
+            new AdrenalineItem(new Item.Properties().stacksTo(1)),
+            "adrenaline");
+
+    /**
+     * 抗生素
+     * - 一次性道具
+     * - 对目标使用后使目标解除中毒
+     */
+    public static final Item ANTIBIOTIC = register(
+            new AntibioticItem(new Item.Properties().stacksTo(1)),
+            "antibiotic");
+
+    /**
+     * 鹤顶红
+     * - 一次性道具
+     * - 对目标使用后使目标中毒
+     */
+    public static final Item HEDINGHONG = register(
+            new HedinghongItem(new Item.Properties().stacksTo(1)),
+            "hedinghong");
+
+    /**
+     * 狗皮膏药
+     * - 一次性道具
+     * - 对目标使用后使目标30秒内san值不会下降
+     */
+    public static final Item DOGSKIN_PLASTER = register(
+            new DogskinPlasterItem(new Item.Properties().stacksTo(1)),
+            "dogskin_plaster");
+
+    /**
      * 消防斧
      * - 3点耐久
      * - Shift+右键：直接撬开门，消耗1点耐久，30秒冷却

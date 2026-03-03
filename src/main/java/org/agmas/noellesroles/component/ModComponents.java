@@ -194,6 +194,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
     public static final ComponentKey<org.agmas.noellesroles.modifier.expedition.ExpeditionComponent> EXPEDITION =
             org.agmas.noellesroles.modifier.expedition.ExpeditionComponent.KEY;
 
+    public static final ComponentKey<TemporaryEffectPlayerComponent> TEMPORARY_EFFECT = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "temporary_effect"),
+            TemporaryEffectPlayerComponent.class);
+
     public ModComponents() {
         // CCA 需要无参构造函数
     }
@@ -410,6 +414,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, EXPEDITION)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(org.agmas.noellesroles.modifier.expedition.ExpeditionComponent::new);
+
+        // 注册临时效果组件 - 存储肾上腺素体力提升和狗皮膏药保护
+        registry.beginRegistration(Player.class, TEMPORARY_EFFECT)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(TemporaryEffectPlayerComponent::new);
 
         // ==================== 示例：注册更多组件 ====================
         //

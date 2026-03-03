@@ -18,6 +18,7 @@
     "ShitExposurePatreonMixin",
     "SpawnMixin",
     "accessor.PlayerPoisonComponentAccessor",
+    "cca.PlayerMoodComponentMixin",
     "roles.awesome_binglus.NoteEntityMixin",
     "roles.awesome_binglus.NoteMixin",
     "roles.coroner.CoronerAddDeathReasonMixin",
