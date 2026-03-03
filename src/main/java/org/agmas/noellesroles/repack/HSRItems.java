@@ -1,15 +1,12 @@
 package org.agmas.noellesroles.repack;
 
 import dev.doctor4t.ratatouille.util.registrar.ItemRegistrar;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,10 +16,6 @@ import org.agmas.noellesroles.repack.items.AntidoteItem;
 import org.agmas.noellesroles.repack.items.BanditRevolverItem;
 import org.agmas.noellesroles.repack.items.CatalystItem;
 import org.agmas.noellesroles.repack.items.ToxinItem;
-import org.agmas.noellesroles.item.AdrenalineItem;
-import org.agmas.noellesroles.item.AntibioticItem;
-import org.agmas.noellesroles.item.HedinghongItem;
-import org.agmas.noellesroles.item.DogskinPlasterItem;
 
 public class HSRItems {
     public static ResourceKey<CreativeModeTab> HSR_CREATIVE_GROUP = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
@@ -31,10 +24,6 @@ public class HSRItems {
 
     public static final Item ANTIDOTE = register(new AntidoteItem((new Item.Properties()).stacksTo(1)), "antidote");
     public static final Item TOXIN = register(new ToxinItem((new Item.Properties()).stacksTo(1)), "toxin");
-    public static final Item ADRENALINE = register(new AdrenalineItem((new Item.Properties()).stacksTo(1)), "adrenaline");
-    public static final Item ANTIBIOTIC = register(new AntibioticItem((new Item.Properties()).stacksTo(1)), "antibiotic");
-    public static final Item HEDINGHONG = register(new HedinghongItem((new Item.Properties()).stacksTo(1)), "hedinghong");
-    public static final Item DOGSKIN_PLASTER = register(new DogskinPlasterItem((new Item.Properties()).stacksTo(1)), "dogskin_plaster");
     public static final Item CATALYST = register(new CatalystItem((new Item.Properties()).stacksTo(1)), "catalyst");
     // public static final Item MASTER_KEY = register(new MasterKeyItem((new
     // Item.Settings()).maxCount(1).maxDamage(3)), "master_key");

@@ -3,8 +3,10 @@ package org.agmas.noellesroles.mixin.cca;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import org.agmas.noellesroles.component.TemporaryEffectPlayerComponent;
 import net.minecraft.world.entity.player.Player;
+
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,13 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = PlayerMoodComponent.class, remap = false)
 public abstract class PlayerMoodComponentMixin {
     
-    @Unique
+    @Shadow
+    @Final
     private Player player;
-    
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(Player player, CallbackInfo ci) {
-        this.player = player;
-    }
     
     /**
      * 在serverTick开始时检查狗皮膏药保护
