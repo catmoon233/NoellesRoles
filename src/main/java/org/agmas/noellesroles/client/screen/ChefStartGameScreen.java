@@ -13,13 +13,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 
-/**
- * 阴谋家选择屏幕
- * 
- * 两阶段选择：
- * 1. 选择目标玩家（显示所有玩家头像）
- * 2. 选择角色（显示所有可用角色）
- */
 public class ChefStartGameScreen extends Screen {
 
     public ChefStartGameScreen() {

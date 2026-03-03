@@ -38,6 +38,7 @@ import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.WheelchairEntityModel;
 import org.agmas.noellesroles.entity.WheelchairEntityRenderer;
 import org.agmas.noellesroles.item.PanItem;
+import org.agmas.noellesroles.item.ProblemSetItem;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoCheckS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootPoolsInfoRequestC2SPacket;
@@ -141,6 +142,14 @@ public class NoellesrolesClient implements ClientModInitializer {
                 VendingMachinesBlockEntityRenderer::new);
 
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.VENDING_MACHINES_BLOCK, RenderType.translucent());
+        ProblemSetItem.openScreenCallback = () -> {
+            Minecraft client = Minecraft.getInstance();
+            if (client.player == null)
+                return;
+            client.execute(() -> {
+                client.setScreen(new MathSolverScreen());
+            });
+        };
         PanItem.openScreenCallback = () -> {
             Minecraft client = Minecraft.getInstance();
             if (client.player == null)
@@ -427,7 +436,8 @@ public class NoellesrolesClient implements ClientModInitializer {
                 if (TMMClient.gameComponent.isRole(player, ModRoles.MAGICIAN)) {
                     var roleR = MagicianPlayerComponent.KEY.get(player).getDisguiseRoleId();
 
-                    // Noellesroles.LOGGER.info("mag player: "+player.getDisplayName().getString()+(roleR!=null?" "+roleR:" Null role"));
+                    // Noellesroles.LOGGER.info("mag player:
+                    // "+player.getDisplayName().getString()+(roleR!=null?" "+roleR:" Null role"));
                     return RoleUtils.getRoleName(roleR);
                 }
             }

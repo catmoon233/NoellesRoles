@@ -9,9 +9,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class PanItem extends Item {
+public class ProblemSetItem extends Item {
     public static Runnable openScreenCallback = null;
-    public PanItem(Properties properties) {
+    public ProblemSetItem(Properties properties) {
         super(properties);
     }
     @Override
@@ -30,6 +30,7 @@ public class PanItem extends Item {
             }
         }
         
+        // 返回 success 但不消耗物品，等猜测完成后再消耗
         return InteractionResultHolder.success(stack);
 
     }
