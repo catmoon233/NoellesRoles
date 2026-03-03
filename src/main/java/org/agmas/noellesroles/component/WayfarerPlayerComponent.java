@@ -290,7 +290,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         ));
         this.player.addEffect(new MobEffectInstance(
                 MobEffects.MOVEMENT_SLOWDOWN,
-                150, // 持续时间（tick）
+                100, // 持续时间（tick）
                 10, // 等级（0 = 速度 I）
                 false, // ambient（环境效果，如信标）
                 false, // showParticles（显示粒子）
@@ -328,8 +328,8 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         this.phase = 2;
         this.killer = null;
         // 播放音效：1阶段进2阶段用信标激活的声音
-        player.level().playSound(null, player.blockPosition(),
-                SoundEvents.BEACON_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
+        // player.level().playSound(null, player.blockPosition(),
+        //         SoundEvents.BEACON_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
 
         TMMItemUtils.clearItem(player, TMMItems.KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
@@ -388,8 +388,8 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         this.phase = 1;
         this.killer = targetKiller.getUUID();
         // 播放音效：0阶段进1阶段用潮涌核心激活的声音
-        player.level().playSound(null, player.blockPosition(),
-                SoundEvents.CONDUIT_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
+        // player.level().playSound(null, player.blockPosition(),
+        //         SoundEvents.CONDUIT_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
         this.player.displayClientMessage(Component.translatable("", targetKiller.getDisplayName()), true);
         this.deathReason = ResourceLocation.tryParse(be.getDeathReason());
         this.sync();
