@@ -4,7 +4,6 @@ import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -12,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +19,6 @@ import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import org.agmas.noellesroles.Noellesroles;
-
-import java.util.ResourceBundle;
 
 /**
  * 远征队修饰符组件
@@ -152,8 +148,10 @@ public class ExpeditionComponent implements RoleComponent, ServerTickingComponen
      */
     private boolean hasExpeditionModifier() {
         try {
-            var worldModifierComponent = org.agmas.harpymodloader.component.WorldModifierComponent.KEY.get(player.level());
-            return worldModifierComponent != null && worldModifierComponent.isModifier(player, org.agmas.noellesroles.modifier.NRModifiers.EXPEDITION);
+            var worldModifierComponent = org.agmas.harpymodloader.component.WorldModifierComponent.KEY
+                    .get(player.level());
+            return worldModifierComponent != null && worldModifierComponent.isModifier(player,
+                    org.agmas.noellesroles.modifier.NRModifiers.EXPEDITION);
         } catch (Exception e) {
             return false;
         }
@@ -166,7 +164,7 @@ public class ExpeditionComponent implements RoleComponent, ServerTickingComponen
         try {
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
             Role role = gameWorld.getRole(player);
-            return role != null && role.isInnocent() && !role.canUseKiller();
+            return role != null && role.isInnocent() && !role.canUseKiller() && !role.isNeutrals();
         } catch (Exception e) {
             return false;
         }
@@ -203,10 +201,6 @@ public class ExpeditionComponent implements RoleComponent, ServerTickingComponen
 
         // 只有游戏进行中才检测
         if (!gameWorld.isRunning())
-            return;
-
-        // 确保玩家不是小透明
-        if (gameWorld.isRole(player, ModRoles.GHOST))
             return;
 
         // 每秒检查一次（20 tick）
