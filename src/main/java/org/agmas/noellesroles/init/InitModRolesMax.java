@@ -100,7 +100,8 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.MAGICIAN_ID, 0);
             }
-            if (random.nextInt(0, 100) <= 50) {
+            // 死灵法师数量 - 仅在12人以上对局出现
+            if (players_count >= 12 && random.nextInt(0, 100) <= 50) {
                 Harpymodloader.setRoleMaximum(SERoles.NECROMANCER, 1);
             } else {
                 Harpymodloader.setRoleMaximum(SERoles.NECROMANCER, 0);
