@@ -7,6 +7,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -179,10 +181,13 @@ public class BloodFeudistPlayerComponent implements RoleComponent, CommonTicking
             }
         }
 
-        // 2人误杀：永久急迫2
+        // 2人误杀：永久急迫2（阶段2）
         if (accidentalKillCount >= 2 && !gotHaste2) {
             gotHaste2 = true;
             player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, Integer.MAX_VALUE, 1, false, false, true));
+            // 播放重生锚充能声音 - 全场播放
+            player.level().playSound(null, player.blockPosition(),
+                    SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.MASTER, 1.0F, 1.0F);
             if (player instanceof ServerPlayer sp) {
                 sp.sendSystemMessage(Component.translatable("message.noellesroles.blood_feudist.haste2")
                         .withStyle(net.minecraft.ChatFormatting.GREEN));
@@ -200,22 +205,28 @@ public class BloodFeudistPlayerComponent implements RoleComponent, CommonTicking
             }
         }
 
-        // 4人误杀：永久速度2（替换速度1）
+        // 4人误杀：永久速度2（替换速度1）（阶段4）
         if (accidentalKillCount >= 4 && !gotSpeed2) {
             gotSpeed2 = true;
             player.removeEffect(MobEffects.MOVEMENT_SPEED);
             player.addEffect(
                     new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1, false, false, true));
+            // 播放重生锚能量被消耗声音 - 全场播放
+            player.level().playSound(null, player.blockPosition(),
+                    SoundEvents.RESPAWN_ANCHOR_DEPLETE.value(), SoundSource.MASTER, 1.0F, 1.0F);
             if (player instanceof ServerPlayer sp) {
                 sp.sendSystemMessage(Component.translatable("message.noellesroles.blood_feudist.speed2")
                         .withStyle(net.minecraft.ChatFormatting.GREEN));
             }
         }
 
-        // 5人误杀：免疫负面效果
+        // 5人误杀：免疫负面效果（阶段5）
         if (accidentalKillCount >= 5 && !gotImmunity) {
             gotImmunity = true;
             clearNegativeEffects();
+            // 播放重生锚设置重生点声音 - 全场播放
+            player.level().playSound(null, player.blockPosition(),
+                    SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.MASTER, 1.0F, 1.0F);
             if (player instanceof ServerPlayer sp) {
                 sp.sendSystemMessage(Component.translatable("message.noellesroles.blood_feudist.immunity")
                         .withStyle(net.minecraft.ChatFormatting.GREEN));

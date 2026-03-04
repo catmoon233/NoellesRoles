@@ -5,6 +5,7 @@ import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -24,10 +26,10 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.agmas.noellesroles.Noellesroles;
-import org.jetbrains.annotations.NotNull;
+import org.agmas.noellesroles.packet.FireAxeStabPayload;
 
 import java.util.List;
 
@@ -169,79 +171,30 @@ public class FireAxeItem extends Item implements AdventureUsable {
     }
 
     @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity user) {
-        if (!world.isClientSide && user instanceof Player player) {
-            // 耐久检查
-            if (stack.getDamageValue() > 0) {
-                return stack;
-            }
-
-            // 寻找前方3格内的玩家
-            Entity target = findTargetPlayer(player);
-
-            if (target instanceof Player targetPlayer) {
-                // 检查目标是否存活
-                if (!GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
-                    player.displayClientMessage(
-                            Component.translatable("item.noellesroles.fire_axe.target_dead")
-                                    .withStyle(ChatFormatting.RED),
-                            true);
-                    return stack;
-                }
-
-                // 击杀玩家
-                if (!player.isCreative()) {
-                    stack.hurtAndBreak(3, player, EquipmentSlot.MAINHAND);
-                }
-
-                // 添加击杀冷却
-                if (!player.isCreative()) {
-                    player.getCooldowns().addCooldown(this, KILL_COOLDOWN);
-                }
-
-                // 击杀并计入误杀惩罚，使用消防斧自定义死因
-                GameFunctions.killPlayer(targetPlayer, true, player,
-                        DEATH_REASON_FIRE_AXE);
-
-                // 回放记录
-                if (TMM.REPLAY_MANAGER != null) {
-                    TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
-                            BuiltInRegistries.ITEM.getKey(this));
-                }
-            }
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
+        if (user.isSpectator()) {
+            return;
         }
-        return stack;
+        if (remainingUseTicks >= this.getUseDuration(stack, user) - 8 || !(user instanceof Player attacker) || !world.isClientSide)
+            return;
+            
+        HitResult collision = getFireAxeTarget(attacker);
+        if (collision instanceof EntityHitResult entityHitResult) {
+            Entity target = entityHitResult.getEntity();
+            if (TMM.REPLAY_MANAGER != null) {
+                TMM.REPLAY_MANAGER.recordItemUse(user.getUUID(), BuiltInRegistries.ITEM.getKey(this));
+            }
+            ClientPlayNetworking.send(new FireAxeStabPayload(target.getId()));
+        }
     }
 
-    /**
-     * 寻找前方3格内的玩家
-     */
-    private Entity findTargetPlayer(Player player) {
-        // 在前方3格内寻找最近的玩家
-        Entity closestTarget = null;
-        double closestDist = 0;
+    public static HitResult getFireAxeTarget(Player user) {
+        return ProjectileUtil.getHitResultOnViewVector(user, entity -> entity instanceof Player player && GameFunctions.isPlayerAliveAndSurvival(player), 3f);
+    }
 
-        Vec3 eyePos = player.getEyePosition();
-        Vec3 lookVec = player.getLookAngle();
-        Vec3 endPos = eyePos.add(lookVec.scale(3.0));
-
-        for (Entity entity : player.level().getEntitiesOfClass(Player.class,
-                new AABB(eyePos, endPos).inflate(1.0))) {
-            if (entity == player) {
-                continue;
-            }
-
-            // 检查是否在视野范围内
-            if (player.hasLineOfSight(entity)) {
-                double dist = entity.distanceTo(player);
-                if (closestTarget == null || dist < closestDist) {
-                    closestTarget = entity;
-                    closestDist = dist;
-                }
-            }
-        }
-
-        return closestTarget;
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity user) {
+        return stack;
     }
 
     @Override
