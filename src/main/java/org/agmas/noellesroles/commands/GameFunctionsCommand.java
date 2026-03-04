@@ -141,6 +141,7 @@ public class GameFunctionsCommand {
       context.getSource()
           .sendSuccess(() -> Component.translatable("Stopped All Blackouts!"), true);
       wbc.reset();
+      
     }
 
     return 1;
