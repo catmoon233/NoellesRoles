@@ -22,11 +22,15 @@ public class CustomWinnerClass {
 
             // 检查是否有小偷存活
             boolean hasThiefAlive = false;
+            int thiefCount = 0;
+            int alivePlayerCount = 0;
             for (var player : serverLevel.players()) {
-                if (GameFunctions.isPlayerAliveAndSurvival(player) &&
-                    gameComponent.isRole(player, ModRoles.THIEF)) {
-                    hasThiefAlive = true;
-                    break;
+                if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                    alivePlayerCount++;
+                    if (gameComponent.isRole(player, ModRoles.THIEF)) {
+                        hasThiefAlive = true;
+                        thiefCount++;
+                    }
                 }
             }
 
@@ -37,10 +41,17 @@ public class CustomWinnerClass {
                     return WinStatus.CUSTOM;
                 }
 
-                // 如果小偷存活且游戏要结束（乘客或杀手胜利），阻止游戏结束
+                // 如果小偷存活且游戏要结束（乘客或杀手胜利）
                 if (winStatus.equals(WinStatus.PASSENGERS) ||
                     winStatus.equals(WinStatus.KILLERS)) {
-                    return WinStatus.NONE; // 游戏继续
+                    // 如果场上只剩下小偷自己，按照乘客胜利结算
+                    if (alivePlayerCount == thiefCount) {
+                        // 只有小偷存活，按照乘客胜利结算
+                        return WinStatus.PASSENGERS;
+                    } else {
+                        // 小偷和其他角色一起存活，阻止游戏结束
+                        return WinStatus.NONE; // 游戏继续
+                    }
                 }
             }
 
