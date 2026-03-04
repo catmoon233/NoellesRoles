@@ -18,9 +18,10 @@ public class EntityClear {
      * 在 finalizeGame 方法尾部注入，清除所有实体
      */
     @Inject(method = "trueStartGame", at = @At("HEAD"))
-    private static void clearAllEntities$start(ServerLevel world, GameMode gameMode, int time) {
+    private static void clearAllEntities$start(ServerLevel world, GameMode gameMode, int time, CallbackInfo ci) {
         EntityClearUtils.clearAllEntities(world);
     }
+
     /**
      * 在 finalizeGame 方法尾部注入，清除所有实体
      */
