@@ -33,6 +33,7 @@ public class InitModRolesMax {
         RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
 
         Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
+        Harpymodloader.setRoleMaximum(ModRoles.BETTER_VIGILANTE, 0);
         Harpymodloader.setRoleMaximum(ModRoles.MANIPULATOR, 0);
         Harpymodloader.setRoleMaximum(ModRoles.EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
         Harpymodloader.setRoleMaximum(ModRoles.VULTURE_ID, NoellesRolesConfig.HANDLER.instance().vultureMax);
