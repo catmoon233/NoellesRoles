@@ -106,7 +106,7 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static int insanityTime = 0;
     public static KeyMapping roleGuessNoteClientBind;
     public static KeyMapping abilityBind;
-    public static KeyMapping taskInstinct;
+    public static KeyMapping taskInstinctBind;
     public static KeyMapping roleIntroClientBind;
     public static Player target;
     public static PlayerBodyEntity targetBody;
@@ -211,7 +211,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                         InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_I, "category.trainmurdermystery.keybinds"));
         abilityBind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key." + Noellesroles.MOD_ID + ".ability",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
-        taskInstinct = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.noellesroles.taskinstinct",
+        taskInstinctBind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.noellesroles.taskinstinct",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, "category.trainmurdermystery.keybinds"));
         ClientPlayNetworking.registerGlobalReceiver(ScanAllTaskPointsPayload.ID, (payload, context) -> {
             Noellesroles.LOGGER.info("Recieved Tasks Points!");
@@ -445,8 +445,15 @@ public class NoellesrolesClient implements ClientModInitializer {
             return null;
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (taskInstinct.consumeClick()) {
+            if (taskInstinctBind.consumeClick()) {
                 isTaskInstinctEnabled = !isTaskInstinctEnabled;
+                if (isTaskInstinctEnabled) {
+                    client.player.displayClientMessage(Component.translatable("message.tip.taskpoint_instinct_enable")
+                            .withStyle(ChatFormatting.GREEN), true);
+                } else {
+                    client.player.displayClientMessage(Component.translatable("message.tip.taskpoint_instinct_disable")
+                            .withStyle(ChatFormatting.RED), true);
+                }
             }
             if (client == null || client.player == null)
                 return;
@@ -563,11 +570,27 @@ public class NoellesrolesClient implements ClientModInitializer {
                                                 Component.keybind("key.noellesroles.taskinstinct"))
                                         .withStyle(ChatFormatting.WHITE));
                     }
+                    // is_taskpoint_able
                 }
             }
             return null;
         });
-
+        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
+            if (TMMClient.gameComponent != null && !taskBlocks.isEmpty()) {
+                if (TMMClient.gameComponent.isRunning()) {
+                    boolean canDisplay = false;
+                    canDisplay = NoellesrolesClient.isTaskInstinctEnabled;
+                    if (canDisplay) {
+                        return new MutableComponentResult(
+                                Component
+                                        .translatable("message.tip.is_taskpoint_able")
+                                        .withStyle(ChatFormatting.AQUA));
+                    }
+                    //
+                }
+            }
+            return null;
+        });
         OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
             if (TMMClient.gameComponent != null) {
                 if (TMMClient.gameComponent.isRunning()) {

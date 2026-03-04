@@ -638,7 +638,6 @@
   "message.noellesroles.recorder.win": "Recorder %s completed all records and achieved victory!",
   "death_reason.noellesroles.recorder_mistake": "Died from recording errors.",
   "death_reason.trainmurdermystery.recorder_mistake": "Died from recording errors.",
-  "item.noellesroles.mint_candies.tooltip": "Restores 35% sanity after eating",
   "==================== Insane Killer Role ====================": "",
   "message.noellesroles.insane_killer.ability_deactivated": "Disguise deactivated, entering cooldown...",
   "message.noellesroles.insane_killer.ability_activated": "Disguise activated!",
