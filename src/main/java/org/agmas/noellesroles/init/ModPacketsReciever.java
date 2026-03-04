@@ -22,6 +22,7 @@ import org.agmas.noellesroles.events.OnVendingMachinesBuyItems;
 import org.agmas.noellesroles.item.ChefFoodItem;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.packet.ChefCookC2SPacket;
+import org.agmas.noellesroles.packet.FireAxeStabPayload;
 import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
 import org.agmas.noellesroles.packet.ProblemSetEventC2SPacket;
 import org.agmas.noellesroles.packet.RecorderC2SPacket;
@@ -51,6 +52,7 @@ import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -435,6 +437,74 @@ public class ModPacketsReciever {
       component.sync();
     });
     ServerPlayNetworking.registerGlobalReceiver(RecorderC2SPacket.TYPE, RecorderC2SPacket::handle);
+    
+    // 消防斧攻击包处理
+    ServerPlayNetworking.registerGlobalReceiver(FireAxeStabPayload.ID, (payload, context) -> {
+        ServerPlayer player = context.player();
+        
+        // 验证目标是否存在且在范围内
+        if (!(player.serverLevel().getEntity(payload.target()) instanceof ServerPlayer target))
+            return;
+        if (target.distanceTo(player) > 3.0)
+            return;
+            
+        GameWorldComponent game = GameWorldComponent.KEY.get(player.level());
+        
+        // 检查目标是否存活
+        if (!GameFunctions.isPlayerAliveAndSurvival(target)) {
+            player.displayClientMessage(
+                    Component.translatable("item.noellesroles.fire_axe.target_dead")
+                            .withStyle(ChatFormatting.RED),
+                    true);
+            return;
+        }
+
+        // 获取玩家手中的消防斧
+        var stack = player.getMainHandItem();
+        if (!stack.is(ModItems.FIRE_AXE)) {
+            return;
+        }
+
+        // 检查耐久是否满
+        if (stack.getDamageValue() > 0) {
+            player.displayClientMessage(
+                    Component.translatable("item.noellesroles.fire_axe.not_full_durability")
+                            .withStyle(ChatFormatting.RED),
+                    true);
+            return;
+        }
+
+        // 检查冷却
+        if (player.getCooldowns().isOnCooldown(ModItems.FIRE_AXE)) {
+            player.displayClientMessage(
+                    Component.translatable("item.noellesroles.fire_axe.on_cooldown")
+                            .withStyle(ChatFormatting.RED),
+                    true);
+            return;
+        }
+
+        // 消耗耐久
+        if (!player.isCreative()) {
+            stack.hurtAndBreak(3, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        }
+
+        // 添加冷却
+        if (!player.isCreative()) {
+            player.getCooldowns().addCooldown(ModItems.FIRE_AXE, 60 * 20); // 60秒冷却
+        }
+
+        // 执行击杀
+        GameFunctions.killPlayer(target, true, player, org.agmas.noellesroles.item.FireAxeItem.DEATH_REASON_FIRE_AXE);
+        target.playSound(TMMSounds.ITEM_KNIFE_STAB, 1.0f, 1.0f);
+        player.swing(InteractionHand.MAIN_HAND);
+
+        // 回放记录
+        if (TMM.REPLAY_MANAGER != null) {
+            TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
+                    net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ModItems.FIRE_AXE));
+        }
+    });
+    
     ServerPlayNetworking.registerGlobalReceiver(ModPackets.MONITOR_MARK_PACKET, (payload, context) -> {
       GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
           .get(context.player().level());

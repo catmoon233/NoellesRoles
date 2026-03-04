@@ -71,6 +71,11 @@ public class ModPackets {
         BanditRevolverShootPayload.CODEC);
     ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID,
         new BanditRevolverShootPayload.Receiver());
+    
+    // 注册消防斧攻击网络包
+    PayloadTypeRegistry.playC2S().register(FireAxeStabPayload.ID,
+        FireAxeStabPayload.CODEC);
+    
     PayloadTypeRegistry.playC2S().register(InsaneKillerAbilityC2SPacket.ID,
         InsaneKillerAbilityC2SPacket.CODEC);
     PayloadTypeRegistry.playC2S().register(RecorderC2SPacket.TYPE, RecorderC2SPacket.CODEC);
