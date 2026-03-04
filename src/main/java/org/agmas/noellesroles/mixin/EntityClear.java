@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.mixin;
 
+import dev.doctor4t.trainmurdermystery.api.GameMode;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.server.level.ServerLevel;
 import org.agmas.noellesroles.utils.EntityClearUtils;
@@ -16,8 +17,15 @@ public class EntityClear {
     /**
      * 在 finalizeGame 方法尾部注入，清除所有实体
      */
+    @Inject(method = "trueStartGame", at = @At("HEAD"))
+    private static void clearAllEntities$start(ServerLevel world, GameMode gameMode, int time) {
+        EntityClearUtils.clearAllEntities(world);
+    }
+    /**
+     * 在 finalizeGame 方法尾部注入，清除所有实体
+     */
     @Inject(method = "finalizeGame", at = @At("TAIL"))
-    private static void clearAllEntities(ServerLevel world, CallbackInfo ci) {
+    private static void clearAllEntities$end(ServerLevel world, CallbackInfo ci) {
         EntityClearUtils.clearAllEntities(world);
     }
 }
