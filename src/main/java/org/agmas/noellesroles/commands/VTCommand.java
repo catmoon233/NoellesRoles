@@ -86,12 +86,12 @@ public class VTCommand {
         Component MSG = Component.translatable("message.noellesroles.vt_mode.enabled", player.getDisplayName())
             .withStyle(ChatFormatting.YELLOW);
         player.sendSystemMessage(MSG);
-        context.getSource().sendSuccess(() -> MSG, true);
+        context.getSource().sendSuccess(() -> MSG, false);
       } else {
         Component MSG = Component.translatable("message.noellesroles.vt_mode.disabled", player.getDisplayName())
             .withStyle(ChatFormatting.GREEN);
         player.sendSystemMessage(MSG);
-        context.getSource().sendSuccess(() -> MSG, true);
+        context.getSource().sendSuccess(() -> MSG, false);
       }
 
       return Command.SINGLE_SUCCESS;
