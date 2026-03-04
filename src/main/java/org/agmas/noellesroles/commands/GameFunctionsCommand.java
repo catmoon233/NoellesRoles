@@ -131,6 +131,7 @@ public class GameFunctionsCommand {
 
   public static int executeBlackout(CommandContext<CommandSourceStack> context, int time) {
     var wbc = WorldBlackoutComponent.KEY.get(context.getSource().getLevel());
+    Noellesroles.LOGGER.info("Reset Points: "+GameFunctions.resetPoints.size());
     if (time != 0) {
       wbc.triggerBlackout();
       context.getSource()

@@ -98,7 +98,7 @@ public class MapScannerManager {
     }
 
     public static boolean loadArea(ServerLevel world) {
-        GameFunctions.resetPoints.clear();
+        GameFunctions.taskBlocks.clear();
         var areaC = AreasWorldComponent.KEY.get(world);
         String mapName = areaC.mapName;
         if (mapName == null)
