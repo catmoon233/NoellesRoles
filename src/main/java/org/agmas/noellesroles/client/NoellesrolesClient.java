@@ -576,22 +576,6 @@ public class NoellesrolesClient implements ClientModInitializer {
             return null;
         });
         OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
-            if (TMMClient.gameComponent != null && !taskBlocks.isEmpty()) {
-                if (TMMClient.gameComponent.isRunning()) {
-                    boolean canDisplay = false;
-                    canDisplay = NoellesrolesClient.isTaskInstinctEnabled;
-                    if (canDisplay) {
-                        return new MutableComponentResult(
-                                Component
-                                        .translatable("message.tip.is_taskpoint_able")
-                                        .withStyle(ChatFormatting.AQUA));
-                    }
-                    //
-                }
-            }
-            return null;
-        });
-        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
             if (TMMClient.gameComponent != null) {
                 if (TMMClient.gameComponent.isRunning()) {
                     var role = TMMClient.gameComponent.getRole(minecraft.player);
@@ -615,6 +599,22 @@ public class NoellesrolesClient implements ClientModInitializer {
             return null;
         });
 
+        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
+            if (TMMClient.gameComponent != null && !taskBlocks.isEmpty()) {
+                if (TMMClient.gameComponent.isRunning()) {
+                    boolean canDisplay = false;
+                    canDisplay = NoellesrolesClient.isTaskInstinctEnabled;
+                    if (canDisplay) {
+                        return new MutableComponentResult(
+                                Component
+                                        .translatable("message.tip.is_taskpoint_able")
+                                        .withStyle(ChatFormatting.AQUA));
+                    }
+                    //
+                }
+            }
+            return null;
+        });
         // 5. 注册实体渲染器
         registerEntityRenderers();
 
