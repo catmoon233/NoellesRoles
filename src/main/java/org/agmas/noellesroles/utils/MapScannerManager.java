@@ -1,0 +1,106 @@
+package org.agmas.noellesroles.utils;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.LevelResource;
+
+public class MapScannerManager {
+    public static class MapScannerInfos {
+        public HashMap<BlockPos, Integer> blocks;
+
+        public MapScannerInfos(HashMap<BlockPos, Integer> blocks) {
+            this.blocks = blocks;
+        }
+    }
+
+    public static Gson gson = new Gson();
+
+    public static void loadOrScanAndSaveScannerArea(ServerLevel serverWorld, AreasWorldComponent areas) {
+        if (areas.noReset) {
+            TMM.LOGGER.info("No need to scan: no reset flag found. " + areas.toString());
+            return;
+        }
+        if (loadArea(serverWorld)) {
+            return;
+        }
+        MapScanner.scanAllTaskBlocks(serverWorld);
+        saveArea(serverWorld);
+    }
+
+    public static void scanAndSaveScannerArea(ServerLevel serverWorld, AreasWorldComponent areas) {
+        if (areas.noReset) {
+            TMM.LOGGER.info("No need to scan: no reset flag found. " + areas.toString());
+            return;
+        }
+        MapScanner.scanAllTaskBlocks(serverWorld);
+        saveArea(serverWorld);
+    }
+
+    public static void saveArea(ServerLevel world) {
+        var areaC = AreasWorldComponent.KEY.get(world);
+        Path mapsDirPath = Paths.get(world.getServer().getWorldPath(LevelResource.ROOT).toString(),
+                "map_scanner_caches");
+        File mapsDir = mapsDirPath.toFile();
+        if (!mapsDir.exists()) {
+            mapsDir.mkdirs();
+        }
+        String mapName = areaC.mapName;
+        if (mapName == null)
+            return;
+        Path mapConfigPath = Paths.get(world.getServer().getWorldPath(LevelResource.ROOT).toString(),
+                "map_scanner_caches", mapName + ".cache.json");
+        File mapConfigFile = mapConfigPath.toFile();
+        try {
+            FileWriter writer = new FileWriter(mapConfigFile);
+            MapScannerInfos infos = new MapScannerInfos(GameFunctions.taskBlocks);
+            gson.toJson(infos, writer);
+            writer.close();
+            TMM.LOGGER.info("Successfully cache scanner points for map: " + mapName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean loadArea(ServerLevel world) {
+        GameFunctions.resetPoints.clear();
+        var areaC = AreasWorldComponent.KEY.get(world);
+        String mapName = areaC.mapName;
+        if (mapName == null)
+            return false;
+        Path mapConfigPath = Paths.get(world.getServer().getWorldPath(LevelResource.ROOT).toString(),
+                "map_scanner_caches", mapName + ".cache.json");
+        File mapConfigFile = mapConfigPath.toFile();
+
+        // 检查地图配置文件是否存在
+        if (!mapConfigFile.exists()) {
+            TMM.LOGGER.warn("Map scanner cache file does not exist: " + mapConfigFile.getAbsolutePath());
+            return false;
+        }
+        try {
+            FileReader reader = new FileReader(mapConfigFile);
+            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+            MapScannerInfos mapinfos = gson.fromJson(jsonObject, MapScannerInfos.class);
+            GameFunctions.taskBlocks = mapinfos.blocks;
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+}

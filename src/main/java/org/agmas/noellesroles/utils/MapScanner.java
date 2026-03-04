@@ -40,7 +40,9 @@ public class MapScanner {
                 Noellesroles.LOGGER.info("Skip scanner (wheel game)");
                 return;
             }
-            scanAllTaskBlocks(serverLevel);
+            // scanAllTaskBlocks(serverLevel);
+            var areas = AreasWorldComponent.KEY.get(serverLevel);
+            MapScannerManager.loadOrScanAndSaveScannerArea(serverLevel, areas);
             for (var player : serverLevel.players()) {
                 ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
             }

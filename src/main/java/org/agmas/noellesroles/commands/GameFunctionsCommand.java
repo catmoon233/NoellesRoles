@@ -7,6 +7,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.replay.GameReplayUtils;
+import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
@@ -39,7 +40,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
-import org.agmas.noellesroles.utils.MapScanner;
+import org.agmas.noellesroles.utils.MapScannerManager;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -68,7 +69,9 @@ public class GameFunctionsCommand {
 
                 return 1;
               })).then(Commands.literal("scan").executes((context) -> {
-                MapScanner.scanAllTaskBlocks(context.getSource().getLevel());
+                var level = context.getSource().getLevel();
+                var areas = AreasWorldComponent.KEY.get(level);
+                MapScannerManager.scanAndSaveScannerArea(level, areas);
                 HashMap<Integer, Boolean> map = new HashMap<>();
                 for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
                   map.putIfAbsent(entry.getValue(), true);

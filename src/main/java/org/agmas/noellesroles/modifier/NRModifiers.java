@@ -32,6 +32,7 @@ public class NRModifiers {
      * 初始化修饰符系统
      */
     public static void init() {
+        EXPEDITION.civilianOnly = true;
         assignModifierComponents();
     }
 
