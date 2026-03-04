@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gson.Gson;
@@ -19,11 +20,32 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.LevelResource;
 
 public class MapScannerManager {
+    public static class MapScannerInfo {
+        public BlockPos pos;
+        public int type;
+
+        public MapScannerInfo(BlockPos pos, int type) {
+            this.pos = pos;
+            this.type = type;
+        }
+    }
+
     public static class MapScannerInfos {
-        public HashMap<BlockPos, Integer> blocks;
+        public ArrayList<MapScannerInfo> infos;
 
         public MapScannerInfos(HashMap<BlockPos, Integer> blocks) {
-            this.blocks = blocks;
+            infos = new ArrayList<MapScannerInfo>();
+            for (var entry : blocks.entrySet()) {
+                infos.add(new MapScannerInfo(entry.getKey(), entry.getValue()));
+            }
+        }
+
+        public HashMap<BlockPos, Integer> getInfos() {
+            var blocks = new HashMap<BlockPos, Integer>();
+            for (var info : this.infos) {
+                blocks.put(info.pos, info.type);
+            }
+            return blocks;
         }
     }
 
@@ -94,7 +116,7 @@ public class MapScannerManager {
             FileReader reader = new FileReader(mapConfigFile);
             JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
             MapScannerInfos mapinfos = gson.fromJson(jsonObject, MapScannerInfos.class);
-            GameFunctions.taskBlocks = mapinfos.blocks;
+            GameFunctions.taskBlocks = mapinfos.getInfos();
             reader.close();
         } catch (Exception e) {
             e.printStackTrace();
