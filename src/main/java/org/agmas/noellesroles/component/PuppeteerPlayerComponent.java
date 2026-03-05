@@ -10,7 +10,11 @@ import org.agmas.noellesroles.utils.RoleUtils;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
+import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
+
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
@@ -497,6 +501,7 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
         if (!(player instanceof ServerPlayer serverPlayer))
             return;
 
+        TMMItemUtils.clearItem(serverPlayer, TMMItems.BAT);
         // 保存假人物品栏
         saveInventory(puppetInventory);
 
@@ -511,7 +516,11 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
 
         // 恢复本体物品栏
         loadInventory(originalInventory);
-
+        TMMItemUtils.clearItem(serverPlayer, TMMItems.BAT);
+        // 停止疯魔
+        var ppc = PlayerPsychoComponent.KEY.get(player);
+        if (ppc.psychoTicks > 0)
+            ppc.stopPsycho();
         // 清除假人状态，但保留收集的尸体信息
         isControllingPuppet = false;
         puppetControlTimer = 0;

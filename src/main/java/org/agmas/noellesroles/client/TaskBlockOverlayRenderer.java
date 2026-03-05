@@ -256,6 +256,12 @@ public class TaskBlockOverlayRenderer {
                                 new Color(121, 148, 255), 1f,
                                 true, 2f);
                     break;
+                case 11:
+                    if (shouldDisplay[type]) {
+                        TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
+                                new Color(255, 174, 201), 1f,
+                                true, 2f);
+                    }
                 default:
                     break;
             }

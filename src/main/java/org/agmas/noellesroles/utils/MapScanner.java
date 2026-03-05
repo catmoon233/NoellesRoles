@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
+import org.agmas.noellesroles.init.ModBlocks;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 
 import dev.doctor4t.trainmurdermystery.TMM;
@@ -71,7 +72,9 @@ public class MapScanner {
                     if (blockState.is(BlockTags.AIR))
                         continue;
                     // blockCounts++;
-                    if (blockState.is(Blocks.NOTE_BLOCK)) {
+                    if (blockState.is(ModBlocks.VENDING_MACHINES_BLOCK)) {
+                        GameFunctions.taskBlocks.put(blockPos6, 11);
+                    } else if (blockState.is(Blocks.NOTE_BLOCK)) {
                         GameFunctions.taskBlocks.put(blockPos6, 10);
                     } else if (blockState.is(Blocks.BLACK_CONCRETE)) {
                         BlockPos blockPos7 = new BlockPos(m, l + 1, k);
