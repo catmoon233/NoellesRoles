@@ -748,12 +748,9 @@ public class RoleShopHandler {
             @Override
             public boolean onBuy(@NotNull Player player) {
                 // 获得假球棒并启动假疯狂模式
-                if (!player.addItem(ModItems.FAKE_BAT.getDefaultInstance().copy())) {
-                    return false;
-                }
                 var magicianComponent = org.agmas.noellesroles.component.ModComponents.MAGICIAN.get(player);
                 if (magicianComponent != null) {
-                    if(!magicianComponent.startFakePsycho()){
+                    if (!magicianComponent.startFakePsycho()) {
                         return false;
                     }
                 }

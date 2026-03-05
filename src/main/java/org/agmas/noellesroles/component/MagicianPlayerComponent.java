@@ -4,6 +4,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.network.TriggerStatusBarPayload;
+import dev.doctor4t.trainmurdermystery.util.ShopEntry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.init.ModItems;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -68,6 +70,9 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         }
         if (psychoComponent.psychoTicks > 0) {
             // 已经疯魔，所以不准！
+            return false;
+        }
+        if (!ShopEntry.insertStackInFreeSlot(player, ModItems.FAKE_BAT.getDefaultInstance())) {
             return false;
         }
         // 直接设置疯狂模式状态（不给球棒，因为商店已经给了假球棒）
