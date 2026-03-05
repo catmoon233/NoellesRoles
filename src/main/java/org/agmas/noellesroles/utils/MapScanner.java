@@ -3,6 +3,7 @@ package org.agmas.noellesroles.utils;
 import java.util.HashMap;
 
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.block.VendingMachinesBlock;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.init.ModBlocks;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
@@ -74,7 +75,7 @@ public class MapScanner {
                     if (blockState.is(BlockTags.AIR))
                         continue;
                     // blockCounts++;
-                    if (blockState.is(ModBlocks.VENDING_MACHINES_BLOCK)) {
+                    if (blockState.is(ModBlocks.VENDING_MACHINES_BLOCK) && blockState.getValue(VendingMachinesBlock.HALF).equals(DoubleBlockHalf.LOWER)) {
                         GameFunctions.taskBlocks.put(blockPos6, 11);
                     } else if (blockState.is(Blocks.NOTE_BLOCK)) {
                         GameFunctions.taskBlocks.put(blockPos6, 10);

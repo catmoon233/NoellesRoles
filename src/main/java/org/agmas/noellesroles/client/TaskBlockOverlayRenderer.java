@@ -97,7 +97,9 @@ public class TaskBlockOverlayRenderer {
             double centerX = (localAABB.minX + localAABB.maxX) / 2.0;
             double centerY = (localAABB.minY + localAABB.maxY) / 2.0;
             double centerZ = (localAABB.minZ + localAABB.maxZ) / 2.0;
-            renderTextAtAABBCenter(context, blockPos, centerX, centerY, centerZ, text, textScale, color.getRGB(), true);
+            if (cameraPos.distanceTo(blockPos.getCenter()) <= 12)
+                renderTextAtAABBCenter(context, blockPos, centerX, centerY, centerZ, text, textScale, color.getRGB(),
+                        true);
         }
 
         matrices.popPose();
@@ -107,28 +109,18 @@ public class TaskBlockOverlayRenderer {
     private static AABB getCombinedAABB(Level world, BlockPos blockPos, BlockState state) {
         // 门（DoubleBlockHalf）：上下两格
         // 普通单格方块：用碰撞箱，fallback 用视觉箱
-        VoxelShape shape = state.getCollisionShape(world, blockPos);
+        VoxelShape shape = state.getShape(world, blockPos);
         if (shape.isEmpty())
-            shape = state.getShape(world, blockPos);
+            shape = state.getCollisionShape(world, blockPos);
         if (shape.isEmpty())
             return new AABB(0, 0, 0, 0, 0, 0);
         if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
             DoubleBlockHalf half = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
             if (half == DoubleBlockHalf.LOWER) {
-                var b = state.getCollisionShape(world, blockPos.above());
-                if (b.isEmpty())
-                    return shape.bounds().expandTowards(0, 1,
-                            0);
-                var a = b.bounds();
-                return shape.bounds().expandTowards(0, a.maxY - a.minY,
+                return shape.bounds().expandTowards(0, 1,
                         0);
             } else {
-                var b = state.getCollisionShape(world, blockPos.below());
-                if (b.isEmpty())
-                    return shape.bounds().expandTowards(0, -1,
-                            0);
-                var a = b.bounds();
-                return shape.bounds().expandTowards(0, -(a.maxY - a.minY),
+                return shape.bounds().expandTowards(0, -1,
                         0);
             }
         }
