@@ -169,7 +169,7 @@ public class TaskBlockOverlayRenderer {
         matrices.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yaw));
         matrices.scale(scale, -scale, scale);
         Font font = client.font;
-        matrices.translate(0, -(font.lineHeight * scale) / 2, 0);
+        matrices.translate(0, -((float) font.lineHeight) / 2f, 0);
 
         // ✅ 文字透视：用 renderBuffers().bufferSource() + SEE_THROUGH
         MultiBufferSource.BufferSource bufferSource = client.renderBuffers().bufferSource();

@@ -12,6 +12,8 @@ import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions.WinStatus;
+import dev.doctor4t.trainmurdermystery.game.MapResetManager;
+import dev.doctor4t.trainmurdermystery.game.ServerTaskInfoClasses;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.commands.CommandSourceStack;
@@ -59,31 +61,62 @@ public class GameFunctionsCommand {
                               .argument(
                                   "subtitle", ComponentArgument.textComponent(registryAccess))
                               .executes(GameFunctionsCommand::executeWinWithIdAndTitle)))))
-              .then(Commands.literal("reset").then(Commands.literal("normal").executes((context) -> {
-                GameFunctions.tryAutoTrainReset(context.getSource().getLevel());
-                context.getSource().sendSuccess(() -> Component.literal("Normal Reset(copy)!"), true);
-                return 1;
-              })).then(Commands.literal("clean").executes((context) -> {
-                GameFunctions.tryResetTrainOnlySomeBlock(context.getSource().getLevel());
-                context.getSource().sendSuccess(() -> Component.literal("Clean Reset (clean only)!"), true);
+              .then(Commands.literal("reset")
+                  .then(Commands.literal("sync")
+                      .then(Commands.literal("copy").executes((context) -> {
+                        GameFunctions.tryAutoTrainReset(context.getSource().getLevel());
+                        context.getSource().sendSuccess(() -> Component.literal("Normal Reset(copy)!"), true);
+                        return 1;
+                      }))
+                      .then(Commands.literal("simple").executes((context) -> {
+                        GameFunctions.tryResetTrainOnlySomeBlock(context.getSource().getLevel());
+                        context.getSource().sendSuccess(() -> Component.literal("Simple Reset (clean points only)!"),
+                            true);
 
-                return 1;
-              })).then(Commands.literal("scan").executes((context) -> {
-                var level = context.getSource().getLevel();
-                var areas = AreasWorldComponent.KEY.get(level);
-                MapScannerManager.scanAndSaveScannerArea(level, areas);
-                HashMap<Integer, Boolean> map = new HashMap<>();
-                for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
-                  map.putIfAbsent(entry.getValue(), true);
-                }
-                context.getSource().sendSuccess(
-                    () -> Component.translatable("Scanned Task points! Total %s types!", map.size()), true);
+                        return 1;
+                      })))
+                  .then(Commands.literal("asyn").then(Commands.literal("copy").executes((context) -> {
+                    var world = context.getSource().getLevel();
+                    var areas = AreasWorldComponent.KEY.get(world);
+                    ServerTaskInfoClasses.AutoTrainResetTask task = new ServerTaskInfoClasses.AutoTrainResetTask(areas,
+                        world, null, 0);
+                    task.shouldStartGame = false;
 
-                for (var player : context.getSource().getLevel().players()) {
-                  ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
-                }
-                return 1;
-              })))
+                    GameFunctions.serverTaskQueue.add(task);
+                    context.getSource()
+                        .sendSuccess(() -> Component.literal("Add server reset task: Normal Reset(copy)!"), true);
+                    return 1;
+                  }))
+                      .then(Commands.literal("simple").executes((context) -> {
+
+                        var world = context.getSource().getLevel();
+                        MapResetManager.loadArea(world);
+                        ServerTaskInfoClasses.OnlySomeBlockResetTask task = new ServerTaskInfoClasses.OnlySomeBlockResetTask(
+                            GameFunctions.resetPoints, world, null, 0);
+                        GameFunctions.serverTaskQueue.add(task);
+
+                        context.getSource().sendSuccess(
+                            () -> Component.literal("Add server reset task: Simple Reset (clean points only)!"),
+                            true);
+
+                        return 1;
+                      })))
+                  .then(Commands.literal("scan").executes((context) -> {
+                    var level = context.getSource().getLevel();
+                    var areas = AreasWorldComponent.KEY.get(level);
+                    MapScannerManager.scanAndSaveScannerArea(level, areas);
+                    HashMap<Integer, Boolean> map = new HashMap<>();
+                    for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
+                      map.putIfAbsent(entry.getValue(), true);
+                    }
+                    context.getSource().sendSuccess(
+                        () -> Component.translatable("Scanned Task points! Total %s types!", map.size()), true);
+
+                    for (var player : context.getSource().getLevel().players()) {
+                      ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
+                    }
+                    return 1;
+                  })))
               .then(Commands.literal("blackout").executes((context) -> {
                 return executeBlackout(context, -1);
               }).then(Commands.literal("stop").executes((context) -> {
@@ -131,7 +164,7 @@ public class GameFunctionsCommand {
 
   public static int executeBlackout(CommandContext<CommandSourceStack> context, int time) {
     var wbc = WorldBlackoutComponent.KEY.get(context.getSource().getLevel());
-    Noellesroles.LOGGER.info("Reset Points: "+GameFunctions.resetPoints.size());
+    Noellesroles.LOGGER.info("Reset Points: " + GameFunctions.resetPoints.size());
     if (time != 0) {
       wbc.triggerBlackout();
       context.getSource()
@@ -141,7 +174,7 @@ public class GameFunctionsCommand {
       context.getSource()
           .sendSuccess(() -> Component.translatable("Stopped All Blackouts!"), true);
       wbc.reset();
-      
+
     }
 
     return 1;
