@@ -15,6 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
 import org.agmas.noellesroles.init.ModItems;
+import org.agmas.noellesroles.utils.RoleUtils;
+
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 
@@ -42,15 +44,14 @@ public class BomberPlayerComponent implements RoleComponent {
 
         PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(player);
         if (shopComponent.balance >= BOMB_COST) {
-            shopComponent.balance -= BOMB_COST;
-            shopComponent.sync();
+            shopComponent.addToBalance(-BOMB_COST);
 
             ItemStack bombStack = ModItems.BOMB.getDefaultInstance();
             CompoundTag tag = new CompoundTag();
             tag.putUUID("owner", player.getUUID());
             var customData = CustomData.of(tag);
             bombStack.set(DataComponents.CUSTOM_DATA, customData);
-            if (!player.getInventory().add(bombStack)) {
+            if (!RoleUtils.insertStackInFreeSlot(player, bombStack)) {
                 player.drop(bombStack, false);
             }
         } else {

@@ -2,6 +2,7 @@ package org.agmas.noellesroles.init;
 
 import dev.doctor4t.ratatouille.util.registrar.ItemRegistrar;
 import dev.doctor4t.trainmurdermystery.api.ChargeableItemRegistry;
+import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
@@ -28,7 +29,6 @@ import org.agmas.noellesroles.item.*;
 import org.agmas.noellesroles.item.charge_item.AntidoteChargeItem;
 import org.agmas.noellesroles.item.charge_item.AntidoteReagentChargeItem;
 import org.agmas.noellesroles.item.charge_item.ToxinChargeItem;
-import org.agmas.noellesroles.item.FireAxeItem;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.utils.LocalDateData;
 
@@ -383,6 +383,7 @@ public class ModItems {
     }
 
     public static void init() {
+        LimitedInventoryScreen.NotAllowItemTakePredicates.add(stack -> stack.is(ModItems.BOMB));
         registrar.registerEntries();
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, MISC_CREATIVE_GROUP, FabricItemGroup.builder()
                 .title(Component.translatable("item_group.noellesroles.misc")).icon(() -> {

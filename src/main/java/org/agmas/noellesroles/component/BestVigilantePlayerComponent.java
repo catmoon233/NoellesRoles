@@ -9,9 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
-import org.agmas.noellesroles.init.ModEventsRegister;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
@@ -81,7 +79,7 @@ public class BestVigilantePlayerComponent implements RoleComponent, ServerTickin
     public void giveStartingGrenade() {
         if (givenGrenade)
             return;
-        if (!(player instanceof ServerPlayer serverPlayer))
+        if (!(player instanceof ServerPlayer))
             return;
 
         // 给予手榴弹

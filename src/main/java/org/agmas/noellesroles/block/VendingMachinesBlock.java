@@ -42,7 +42,7 @@ public class VendingMachinesBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING;
     private static final MapCodec<VendingMachinesBlock> CODEC;
     protected static final VoxelShape SHAPE;
-    protected static final VoxelShape SHAPE_TOP = Block.box(0, -16, 0, 16, 16, 16);
+    // protected static final VoxelShape SHAPE_TOP = Block.box(0, -16, 0, 16, 16, 16);
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     public VendingMachinesBlock(Properties properties) {
@@ -57,8 +57,8 @@ public class VendingMachinesBlock extends BaseEntityBlock {
     }
 
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        if (state.getValue(HALF).equals(DoubleBlockHalf.UPPER))
-            return SHAPE_TOP;
+        // if (state.getValue(HALF).equals(DoubleBlockHalf.UPPER))
+        //     return SHAPE_TOP;
         return SHAPE;
     }
 
@@ -69,8 +69,8 @@ public class VendingMachinesBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getInteractionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-        if (blockState.getValue(HALF).equals(DoubleBlockHalf.UPPER))
-            return SHAPE_TOP;
+        // if (blockState.getValue(HALF).equals(DoubleBlockHalf.UPPER))
+        //     return SHAPE_TOP;
         return SHAPE;
     }
 
@@ -146,7 +146,7 @@ public class VendingMachinesBlock extends BaseEntityBlock {
 
     static {
         FACING = BlockStateProperties.HORIZONTAL_FACING;
-        SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 32.0, 16.0);
+        SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
         CODEC = simpleCodec(VendingMachinesBlock::new);
     }
 }

@@ -1,7 +1,9 @@
 package org.agmas.noellesroles.mixin.client.roles;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -30,9 +32,16 @@ public class BomberHudMixin {
         Player player = client.player;
         if (player == null)
             return;
-        if(client.player.isSpectator()) return;
-
+        if (client.player.isSpectator())
+            return;
+        if (TMMClient.gameComponent == null) {
+            return;
+        }
+        if (!TMMClient.gameComponent.isKillerTeam(player)) {
+            return;
+        }
         ItemStack mainHandItem = player.getMainHandItem();
+
         if (mainHandItem.is(ModItems.BOMB)) {
             CustomData customData = mainHandItem.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
             CompoundTag tag = customData.copyTag();
@@ -65,12 +74,7 @@ public class BomberHudMixin {
             return;
 
         // 计算背包中的炸弹数量
-        int bombCount = 0;
-        for (ItemStack stack : client.player.getInventory().items) {
-            if (stack.is(ModItems.BOMB)) {
-                bombCount += stack.getCount();
-            }
-        }
+        int bombCount = TMMItemUtils.hasItem(client.player, ModItems.BOMB);
         if (client.player.getOffhandItem().is(ModItems.BOMB)) {
             bombCount += client.player.getOffhandItem().getCount();
         }

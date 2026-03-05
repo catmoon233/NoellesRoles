@@ -97,9 +97,10 @@ public class TaskBlockOverlayRenderer {
             double centerX = (localAABB.minX + localAABB.maxX) / 2.0;
             double centerY = (localAABB.minY + localAABB.maxY) / 2.0;
             double centerZ = (localAABB.minZ + localAABB.maxZ) / 2.0;
-            if (cameraPos.distanceTo(blockPos.getCenter()) <= 12)
-                renderTextAtAABBCenter(context, blockPos, centerX, centerY, centerZ, text, textScale, color.getRGB(),
-                        true);
+            if (cameraPos.distanceTo(blockPos.getCenter()) <= 8)
+            renderTextAtAABBCenter(context, blockPos, centerX, centerY, centerZ, text,
+            textScale, color.getRGB(),
+            true);
         }
 
         matrices.popPose();
@@ -109,9 +110,9 @@ public class TaskBlockOverlayRenderer {
     private static AABB getCombinedAABB(Level world, BlockPos blockPos, BlockState state) {
         // 门（DoubleBlockHalf）：上下两格
         // 普通单格方块：用碰撞箱，fallback 用视觉箱
-        VoxelShape shape = state.getShape(world, blockPos);
+        VoxelShape shape = state.getCollisionShape(world, blockPos);
         if (shape.isEmpty())
-            shape = state.getCollisionShape(world, blockPos);
+            shape = state.getShape(world, blockPos);
         if (shape.isEmpty())
             return new AABB(0, 0, 0, 0, 0, 0);
         if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
@@ -121,10 +122,11 @@ public class TaskBlockOverlayRenderer {
                 if (b.isEmpty())
                     return shape.bounds().expandTowards(0, 1,
                             0);
-                var a = b.bounds().move(0, 1, 0);
+                var a = b.bounds();
+                a = a.move(0, 1, 0);
                 var c = shape.bounds();
                 return new AABB(Math.min(a.minX, c.minX), Math.min(a.minY, c.minY), Math.min(a.minZ, c.minZ),
-                        Math.max(a.maxX, c.maxX), Math.max(a.maxY, c.maxY),Math.max(a.maxZ, c.maxZ));
+                        Math.max(a.maxX, c.maxX), Math.max(a.maxY, c.maxY), Math.max(a.maxZ, c.maxZ));
             } else {
                 var b = state.getCollisionShape(world, blockPos.above());
                 if (b.isEmpty())
@@ -133,7 +135,7 @@ public class TaskBlockOverlayRenderer {
                 var a = b.bounds().move(0, -1, 0);
                 var c = shape.bounds();
                 return new AABB(Math.min(a.minX, c.minX), Math.min(a.minY, c.minY), Math.min(a.minZ, c.minZ),
-                        Math.max(a.maxX, c.maxX), Math.max(a.maxY, c.maxY),Math.max(a.maxZ, c.maxZ));
+                        Math.max(a.maxX, c.maxX), Math.max(a.maxY, c.maxY), Math.max(a.maxZ, c.maxZ));
             }
         }
 
@@ -161,7 +163,7 @@ public class TaskBlockOverlayRenderer {
             BlockPos blockPos,
             double localCX, double localCY, double localCZ,
             Component text, float scale, int color, boolean shadow) {
-        var vertexConsumers = context.consumers();
+
         Minecraft client = Minecraft.getInstance();
         PoseStack matrices = context.matrixStack();
 
@@ -177,9 +179,8 @@ public class TaskBlockOverlayRenderer {
         Font font = client.font;
         matrices.translate(0, -((float) font.lineHeight) / 2f, 0);
 
-        // ✅ 文字透视：用 renderBuffers().bufferSource() + SEE_THROUGH
-
-        MultiBufferSource bufferSource = vertexConsumers;
+        // ✅ 使用独立 BufferSource，不污染 context.consumers() 的线框缓冲
+        MultiBufferSource.BufferSource bufferSource = client.renderBuffers().bufferSource();
         font.drawInBatch(
                 text,
                 -font.width(text) / 2.0f, 0,
@@ -188,10 +189,9 @@ public class TaskBlockOverlayRenderer {
                 bufferSource,
                 Font.DisplayMode.SEE_THROUGH,
                 0, 15728880);
-        // ✅ 文字必须立即 flush，否则不显示
-        if (bufferSource instanceof MultiBufferSource.BufferSource bufs) {
-            bufs.endBatch();
-        }
+        // ✅ 立即 flush，确保文字渲染状态不外泄
+        bufferSource.endBatch();
+
         matrices.popPose();
     }
 
