@@ -12,10 +12,12 @@ import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions.WinStatus;
+import dev.doctor4t.trainmurdermystery.game.ServerTaskInfoClasses.ServerTaskInfo;
 import dev.doctor4t.trainmurdermystery.game.MapResetManager;
 import dev.doctor4t.trainmurdermystery.game.ServerTaskInfoClasses;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ComponentArgument;
@@ -46,21 +48,126 @@ import org.agmas.noellesroles.utils.MapScannerManager;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 
 public class GameFunctionsCommand {
   public static void register() {
     CommandRegistrationCallback.EVENT.register(
         (dispatcher, registryAccess, environment) -> {
           dispatcher.register(Commands.literal("tmm:game").requires(source -> source.hasPermission(2))
+              .then(Commands.literal("tasks")
+                  .then(Commands.literal("list").executes((context) -> {
+                    var source = context.getSource();
+                    source.sendSystemMessage(
+                        Component.literal("Sync Task Queue:\n").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+                    int idx = 0;
+                    for (ServerTaskInfo inf : GameFunctions.serverTaskQueue) {
+                      source.sendSystemMessage(Component.translatable("[%s] %s", idx, inf.getClass().getName())
+                          .withStyle(ChatFormatting.AQUA));
+                      idx++;
+                    }
+                    source.sendSystemMessage(
+                        Component.literal("Asyn Task List:\n").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+                    idx = 0;
+                    for (ServerTaskInfo inf : GameFunctions.serverAsynTaskLists) {
+                      source.sendSystemMessage(Component.translatable("[%s] %s", idx, inf.getClass().getName())
+                          .withStyle(ChatFormatting.AQUA));
+                      idx++;
+                    }
+                    source.sendSuccess(() -> {
+                      return Component.translatable("Sync Task Queue size: %s\nAsyn Task List size: %s",
+                          GameFunctions.serverTaskQueue.size(),
+                          GameFunctions.serverAsynTaskLists.size()).withStyle(ChatFormatting.GOLD);
+                    }, false);
+                    // GameFunctions.serverTaskQueue;
+                    // GameFunctions.;
+                    return 1;
+                  }))
+                  .then(Commands.literal("clear")
+                      .then(Commands.literal("task_queue").executes((context) -> {
+                        var source = context.getSource();
+                        GameFunctions.serverTaskQueue.clear();
+                        source.sendSuccess(() -> {
+                          return Component.literal("Cleared all task queues!");
+                        }, true);
+                        return 1;
+                      }))
+                      .then(Commands.literal("task_list").executes((context) -> {
+                        var source = context.getSource();
+                        GameFunctions.serverAsynTaskLists.clear();
+                        source.sendSuccess(() -> {
+                          return Component.literal("Cleared all asyn tasks list!");
+                        }, true);
+                        return 1;
+                      })))
+                  .then(Commands.literal("cancel")
+                      .then(Commands.literal("task_queue")
+                          .then(Commands.argument("tid", IntegerArgumentType.integer(0)).executes((context) -> {
+                            var source = context.getSource();
+
+                            int tid = IntegerArgumentType.getInteger(context, "tid");
+                            if (tid >= 0 && tid < GameFunctions.serverTaskQueue.size()) {
+                              var task = GameFunctions.serverTaskQueue.get(tid);
+                              task.cancelled = true;
+                              source.sendSuccess(() -> Component
+                                  .translatable("Cancelled task %s (tid: %s)!", task.getClass().getName(), tid)
+                                  .withStyle(ChatFormatting.GREEN), true);
+                            } else {
+                              source.sendFailure(Component.literal("Invaild tid!").withStyle(ChatFormatting.RED));
+                              return 0;
+                            }
+                            return 1;
+                          }))
+                          .then(Commands.literal("all").executes((context) -> {
+                            var source = context.getSource();
+                            GameFunctions.serverTaskQueue.forEach((t) -> {
+                              t.cancelled = true;
+                            });
+                            source.sendSuccess(() -> {
+                              return Component.literal("Cleared all task queues!");
+                            }, true);
+                            return 1;
+                          })))
+                      .then(Commands.literal("task_list")
+                          .then(Commands.argument("tid", IntegerArgumentType.integer(0)).executes((context) -> {
+                            var source = context.getSource();
+
+                            int tid = IntegerArgumentType.getInteger(context, "tid");
+                            if (tid >= 0 && tid < GameFunctions.serverAsynTaskLists.size()) {
+                              var task = GameFunctions.serverAsynTaskLists.get(tid);
+                              task.cancelled = true;
+                              source.sendSuccess(() -> Component
+                                  .translatable("Cancelled task %s (tid: %s)!", task.getClass().getName(), tid)
+                                  .withStyle(ChatFormatting.GREEN), true);
+                            } else {
+                              source.sendFailure(Component.literal("Invaild tid!").withStyle(ChatFormatting.RED));
+                              return 0;
+                            }
+                            return 1;
+                          }))
+                          .then(Commands.literal("all").executes((context) -> {
+                            var source = context.getSource();
+                            GameFunctions.serverAsynTaskLists.forEach((t) -> {
+                              t.cancelled = true;
+                            });
+                            source.sendSuccess(() -> {
+                              return Component.literal("Cleared all asyn tasks list!");
+                            }, true);
+                            return 1;
+                          })))))
               .then(Commands.literal("win")
+                  .then(Commands.argument("id", StringArgumentType.string())
+                      .suggests(WinStatusSuggestions::suggestWinStatus)
+                      .executes(GameFunctionsCommand::executeWinWithOnlyId)))
+              .then(Commands.literal("custom_win")
                   .then(Commands.argument("color", ModColorArgument.color()).then(
                       Commands.argument("id", StringArgumentType.string())
-                          .executes(GameFunctionsCommand::executeWinWithOnlyId))
+                          .executes(GameFunctionsCommand::executeCustomWinWithOnlyId))
                       .then(Commands.argument("title", ComponentArgument.textComponent(registryAccess))
                           .then(Commands
                               .argument(
                                   "subtitle", ComponentArgument.textComponent(registryAccess))
-                              .executes(GameFunctionsCommand::executeWinWithIdAndTitle)))))
+                              .executes(GameFunctionsCommand::executeCustomWinWithIdAndTitle)))))
               .then(Commands.literal("reset")
                   .then(Commands.literal("sync")
                       .then(Commands.literal("copy").executes((context) -> {
@@ -184,6 +291,27 @@ public class GameFunctionsCommand {
 
   public static int executeWinWithOnlyId(CommandContext<CommandSourceStack> context) {
     String id = StringArgumentType.getString(context, "id");
+    WinStatus winStatus = null;
+    for (WinStatus status : WinStatusSuggestions.allWinStatus) {
+      if (status.toString().toLowerCase().equals(id)) {
+        winStatus = status;
+      }
+    }
+    if (winStatus == null) {
+      context.getSource().sendFailure(Component.literal("Unknown WinStatus ID!").withStyle(ChatFormatting.RED));
+      return 0;
+    }
+    var roundComponent = GameRoundEndComponent.KEY.get(context.getSource().getLevel());
+    roundComponent.setRoundEndData(context.getSource().getLevel().players(), winStatus);
+    roundComponent.sync();
+    context.getSource()
+        .sendSuccess(() -> Component.translatable("Stop the game with WinStatus ID [%s]", id), true);
+    GameFunctions.stopGame(context.getSource().getLevel());
+    return 1;
+  }
+
+  public static int executeCustomWinWithOnlyId(CommandContext<CommandSourceStack> context) {
+    String id = StringArgumentType.getString(context, "id");
     int color = ModColorArgument.getColor(context, "color");
     var roundComponent = GameRoundEndComponent.KEY.get(context.getSource().getLevel());
     roundComponent.CustomWinnerID = id;
@@ -200,7 +328,7 @@ public class GameFunctionsCommand {
     return 1;
   }
 
-  public static int executeWinWithIdAndTitle(CommandContext<CommandSourceStack> context) {
+  public static int executeCustomWinWithIdAndTitle(CommandContext<CommandSourceStack> context) {
     Component title = ComponentArgument.getComponent(context, "title");
     Component subtitle = ComponentArgument.getComponent(context, "subtitle");
     String id = "custom";
@@ -236,6 +364,31 @@ public class GameFunctionsCommand {
 
     GameFunctions.stopGame(context.getSource().getLevel());
     return 1;
+  }
+
+  public static class WinStatusSuggestions {
+    public static List<WinStatus> allWinStatus = Arrays.asList(GameFunctions.WinStatus.values());
+
+    public static CompletableFuture<Suggestions> suggestWinStatus(CommandContext<CommandSourceStack> context,
+        SuggestionsBuilder builder) {
+      String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
+      Set<String> suggestions = new HashSet<>();
+      // 添加自定义 ID 到 Set
+
+      allWinStatus.stream()
+          .map(GameFunctions.WinStatus::toString)
+          .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(remaining))
+          .forEach(suggestions::add);
+      // 最后批量建议
+      suggestions.forEach((s) -> {
+        var t = ResourceLocation.tryParse(s);
+        if (t != null) {
+          builder.suggest(s, Component.translatable("announcement.win." + s));
+        }
+      });
+
+      return builder.buildFuture();
+    }
   }
 
   public static class DeathReasonSuggestions {
