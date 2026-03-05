@@ -37,7 +37,7 @@ public class GuessRoleScreen extends Screen {
     public static void clearData() {
         guessedRoles.clear();
         allPlayers.clear();
-        allPlayers.addAll(  Minecraft.getInstance().getConnection().getListedOnlinePlayers());
+        allPlayers.addAll(Minecraft.getInstance().getConnection().getListedOnlinePlayers());
     }
 
     // 当前阶段：0 = 选择玩家，1 = 选择角色
@@ -128,7 +128,7 @@ public class GuessRoleScreen extends Screen {
     private void refreshPlayerSelection(String searchText) {
         if (minecraft == null || minecraft.level == null || minecraft.player == null)
             return;
-        
+
         // 获取所有其他玩家
         var now_players = new ArrayList<>(minecraft.getConnection().getListedOnlinePlayers());
         now_players.removeIf((a) -> {
@@ -281,7 +281,7 @@ public class GuessRoleScreen extends Screen {
      */
     private void initRoleSelection() {
         // 获取所有注册的角色
-        roles = Noellesroles.getAllRolesSorted();
+        roles = Noellesroles.getAllRolesSorted(true);
         roles.add(0, null);
         if (roles.isEmpty()) {
             // 如果没有角色，返回上一级

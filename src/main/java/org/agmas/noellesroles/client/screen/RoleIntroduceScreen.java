@@ -69,7 +69,7 @@ public class RoleIntroduceScreen extends Screen {
 
         // 加载可用角色
         availableRoles.clear();
-        availableRoles.addAll(Noellesroles.getAllRolesSorted());
+        availableRoles.addAll(Noellesroles.getAllRolesSorted(true));
     }
 
     /**
@@ -480,12 +480,7 @@ public class RoleIntroduceScreen extends Screen {
         private int getRoleColor() {
             // 根据职业类型返回不同的颜色
             // 这里只是一个示例，您可以根据实际的职业属性返回不同的颜色
-            if(role instanceof Role r){
-                if(r.identifier().getNamespace().equals("stupid_express")){
-                    Noellesroles.LOGGER.info("Color for {} is {}",r.identifier().getPath(),RoleUtils.getRoleOrModifierColor(role));
-                }
-            }
-            return RoleUtils.getRoleOrModifierColor(role);
+            return (RoleUtils.getRoleOrModifierColor(role));
         }
 
         private int blendColors(int color1, int color2, float ratio) {

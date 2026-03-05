@@ -289,7 +289,7 @@ public class RoleUtils {
 
     public static MutableComponent getRoleOrModifierNameWithColor(Object role) {
         if (role instanceof Role r) {
-            return getRoleName(r).withColor(r.color());
+            return getRoleName(r).withColor(0xff000000 | r.color());
         } else if (role instanceof Modifier m) {
             return m.getName(true);
         } else {
@@ -309,9 +309,9 @@ public class RoleUtils {
 
     public static int getRoleOrModifierColor(Object role) {
         if (role instanceof Role r) {
-            return r.color();
+            return 0xff000000 | r.color();
         } else if (role instanceof Modifier m) {
-            return m.color();
+            return 0xff000000 | m.color();
         } else {
             return java.awt.Color.WHITE.getRGB();
         }

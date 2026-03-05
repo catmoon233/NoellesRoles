@@ -101,6 +101,10 @@ public class Noellesroles implements ModInitializer {
     }
 
     public static List<Role> getAllRolesSorted() {
+        return getAllRolesSorted(false);
+    }
+
+    public static List<Role> getAllRolesSorted(boolean killerFirst) {
         ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
         Collator collator = Collator.getInstance();
         clone.sort((a, b) -> {
@@ -108,9 +112,9 @@ public class Noellesroles implements ModInitializer {
             int rt_b = getRoleType$Int(b);
             if (a != null && b != null) {
                 if (rt_a > rt_b)
-                    return -1;
+                    return killerFirst ? -1 : 1;
                 if (rt_a < rt_b)
-                    return 1;
+                    return killerFirst ? 1 : -1;
                 if (a.identifier().getNamespace().equals(b.identifier().getNamespace())) {
                     String r_a = RoleUtils.getRoleName(a).getString();
                     String r_b = RoleUtils.getRoleName(b).getString();

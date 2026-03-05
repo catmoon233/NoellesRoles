@@ -270,21 +270,14 @@ public class RecorderScreen extends Screen {
         // 从组件获取当前局有的身份
         // RecorderPlayerComponent recorder =
         // ModComponents.RECORDER.get(minecraft.player);
-        var availableRoleIds = TMMRoles.ROLES.keySet();
+        var availableRoleIds = Noellesroles.getAllRolesSorted(false);
 
         roles.clear();
-        for (ResourceLocation id : availableRoleIds) {
-            for (Role role : Noellesroles.getAllRolesSorted()) {
-                if (role.identifier().equals(id)) {
-                    roles.add(role);
-                    break;
-                }
-            }
-        }
+        roles.addAll(availableRoleIds);
 
         // 如果列表为空（可能是单人测试或者数据未同步），回退到显示所有角色
         if (roles.isEmpty()) {
-            roles = Noellesroles.getAllRolesSorted();
+            roles = Noellesroles.getAllRolesSorted(false);
         }
 
         if (roles.isEmpty()) {

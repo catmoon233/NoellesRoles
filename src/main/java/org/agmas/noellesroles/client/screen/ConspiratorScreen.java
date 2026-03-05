@@ -203,7 +203,7 @@ public class ConspiratorScreen extends Screen {
      */
     private void initRoleSelection() {
         // 获取所有注册的角色
-        roles = Noellesroles.getAllRolesSorted();
+        roles = Noellesroles.getAllRolesSorted(false);
 
         if (roles.isEmpty()) {
             onClose();
