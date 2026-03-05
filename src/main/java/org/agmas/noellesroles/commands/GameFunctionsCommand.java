@@ -102,23 +102,23 @@ public class GameFunctionsCommand {
                             true);
 
                         return 1;
-                      })))
-                  .then(Commands.literal("scan").executes((context) -> {
-                    var level = context.getSource().getLevel();
-                    var areas = AreasWorldComponent.KEY.get(level);
-                    MapScannerManager.scanAndSaveScannerArea(level, areas);
-                    HashMap<Integer, Boolean> map = new HashMap<>();
-                    for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
-                      map.putIfAbsent(entry.getValue(), true);
-                    }
-                    context.getSource().sendSuccess(
-                        () -> Component.translatable("Scanned Task points! Total %s types!", map.size()), true);
+                      }))))
+              .then(Commands.literal("scan").executes((context) -> {
+                var level = context.getSource().getLevel();
+                var areas = AreasWorldComponent.KEY.get(level);
+                MapScannerManager.scanAndSaveScannerArea(level, areas);
+                HashMap<Integer, Boolean> map = new HashMap<>();
+                for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
+                  map.putIfAbsent(entry.getValue(), true);
+                }
+                context.getSource().sendSuccess(
+                    () -> Component.translatable("Scanned Task points! Total %s types!", map.size()), true);
 
-                    for (var player : context.getSource().getLevel().players()) {
-                      ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
-                    }
-                    return 1;
-                  })))
+                for (var player : context.getSource().getLevel().players()) {
+                  ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
+                }
+                return 1;
+              }))
               .then(Commands.literal("blackout").executes((context) -> {
                 return executeBlackout(context, -1);
               }).then(Commands.literal("stop").executes((context) -> {
