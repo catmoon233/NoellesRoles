@@ -16,7 +16,6 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -48,7 +47,7 @@ public class TaskBlockOverlayRenderer {
                     .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(4.0))) // 线宽4.0
                     .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
                     .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                    .setOutputState(RenderStateShard.MAIN_TARGET)
+                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
                     .setWriteMaskState(RenderStateShard.COLOR_WRITE)
                     .setCullState(RenderStateShard.NO_CULL)
                     .setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
@@ -63,6 +62,8 @@ public class TaskBlockOverlayRenderer {
 
         BlockState state = world.getBlockState(blockPos);
         AABB localAABB = getCombinedAABB(world, blockPos, state);
+        MultiBufferSource vertexConsumers = context.consumers();
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(ALWAYS_VISIBLE_THICK_LINES);
 
         PoseStack matrices = context.matrixStack();
         matrices.pushPose();
@@ -78,7 +79,7 @@ public class TaskBlockOverlayRenderer {
         float blue = color.getBlue() / 255f;
 
         // ✅ 方块描边：用 context.consumers()，配合 ITEM_ENTITY_TARGET+NO_DEPTH_TEST 实现透视
-        VertexConsumer vertexConsumer = context.consumers().getBuffer(ALWAYS_VISIBLE_THICK_LINES);
+        // RenderSystem.lineWidth(4);
         LevelRenderer.renderLineBox(matrices, vertexConsumer, localAABB, red, green, blue, alpha);
 
         if (text != null) {
@@ -156,6 +157,7 @@ public class TaskBlockOverlayRenderer {
             BlockPos blockPos,
             double localCX, double localCY, double localCZ,
             Component text, float scale, int color, boolean shadow) {
+        var vertexConsumers = context.consumers();
         Minecraft client = Minecraft.getInstance();
         PoseStack matrices = context.matrixStack();
 
@@ -172,7 +174,8 @@ public class TaskBlockOverlayRenderer {
         matrices.translate(0, -((float) font.lineHeight) / 2f, 0);
 
         // ✅ 文字透视：用 renderBuffers().bufferSource() + SEE_THROUGH
-        MultiBufferSource.BufferSource bufferSource = client.renderBuffers().bufferSource();
+
+        MultiBufferSource bufferSource = vertexConsumers;
         font.drawInBatch(
                 text,
                 -font.width(text) / 2.0f, 0,
@@ -182,8 +185,9 @@ public class TaskBlockOverlayRenderer {
                 Font.DisplayMode.SEE_THROUGH,
                 0, 15728880);
         // ✅ 文字必须立即 flush，否则不显示
-        bufferSource.endBatch();
-
+        if (bufferSource instanceof MultiBufferSource.BufferSource bufs) {
+            bufs.endBatch();
+        }
         matrices.popPose();
     }
 
@@ -304,33 +308,34 @@ public class TaskBlockOverlayRenderer {
                 case 1:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, Color.GREEN, 1f, true, 0f,
-                                Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                Component.translatable("hud.noellesroles.task_instinct.render.task.food"));
                     break;
                 case 2:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(234, 88, 88), 1f,
-                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.task.drink"));
                     break;
                 case 3:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(141, 234, 189), 1f,
-                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.task.bathe"));
                     break;
                 case 4:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(0, 255, 220), 1f,
-                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.task.bed"));
                     break;
                 case 5:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos, new Color(255, 242, 0), 1f,
-                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                true, 0f,
+                                Component.translatable("hud.noellesroles.task_instinct.render.task.running_machine"));
                     break;
                 case 6:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
                                 new Color(255, 127, 39), 1f,
-                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.task.lecture"));
                     break;
                 case 7:
                     break;
@@ -338,19 +343,20 @@ public class TaskBlockOverlayRenderer {
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
                                 new Color(255, 174, 201), 1f,
-                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.task.toilet"));
                     break;
                 case 9:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
                                 new Color(126, 255, 228), 1f,
-                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.task.seat"));
                     break;
                 case 10:
                     if (shouldDisplay[type])
                         TaskBlockOverlayRenderer.renderBlockOverlay(renderContext, pos,
                                 new Color(121, 148, 255), 1f,
-                                true, 0f, Component.translatable("hud.noellesroles.task_instinct.render.tasks"));
+                                true, 0f,
+                                Component.translatable("hud.noellesroles.task_instinct.render.task.note_block"));
                     break;
                 case 11:
                     if (shouldDisplay[type]) {
