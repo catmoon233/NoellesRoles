@@ -95,6 +95,7 @@ public class GameFunctionsCommand {
                         MapResetManager.loadArea(world);
                         ServerTaskInfoClasses.OnlySomeBlockResetTask task = new ServerTaskInfoClasses.OnlySomeBlockResetTask(
                             GameFunctions.resetPoints, world, null, 0);
+                        task.shouldStartGame = false;
                         GameFunctions.serverTaskQueue.add(task);
                         context.getSource().sendSuccess(
                             () -> Component.literal("Add server reset task: Simple Reset (clean points only)!"),

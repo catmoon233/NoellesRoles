@@ -69,7 +69,7 @@ public abstract class CoronerHudMixin {
                 if (worldModifierComponent != null) {
                     if (worldModifierComponent.isModifier(player, SEModifiers.SPLIT_PERSONALITY)) {
                         var splitComponent = SplitPersonalityComponent.KEY.get(player);
-                        if (splitComponent != null && !splitComponent.isDeath()) {
+                        if (splitComponent != null && player.isSpectator() && !splitComponent.isDeath()) {
                             hasPenalty = true;
                         }
                     }
@@ -115,7 +115,7 @@ public abstract class CoronerHudMixin {
                 if (worldModifierComponent != null) {
                     if (worldModifierComponent.isModifier(player, SEModifiers.SPLIT_PERSONALITY)) {
                         var splitComponent = SplitPersonalityComponent.KEY.get(player);
-                        if (splitComponent != null && !splitComponent.isDeath()) {
+                        if (splitComponent != null && player.isSpectator() && !splitComponent.isDeath()) {
                             hasPenalty = true;
                         }
                     }
