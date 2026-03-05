@@ -62,7 +62,7 @@ public class GameFunctionsCommand {
                         Component.literal("Sync Task Queue:\n").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
                     int idx = 0;
                     for (ServerTaskInfo inf : GameFunctions.serverTaskQueue) {
-                      source.sendSystemMessage(Component.translatable("[%s] %s", idx, inf.getClass().getName())
+                      source.sendSystemMessage(Component.translatable("[%s] %s", idx, inf.getClass().getSimpleName())
                           .withStyle(ChatFormatting.AQUA));
                       idx++;
                     }
@@ -70,7 +70,7 @@ public class GameFunctionsCommand {
                         Component.literal("Asyn Task List:\n").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
                     idx = 0;
                     for (ServerTaskInfo inf : GameFunctions.serverAsynTaskLists) {
-                      source.sendSystemMessage(Component.translatable("[%s] %s", idx, inf.getClass().getName())
+                      source.sendSystemMessage(Component.translatable("[%s] %s", idx, inf.getClass().getSimpleName())
                           .withStyle(ChatFormatting.AQUA));
                       idx++;
                     }
@@ -110,7 +110,7 @@ public class GameFunctionsCommand {
                               var task = GameFunctions.serverTaskQueue.get(tid);
                               task.cancelled = true;
                               source.sendSuccess(() -> Component
-                                  .translatable("Cancelled task %s (tid: %s)!", task.getClass().getName(), tid)
+                                  .translatable("Cancelled task %s (tid: %s)!", task.getClass().getSimpleName(), tid)
                                   .withStyle(ChatFormatting.GREEN), true);
                             } else {
                               source.sendFailure(Component.literal("Invaild tid!").withStyle(ChatFormatting.RED));
@@ -137,7 +137,7 @@ public class GameFunctionsCommand {
                               var task = GameFunctions.serverAsynTaskLists.get(tid);
                               task.cancelled = true;
                               source.sendSuccess(() -> Component
-                                  .translatable("Cancelled task %s (tid: %s)!", task.getClass().getName(), tid)
+                                  .translatable("Cancelled task %s (tid: %s)!", task.getClass().getSimpleName(), tid)
                                   .withStyle(ChatFormatting.GREEN), true);
                             } else {
                               source.sendFailure(Component.literal("Invaild tid!").withStyle(ChatFormatting.RED));
