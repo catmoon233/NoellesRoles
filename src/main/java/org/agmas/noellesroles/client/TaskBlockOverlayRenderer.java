@@ -48,7 +48,7 @@ public class TaskBlockOverlayRenderer {
                     .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(4.0))) // 线宽4.0
                     .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
                     .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
+                    .setOutputState(RenderStateShard.MAIN_TARGET)
                     .setWriteMaskState(RenderStateShard.COLOR_WRITE)
                     .setCullState(RenderStateShard.NO_CULL)
                     .setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
@@ -62,14 +62,12 @@ public class TaskBlockOverlayRenderer {
             return;
 
         BlockState state = world.getBlockState(blockPos);
-        // ✅ 获取合并后的本地 AABB（相对于 blockPos）
         AABB localAABB = getCombinedAABB(world, blockPos, state);
 
         PoseStack matrices = context.matrixStack();
         matrices.pushPose();
 
-        Camera camera = context.camera();
-        Vec3 cameraPos = camera.getPosition();
+        Vec3 cameraPos = context.camera().getPosition();
         matrices.translate(
                 blockPos.getX() - cameraPos.x,
                 blockPos.getY() - cameraPos.y,
@@ -79,12 +77,22 @@ public class TaskBlockOverlayRenderer {
         float green = color.getGreen() / 255f;
         float blue = color.getBlue() / 255f;
 
+        // ✅ 方块描边：用 context.consumers()，配合 ITEM_ENTITY_TARGET+NO_DEPTH_TEST 实现透视
         VertexConsumer vertexConsumer = context.consumers().getBuffer(ALWAYS_VISIBLE_THICK_LINES);
-        // ✅ 改用 renderLineBox，直接传合并后的 AABB
         LevelRenderer.renderLineBox(matrices, vertexConsumer, localAABB, red, green, blue, alpha);
 
         if (text != null) {
-            // ✅ 文字显示在合并 AABB 的中心
+            if (textScale <= 0) {
+                double blockWidthX = localAABB.maxX - localAABB.minX;
+                double blockWidthZ = localAABB.maxZ - localAABB.minZ;
+                double blockWidth = Math.max(blockWidthX, blockWidthZ);
+                if (blockWidth <= 0 || blockWidth > 1)
+                    blockWidth = 1.0;
+                int textPixelWidth = client.font.width(text);
+                if (textPixelWidth > 0)
+                    textScale = (float) blockWidth / textPixelWidth;
+            }
+
             double centerX = (localAABB.minX + localAABB.maxX) / 2.0;
             double centerY = (localAABB.minY + localAABB.maxY) / 2.0;
             double centerZ = (localAABB.minZ + localAABB.maxZ) / 2.0;
@@ -97,13 +105,30 @@ public class TaskBlockOverlayRenderer {
     // ✅ 新增：计算多格方块的合并 AABB（坐标相对于 blockPos）
     private static AABB getCombinedAABB(Level world, BlockPos blockPos, BlockState state) {
         // 门（DoubleBlockHalf）：上下两格
+        // 普通单格方块：用碰撞箱，fallback 用视觉箱
+        VoxelShape shape = state.getCollisionShape(world, blockPos);
+        if (shape.isEmpty())
+            shape = state.getShape(world, blockPos);
+        if (shape.isEmpty())
+            return new AABB(0, 0, 0, 0, 0, 0);
         if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
             DoubleBlockHalf half = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
             if (half == DoubleBlockHalf.LOWER) {
-                return new AABB(0, 0, 0, 1, 2, 1);
+                var b = state.getCollisionShape(world, blockPos.above());
+                if (b.isEmpty())
+                    return shape.bounds().expandTowards(0, 1,
+                            0);
+                var a = b.bounds();
+                return shape.bounds().expandTowards(0, a.maxY - a.minY,
+                        0);
             } else {
-                // 当前是上半格，AABB 向下延伸一格
-                return new AABB(0, -1, 0, 1, 1, 1);
+                var b = state.getCollisionShape(world, blockPos.below());
+                if (b.isEmpty())
+                    return shape.bounds().expandTowards(0, -1,
+                            0);
+                var a = b.bounds();
+                return shape.bounds().expandTowards(0, -(a.maxY - a.minY),
+                        0);
             }
         }
 
@@ -114,26 +139,19 @@ public class TaskBlockOverlayRenderer {
             Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
             if (part == BedPart.FOOT) {
                 // 脚部：朝 facing 方向扩展一格
-                return new AABB(0, 0, 0, 1, 1, 1)
-                        .expandTowards(facing.getStepX(), 0, facing.getStepZ());
+                return shape.bounds().expandTowards(facing.getStepX(), 0,
+                        facing.getStepZ());
             } else {
                 // 头部：朝反方向扩展一格
                 Direction opp = facing.getOpposite();
-                return new AABB(0, 0, 0, 1, 1, 1)
+                return shape.bounds()
                         .expandTowards(opp.getStepX(), 0, opp.getStepZ());
             }
         }
 
-        // 普通单格方块：用碰撞箱，fallback 用视觉箱
-        VoxelShape shape = state.getCollisionShape(world, blockPos);
-        if (shape.isEmpty())
-            shape = state.getShape(world, blockPos);
-        if (!shape.isEmpty())
-            return shape.bounds();
-        return new AABB(0, 0, 0, 1, 1, 1);
+        return shape.bounds();
     }
 
-    // ✅ 把原来的 renderTextAtBlock 改为接受本地中心坐标
     private static void renderTextAtAABBCenter(WorldRenderContext context,
             BlockPos blockPos,
             double localCX, double localCY, double localCZ,
@@ -142,8 +160,6 @@ public class TaskBlockOverlayRenderer {
         PoseStack matrices = context.matrixStack();
 
         matrices.pushPose();
-
-        // 外层已平移到 blockPos，这里再偏移到 AABB 中心
         matrices.translate(localCX, localCY, localCZ);
 
         Vec3 cameraPos = context.camera().getPosition();
@@ -151,12 +167,12 @@ public class TaskBlockOverlayRenderer {
         double dz = cameraPos.z - (blockPos.getZ() + localCZ);
         float yaw = (float) Math.toDegrees(Math.atan2(dx, dz));
         matrices.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yaw));
-
         matrices.scale(scale, -scale, scale);
-
         Font font = client.font;
-        MultiBufferSource.BufferSource bufferSource = client.renderBuffers().bufferSource();
+        matrices.translate(0, -(font.lineHeight * scale) / 2, 0);
 
+        // ✅ 文字透视：用 renderBuffers().bufferSource() + SEE_THROUGH
+        MultiBufferSource.BufferSource bufferSource = client.renderBuffers().bufferSource();
         font.drawInBatch(
                 text,
                 -font.width(text) / 2.0f, 0,
@@ -165,6 +181,8 @@ public class TaskBlockOverlayRenderer {
                 bufferSource,
                 Font.DisplayMode.SEE_THROUGH,
                 0, 15728880);
+        // ✅ 文字必须立即 flush，否则不显示
+        bufferSource.endBatch();
 
         matrices.popPose();
     }
@@ -346,6 +364,8 @@ public class TaskBlockOverlayRenderer {
             }
         }
         // 恢复渲染状态
+        // 统一提交线框和文字的批次
+        // Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
 }
