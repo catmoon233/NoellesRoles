@@ -281,7 +281,7 @@ public class GuessRoleScreen extends Screen {
      */
     private void initRoleSelection() {
         // 获取所有注册的角色
-        roles = Noellesroles.getEnableRoles();
+        roles = Noellesroles.getAllRolesSorted();
         roles.add(0, null);
         if (roles.isEmpty()) {
             // 如果没有角色，返回上一级

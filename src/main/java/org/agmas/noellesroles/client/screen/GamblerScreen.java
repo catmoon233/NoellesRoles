@@ -74,7 +74,7 @@ public class GamblerScreen extends Screen {
 
         // 加载可用角色
         for (ResourceLocation roleId : component.availableRoles) {
-            for (Role role : Noellesroles.getEnableRoles()) {
+            for (Role role : Noellesroles.getAllRolesSorted()) {
                 if (role.identifier().equals(roleId)) {
                     availableRoles.add(role);
                     break;

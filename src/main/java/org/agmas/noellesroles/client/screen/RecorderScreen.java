@@ -268,12 +268,13 @@ public class RecorderScreen extends Screen {
             return;
 
         // 从组件获取当前局有的身份
-        // RecorderPlayerComponent recorder = ModComponents.RECORDER.get(minecraft.player);
+        // RecorderPlayerComponent recorder =
+        // ModComponents.RECORDER.get(minecraft.player);
         var availableRoleIds = TMMRoles.ROLES.keySet();
 
         roles.clear();
         for (ResourceLocation id : availableRoleIds) {
-            for (Role role : Noellesroles.getEnableRoles()) {
+            for (Role role : Noellesroles.getAllRolesSorted()) {
                 if (role.identifier().equals(id)) {
                     roles.add(role);
                     break;
@@ -283,7 +284,7 @@ public class RecorderScreen extends Screen {
 
         // 如果列表为空（可能是单人测试或者数据未同步），回退到显示所有角色
         if (roles.isEmpty()) {
-            roles = Noellesroles.getEnableRoles();
+            roles = Noellesroles.getAllRolesSorted();
         }
 
         if (roles.isEmpty()) {
@@ -327,10 +328,15 @@ public class RecorderScreen extends Screen {
         }
         for (Role role : roles) {
             String roleName = RoleUtils.getRoleName(role).getString();
+            String roleId = "";
+            if (role != null) {
+                roleId = role.identifier().toString();
+            }
             if (roleName == null)
                 continue;
             roleName = roleName.toLowerCase();
-            if (searchText == null || searchText == "" || roleName.contains(lowerCasedSearchText)) {
+            if (searchText == null || searchText == "" || roleName.contains(lowerCasedSearchText)
+                    || roleId.contains(lowerCasedSearchText)) {
                 if (totalRoles >= startIndex && totalRoles < endIndex) {
                     int col = k % 4;
                     int row = k / 4;

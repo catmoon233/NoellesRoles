@@ -91,7 +91,8 @@ public class SwapperPlayerComponent implements RoleComponent, ServerTickingCompo
         if (!GameFunctions.isPlayerAliveAndSurvival(player2)) {
             return;
         }
-        if (!player1.onGround() || !player2.onGround())
+        if ((player1.getVehicle() == null && player2.getVehicle() == null)
+                && (!player1.isSleeping() && !player2.isSleeping()) && (!player1.onGround() || !player2.onGround()))
             return;
         if (player1 != null && player2 != null) {
             player1.stopRiding();

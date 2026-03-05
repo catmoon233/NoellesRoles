@@ -160,9 +160,12 @@ public class AbilityHandler {
 
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.OLDMAN)) {
-            if (player.getVehicle() != null && player.getVehicle() instanceof WheelchairEntity) {
-                player.getVehicle().discard();
-                RoleUtils.insertStackInFreeSlot(player, ModItems.WHEELCHAIR.getDefaultInstance());
+            if (player.getVehicle() != null && player.getVehicle() instanceof WheelchairEntity we) {
+                var chairDurability = we.durability;
+                we.discard();
+                var it = ModItems.WHEELCHAIR.getDefaultInstance();
+                it.setDamageValue(it.getMaxDamage() - chairDurability);
+                RoleUtils.insertStackInFreeSlot(player, it);
                 player.stopRiding();
                 player.displayClientMessage(
                         Component.translatable("message.oldman.get_back").withStyle(ChatFormatting.GOLD), true);

@@ -2,9 +2,13 @@ package org.agmas.noellesroles.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.agmas.noellesroles.game.ChairWheelRaceGame;
 import org.agmas.noellesroles.init.ModItems;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -26,6 +30,7 @@ import net.minecraft.world.phys.Vec3;
 public class WheelchairEntity extends Mob {
     // 在 WheelchairEntity 类中添加字段
     private float rotationVelocity = 0.0f;
+    public int durability = 60;
     private static final float ROTATION_ACCELERATION = 2f; // 旋转加速度（每 tick 速度变化）
     private static final float ROTATION_FRICTION = 0.4f; // 旋转摩擦（每 tick 速度衰减系数）
     private static final float MAX_ROTATION_SPEED = 10.0f; // 最大旋转速度（角度/tick）
@@ -49,6 +54,7 @@ public class WheelchairEntity extends Mob {
         super.tick();
         if (this.level().isClientSide)
             return;
+
         if (lastPos == null) {
             lastPos = this.position();
         }
@@ -83,6 +89,20 @@ public class WheelchairEntity extends Mob {
     @Override
     public void tickRidden(Player player, Vec3 vec3) {
         super.tickRidden(player, vec3);
+        if (this.level().getGameTime() % 20 == 0) {
+            var gameC = GameWorldComponent.KEY.get(player.level());
+            if (gameC.getGameMode() instanceof ChairWheelRaceGame) {
+            } else {
+                this.durability--;
+            }
+        }
+        if (this.durability <= 0) {
+            this.discard();
+            player.displayClientMessage(
+                    Component.translatable("entity.noellesroles.wheelchair.damaged").withStyle(ChatFormatting.RED),
+                    true);
+            return;
+        }
         // Noellesroles.LOGGER.info(input_zza+":"+input_xxa);
         // ===== 1. 从玩家输入获取指令 =====
         // 在 tickRidden 中，这些输入值是服务端同步好的，可以直接使用
@@ -219,6 +239,8 @@ public class WheelchairEntity extends Mob {
             if (!this.level().isClientSide) {
                 // 回收逻辑：给玩家一个轮椅物品，并移除实体
                 ItemStack wheelchairItem = new ItemStack(ModItems.WHEELCHAIR); // 你需要一个自定义物品
+                var chairDurability = this.durability;
+                wheelchairItem.setDamageValue(wheelchairItem.getMaxDamage() - chairDurability);
                 if (!player.getInventory().add(wheelchairItem)) {
                     // 如果背包满了，掉落在地上
                     player.drop(wheelchairItem, false);

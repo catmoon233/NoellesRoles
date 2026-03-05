@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
@@ -91,7 +93,7 @@ public class GamblerPlayerComponent implements RoleComponent, ServerTickingCompo
     }
 
     private void drawNewRole() {
-        List<Role> allRoles = new ArrayList<>(Noellesroles.getEnableRoles());
+        List<Role> allRoles = new ArrayList<>(Noellesroles.getEnableRoles_ServerSide());
 
         // 过滤掉禁用的角色、赌徒自己、已经在列表中的角色
         List<Role> validRoles = allRoles.stream()
@@ -100,6 +102,8 @@ public class GamblerPlayerComponent implements RoleComponent, ServerTickingCompo
                 .filter(role -> !role.identifier().equals(ModRoles.DOCTOR_ID))
                 .filter(role -> !role.identifier().equals(ModRoles.POISONER_ID))
                 .filter(role -> !role.identifier().equals(ModRoles.BEST_VIGILANTE_ID)) // 排除更好的义警
+                .filter(role -> !role.identifier().equals(TMMRoles.LOOSE_END.identifier())) // 排除亡命徒
+                .filter(role -> !role.identifier().equals(TMMRoles.DISCOVERY_CIVILIAN.identifier())) // 排除游客
                 .filter(role -> !availableRoles.contains(role.identifier()))
                 .collect(Collectors.toList());
 

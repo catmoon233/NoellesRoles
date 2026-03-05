@@ -19,6 +19,7 @@ import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.commands.*;
 import org.agmas.noellesroles.presets.Preset;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.repack.HSRConstants;
@@ -27,6 +28,8 @@ import org.agmas.noellesroles.repack.HSRSounds;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.Collator;
 import java.util.*;
 
 public class Noellesroles implements ModInitializer {
@@ -41,7 +44,12 @@ public class Noellesroles implements ModInitializer {
     // ==================== 初始物品配置 ====================
     public static String isOnlineMode = null;
 
-    public static List<Role> getEnableRoles() {
+    public static List<Role> getAllRoles() {
+        ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
+        return clone;
+    }
+
+    public static List<Role> getEnableRoles_ServerSide() {
         ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
         clone.removeIf(
                 r -> {
@@ -49,10 +57,73 @@ public class Noellesroles implements ModInitializer {
                         return true;
                     if (String.valueOf(r.identifier()).equals("trainmurdermystery:discovery_civilian"))
                         return true;
-                    if (String.valueOf(r.identifier()).equals("trainmurdermystery:loose_end"))
-                        return true;
                     return false;
                 });
+        return clone;
+    }
+
+    /**
+     * Get Role type(int) for a role
+     * 
+     * @param role
+     * @return - 0: Innocent and Cannot Use Killer
+     *         - 1: Innocent but can Use Killer
+     *         - 2: Neturals but not for killer
+     *         - 3: Neturals for killer
+     *         - 4: Killer
+     */
+    public static int getRoleType$Int(Role role) {
+        if (role == null)
+            return -1;
+        if (role.isInnocent() && !role.canUseKiller()) {
+            return 0;
+        }
+        if (role.isInnocent()) {
+            return 1;
+        }
+
+        if (role.isNeutrals() && !role.isNeutralForKiller()) {
+            return 2;
+        }
+        if (role.isNeutrals() && role.isNeutralForKiller()) {
+            return 3;
+        }
+        if (!role.isInnocent() && !role.canUseKiller() && !role.isNeutralForKiller()) {
+            return 2;
+        }
+        if (!role.isInnocent() && !role.canUseKiller() && role.isNeutralForKiller()) {
+            return 3;
+        }
+        if (role.canUseKiller()) {
+            return 4;
+        }
+        return -1; // Unknown
+    }
+
+    public static List<Role> getAllRolesSorted() {
+        ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
+        Collator collator = Collator.getInstance();
+        clone.sort((a, b) -> {
+            int rt_a = getRoleType$Int(a);
+            int rt_b = getRoleType$Int(b);
+            if (a != null && b != null) {
+                if (rt_a > rt_b)
+                    return -1;
+                if (rt_a < rt_b)
+                    return 1;
+                if (a.identifier().getNamespace().equals(b.identifier().getNamespace())) {
+                    String r_a = RoleUtils.getRoleName(a).getString();
+                    String r_b = RoleUtils.getRoleName(b).getString();
+                    return collator.compare(r_a, r_b);
+                } else {
+                    String nameSpaceA = a.identifier().getNamespace();
+                    String nameSpaceB = b.identifier().getNamespace();
+                    return collator.compare(nameSpaceA, nameSpaceB);
+                }
+            } else {
+                return 0;
+            }
+        });
         return clone;
     }
 

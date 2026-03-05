@@ -1,7 +1,6 @@
 package org.agmas.noellesroles.client.screen;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 
 import org.agmas.harpymodloader.modifiers.HMLModifiers;
 import org.agmas.harpymodloader.modifiers.Modifier;
+import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.client.widget.SelectedRoleIntroTextWidget;
 import org.agmas.noellesroles.utils.RoleUtils;
 import java.util.ArrayList;
@@ -68,9 +68,8 @@ public class RoleIntroduceScreen extends Screen {
         super(Component.translatable("gui.roleintroduce.select_role.title"));
 
         // 加载可用角色
-        for (Role role : TMMRoles.ROLES.values()) {
-            availableRoles.add(role);
-        }
+        availableRoles.clear();
+        availableRoles.addAll(Noellesroles.getAllRolesSorted());
     }
 
     /**
@@ -481,6 +480,11 @@ public class RoleIntroduceScreen extends Screen {
         private int getRoleColor() {
             // 根据职业类型返回不同的颜色
             // 这里只是一个示例，您可以根据实际的职业属性返回不同的颜色
+            if(role instanceof Role r){
+                if(r.identifier().getNamespace().equals("stupid_express")){
+                    Noellesroles.LOGGER.info("Color for {} is {}",r.identifier().getPath(),RoleUtils.getRoleOrModifierColor(role));
+                }
+            }
             return RoleUtils.getRoleOrModifierColor(role);
         }
 

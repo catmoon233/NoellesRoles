@@ -12,7 +12,6 @@ import net.minecraft.world.entity.MobCategory;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.entity.*;
 
-
 public class ModEntities {
     public static final EntityType<RoleMineEntity> ROLE_MINE_ENTITY_ENTITY_TYPE = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
@@ -21,7 +20,7 @@ public class ModEntities {
     public static final EntityType<WheelchairEntity> WHEELCHAIR = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             Noellesroles.id("wheelchair"),
-            EntityType.Builder.of(WheelchairEntity::new, MobCategory.MISC).sized(0.8f, 0.2f)
+            EntityType.Builder.of(WheelchairEntity::new, MobCategory.MISC).sized(0.6f, 1.2f)
                     .build("wheelchair"));
 
     @SuppressWarnings("deprecation")
@@ -42,7 +41,7 @@ public class ModEntities {
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "chlorine_bomb"),
             FabricEntityTypeBuilder.<ChlorineBombEntity>create(MobCategory.MISC, ChlorineBombEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.6F, 0.6F))
+                    .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
                     .trackRangeBlocks(4)
                     .trackedUpdateRate(10)
                     .build());

@@ -203,7 +203,7 @@ public class ConspiratorScreen extends Screen {
      */
     private void initRoleSelection() {
         // 获取所有注册的角色
-        roles = Noellesroles.getEnableRoles();
+        roles = Noellesroles.getAllRolesSorted();
 
         if (roles.isEmpty()) {
             onClose();
@@ -242,8 +242,12 @@ public class ConspiratorScreen extends Screen {
 
         for (int i = 0; i < roles.size(); i++) {
             var role = roles.get(i);
+            String roleid = "";
+            if (role != null) {
+                roleid = role.identifier().toString();
+            }
             String roleName = RoleUtils.getRoleName(role).getString();
-            if (searchContent == null || roleName.contains(searchContent)) {
+            if (searchContent == null || roleName.contains(searchContent) || roleName.contains(roleid)) {
                 if (count >= startIndex && count < endIndex) {
                     int indexOnPage = count - startIndex;
                     int col = indexOnPage % 4;
