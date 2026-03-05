@@ -293,7 +293,7 @@ public class GameFunctionsCommand {
     String id = StringArgumentType.getString(context, "id");
     WinStatus winStatus = null;
     for (WinStatus status : WinStatusSuggestions.allWinStatus) {
-      if (status.toString().toLowerCase().equals(id)) {
+      if (status.toString().toLowerCase().equals(id.toLowerCase())) {
         winStatus = status;
       }
     }
@@ -380,10 +380,9 @@ public class GameFunctionsCommand {
           .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(remaining))
           .forEach(suggestions::add);
       // 最后批量建议
-      suggestions.forEach((s) -> {
-        var t = ResourceLocation.tryParse(s);
+      suggestions.forEach((t) -> {
         if (t != null) {
-          builder.suggest(s, Component.translatable("announcement.win." + s));
+          builder.suggest(t, Component.translatable("announcement.win." + t));
         }
       });
 
