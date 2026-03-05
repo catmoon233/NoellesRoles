@@ -33,6 +33,7 @@ import pro.fazeclan.river.stupid_express.StupidExpress;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -158,16 +159,19 @@ public class GameFunctionsCommand {
               .then(Commands.literal("win")
                   .then(Commands.argument("id", StringArgumentType.string())
                       .suggests(WinStatusSuggestions::suggestWinStatus)
-                      .executes(GameFunctionsCommand::executeWinWithOnlyId)))
-              .then(Commands.literal("custom_win")
-                  .then(Commands.argument("color", ModColorArgument.color()).then(
-                      Commands.argument("id", StringArgumentType.string())
-                          .executes(GameFunctionsCommand::executeCustomWinWithOnlyId))
-                      .then(Commands.argument("title", ComponentArgument.textComponent(registryAccess))
-                          .then(Commands
-                              .argument(
-                                  "subtitle", ComponentArgument.textComponent(registryAccess))
-                              .executes(GameFunctionsCommand::executeCustomWinWithIdAndTitle)))))
+                      .executes(GameFunctionsCommand::executeWinWithOnlyId))
+                  .then(Commands.literal("CUSTOM")
+                      .then(Commands.argument("color", ModColorArgument.color())
+                          .then(
+                              Commands.argument("id", StringArgumentType.string())
+                                  .executes(GameFunctionsCommand::executeCustomWinWithOnlyId))))
+                  .then(Commands.literal("CUSTOM_COMPONENT")
+                      .then(Commands.argument("color", ModColorArgument.color())
+                          .then(Commands.argument("title", ComponentArgument.textComponent(registryAccess))
+                              .then(Commands
+                                  .argument(
+                                      "subtitle", ComponentArgument.textComponent(registryAccess))
+                                  .executes(GameFunctionsCommand::executeCustomWinWithIdAndTitle))))))
               .then(Commands.literal("reset")
                   .then(Commands.literal("sync")
                       .then(Commands.literal("copy").executes((context) -> {
@@ -210,22 +214,42 @@ public class GameFunctionsCommand {
 
                         return 1;
                       }))))
-              .then(Commands.literal("scan").executes((context) -> {
-                var level = context.getSource().getLevel();
-                var areas = AreasWorldComponent.KEY.get(level);
-                MapScannerManager.scanAndSaveScannerArea(level, areas);
-                HashMap<Integer, Boolean> map = new HashMap<>();
-                for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
-                  map.putIfAbsent(entry.getValue(), true);
-                }
-                context.getSource().sendSuccess(
-                    () -> Component.translatable("Scanned Task points! Total %s types!", map.size()), true);
+              .then(Commands.literal("scan")
+                  .then(Commands.literal("reset_points").executes((context) -> {
+                    var source = context.getSource();
+                    var level = source.getLevel();
+                    var areas = AreasWorldComponent.KEY.get(level);
+                    if (areas.mapName == null) {
+                      context.getSource()
+                          .sendFailure(Component
+                              .literal("You should load map first to scan points!\nUsage: /tmm:switchmap load <MapID>")
+                              .withStyle(ChatFormatting.RED));
+                      return 0;
+                    }
+                    MapResetManager.scanArea(level, areas);
+                    MapResetManager.saveArea(level);
+                    context.getSource().sendSuccess(
+                        () -> Component.translatable("Scanned and saved reset points for map %s ! Total %s blocks!",
+                            Component.nullToEmpty(areas.mapName), GameFunctions.resetPoints.size()),
+                        true);
+                    return 1;
+                  }))
+                  .then(Commands.literal("tasks").executes((context) -> {
+                    var level = context.getSource().getLevel();
+                    var areas = AreasWorldComponent.KEY.get(level);
+                    MapScannerManager.scanAndSaveScannerArea(level, areas);
+                    HashMap<Integer, Boolean> map = new HashMap<>();
+                    for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
+                      map.putIfAbsent(entry.getValue(), true);
+                    }
+                    context.getSource().sendSuccess(
+                        () -> Component.translatable("Scanned Task points! Total %s types!", map.size()), true);
 
-                for (var player : context.getSource().getLevel().players()) {
-                  ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
-                }
-                return 1;
-              }))
+                    for (var player : context.getSource().getLevel().players()) {
+                      ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
+                    }
+                    return 1;
+                  })))
               .then(Commands.literal("blackout").executes((context) -> {
                 return executeBlackout(context, -1);
               }).then(Commands.literal("stop").executes((context) -> {
@@ -331,7 +355,7 @@ public class GameFunctionsCommand {
   public static int executeCustomWinWithIdAndTitle(CommandContext<CommandSourceStack> context) {
     Component title = ComponentArgument.getComponent(context, "title");
     Component subtitle = ComponentArgument.getComponent(context, "subtitle");
-    String id = "custom";
+    String id = "custom_component";
     int color = ModColorArgument.getColor(context, "color");
 
     ServerPlayer serverPlayer = context.getSource().getPlayer();
@@ -367,7 +391,14 @@ public class GameFunctionsCommand {
   }
 
   public static class WinStatusSuggestions {
-    public static List<WinStatus> allWinStatus = Arrays.asList(GameFunctions.WinStatus.values());
+    public static List<WinStatus> allWinStatus = removeSome(
+        new ArrayList<>(Arrays.asList(GameFunctions.WinStatus.values())));
+
+    public static List<WinStatus> removeSome(List<WinStatus> list) {
+      list.removeIf(
+          (t) -> t.equals(GameFunctions.WinStatus.CUSTOM) || t.equals(GameFunctions.WinStatus.CUSTOM_COMPONENT));
+      return list;
+    }
 
     public static CompletableFuture<Suggestions> suggestWinStatus(CommandContext<CommandSourceStack> context,
         SuggestionsBuilder builder) {
