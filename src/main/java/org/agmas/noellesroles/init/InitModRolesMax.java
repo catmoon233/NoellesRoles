@@ -91,7 +91,7 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.WAYFARER_ID, 0);
             }
-            if (random.nextInt(0, 100) < 50) {
+            if (players_count >= 12 && random.nextInt(0, 100) < 50) {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);

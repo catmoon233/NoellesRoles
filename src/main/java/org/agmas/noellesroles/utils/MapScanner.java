@@ -31,6 +31,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LecternBlock;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
@@ -82,7 +84,8 @@ public class MapScanner {
                         if (blockState2.is(BlockTags.WOOL_CARPETS) || blockState2.is(BlockTags.AIR)) {
                             GameFunctions.taskBlocks.put(blockPos6, 5);
                         }
-                    } else if (blockState.getBlock() instanceof TrimmedBedBlock) {
+                    } else if (blockState.getBlock() instanceof TrimmedBedBlock
+                            && blockState.getValue(BlockStateProperties.BED_PART).equals(BedPart.HEAD)) {
                         GameFunctions.taskBlocks.put(blockPos6, 4);
                     } else if (blockState.getBlock() instanceof ToiletBlock) {
                         GameFunctions.taskBlocks.put(blockPos6, 8);
