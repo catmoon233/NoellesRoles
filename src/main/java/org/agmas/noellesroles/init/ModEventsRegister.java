@@ -825,15 +825,7 @@ public class ModEventsRegister {
                 return;
             }
             if (role.identifier().equals(ModRoles.WIND_YAOSE.identifier())) {
-                // player.getAttribute(Attributes.SCALE).addOrReplacePermanentModifier(windYaoseScaleAttribute);
-                player.addEffect(new MobEffectInstance(
-                        MobEffects.INVISIBILITY,
-                        -1, // 持续时间 5s（tick）
-                        1, // 等级（0 = 速度 I）
-                        true, // ambient（环境效果，如信标）
-                        false, // showParticles（显示粒子）
-                        true // showIcon（显示图标）
-                ));
+                // 现在在NoellesRolesAbilityPlayerComponent serverTick中处理。
                 return;
             }
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
@@ -850,14 +842,7 @@ public class ModEventsRegister {
                 return;
             }
             if (role.identifier().equals(ModRoles.OLDMAN.identifier())) {
-                player.addEffect(new MobEffectInstance(
-                        MobEffects.MOVEMENT_SLOWDOWN,
-                        -1, // 持续时间 5s（tick）
-                        1, // 等级（0 = 速度 I）
-                        true, // ambient（环境效果，如信标）
-                        false, // showParticles（显示粒子）
-                        true // showIcon（显示图标）
-                ));
+                // 现在在NoellesRolesAbilityPlayerComponent serverTick中处理。
                 return;
             }
             NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY

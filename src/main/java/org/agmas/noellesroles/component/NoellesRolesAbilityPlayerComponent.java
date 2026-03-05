@@ -2,10 +2,17 @@ package org.agmas.noellesroles.component;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
@@ -142,6 +149,37 @@ public class NoellesRolesAbilityPlayerComponent
             // 每秒同步一次（而不是每 tick），减少网络压力
             if (this.cooldown % 20 == 0 || this.cooldown == 0) {
                 this.sync();
+            }
+        }
+        if (this.player.level().getGameTime() % 20 == 0) {
+            if (GameFunctions.isPlayerAliveAndSurvival(this.player)) {
+                GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(this.player.level());
+                if (gameWorldComponent.isRole(this.player, ModRoles.WIND_YAOSE)) {
+                    var effect = player.getEffect(MobEffects.INVISIBILITY);
+                    if (effect == null || effect.getDuration() <= 30) {
+                        player.addEffect(new MobEffectInstance(
+                                MobEffects.INVISIBILITY,
+                                60 * 20, // 持续时间 60s（tick）
+                                1, // 等级（0 = 速度 I）
+                                true, // ambient（环境效果，如信标）
+                                false, // showParticles（显示粒子）
+                                true // showIcon（显示图标）
+                        ));
+                    }
+                }
+                if (gameWorldComponent.isRole(this.player, ModRoles.OLDMAN)) {
+                    var effect = player.getEffect(MobEffects.MOVEMENT_SLOWDOWN);
+                    if (effect == null || effect.getDuration() <= 30) {
+                        player.addEffect(new MobEffectInstance(
+                                MobEffects.MOVEMENT_SLOWDOWN,
+                                60 * 20, // 持续时间 60s（tick）
+                                1, // 等级（0 = 速度 I）
+                                true, // ambient（环境效果，如信标）
+                                false, // showParticles（显示粒子）
+                                true // showIcon（显示图标）
+                        ));
+                    }
+                }
             }
         }
     }
