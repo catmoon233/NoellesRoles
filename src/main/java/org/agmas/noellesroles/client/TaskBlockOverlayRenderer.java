@@ -90,7 +90,7 @@ public class TaskBlockOverlayRenderer {
                     blockWidth = 1.0;
                 int textPixelWidth = client.font.width(text);
                 if (textPixelWidth > 0)
-                    textScale = (float) blockWidth / textPixelWidth;
+                    textScale = (float) blockWidth * 0.75f / textPixelWidth;
             }
 
             double centerX = (localAABB.minX + localAABB.maxX) / 2.0;
