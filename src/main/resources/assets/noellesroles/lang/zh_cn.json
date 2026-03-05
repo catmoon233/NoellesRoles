@@ -1036,6 +1036,7 @@
   "announcement.role.noellesroles.blood_feudist": "仇杀客",
   "announcement.goals.blood_feudist": "同类相杀令你的世界观逐渐扭曲！",
   "announcement.win.blood_feudist": "杀手胜利！",
+  "announcement.win.time": "乘客获胜！",
   "message.noellesroles.bandit.stole_money": "你从 %s 身上偷走了 %s 金币！",
   "message.noellesroles.bandit.lost_money": "你被强盗偷走了 %s 金币！",
   "=========== 仇杀客 ===========": "",

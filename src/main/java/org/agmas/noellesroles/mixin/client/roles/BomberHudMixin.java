@@ -37,12 +37,19 @@ public class BomberHudMixin {
         if (TMMClient.gameComponent == null) {
             return;
         }
-        if (!TMMClient.gameComponent.isKillerTeam(player)) {
-            return;
-        }
+
         ItemStack mainHandItem = player.getMainHandItem();
 
         if (mainHandItem.is(ModItems.BOMB)) {
+            if (!TMMClient.gameComponent.isKillerTeam(player)) {
+                String text = "!!!BOMB!!!";
+
+                int width = client.getWindow().getGuiScaledWidth();
+                int height = client.getWindow().getGuiScaledHeight();
+
+                guiGraphics.drawCenteredString(client.font, text, width / 2, height / 2 - 20, 0xFF0000);
+                return;
+            }
             CustomData customData = mainHandItem.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
             CompoundTag tag = customData.copyTag();
 

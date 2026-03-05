@@ -11,6 +11,7 @@ import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.WayfarerPlayerComponent;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
@@ -465,6 +466,11 @@ public class InstinctRenderer {
                     } else if (target_role.isNeutralForKiller()) {
                         return Color.ORANGE.getRGB();
                     } else {
+                        if (TMMClient.gameComponent.isRole(self, ModRoles.BOMBER)){
+                            if(target_player.getMainHandItem().is(ModItems.BOMB)){
+                                return ModRoles.BOMBER.color();
+                            }
+                        }
                         if (TMMClient.gameComponent.isRole(target_player, ModRoles.GAMBLER)) {
                             return -2;
                         }
