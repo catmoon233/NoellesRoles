@@ -56,8 +56,7 @@
     "roles.thief.DelayedCoinDisplayMixin",
     "roles.thief.ThiefsHonorMixin",
     "roles.veteran.VeteranKnifeLeftClickMixin",
-    "roles.veteran.VeteranKnifeMixin",
-    "roles.voodoo.VoodooVooMixin"
+    "roles.veteran.VeteranKnifeMixin"
   ],
   "injectors": {
     "defaultRequire": 1
