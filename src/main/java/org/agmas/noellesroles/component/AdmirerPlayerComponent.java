@@ -223,18 +223,21 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
     }
 
     private void checkBoundTarget() {
-        Player boundTarget = getBoundTarget();
-        var gameCp = GameWorldComponent.KEY.get(this.player.level());
-        if (gameCp != null && gameCp.isRunning()) {
-            if (GameFunctions.isPlayerAliveAndSurvival(this.player)) {
-                if (boundTarget == null || !GameFunctions.isPlayerAliveAndSurvival(boundTarget)) {
-                    if (player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.displayClientMessage(
-                                Component.translatable("message.noellesroles.admirer.target_died")
-                                        .withStyle(ChatFormatting.RED),
-                                false);
+        if (player.level().getGameTime() % 20 == 0) {
+            Player boundTarget = getBoundTarget();
+            var gameCp = GameWorldComponent.KEY.get(this.player.level());
+            if (gameCp != null && gameCp.isRunning()) {
+                if (GameFunctions.isPlayerAliveAndSurvival(this.player)) {
+                    if (boundTarget == null || !GameFunctions.isPlayerAliveAndSurvival(boundTarget)) {
+                        if (player instanceof ServerPlayer serverPlayer) {
+                            serverPlayer.displayClientMessage(
+                                    Component.translatable("message.noellesroles.admirer.target_died")
+                                            .withStyle(ChatFormatting.RED),
+                                    false);
+                        }
+
+                        bindRandomTarget();
                     }
-                    bindRandomTarget();
                 }
             }
         }

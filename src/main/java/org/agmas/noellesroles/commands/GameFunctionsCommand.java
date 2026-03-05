@@ -75,18 +75,20 @@ public class GameFunctionsCommand {
 
                         return 1;
                       })))
-                  .then(Commands.literal("asyn").then(Commands.literal("copy").executes((context) -> {
-                    var world = context.getSource().getLevel();
-                    var areas = AreasWorldComponent.KEY.get(world);
-                    ServerTaskInfoClasses.AutoTrainResetTask task = new ServerTaskInfoClasses.AutoTrainResetTask(areas,
-                        world, null, 0);
-                    task.shouldStartGame = false;
+                  .then(Commands.literal("asyn")
+                      .then(Commands.literal("copy").executes((context) -> {
+                        var world = context.getSource().getLevel();
+                        var areas = AreasWorldComponent.KEY.get(world);
+                        ServerTaskInfoClasses.AutoTrainResetTask task = new ServerTaskInfoClasses.AutoTrainResetTask(
+                            areas,
+                            world, null, 0);
+                        task.shouldStartGame = false;
 
-                    GameFunctions.serverTaskQueue.add(task);
-                    context.getSource()
-                        .sendSuccess(() -> Component.literal("Add server reset task: Normal Reset(copy)!"), true);
-                    return 1;
-                  }))
+                        GameFunctions.serverTaskQueue.add(task);
+                        context.getSource()
+                            .sendSuccess(() -> Component.literal("Add server reset task: Normal Reset(copy)!"), true);
+                        return 1;
+                      }))
                       .then(Commands.literal("simple").executes((context) -> {
 
                         var world = context.getSource().getLevel();
@@ -94,7 +96,6 @@ public class GameFunctionsCommand {
                         ServerTaskInfoClasses.OnlySomeBlockResetTask task = new ServerTaskInfoClasses.OnlySomeBlockResetTask(
                             GameFunctions.resetPoints, world, null, 0);
                         GameFunctions.serverTaskQueue.add(task);
-
                         context.getSource().sendSuccess(
                             () -> Component.literal("Add server reset task: Simple Reset (clean points only)!"),
                             true);
