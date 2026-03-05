@@ -66,7 +66,10 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         if (psychoComponent == null) {
             return false;
         }
-
+        if (psychoComponent.psychoTicks > 0) {
+            // 已经疯魔，所以不准！
+            return false;
+        }
         // 直接设置疯狂模式状态（不给球棒，因为商店已经给了假球棒）
         psychoComponent.setPsychoTicks(GameConstants.getPsychoTimer());
         psychoComponent.setArmour(GameConstants.getPsychoModeArmour());

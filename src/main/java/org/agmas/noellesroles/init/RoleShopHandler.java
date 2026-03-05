@@ -753,7 +753,9 @@ public class RoleShopHandler {
                 }
                 var magicianComponent = org.agmas.noellesroles.component.ModComponents.MAGICIAN.get(player);
                 if (magicianComponent != null) {
-                    magicianComponent.startFakePsycho();
+                    if(!magicianComponent.startFakePsycho()){
+                        return false;
+                    }
                 }
                 return true;
             }
