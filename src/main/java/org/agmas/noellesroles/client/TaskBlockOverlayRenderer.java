@@ -117,11 +117,23 @@ public class TaskBlockOverlayRenderer {
         if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
             DoubleBlockHalf half = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
             if (half == DoubleBlockHalf.LOWER) {
-                return shape.bounds().expandTowards(0, 1,
-                        0);
+                var b = state.getCollisionShape(world, blockPos.above());
+                if (b.isEmpty())
+                    return shape.bounds().expandTowards(0, 1,
+                            0);
+                var a = b.bounds().move(0, 1, 0);
+                var c = shape.bounds();
+                return new AABB(Math.min(a.minX, c.minX), Math.min(a.minY, c.minY), Math.min(a.minZ, c.minZ),
+                        Math.max(a.maxX, c.maxX), Math.max(a.maxY, c.maxY),Math.max(a.maxZ, c.maxZ));
             } else {
-                return shape.bounds().expandTowards(0, -1,
-                        0);
+                var b = state.getCollisionShape(world, blockPos.above());
+                if (b.isEmpty())
+                    return shape.bounds().expandTowards(0, 1,
+                            0);
+                var a = b.bounds().move(0, -1, 0);
+                var c = shape.bounds();
+                return new AABB(Math.min(a.minX, c.minX), Math.min(a.minY, c.minY), Math.min(a.minZ, c.minZ),
+                        Math.max(a.maxX, c.maxX), Math.max(a.maxY, c.maxY),Math.max(a.maxZ, c.maxZ));
             }
         }
 
