@@ -1121,5 +1121,11 @@
   "item.noellesroles.rope.no_durability": "绳索已损坏！",
   "item.noellesroles.rope.on_cooldown": "绳索正在冷却中！",
   "item.noellesroles.rope.no_target": "前方没有可拉取的目标！",
-  "item.noellesroles.rope.success": "成功拉取了目标！"
+  "item.noellesroles.rope.success": "成功拉取了目标！",
+  "item.noellesroles.extinguisher": "灭火器",
+  "item.noellesroles.extinguisher.tooltip.durability": "耐久度: %s/%s",
+  "item.noellesroles.extinguisher.tooltip.use": "右键：对前方玩家喷射（缓慢+失明1.5秒，可清除被纵火犯浇上的汽油）",
+  "item.noellesroles.extinguisher.tooltip.hold": "长按：持续喷射最多5秒",
+  "item.noellesroles.extinguisher.empty": "灭火器已用尽！",
+  "item.noellesroles.extinguisher.cleaned_fuel": "你成功清除了目标身上的汽油！"
 }
