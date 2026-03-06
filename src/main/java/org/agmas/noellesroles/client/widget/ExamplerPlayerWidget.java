@@ -34,7 +34,8 @@ public class ExamplerPlayerWidget extends Button {
     public ExamplerPlayerWidget(LimitedInventoryScreen screen, int x, int y, PlayerInfo target) {
         super(x, y, 16, 16, Component.nullToEmpty(target.getProfile().getName()), (a) -> {
             AbstractClientPlayer player = Minecraft.getInstance().player;
-            if (player != null && (NoellesRolesAbilityPlayerComponent.KEY.get(player)).cooldown <= 0 && (PlayerShopComponent.KEY.get(player)).balance >= 50) {
+            if (player != null && (NoellesRolesAbilityPlayerComponent.KEY.get(player)).cooldown <= 0
+                    && (PlayerShopComponent.KEY.get(player)).balance >= 50) {
                 ClientPlayNetworking.send(new AbilityWithTargetC2SPacket(target.getProfile().getId()));
             }
         }, DEFAULT_NARRATION);
@@ -98,7 +99,7 @@ public class ExamplerPlayerWidget extends Button {
                         this.getY() - 9);
             }
             context.setColor(1f, 1f, 1f, 1f);
-            context.drawString(Minecraft.getInstance().font, "MONEY",
+            context.drawString(Minecraft.getInstance().font, String.valueOf(50 - shopComponent.balance),
                     this.getX(), this.getY(), Color.YELLOW.getRGB(), true);
         }
 
