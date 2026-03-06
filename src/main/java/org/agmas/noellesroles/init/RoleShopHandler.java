@@ -159,6 +159,14 @@ public class RoleShopHandler {
     {
       // EXAMPLER的商店
       var SHOP = new ArrayList<ShopEntry>();
+      SHOP.add(new ShopEntry(
+          dev.doctor4t.trainmurdermystery.index.TMMItems.KNIFE.getDefaultInstance(),
+          120,
+          ShopEntry.Type.TOOL));
+      SHOP.add(new ShopEntry(
+          dev.doctor4t.trainmurdermystery.index.TMMItems.LOCKPICK.getDefaultInstance(),
+          50,
+          ShopEntry.Type.TOOL));
       var psychoItem = TMMItems.PSYCHO_MODE.getDefaultInstance();
       var examplerPsychoLore = new ItemLore(
           List.of(Component.translatable(

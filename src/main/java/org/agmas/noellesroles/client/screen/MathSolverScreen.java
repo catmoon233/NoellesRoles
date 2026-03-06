@@ -40,25 +40,7 @@ public class MathSolverScreen extends Screen {
         super(Component.translatable("screen.math_solver.title"));
         this.forced = forced;
         this.maxTrial = maxTrial;
-        this.MathProblems.clear();
-        MathProblemsManager manager = new MathProblemsManager();
-        int maxT = 4;
-        for (int i = 0; i < totalPages; i++) {
-            var newP = manager.generateProblem();
-            switch (newP.getType()) {
-                case 1:
-                    maxT += 3;
-                    break;
-                case 2:
-                    maxT += 6;
-                    break;
-                default:
-                    maxT += 2;
-                    break;
-            }
-            this.MathProblems.add(newP);
-        }
-        this.maxTime = maxT * 20;
+        resetProblems();
         hasStarted = false;
         currentIndex = -1;
         startTime = 0;
@@ -73,6 +55,12 @@ public class MathSolverScreen extends Screen {
     }
 
     public void restart() {
+        resetProblems();
+        this.failed = false;
+        this.startMathSolving();
+    }
+
+    private void resetProblems() {
         this.MathProblems.clear();
         MathProblemsManager manager = new MathProblemsManager();
         int maxT = 4;
@@ -80,7 +68,7 @@ public class MathSolverScreen extends Screen {
             var newP = manager.generateProblem();
             switch (newP.getType()) {
                 case 1:
-                    maxT += 3;
+                    maxT += 2;
                     break;
                 case 2:
                     maxT += 6;
@@ -92,8 +80,6 @@ public class MathSolverScreen extends Screen {
             this.MathProblems.add(newP);
         }
         this.maxTime = maxT * 20;
-        this.failed = false;
-        this.startMathSolving();
     }
 
     public void solveFailed_and_sendPacket() {
