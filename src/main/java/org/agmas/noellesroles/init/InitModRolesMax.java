@@ -60,6 +60,8 @@ public class InitModRolesMax {
         Harpymodloader.setRoleMaximum(ModRoles.CHEF_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.FORTUNETELLER_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.WIND_YAOSE_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.RESCUER_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.FIREFIGHTER_ID, 1);
     }
 
     public static void registerDynamic() {
@@ -141,6 +143,8 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.CLOCKMAKER_ID, 0);
             }
+
+
 
             // 仇杀客数量 - 仅在12人以上对局出现
             if (players_count >= 12) {
