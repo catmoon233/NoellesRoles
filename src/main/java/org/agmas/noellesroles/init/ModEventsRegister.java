@@ -851,7 +851,7 @@ public class ModEventsRegister {
                 return;
             }
             if (role.identifier().equals(ModRoles.ALCHEMIST.identifier())) {
-                // 炼金师角色初始化
+                // 药剂师角色初始化
                 var alchemistComponent = org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY.get(player);
                 alchemistComponent.reset();
                 return;

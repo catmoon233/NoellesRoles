@@ -391,8 +391,8 @@ public class ModItems {
       "passbook");
 
   /**
-   * 炼金素材
-   * - 用于炼金相关合成
+   * 药剂素材
+   * - 用于药剂相关合成
    */
   public static final Item ALCHEMY_MATERIAL = register(
       new AlchemyMaterialItem(new Item.Properties().stacksTo(64)),
