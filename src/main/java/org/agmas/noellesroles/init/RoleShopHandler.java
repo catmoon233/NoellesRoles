@@ -86,6 +86,8 @@ public class RoleShopHandler {
   public static ArrayList<ShopEntry> RESCUER_SHOP = new ArrayList<>();
   // ==================== 消防员商店 ====================
   public static ArrayList<ShopEntry> FIREFIGHTER_SHOP = new ArrayList<>();
+  // ==================== 会计商店 ====================
+  public static ArrayList<ShopEntry> ACCOUNTANT_SHOP = new ArrayList<>();
 
   /**
    * 初始化框架角色商店
@@ -503,6 +505,11 @@ public class RoleShopHandler {
     {
       ShopContent.customEntries.put(
           ModRoles.FIREFIGHTER_ID, FIREFIGHTER_SHOP);
+    }
+    // 会计商店
+    {
+      ShopContent.customEntries.put(
+          ModRoles.ACCOUNTANT_ID, ACCOUNTANT_SHOP);
     }
     // 风精灵
     {
@@ -955,6 +962,25 @@ public class RoleShopHandler {
         }
         if (RoleUtils.insertStackInFreeSlot(player, this.stack().copy())) {
           player.getInventory().setItem(15, Items.REPEATING_COMMAND_BLOCK.getDefaultInstance());
+          return true;
+        }
+        return false;
+      }
+    });
+
+    // 会计商店
+    // 存折 - 100金币（只能购买1次）
+    ACCOUNTANT_SHOP.add(new ShopEntry(
+        ModItems.PASSBOOK.getDefaultInstance(),
+        100,
+        ShopEntry.Type.TOOL) {
+      @Override
+      public boolean onBuy(Player player) {
+        if (TMMItemUtils.hasItem(player, Items.COMMAND_BLOCK) > 0) {
+          return false;
+        }
+        if (RoleUtils.insertStackInFreeSlot(player, this.stack().copy())) {
+          player.getInventory().setItem(16, Items.COMMAND_BLOCK.getDefaultInstance());
           return true;
         }
         return false;

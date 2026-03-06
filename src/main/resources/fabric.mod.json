@@ -86,7 +86,9 @@
       "noellesroles:best_vigilante",
       "noellesroles:expedition",
       "noellesroles:temporary_effect",
-      "noellesroles:awesome"
+      "noellesroles:awesome",
+      "noellesroles:accountant",
+      "noellesroles:alchemist"
     ]
   },
   "mixins": [

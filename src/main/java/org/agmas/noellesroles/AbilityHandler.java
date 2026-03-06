@@ -275,6 +275,34 @@ public class AbilityHandler {
             clockmakerComponent.useSkill();
             return;
         }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.ACCOUNTANT)) {
+            org.agmas.noellesroles.component.AccountantPlayerComponent accountantComponent =
+                    org.agmas.noellesroles.component.AccountantPlayerComponent.KEY.get(context.player());
+
+            // 检查玩家是否在蹲下
+            if (context.player().isShiftKeyDown()) {
+                // 蹲下按技能键：切换模式
+                accountantComponent.toggleMode();
+            } else {
+                // 普通按技能键：使用技能
+                accountantComponent.useAbility();
+            }
+            return;
+        }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.ALCHEMIST)) {
+            org.agmas.noellesroles.component.AlchemistPlayerComponent alchemistComponent =
+                    org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY.get(context.player());
+
+            // 检查玩家是否在蹲下
+            if (context.player().isShiftKeyDown()) {
+                // 蹲下按技能键：切换药剂
+                alchemistComponent.switchPotion();
+            } else {
+                // 普通按技能键：调制药剂
+                alchemistComponent.craftPotion();
+            }
+            return;
+        }
     }
 
     public static void handlerWithTarget(AbilityWithTargetC2SPacket payload, Context context) {
