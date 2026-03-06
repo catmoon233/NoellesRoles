@@ -163,6 +163,9 @@ public class AbilityHandler {
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.OLDMAN)) {
             if (player.getVehicle() != null && player.getVehicle() instanceof WheelchairEntity we) {
+                if (player.getCooldowns().isOnCooldown(ModItems.WHEELCHAIR)) {
+                    return;
+                }
                 var chairDurability = we.durability;
                 we.discard();
                 var it = ModItems.WHEELCHAIR.getDefaultInstance();
@@ -276,8 +279,8 @@ public class AbilityHandler {
             return;
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.ACCOUNTANT)) {
-            org.agmas.noellesroles.component.AccountantPlayerComponent accountantComponent =
-                    org.agmas.noellesroles.component.AccountantPlayerComponent.KEY.get(context.player());
+            org.agmas.noellesroles.component.AccountantPlayerComponent accountantComponent = org.agmas.noellesroles.component.AccountantPlayerComponent.KEY
+                    .get(context.player());
 
             // 检查玩家是否在蹲下
             if (context.player().isShiftKeyDown()) {
@@ -290,8 +293,8 @@ public class AbilityHandler {
             return;
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.ALCHEMIST)) {
-            org.agmas.noellesroles.component.AlchemistPlayerComponent alchemistComponent =
-                    org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY.get(context.player());
+            org.agmas.noellesroles.component.AlchemistPlayerComponent alchemistComponent = org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY
+                    .get(context.player());
 
             // 检查玩家是否在蹲下
             if (context.player().isShiftKeyDown()) {

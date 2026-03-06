@@ -931,7 +931,6 @@ public class RoleShopHandler {
         ShopEntry.Type.TOOL));
 
     // 消防员商店
-    // TODO:消防斧和灭火器只能购买一次
     // 消防斧 - 150金币
     FIREFIGHTER_SHOP.add(new ShopEntry(
         ModItems.FIRE_AXE.getDefaultInstance(),
