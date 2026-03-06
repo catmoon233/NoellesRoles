@@ -366,6 +366,19 @@ public class ModItems {
             new RopeItem(new Item.Properties().stacksTo(1).durability(3)),
             "rope");
 
+    /**
+     * 灭火器
+     * - 5点耐久
+     * - 右键对人喷射：每使用一次消耗1点耐久
+     * - 长按右键持续喷射：最多持续5秒，持续消耗耐久
+     * - 对人喷射效果：缓慢 + 失明（持续1.5秒）
+     * - 持续喷射同一人会刷新效果时间
+     * - 如果被喷射的人被纵火犯浇湿，则清除浇湿状态
+     */
+    public static final Item EXTINGUISHER = register(
+            new ExtinguisherItem(new Item.Properties().stacksTo(1).durability(5)),
+            "extinguisher");
+
     static {
         ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
         ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());

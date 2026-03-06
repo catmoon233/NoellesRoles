@@ -790,5 +790,11 @@
   "item.noellesroles.rope.no_durability": "Rope is broken!",
   "item.noellesroles.rope.on_cooldown": "Rope is on cooldown!",
   "item.noellesroles.rope.no_target": "No target in front to pull!",
-  "item.noellesroles.rope.success": "Successfully pulled the target!"
+  "item.noellesroles.rope.success": "Successfully pulled the target!",
+  "item.noellesroles.extinguisher": "Fire Extinguisher",
+  "item.noellesroles.extinguisher.tooltip.durability": "Durability: %s/%s",
+  "item.noellesroles.extinguisher.tooltip.use": "Right Click: Spray target player (Slowness + Blindness for 1.5s, removes arsonist's fuel)",
+  "item.noellesroles.extinguisher.tooltip.hold": "Hold Right Click: Continuous spray for up to 5 seconds",
+  "item.noellesroles.extinguisher.empty": "Fire extinguisher is empty!",
+  "item.noellesroles.extinguisher.cleaned_fuel": "Cleared the fuel from the target!"
 }
