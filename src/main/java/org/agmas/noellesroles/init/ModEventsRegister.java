@@ -461,6 +461,12 @@ public class ModEventsRegister {
         TMM.canDrop.add((player) -> {
             var mainHandItem = player.getMainHandItem();
             var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+
+            if (gameWorldComponent.isRole(player, ModRoles.BAKA)) {
+                if (mainHandItem.is(FunnyItems.PROBLEM_SET)) {
+                    return true;
+                }
+            }
             if (gameWorldComponent.isRole(player, ModRoles.CHEF)) {
                 if (mainHandItem.get(ModDataComponentTypes.COOKED) != null) {
                     return true;
@@ -814,6 +820,12 @@ public class ModEventsRegister {
             if (role.identifier().equals(ModRoles.RECORDER.identifier())) {
                 var tpc = RecorderPlayerComponent.KEY.get(player);
                 tpc.initRecorder();
+            }
+            if (role.identifier().equals(ModRoles.EXAMPLER.identifier())) {
+                var tpc = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+                tpc.reset();
+                tpc.charges = 0;
+                tpc.sync();
             }
             if (role.identifier().equals(ModRoles.THIEF.identifier())) {
                 int totalPlayers = player.level().players().size();

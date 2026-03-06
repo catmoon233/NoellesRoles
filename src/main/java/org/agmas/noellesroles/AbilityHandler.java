@@ -13,6 +13,7 @@ import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
+import org.agmas.noellesroles.packet.ProblemScreenOpenC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
@@ -23,6 +24,7 @@ import org.agmas.noellesroles.utils.RoleUtils;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -312,6 +314,17 @@ public class AbilityHandler {
                 .get(context.player().level());
         final ServerPlayer player = context.player();
         var targetPlayer = player.level().getPlayerByUUID(payload.target());
+        if (gameWorldComponent.isRole(player, ModRoles.EXAMPLER)) {
+            if (abilityPlayerComponent.cooldown > 0) {
+                player.displayClientMessage(Component.translatable("message.noellesroles.ability_cooldown"), true);
+                return;
+            }
+            if (targetPlayer != null && targetPlayer instanceof ServerPlayer sp) {
+                abilityPlayerComponent.setCooldown(20 * 30);
+                ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));
+            }
+            return;
+        }
         if (gameWorldComponent.isRole(player, ModRoles.FORTUNETELLER)) {
             if (abilityPlayerComponent.cooldown > 0) {
                 player.displayClientMessage(Component.translatable("message.noellesroles.ability_cooldown"), true);

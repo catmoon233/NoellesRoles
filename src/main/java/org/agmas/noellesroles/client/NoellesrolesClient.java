@@ -213,6 +213,12 @@ public class NoellesrolesClient implements ClientModInitializer {
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
         taskInstinctBind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.noellesroles.taskinstinct",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, "category.trainmurdermystery.keybinds"));
+        ClientPlayNetworking.registerGlobalReceiver(ProblemScreenOpenC2SPacket.ID, (payload, context) -> {
+            var client = context.client();
+            client.execute(() -> {
+                client.setScreen(new MathSolverScreen(payload.forced(), payload.maxTrial()));
+            });
+        });
         ClientPlayNetworking.registerGlobalReceiver(ScanAllTaskPointsPayload.ID, (payload, context) -> {
             Noellesroles.LOGGER.info("Recieved Tasks Points!");
             NoellesrolesClient.taskBlocks.clear();

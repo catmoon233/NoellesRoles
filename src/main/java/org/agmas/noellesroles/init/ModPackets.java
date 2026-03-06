@@ -25,6 +25,8 @@ public class ModPackets {
   public static final CustomPacketPayload.Type<MonitorMarkC2SPacket> MONITOR_MARK_PACKET = MonitorMarkC2SPacket.ID;
 
   public static void registerPackets() {
+    PayloadTypeRegistry.playS2C().register(ProblemScreenOpenC2SPacket.ID,
+        ProblemScreenOpenC2SPacket.CODEC);
     PayloadTypeRegistry.playC2S().register(ExecutionerSelectTargetC2SPacket.ID,
         ExecutionerSelectTargetC2SPacket.CODEC);
     PayloadTypeRegistry.playC2S().register(ProblemSetEventC2SPacket.ID,
@@ -71,11 +73,11 @@ public class ModPackets {
         BanditRevolverShootPayload.CODEC);
     ServerPlayNetworking.registerGlobalReceiver(BanditRevolverShootPayload.ID,
         new BanditRevolverShootPayload.Receiver());
-    
+
     // 注册消防斧攻击网络包
     PayloadTypeRegistry.playC2S().register(FireAxeStabPayload.ID,
         FireAxeStabPayload.CODEC);
-    
+
     PayloadTypeRegistry.playC2S().register(InsaneKillerAbilityC2SPacket.ID,
         InsaneKillerAbilityC2SPacket.CODEC);
     PayloadTypeRegistry.playC2S().register(RecorderC2SPacket.TYPE, RecorderC2SPacket.CODEC);
