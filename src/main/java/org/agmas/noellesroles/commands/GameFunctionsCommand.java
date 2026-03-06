@@ -44,6 +44,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.packet.ProblemScreenOpenC2SPacket;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 import org.agmas.noellesroles.utils.MapScannerManager;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +57,16 @@ public class GameFunctionsCommand {
     CommandRegistrationCallback.EVENT.register(
         (dispatcher, registryAccess, environment) -> {
           dispatcher.register(Commands.literal("tmm:game").requires(source -> source.hasPermission(2))
+              .then(Commands.literal("tests")
+                  .then(Commands.literal("math").executes((context) -> {
+                    ServerPlayNetworking.send(context.getSource().getPlayerOrException(),
+                        new ProblemScreenOpenC2SPacket(false, 3));
+                    return 1;
+                  }).then(Commands.literal("forced").executes((context) -> {
+                    ServerPlayNetworking.send(context.getSource().getPlayerOrException(),
+                        new ProblemScreenOpenC2SPacket(true, 3));
+                    return 1;
+                  }))))
               .then(Commands.literal("tasks")
                   .then(Commands.literal("list").executes((context) -> {
                     var source = context.getSource();

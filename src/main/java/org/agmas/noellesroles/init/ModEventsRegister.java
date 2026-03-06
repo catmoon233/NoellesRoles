@@ -821,6 +821,12 @@ public class ModEventsRegister {
                 var tpc = RecorderPlayerComponent.KEY.get(player);
                 tpc.initRecorder();
             }
+            if (role.identifier().equals(ModRoles.EXAMPLER.identifier())) {
+                var tpc = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+                tpc.reset();
+                tpc.charges = 0;
+                tpc.sync();
+            }
             if (role.identifier().equals(ModRoles.THIEF.identifier())) {
                 int totalPlayers = player.level().players().size();
                 var tpc = ThiefPlayerComponent.KEY.get(player);

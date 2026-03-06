@@ -16,34 +16,32 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.GameType;
 import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
-import org.agmas.noellesroles.packet.MorphC2SPacket;
-import org.jetbrains.annotations.NotNull;
-
+import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import java.awt.*;
 
 /**
  * 变形者玩家选择组件
  * @author YourName
  */
-public class MorphlingPlayerWidget extends Button{
+public class ExamplerPlayerWidget extends Button{
     public final LimitedInventoryScreen screen;
-    public final PlayerInfo disguiseTarget;
     private Component displayText = Component.empty();
     private java.util.List<net.minecraft.util.FormattedCharSequence> cachedLines = new java.util.ArrayList<>();
+    private PlayerInfo target;
 
-    public MorphlingPlayerWidget(LimitedInventoryScreen screen, int x, int y, @NotNull PlayerInfo disguiseTarget) {
-        super(x, y, 16, 16, Component.nullToEmpty(disguiseTarget.getProfile().getName()), (a) -> {
+    public ExamplerPlayerWidget(LimitedInventoryScreen screen, int x, int y,PlayerInfo target) {
+        super(x, y, 16, 16, Component.nullToEmpty(target.getProfile().getName()), (a) -> {
             AbstractClientPlayer player = Minecraft.getInstance().player;
             if (player != null && (MorphlingPlayerComponent.KEY.get(player)).getMorphTicks() == 0) {
-                ClientPlayNetworking.send(new MorphC2SPacket(disguiseTarget.getProfile().getId()));
+                ClientPlayNetworking.send(new AbilityWithTargetC2SPacket(target.getProfile().getId()));
             }
         }, DEFAULT_NARRATION);
+        this.target = target;
         this.screen = screen;
-        this.disguiseTarget = disguiseTarget;
-        if (disguiseTarget.getGameMode() != GameType.ADVENTURE){
+        if (target.getGameMode() != GameType.ADVENTURE){
             setDisplayText(Component.translatable("hud.general.dead").withStyle(ChatFormatting.DARK_RED));
         }else {
-            if (TMMClient.gameComponent!=null && TMMClient.gameComponent.getRole(disguiseTarget.getProfile().getId()) != null && TMMClient.gameComponent.getRole(disguiseTarget.getProfile().getId()).canUseKiller()){
+            if (TMMClient.gameComponent!=null && TMMClient.gameComponent.getRole(target.getProfile().getId()) != null && TMMClient.gameComponent.getRole(target.getProfile().getId()).canUseKiller()){
                 setDisplayText(Component.translatable("hud.general.killer_friend").withStyle(ChatFormatting.GOLD));
             }
         }
@@ -59,19 +57,19 @@ public class MorphlingPlayerWidget extends Button{
         if (component.getMorphTicks() == 0) {
             super.renderWidget(context, mouseX, mouseY, delta);
             context.blitSprite(ShopEntry.Type.POISON.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
-            PlayerFaceRenderer.draw(context, disguiseTarget.getSkin().texture(), this.getX(), this.getY(), 16);
+            PlayerFaceRenderer.draw(context, target.getSkin().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(disguiseTarget.getProfile().getName()), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getProfile().getName()) / 2, this.getY() - 9);
+                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(target.getProfile().getName()), this.getX() - 4 - Minecraft.getInstance().font.width(target.getProfile().getName()) / 2, this.getY() - 9);
             }
         } else if (component.getMorphTicks() < 0) {
             super.renderWidget(context, mouseX, mouseY, delta);
             context.setColor(0.25f, 0.25f, 0.25f, 0.5f);
             context.blitSprite(ShopEntry.Type.POISON.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
-            PlayerFaceRenderer.draw(context, disguiseTarget.getSkin().texture(), this.getX(), this.getY(), 16);
+            PlayerFaceRenderer.draw(context, target.getSkin().texture(), this.getX(), this.getY(), 16);
             if (this.isHovered()) {
                 this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
-                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(disguiseTarget.getProfile().getName()), this.getX() - 4 - Minecraft.getInstance().font.width(disguiseTarget.getProfile().getName()) / 2, this.getY() - 9);
+                context.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(target.getProfile().getName()), this.getX() - 4 - Minecraft.getInstance().font.width(target.getProfile().getName()) / 2, this.getY() - 9);
             }
             context.setColor(1f, 1f, 1f, 1f);
             context.drawString(Minecraft.getInstance().font, String.valueOf(-component.getMorphTicks() / 20), this.getX(), this.getY(), Color.RED.getRGB(), true);

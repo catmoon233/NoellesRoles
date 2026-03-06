@@ -170,7 +170,8 @@ public class ModPacketsReciever {
       if (payload.success()) {
         var psc = PlayerShopComponent.KEY.get(player);
         if (isForced) {
-          player.displayClientMessage(Component.translatable("death_reason.noellesroles.success").withStyle(ChatFormatting.GREEN), false);
+          player.displayClientMessage(
+              Component.translatable("death_reason.noellesroles.success").withStyle(ChatFormatting.GREEN), false);
           // 没奖励，太抠门了。
         } else {
           if (gameWorldComponent.isRole(player, ModRoles.BAKA)) {
@@ -206,6 +207,9 @@ public class ModPacketsReciever {
             abpc.charges++;
             if (abpc.charges >= 3) {
               if (RoleUtils.insertStackInFreeSlot(player, ModItems.ExamplerPsychoItemStack.copy())) {
+                killer.displayClientMessage(
+                    Component.translatable("message.exampler.get_test_psycho").withStyle(ChatFormatting.GOLD),
+                    false);
                 abpc.charges = 0;
               }
             }

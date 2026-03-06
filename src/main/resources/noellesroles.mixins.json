@@ -120,6 +120,7 @@
     "client.roles.recaller.RecallerHudMixin",
     "client.roles.swapper.KeyBindingMixin",
     "client.roles.swapper.SwapperScreenMixin",
+    "client.roles.exampler.ExamplerScreenMixin",
     "client.roles.thief.ThiefHudMixin",
     "client.roles.trapper.TrapperHudMixin",
     "client.roles.voodoo.VoodooScreenMixin",
