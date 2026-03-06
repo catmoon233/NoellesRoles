@@ -34,7 +34,7 @@ public class ExamplerPlayerWidget extends Button {
     public ExamplerPlayerWidget(LimitedInventoryScreen screen, int x, int y, PlayerInfo target) {
         super(x, y, 16, 16, Component.nullToEmpty(target.getProfile().getName()), (a) -> {
             AbstractClientPlayer player = Minecraft.getInstance().player;
-            if (player != null && (NoellesRolesAbilityPlayerComponent.KEY.get(player)).cooldown <= 0 && (PlayerShopComponent.KEY.get(player)).balance >= 100) {
+            if (player != null && (NoellesRolesAbilityPlayerComponent.KEY.get(player)).cooldown <= 0 && (PlayerShopComponent.KEY.get(player)).balance >= 50) {
                 ClientPlayNetworking.send(new AbilityWithTargetC2SPacket(target.getProfile().getId()));
             }
         }, DEFAULT_NARRATION);
@@ -59,7 +59,7 @@ public class ExamplerPlayerWidget extends Button {
         NoellesRolesAbilityPlayerComponent component = NoellesRolesAbilityPlayerComponent.KEY.get(player);
         PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(player);
 
-        if (component.cooldown <= 0 && shopComponent.balance >= 100) {
+        if (component.cooldown <= 0 && shopComponent.balance >= 50) {
             super.renderWidget(context, mouseX, mouseY, delta);
             context.blitSprite(ShopEntry.Type.POISON.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
             PlayerFaceRenderer.draw(context, target.getSkin().texture(), this.getX(), this.getY(), 16);
@@ -85,7 +85,7 @@ public class ExamplerPlayerWidget extends Button {
             context.setColor(1f, 1f, 1f, 1f);
             context.drawString(Minecraft.getInstance().font, String.valueOf(component.cooldown / 20),
                     this.getX(), this.getY(), Color.RED.getRGB(), true);
-        } else if (shopComponent.balance < 100) {
+        } else if (shopComponent.balance < 50) {
             super.renderWidget(context, mouseX, mouseY, delta);
             context.setColor(0.25f, 0.25f, 0.25f, 0.5f);
             context.blitSprite(ShopEntry.Type.POISON.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
@@ -98,8 +98,8 @@ public class ExamplerPlayerWidget extends Button {
                         this.getY() - 9);
             }
             context.setColor(1f, 1f, 1f, 1f);
-            context.drawString(Minecraft.getInstance().font, "X",
-                    this.getX(), this.getY(), Color.RED.getRGB(), true);
+            context.drawString(Minecraft.getInstance().font, "MONEY",
+                    this.getX(), this.getY(), Color.YELLOW.getRGB(), true);
         }
 
         // 渲染下方的文字

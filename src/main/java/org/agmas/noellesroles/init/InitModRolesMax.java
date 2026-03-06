@@ -21,6 +21,107 @@ public class InitModRolesMax {
     public static int REFUGEE_CHANCE = 10; // 10 in 100
 
     public static void registerStatics() {
+        // ==================== 设置角色数量限制 ====================
+        // 某些角色可能需要限制每局游戏中的数量
+        // 复仇者每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.AVENGER_ID, 1);
+
+        // 滑头鬼每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.SLIPPERY_GHOST_ID, 1);
+
+        // 工程师每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.ENGINEER_ID, 1);
+
+        // 拳击手每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.BOXER_ID, 1);
+
+        // 小偷每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.THIEF_ID, 1);
+
+        // 邮差每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.POSTMAN_ID, 1);
+
+        // 私家侦探每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.DETECTIVE_ID, 1);
+
+        // 运动员每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.ATHLETE_ID, 1);
+
+        // 明星每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.STAR_ID, 1);
+
+        // 退伍军人每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.VETERAN_ID, 1);
+
+        // 歌手每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.SINGER_ID, 1);
+
+        // 心理学家每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.PSYCHOLOGIST_ID, 1);
+
+        // 摄影师每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.PHOTOGRAPHER_ID, 1);
+
+        // 阴谋家每局只能有 1 个
+        // Harpymodloader.setRoleMaximum(CONSPIRATOR_ID, 1);
+
+        // 设陷者每局只能有 1 个
+        // Harpymodloader.setRoleMaximum(TRAPPER_ID, 1);
+
+        // 炸弹客每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
+
+        // 跟踪者每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.STALKER_ID, 1);
+
+        // 慕恋者每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.ADMIRER_ID, 1);
+
+        Harpymodloader.setRoleMaximum(ModRoles.POISONER, 1);
+
+        Harpymodloader.setRoleMaximum(ModRoles.ADMIRER_ID, 1);
+
+        // 傀儡师每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.PUPPETEER_ID, 1);
+
+        // 记录员每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.RECORDER_ID, 1);
+
+        // 监察员每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.MONITOR_ID, 1);
+
+        // 故障机器人每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.GLITCH_ROBOT_ID, 1);
+
+        // 年兽每局只能有 1 个
+        Harpymodloader.setRoleMaximum(ModRoles.NIAN_SHOU_ID, 1);
+
+        // 游侠
+        Harpymodloader.setRoleMaximum(ModRoles.ELF_ID, 1);
+
+        // 巡警
+        Harpymodloader.setRoleMaximum(ModRoles.PATROLLER_ID, 1);
+
+        // 魔术师
+        Harpymodloader.setRoleMaximum(ModRoles.MAGICIAN_ID, 1);
+
+        // 强盗
+        Harpymodloader.setRoleMaximum(ModRoles.BANDIT_ID, 1);
+
+        // 仇杀客 - 仅在12人及以上对局生成
+        Harpymodloader.setRoleMaximum(ModRoles.BLOOD_FEUDIST_ID, 1);
+
+        // 钟表匠 - 仅在12人及以上对局生成
+        // 注意：具体限制在 InitModRolesMax 中设置
+
+        // 更好的义警 - 仅在12人及以上对局生成，0.5%概率
+        Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 0); // 默认为0，在 InitModRolesMax 中动态设置
+
+        // 红海军 - 设置为0（不会自然生成，只能通过远征队修饰符获得）
+        Harpymodloader.setRoleMaximum(ModRoles.BETTER_VIGILANTE_ID, 0);
+
+        // 作家 - 默认为0，在 InitModRolesMax 中动态设置（0.5%概率刷新）
+        Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 0);
 
         // 设置角色最大数量
         Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
@@ -31,9 +132,12 @@ public class InitModRolesMax {
 
         // 同时出现
         RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
+        RoleAssignmentManager.addOccupationRole(ModRoles.BAKA, ModRoles.EXAMPLER);
 
         Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
         Harpymodloader.setRoleMaximum(ModRoles.BETTER_VIGILANTE, 0);
+        Harpymodloader.setRoleMaximum(ModRoles.BAKA, 0);
+        Harpymodloader.setRoleMaximum(ModRoles.EXAMPLER, 0);
         Harpymodloader.setRoleMaximum(ModRoles.MANIPULATOR, 0);
         Harpymodloader.setRoleMaximum(ModRoles.EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
         Harpymodloader.setRoleMaximum(ModRoles.VULTURE_ID, NoellesRolesConfig.HANDLER.instance().vultureMax);
@@ -98,13 +202,8 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
             }
-            
-            if (random.nextInt(0, 100) <= 25) {
-                Harpymodloader.setRoleMaximum(ModRoles.EXAMPLER_ID, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.EXAMPLER_ID, 0);
-            }
-            if (random.nextInt(0, 100) <= 25) {
+
+            if (players_count >= 12 && random.nextInt(0, 100) <= 50) {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 0);
@@ -155,8 +254,6 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.CLOCKMAKER_ID, 0);
             }
-
-
 
             // 仇杀客数量 - 仅在12人以上对局出现
             if (players_count >= 12) {

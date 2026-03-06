@@ -325,13 +325,13 @@ public class AbilityHandler {
                         true);
                 return;
             }
-            if (playerShopComponent.balance < 100) {
+            if (playerShopComponent.balance < 50) {
                 player.displayClientMessage(
                         Component.translatable("message.noellesroles.insufficient_funds").withStyle(ChatFormatting.RED),
                         true);
                 return;
             }
-            playerShopComponent.addToBalance(-100);
+            playerShopComponent.addToBalance(-50);
             if (targetPlayer != null && targetPlayer instanceof ServerPlayer sp) {
                 abilityPlayerComponent.setCooldown(20 * 30);
                 ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));
