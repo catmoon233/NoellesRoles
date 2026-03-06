@@ -29,10 +29,14 @@ public class WheelchairItem extends Item {
 
    public InteractionResult useOn(UseOnContext useOnContext) {
       Level level = useOnContext.getLevel();
+      if (useOnContext.getPlayer().getCooldowns().isOnCooldown(ModItems.WHEELCHAIR)) {
+         return InteractionResult.PASS;
+      }
       if (!(level instanceof ServerLevel)) {
          return InteractionResult.SUCCESS;
       } else {
          ItemStack itemStack = useOnContext.getItemInHand();
+
          BlockPos blockPos = useOnContext.getClickedPos();
          Direction direction = useOnContext.getClickedFace();
          BlockState blockState = level.getBlockState(blockPos);
@@ -46,6 +50,7 @@ public class WheelchairItem extends Item {
          var we = ModEntities.WHEELCHAIR.spawn((ServerLevel) level, itemStack, useOnContext.getPlayer(), blockPos2,
                MobSpawnType.SPAWN_EGG, true,
                !Objects.equals(blockPos, blockPos2) && direction == Direction.UP);
+         useOnContext.getPlayer().getCooldowns().addCooldown(ModItems.WHEELCHAIR, 20);
          if (we != null) {
             we.durability = itemStack.getMaxDamage() - itemStack.getDamageValue();
             itemStack.consume(1, useOnContext.getPlayer());
@@ -58,13 +63,18 @@ public class WheelchairItem extends Item {
    }
 
    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+
       ItemStack itemStack = player.getItemInHand(interactionHand);
+      if (player.getCooldowns().isOnCooldown(ModItems.WHEELCHAIR)) {
+         return InteractionResultHolder.pass(itemStack);
+      }
       if (!itemStack.is(ModItems.WHEELCHAIR))
          return InteractionResultHolder.pass(itemStack);
       if (level.isClientSide)
          return InteractionResultHolder.success(itemStack);
       EntityType<WheelchairEntity> entityType = ModEntities.WHEELCHAIR;
       BlockPos bc = player.getOnPos();
+      player.getCooldowns().addCooldown(ModItems.WHEELCHAIR, 20);
       WheelchairEntity entity = entityType.spawn((ServerLevel) level, itemStack, player, bc.above(),
             MobSpawnType.SPAWN_EGG, false, false);
       if (entity == null) {

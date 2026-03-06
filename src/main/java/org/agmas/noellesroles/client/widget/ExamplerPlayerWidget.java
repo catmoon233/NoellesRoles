@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.client.widget;
 
+import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import dev.doctor4t.trainmurdermystery.util.ShopEntry;
@@ -33,7 +34,7 @@ public class ExamplerPlayerWidget extends Button {
     public ExamplerPlayerWidget(LimitedInventoryScreen screen, int x, int y, PlayerInfo target) {
         super(x, y, 16, 16, Component.nullToEmpty(target.getProfile().getName()), (a) -> {
             AbstractClientPlayer player = Minecraft.getInstance().player;
-            if (player != null && (NoellesRolesAbilityPlayerComponent.KEY.get(player)).cooldown <= 0) {
+            if (player != null && (NoellesRolesAbilityPlayerComponent.KEY.get(player)).cooldown <= 0 && (PlayerShopComponent.KEY.get(player)).balance >= 100) {
                 ClientPlayNetworking.send(new AbilityWithTargetC2SPacket(target.getProfile().getId()));
             }
         }, DEFAULT_NARRATION);
@@ -56,8 +57,9 @@ public class ExamplerPlayerWidget extends Button {
             return;
 
         NoellesRolesAbilityPlayerComponent component = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+        PlayerShopComponent shopComponent = PlayerShopComponent.KEY.get(player);
 
-        if (component.cooldown <= 0) {
+        if (component.cooldown <= 0 && shopComponent.balance >= 100) {
             super.renderWidget(context, mouseX, mouseY, delta);
             context.blitSprite(ShopEntry.Type.POISON.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
             PlayerFaceRenderer.draw(context, target.getSkin().texture(), this.getX(), this.getY(), 16);
@@ -81,7 +83,22 @@ public class ExamplerPlayerWidget extends Button {
                         this.getY() - 9);
             }
             context.setColor(1f, 1f, 1f, 1f);
-            context.drawString(Minecraft.getInstance().font, String.valueOf(-component.cooldown / 20),
+            context.drawString(Minecraft.getInstance().font, String.valueOf(component.cooldown / 20),
+                    this.getX(), this.getY(), Color.RED.getRGB(), true);
+        } else if (shopComponent.balance < 100) {
+            super.renderWidget(context, mouseX, mouseY, delta);
+            context.setColor(0.25f, 0.25f, 0.25f, 0.5f);
+            context.blitSprite(ShopEntry.Type.POISON.getTexture(), this.getX() - 7, this.getY() - 7, 30, 30);
+            PlayerFaceRenderer.draw(context, target.getSkin().texture(), this.getX(), this.getY(), 16);
+            if (this.isHovered()) {
+                this.drawShopSlotHighlight(context, this.getX(), this.getY(), 0);
+                context.renderTooltip(Minecraft.getInstance().font,
+                        Component.nullToEmpty(target.getProfile().getName()),
+                        this.getX() - 4 - Minecraft.getInstance().font.width(target.getProfile().getName()) / 2,
+                        this.getY() - 9);
+            }
+            context.setColor(1f, 1f, 1f, 1f);
+            context.drawString(Minecraft.getInstance().font, "X",
                     this.getX(), this.getY(), Color.RED.getRGB(), true);
         }
 

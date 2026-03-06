@@ -241,6 +241,8 @@ public class WheelchairEntity extends Mob {
                 ItemStack wheelchairItem = new ItemStack(ModItems.WHEELCHAIR); // 你需要一个自定义物品
                 var chairDurability = this.durability;
                 wheelchairItem.setDamageValue(wheelchairItem.getMaxDamage() - chairDurability);
+                player.getCooldowns().addCooldown(ModItems.WHEELCHAIR, 20);
+
                 if (!player.getInventory().add(wheelchairItem)) {
                     // 如果背包满了，掉落在地上
                     player.drop(wheelchairItem, false);

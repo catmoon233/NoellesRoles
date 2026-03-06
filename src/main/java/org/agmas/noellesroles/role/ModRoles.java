@@ -181,9 +181,9 @@ public class ModRoles {
     // 中立偏狼：小镇做题家
     public static Role EXAMPLER = TMMRoles.registerRole(
             new NormalRole(EXAMPLER_ID, new Color(213, 95, 214).getRGB(),
-                    false, false, Role.MoodType.FAKE,
+                    false, true, Role.MoodType.FAKE,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), true))
-            .setCanSeeCoin(true).setNeutralForKiller(true).setCanSeeTeammateKiller(true)
+            .setCanSeeCoin(true).setCanSeeTeammateKiller(true)
             .setCanUseInstinct(true);
     // 好人：大妖精baka
     public static Role BAKA = TMMRoles.registerRole(

@@ -169,10 +169,17 @@ public class ClientHudRenderer {
             int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
             int xOffset = screenWidth - 10; // 距离右边缘
             var abpc = NoellesRolesAbilityPlayerComponent.KEY.get(client.player);
+            var psc = PlayerShopComponent.KEY.get(client.player);
             if (abpc.cooldown > 0) {
                 var text = Component
                         .translatable("hud.exampler.cooldown", abpc.cooldown / 20)
                         .withStyle(ChatFormatting.RED);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            } else if (psc.balance < 100) {
+                var text = Component
+                        .translatable("hud.exampler.money")
+                        .withStyle(ChatFormatting.AQUA);
                 guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
                         Color.WHITE.getRGB());
             } else {

@@ -29,9 +29,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.GameType;
 
-
 @Mixin(LimitedInventoryScreen.class)
-public abstract class ExamplerScreenMixin extends LimitedHandledScreen<InventoryMenu> implements PlayerPaginationHelper.ScreenWithChildren {
+public abstract class ExamplerScreenMixin extends LimitedHandledScreen<InventoryMenu>
+        implements PlayerPaginationHelper.ScreenWithChildren {
     @Unique
     private static final PlayerPaginationHelper.PaginationTextProvider TEXT_PROVIDER = new PlayerPaginationHelper.PaginationTextProvider() {
         @Override
@@ -50,7 +50,8 @@ public abstract class ExamplerScreenMixin extends LimitedHandledScreen<Inventory
         }
     };
 
-    @Shadow @Final
+    @Shadow
+    @Final
     public LocalPlayer player;
 
     @Unique
@@ -59,8 +60,6 @@ public abstract class ExamplerScreenMixin extends LimitedHandledScreen<Inventory
     public ExamplerScreenMixin(InventoryMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
-
-
 
     @Unique
     private RoleScreenHelper<PlayerInfo> getRoleScreenHelper() {
@@ -71,8 +70,7 @@ public abstract class ExamplerScreenMixin extends LimitedHandledScreen<Inventory
                     this::createExamplerWidget,
                     TEXT_PROVIDER,
                     this::drawSwapperSelectionHint,
-                    this::getEligiblePlayers
-            );
+                    this::getEligiblePlayers);
         }
         return roleScreenHelper;
     }
@@ -81,8 +79,7 @@ public abstract class ExamplerScreenMixin extends LimitedHandledScreen<Inventory
     private ExamplerPlayerWidget createExamplerWidget(int x, int y, PlayerInfo playerEntity, int index) {
         ExamplerPlayerWidget widget = new ExamplerPlayerWidget(
                 (LimitedInventoryScreen) (Object) this,
-                x, y, playerEntity
-        );
+                x, y, playerEntity);
         addDrawableChild(widget);
         return widget;
     }
@@ -93,13 +90,8 @@ public abstract class ExamplerScreenMixin extends LimitedHandledScreen<Inventory
         Component text;
         int color;
 
-        if (SwapperPlayerWidget.playerChoiceOne == null) {
-            text = Component.translatable("hud.swapper.first_player_selection");
-            color = Color.CYAN.getRGB();
-        } else {
-            text = Component.translatable("hud.swapper.second_player_selection");
-            color = Color.RED.getRGB();
-        }
+        text = Component.translatable("screen.exampler.select_player");
+        color = Color.CYAN.getRGB();
 
         int textWidth = client.font.width(text);
         context.drawString(client.font, text,
@@ -117,6 +109,7 @@ public abstract class ExamplerScreenMixin extends LimitedHandledScreen<Inventory
                 .filter(a -> a.getProfile().getId() != player.getUUID() && a.getGameMode() == GameType.ADVENTURE)
                 .collect(Collectors.toList());
     }
+
     @Unique
     private boolean isPlayerInAdventureMode(AbstractClientPlayer targetPlayer) {
         Minecraft client = Minecraft.getInstance();
