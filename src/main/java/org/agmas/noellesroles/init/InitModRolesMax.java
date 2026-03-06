@@ -18,7 +18,8 @@ import pro.fazeclan.river.stupid_express.constants.SERoles;
 
 public class InitModRolesMax {
     public static int SPLIT_PERSONALITY_CHANCE = 10; // 10 in 100
-    public static int REFUGEE_CHANCE = 50; // 10 in 100
+    public static int REFUGEE_CHANCE = 10; // 10 in 100
+    public static int EGGS_CHANCE = 10;
 
     public static void registerStatics() {
         // ==================== 设置角色数量限制 ====================
@@ -203,7 +204,7 @@ public class InitModRolesMax {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
             }
 
-            if (players_count >= 12 && random.nextInt(0, 100) <= REFUGEE_CHANCE) {
+            if (players_count >= 12 && random.nextInt(0, 100) <= EGGS_CHANCE) {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 0);
@@ -307,7 +308,7 @@ public class InitModRolesMax {
 
             }
             // WRITER (作家) - 0.2%概率生成
-            if (random.nextInt(0, 1000) < 2) {
+            if (random.nextInt(0, 100) <= 2) {
                 Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 0);
@@ -322,6 +323,10 @@ public class InitModRolesMax {
         REFUGEE_CHANCE = NoellesRolesConfig.HANDLER.instance().chanceOfModifierRefugee;
         if (REFUGEE_CHANCE < 0) {
             REFUGEE_CHANCE = 0;
+        }
+        EGGS_CHANCE = NoellesRolesConfig.HANDLER.instance().chanceOfEggRoles;
+        if (EGGS_CHANCE < 0) {
+            EGGS_CHANCE = 0;
         }
         //
         if (players >= 12 && random.nextInt(0, 100) <= 10) {
