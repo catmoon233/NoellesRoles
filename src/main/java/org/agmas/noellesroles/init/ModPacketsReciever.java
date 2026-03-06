@@ -190,7 +190,7 @@ public class ModPacketsReciever {
           player.displayClientMessage(
               Component.translatable("message.baka.problem_set.failed").withStyle(ChatFormatting.YELLOW), true);
           var pmc = PlayerMoodComponent.KEY.get(player);
-          pmc.setMood(pmc.getMood() * 0.5f);
+          pmc.setMood(pmc.getMood() * 0.3f);
           return;
         }
 
