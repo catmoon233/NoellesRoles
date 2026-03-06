@@ -177,8 +177,12 @@ public class RoleShopHandler {
         @Override
         public boolean onBuy(@NotNull Player player) {
           // 启动疯狂模式
-          if (TMMItemUtils.clearItem(player, TMMItems.PSYCHO_MODE, 1) > 0)
-            return PlayerPsychoComponent.KEY.get(player).startPsycho();
+          if (TMMItemUtils.hasItem(player, TMMItems.PSYCHO_MODE) > 0) {
+            if (PlayerPsychoComponent.KEY.get(player).startPsycho()) {
+              TMMItemUtils.clearItem(player, TMMItems.PSYCHO_MODE, 1);
+              return true;
+            }
+          }
           return false;
         }
       });

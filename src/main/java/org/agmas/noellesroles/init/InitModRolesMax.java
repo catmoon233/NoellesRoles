@@ -18,7 +18,7 @@ import pro.fazeclan.river.stupid_express.constants.SERoles;
 
 public class InitModRolesMax {
     public static int SPLIT_PERSONALITY_CHANCE = 10; // 10 in 100
-    public static int REFUGEE_CHANCE = 10; // 10 in 100
+    public static int REFUGEE_CHANCE = 50; // 10 in 100
 
     public static void registerStatics() {
         // ==================== 设置角色数量限制 ====================
@@ -203,7 +203,7 @@ public class InitModRolesMax {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
             }
 
-            if (players_count >= 12 && random.nextInt(0, 100) <= 50) {
+            if (players_count >= 12 && random.nextInt(0, 100) <= REFUGEE_CHANCE) {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 0);
