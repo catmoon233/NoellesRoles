@@ -4,6 +4,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
+import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SkinSplitPersonalityComponent;
 import pro.fazeclan.river.stupid_express.modifier.split_personality.cca.SplitPersonalityComponent;
 
 import org.agmas.harpymodloader.component.WorldModifierComponent;
@@ -35,6 +36,8 @@ public class DecServerJoinPlayer {
             pl.clear();
             modifierComponent.sync();
         }
+        SplitPersonalityComponent.KEY.get(serverPlayer).reset();
+        SkinSplitPersonalityComponent.KEY.get(serverPlayer).clear();
         serverPlayer.getInventory().clearContent();
         RoleUtils.RemoveAllEffects(serverPlayer);
         RoleUtils.RemoveAllPlayerAttributes(serverPlayer);
