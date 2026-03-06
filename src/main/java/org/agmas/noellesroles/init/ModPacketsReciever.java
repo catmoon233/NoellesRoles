@@ -171,24 +171,24 @@ public class ModPacketsReciever {
         var psc = PlayerShopComponent.KEY.get(player);
         if (isForced) {
           player.displayClientMessage(
-              Component.translatable("death_reason.noellesroles.success").withStyle(ChatFormatting.GREEN), false);
+              Component.translatable("death_reason.noellesroles.success").withStyle(ChatFormatting.GREEN), true);
           // 没奖励，太抠门了。
         } else {
           if (gameWorldComponent.isRole(player, ModRoles.BAKA)) {
             player.displayClientMessage(
-                Component.translatable("message.baka.problem_set.success").withStyle(ChatFormatting.GREEN), false);
+                Component.translatable("message.baka.problem_set.success").withStyle(ChatFormatting.GREEN), true);
             psc.addToBalance(200);
           } else {
             player.displayClientMessage(
                 Component.translatable("message.baka.not_baka.problem_set.success").withStyle(ChatFormatting.GREEN),
-                false);
+                true);
             psc.addToBalance(100);
           }
         }
       } else {
         if (gameWorldComponent.isRole(player, ModRoles.BAKA)) {
           player.displayClientMessage(
-              Component.translatable("message.baka.problem_set.failed").withStyle(ChatFormatting.YELLOW), false);
+              Component.translatable("message.baka.problem_set.failed").withStyle(ChatFormatting.YELLOW), true);
           var pmc = PlayerMoodComponent.KEY.get(player);
           pmc.setMood(pmc.getMood() * 0.5f);
           return;
@@ -197,7 +197,7 @@ public class ModPacketsReciever {
         if (isForced) {
           player.displayClientMessage(
               Component.translatable("message.exampler.problem_set.failed").withStyle(ChatFormatting.YELLOW),
-              false);
+              true);
           // 如果是小镇做题家给的则杀死玩家
           var killer = player.level().players().stream().filter((p) -> {
             return gameWorldComponent.isRole(p, ModRoles.EXAMPLER);
@@ -205,12 +205,13 @@ public class ModPacketsReciever {
           if (killer != null) {
             var abpc = NoellesRolesAbilityPlayerComponent.KEY.get(killer);
             abpc.charges++;
+            // Noellesroles.LOGGER.info("Increase 1");
             if (abpc.charges >= 3) {
               if (RoleUtils.insertStackInFreeSlot(player, ModItems.ExamplerPsychoItemStack.copy())) {
                 killer.displayClientMessage(
                     Component.translatable("message.exampler.get_test_psycho").withStyle(ChatFormatting.GOLD),
-                    false);
-                abpc.charges = 0;
+                    true);
+                abpc.charges -= 3;
               }
             }
             abpc.sync();
@@ -221,13 +222,13 @@ public class ModPacketsReciever {
         } else {
           player.displayClientMessage(
               Component.translatable("message.baka.not_baka.problem_set.failed").withStyle(ChatFormatting.YELLOW),
-              false);
+              true);
           // 如果是baka给的则杀死玩家
           if (GameFunctions.isPlayerAliveAndSurvival(player)) {
             GameFunctions.killPlayer(player, true, null, Noellesroles.id("baka"));
           }
         }
-        player.displayClientMessage(Component.literal("Failed"), false);
+        // player.displayClientMessage(Component.literal("Failed"), true);
       }
     });
     ServerPlayNetworking.registerGlobalReceiver(ChefCookC2SPacket.ID, (payload, context) -> {

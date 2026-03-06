@@ -169,6 +169,7 @@ public class AbilityHandler {
                 it.setDamageValue(it.getMaxDamage() - chairDurability);
                 RoleUtils.insertStackInFreeSlot(player, it);
                 player.stopRiding();
+                player.getCooldowns().addCooldown(ModItems.WHEELCHAIR, 20);
                 player.displayClientMessage(
                         Component.translatable("message.oldman.get_back").withStyle(ChatFormatting.GOLD), true);
             }
@@ -288,9 +289,18 @@ public class AbilityHandler {
         var targetPlayer = player.level().getPlayerByUUID(payload.target());
         if (gameWorldComponent.isRole(player, ModRoles.EXAMPLER)) {
             if (abilityPlayerComponent.cooldown > 0) {
-                player.displayClientMessage(Component.translatable("message.noellesroles.ability_cooldown"), true);
+                player.displayClientMessage(
+                        Component.translatable("message.noellesroles.ability_cooldown").withStyle(ChatFormatting.RED),
+                        true);
                 return;
             }
+            if (playerShopComponent.balance < 100) {
+                player.displayClientMessage(
+                        Component.translatable("message.noellesroles.insufficient_funds").withStyle(ChatFormatting.RED),
+                        true);
+                return;
+            }
+            playerShopComponent.addToBalance(-100);
             if (targetPlayer != null && targetPlayer instanceof ServerPlayer sp) {
                 abilityPlayerComponent.setCooldown(20 * 30);
                 ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));

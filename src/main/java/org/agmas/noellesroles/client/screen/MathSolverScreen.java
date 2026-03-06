@@ -92,11 +92,13 @@ public class MathSolverScreen extends Screen {
             this.MathProblems.add(newP);
         }
         this.maxTime = maxT * 20;
-        hasStarted = false;
-        currentIndex = -1;
-        startTime = 0;
-        failed = false;
-        init();
+        this.failed = false;
+        this.startMathSolving();
+    }
+
+    public void solveFailed_and_sendPacket() {
+        maxTrial = 0;
+        ClientPlayNetworking.send(new ProblemSetEventC2SPacket(false, forced));
     }
 
     public void solveFailed() {
@@ -104,13 +106,8 @@ public class MathSolverScreen extends Screen {
             return;
         failed = true;
         this.currentIndex = -2;
-        this.initFinished();
         maxTrial--;
-        if (maxTrial > 0) {
-            // 可以继续
-        } else {
-            ClientPlayNetworking.send(new ProblemSetEventC2SPacket(false, forced));
-        }
+        this.initFailed();
     }
 
     @Override
@@ -138,10 +135,11 @@ public class MathSolverScreen extends Screen {
     @Override
     public void onClose() {
         if (!hasStarted && forced) {
-            solveFailed();
-        }
-        if (hasStarted && this.currentIndex >= 0 && this.currentIndex < this.totalPages) {
-            solveFailed();
+            solveFailed_and_sendPacket();
+        } else if (currentIndex == -2) {
+            solveFailed_and_sendPacket();
+        } else if (hasStarted && this.currentIndex >= 0 && this.currentIndex < this.totalPages) {
+            solveFailed_and_sendPacket();
         }
         super.onClose();
     }
@@ -179,9 +177,9 @@ public class MathSolverScreen extends Screen {
         }
         this.addRenderableWidget(btn2);
 
-        Button btn = Button.builder(Component.translatable("screen.noellesroles.failed_close"), (bbtn) -> {
+        Button btn = Button.builder(Component.translatable("screen.math_solver.failed_close"), (bbtn) -> {
             this.onClose();
-        }).bounds(buttonX, buttonY - 30, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        }).bounds(buttonX, buttonY - 10, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(btn);
     }
 
@@ -220,9 +218,6 @@ public class MathSolverScreen extends Screen {
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
         int buttonY = maxHeight / 2;
-        if (this.maxTrial > 0) {
-
-        }
 
         Button btn = Button.builder(Component.translatable("screen.math_solver.close"), (bbtn) -> {
             this.onClose();

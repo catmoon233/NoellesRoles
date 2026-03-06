@@ -826,6 +826,7 @@ public class ModEventsRegister {
                 tpc.reset();
                 tpc.charges = 0;
                 tpc.sync();
+                return;
             }
             if (role.identifier().equals(ModRoles.THIEF.identifier())) {
                 int totalPlayers = player.level().players().size();
