@@ -179,7 +179,7 @@ public class ClientHudRenderer {
             } else if (psc.balance < 100) {
                 var text = Component
                         .translatable("hud.exampler.money")
-                        .withStyle(ChatFormatting.AQUA);
+                        .withStyle(ChatFormatting.YELLOW);
                 guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
                         Color.WHITE.getRGB());
             } else {
@@ -191,7 +191,7 @@ public class ClientHudRenderer {
             }
             var chargeText = Component
                     .translatable("hud.exampler.charges", abpc.charges)
-                    .withStyle(ChatFormatting.AQUA);
+                    .withStyle(ChatFormatting.GOLD);
             guiGraphics.drawString(font, chargeText, xOffset - font.width(chargeText),
                     yOffset - font.lineHeight * 2 - 8,
                     Color.WHITE.getRGB());
