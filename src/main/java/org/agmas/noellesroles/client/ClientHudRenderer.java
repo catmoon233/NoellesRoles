@@ -506,7 +506,7 @@ public class ClientHudRenderer {
             guiGraphics.drawString(font, toggleText, xOffset - font.width(toggleText), dy, Color.WHITE.getRGB());
         });
 
-        // 炼金师HUD
+        // 药剂师HUD
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             var client = Minecraft.getInstance();
             if (client == null)

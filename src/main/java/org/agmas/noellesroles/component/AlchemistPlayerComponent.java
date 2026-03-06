@@ -21,11 +21,11 @@ import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
- * 炼金师玩家组件
+ * 药剂师玩家组件
  *
  * 平民阵营，真实心情，默认冲刺时间
  *
- * 被动：持续蹲下每30秒获取一次炼金素材
+ * 被动：持续蹲下每30秒获取一次药剂素材
  *
  * 技能：
  * - 蹲下按技能键：切换当前调制的药剂（肾上腺素/抗生素/鹤顶红/狗皮膏药）
@@ -131,7 +131,7 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     public void serverTick() {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
         
-        // 检查游戏是否开始、玩家是否是炼金师角色
+        // 检查游戏是否开始、玩家是否是药剂师角色
         if (gameWorldComponent != null && gameWorldComponent.isRunning() &&
             gameWorldComponent.isRole(player, ModRoles.ALCHEMIST)) {
             // 检查玩家是否蹲下
@@ -155,13 +155,13 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     /**
-     * 获取炼金素材
+     * 获取药剂素材
      */
     private void gatherMaterials() {
         if (!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        // 给予玩家炼金素材
+        // 给予玩家药剂素材
         ItemStack materials = new ItemStack(ModItems.ALCHEMY_MATERIAL, MATERIALS_PER_GATHER);
         if (!player.getInventory().add(materials)) {
             // 背包满了，丢弃在地上
@@ -295,7 +295,7 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     /**
-     * 计算玩家背包中的炼金素材数量
+     * 计算玩家背包中的药剂素材数量
      */
     private int countMaterials() {
         int count = 0;
@@ -308,7 +308,7 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     /**
-     * 从玩家背包中移除指定数量的炼金素材
+     * 从玩家背包中移除指定数量的药剂素材
      */
     private void removeMaterials(int amount) {
         int remaining = amount;

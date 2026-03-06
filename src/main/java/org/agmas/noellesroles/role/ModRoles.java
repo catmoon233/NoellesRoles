@@ -372,21 +372,21 @@ public class ModRoles {
     )).setCanSeeCoin(true).setComponentKey(org.agmas.noellesroles.component.AccountantPlayerComponent.KEY);
 
     /**
-     * 炼金师角色
+     * 药剂师角色
      * - 属于乘客阵营 (isInnocent = true)
      * - 不能使用杀手能力 (canUseKiller = false)
      * - 真实心情系统
      * - 标准冲刺时间
      * - 在计分板上显示
-     * - 被动：持续蹲下每30秒获取一次炼金素材
+     * - 被动：持续蹲下每30秒获取一次药剂素材
      * - 技能：蹲下按技能键切换药剂，直接按技能键调制药剂
      * - 药剂：肾上腺素(100金币)、抗生素(100金币)、鹤顶红(200金币)、狗皮膏药(150金币)
      * - 限制：每种药剂只能调两次
      */
-    // 炼金师角色 - 乘客阵营
+    // 药剂师角色 - 乘客阵营
     public static Role ALCHEMIST = TMMRoles.registerRole(new NoramlRole(
             ALCHEMIST_ID, // 角色 ID
-            new Color(128, 0, 128).getRGB(), // 紫色 - 代表炼金
+            new Color(128, 0, 128).getRGB(), // 紫色 - 代表药剂
             true, // isInnocent = 乘客阵营
             false, // canUseKiller = 无杀手能力
             Role.MoodType.REAL, // 真实心情

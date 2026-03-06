@@ -429,7 +429,7 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(AccountantPlayerComponent::new);
 
-        // 注册炼金师组件 - 存蹲下素材获取、药剂选择、调制次数
+        // 注册药剂师组件 - 存蹲下素材获取、药剂选择、调制次数
         registry.beginRegistration(Player.class, ALCHEMIST)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(AlchemistPlayerComponent::new);
