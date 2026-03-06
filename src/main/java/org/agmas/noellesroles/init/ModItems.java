@@ -370,7 +370,7 @@ public class ModItems {
      * 灭火器
      * - 5点耐久
      * - 右键对人喷射：每使用一次消耗1点耐久
-     * - 长按右键持续喷射：最多持续5秒，持续消耗耐久
+     * 长按右键持续喷射：最多持续5秒，持续消耗耐久
      * - 对人喷射效果：缓慢 + 失明（持续1.5秒）
      * - 持续喷射同一人会刷新效果时间
      * - 如果被喷射的人被纵火犯浇湿，则清除浇湿状态
@@ -378,6 +378,15 @@ public class ModItems {
     public static final Item EXTINGUISHER = register(
             new ExtinguisherItem(new Item.Properties().stacksTo(1).durability(5)),
             "extinguisher");
+
+    /**
+     * 存折
+     * - 用于查看和记录金币数量
+     * - 右键使用显示当前金币
+     */
+    public static final Item PASSBOOK = register(
+            new PassbookItem(new Item.Properties().stacksTo(1)),
+            "passbook");
 
     static {
         ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
