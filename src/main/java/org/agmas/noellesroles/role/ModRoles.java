@@ -134,6 +134,8 @@ public class ModRoles {
     public static ResourceLocation MAGICIAN_ID = Noellesroles.id("magician");
     public static ResourceLocation CLOCKMAKER_ID = Noellesroles.id("clockmaker");
     public static final ResourceLocation WRITER_ID = Noellesroles.id("writer");
+    public static final ResourceLocation RESCUER_ID = Noellesroles.id("rescuer");
+    public static final ResourceLocation FIREFIGHTER_ID = Noellesroles.id("firefighter");
 
     // 杀手阵营角色 ID
     public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
@@ -294,6 +296,48 @@ public class ModRoles {
     public static Role WRITER = TMMRoles.registerRole(new NoramlRole(
             WRITER_ID, // 角色 ID
             new Color(254, 254, 254).getRGB(), // 白色 - 代表书与笔
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不隐藏计分板
+    )).setCanSeeCoin(true);
+
+    /**
+     * 搜救员角色
+     * - 属于乘客阵营 (isInnocent = true)
+     * - 不能使用杀手能力 (canUseKiller = false)
+     * - 真实心情系统
+     * - 标准冲刺时间
+     * - 在计分板上显示
+     * - 专属商店：绳索(150金币)、裹尸袋(150金币)
+     * - 只在中级及高级场中出现
+     */
+    // 搜救员角色 - 乘客阵营
+    public static Role RESCUER = TMMRoles.registerRole(new NoramlRole(
+            RESCUER_ID, // 角色 ID
+            new Color(255, 140, 0).getRGB(), // 橙色 - 代表救援
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不隐藏计分板
+    )).setCanSeeCoin(true);
+
+    /**
+     * 消防员角色
+     * - 属于乘客阵营 (isInnocent = true)
+     * - 不能使用杀手能力 (canUseKiller = false)
+     * - 真实心情系统
+     * - 标准冲刺时间
+     * - 在计分板上显示
+     * - 专属商店：消防斧(150金币)、灭火器(150金币)
+     * - 只在中级及高级场中出现
+     */
+    // 消防员角色 - 乘客阵营
+    public static Role FIREFIGHTER = TMMRoles.registerRole(new NoramlRole(
+            FIREFIGHTER_ID, // 角色 ID
+            new Color(255, 69, 0).getRGB(), // 红橙色 - 代表消防
             true, // isInnocent = 乘客阵营
             false, // canUseKiller = 无杀手能力
             Role.MoodType.REAL, // 真实心情

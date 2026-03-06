@@ -82,6 +82,10 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> CLOCKMAKER_SHOP = new ArrayList<>();
     // ==================== 作家商店 ====================
     public static ArrayList<ShopEntry> WRITER_SHOP = new ArrayList<>();
+    // ==================== 搜救员商店 ====================
+    public static ArrayList<ShopEntry> RESCUER_SHOP = new ArrayList<>();
+    // ==================== 消防员商店 ====================
+    public static ArrayList<ShopEntry> FIREFIGHTER_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -470,6 +474,16 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.WRITER_ID, WRITER_SHOP);
+        }
+        // 搜救员商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.RESCUER_ID, RESCUER_SHOP);
+        }
+        // 消防员商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.FIREFIGHTER_ID, FIREFIGHTER_SHOP);
         }
         // 风精灵
         {
@@ -862,6 +876,33 @@ public class RoleShopHandler {
         WRITER_SHOP.add(new ShopEntry(
                 Items.WRITABLE_BOOK.getDefaultInstance(),
                 100,
+                ShopEntry.Type.TOOL));
+
+        // 搜救员商店
+        // 绳索 - 150金币
+        RESCUER_SHOP.add(new ShopEntry(
+                ModItems.ROPE.getDefaultInstance(),
+                150,
+                ShopEntry.Type.TOOL));
+
+        // 裹尸袋 - 150金币
+        RESCUER_SHOP.add(new ShopEntry(
+                TMMItems.BODY_BAG.getDefaultInstance(),
+                150,
+                ShopEntry.Type.TOOL));
+
+        // 消防员商店
+        // TODO:消防斧和灭火器只能购买一次
+        // 消防斧 - 150金币
+        FIREFIGHTER_SHOP.add(new ShopEntry(
+                ModItems.FIRE_AXE.getDefaultInstance(),
+                150,
+                ShopEntry.Type.TOOL));
+
+        // 灭火器 - 150金币
+        FIREFIGHTER_SHOP.add(new ShopEntry(
+                ModItems.EXTINGUISHER.getDefaultInstance(),
+                150,
                 ShopEntry.Type.TOOL));
     }
 }
