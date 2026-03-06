@@ -191,6 +191,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "best_vigilante"),
             BestVigilantePlayerComponent.class);
 
+    public static final ComponentKey<AccountantPlayerComponent> ACCOUNTANT = AccountantPlayerComponent.KEY;
+
+    public static final ComponentKey<AlchemistPlayerComponent> ALCHEMIST = AlchemistPlayerComponent.KEY;
+
     public static final ComponentKey<org.agmas.noellesroles.modifier.expedition.ExpeditionComponent> EXPEDITION =
             org.agmas.noellesroles.modifier.expedition.ExpeditionComponent.KEY;
 
@@ -419,6 +423,16 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, TEMPORARY_EFFECT)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(TemporaryEffectPlayerComponent::new);
+
+        // 注册会计组件 - 存储模式、被动收入计时器
+        registry.beginRegistration(Player.class, ACCOUNTANT)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(AccountantPlayerComponent::new);
+
+        // 注册炼金师组件 - 存蹲下素材获取、药剂选择、调制次数
+        registry.beginRegistration(Player.class, ALCHEMIST)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(AlchemistPlayerComponent::new);
 
         // ==================== 示例：注册更多组件 ====================
         //

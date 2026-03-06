@@ -111,6 +111,8 @@ public class ModRoles {
     public static final ResourceLocation WRITER_ID = Noellesroles.id("writer");
     public static final ResourceLocation RESCUER_ID = Noellesroles.id("rescuer");
     public static final ResourceLocation FIREFIGHTER_ID = Noellesroles.id("firefighter");
+    public static final ResourceLocation ACCOUNTANT_ID = Noellesroles.id("accountant");
+    public static final ResourceLocation ALCHEMIST_ID = Noellesroles.id("alchemist");
 
     // 杀手阵营角色 ID
     public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
@@ -300,6 +302,53 @@ public class ModRoles {
             TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
             false // 不隐藏计分板
     )).setCanSeeCoin(true);
+
+    /**
+     * 会计角色
+     * - 属于乘客阵营 (isInnocent = true)
+     * - 不能使用杀手能力 (canUseKiller = false)
+     * - 真实心情系统
+     * - 标准冲刺时间
+     * - 在计分板上显示
+     * - 被动：每60秒获得25金币
+     * - 技能：蹲下按技能键切换收入/支出模式，直接按技能键花费175金币发动技能
+     * - 收入模式：查看目标玩家金币量是否超过300
+     * - 支出模式：查看半径4格内玩家30秒内总支出金币数量的大致范围
+     * - 专属商店：存折(100金币)
+     */
+    // 会计角色 - 乘客阵营
+    public static Role ACCOUNTANT = TMMRoles.registerRole(new NoramlRole(
+            ACCOUNTANT_ID, // 角色 ID
+            new Color(0, 128, 128).getRGB(), // 青色 - 代表会计
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不隐藏计分板
+    )).setCanSeeCoin(true).setComponentKey(org.agmas.noellesroles.component.AccountantPlayerComponent.KEY);
+
+    /**
+     * 炼金师角色
+     * - 属于乘客阵营 (isInnocent = true)
+     * - 不能使用杀手能力 (canUseKiller = false)
+     * - 真实心情系统
+     * - 标准冲刺时间
+     * - 在计分板上显示
+     * - 被动：持续蹲下每30秒获取一次炼金素材
+     * - 技能：蹲下按技能键切换药剂，直接按技能键调制药剂
+     * - 药剂：肾上腺素(100金币)、抗生素(100金币)、鹤顶红(200金币)、狗皮膏药(150金币)
+     * - 限制：每种药剂只能调两次
+     */
+    // 炼金师角色 - 乘客阵营
+    public static Role ALCHEMIST = TMMRoles.registerRole(new NoramlRole(
+            ALCHEMIST_ID, // 角色 ID
+            new Color(128, 0, 128).getRGB(), // 紫色 - 代表炼金
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不隐藏计分板
+    )).setCanSeeCoin(true).setComponentKey(org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY);
 
     // 杀手阵营角色
     public static Role CLEANER = TMMRoles

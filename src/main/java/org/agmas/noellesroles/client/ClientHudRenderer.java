@@ -400,6 +400,159 @@ public class ClientHudRenderer {
                     .withStyle(ChatFormatting.YELLOW);
             guiGraphics.drawString(font, readyText, xOffset - font.width(readyText), dy, Color.WHITE.getRGB());
         });
+
+        // 会计HUD
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            var client = Minecraft.getInstance();
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null
+                    || !TMMClient.gameComponent.isRole(client.player, ModRoles.ACCOUNTANT)) {
+                return;
+            }
+
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+
+            var accountantComponent = org.agmas.noellesroles.component.AccountantPlayerComponent.KEY.maybeGet(client.player).orElse(null);
+            if (accountantComponent == null)
+                return;
+
+            var shopC = PlayerShopComponent.KEY.get(client.player);
+            int dy = yOffset;
+
+            // 显示当前模式
+            Component modeText;
+            if (accountantComponent.getCurrentMode() == org.agmas.noellesroles.component.AccountantPlayerComponent.MODE_INCOME) {
+                modeText = Component.translatable("hud.accountant.mode.income").withStyle(ChatFormatting.GOLD);
+            } else {
+                modeText = Component.translatable("hud.accountant.mode.expense").withStyle(ChatFormatting.AQUA);
+            }
+
+            var modeInfo = Component.translatable("hud.accountant.current_mode").withStyle(ChatFormatting.WHITE);
+            guiGraphics.drawString(font, modeInfo, xOffset - font.width(modeInfo) - font.width(modeText), dy,
+                    Color.WHITE.getRGB());
+            guiGraphics.drawString(font, modeText, xOffset - font.width(modeText), dy, Color.WHITE.getRGB());
+            dy -= font.lineHeight + 4;
+
+            // 显示技能提示
+            Component skillText = Component.translatable("hud.accountant.skill_cost", 175)
+                    .withStyle(ChatFormatting.GOLD);
+            guiGraphics.drawString(font, skillText, xOffset - font.width(skillText), dy, Color.WHITE.getRGB());
+            dy -= font.lineHeight + 4;
+
+            // 显示被动收入倒计时
+            int remainingSeconds = accountantComponent.getPassiveIncomeRemainingSeconds();
+            Component incomeText = Component.translatable("hud.accountant.passive_income", remainingSeconds)
+                    .withStyle(ChatFormatting.YELLOW);
+            guiGraphics.drawString(font, incomeText, xOffset - font.width(incomeText), dy, Color.WHITE.getRGB());
+            dy -= font.lineHeight + 4;
+
+            // 显示切换模式提示
+            var toggleText = Component
+                    .translatable("hud.accountant.toggle_mode",
+                            NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                    .withStyle(ChatFormatting.GRAY);
+            guiGraphics.drawString(font, toggleText, xOffset - font.width(toggleText), dy, Color.WHITE.getRGB());
+        });
+
+        // 炼金师HUD
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            var client = Minecraft.getInstance();
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null
+                    || !TMMClient.gameComponent.isRole(client.player, ModRoles.ALCHEMIST)) {
+                return;
+            }
+
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+
+            var alchemistComponent = org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY.maybeGet(client.player).orElse(null);
+            if (alchemistComponent == null)
+                return;
+
+            var shopC = PlayerShopComponent.KEY.get(client.player);
+            int dy = yOffset;
+
+            // 显示当前选择的药剂
+            int currentPotionIndex = alchemistComponent.getCurrentPotionIndex();
+            Component potionName = Component.translatable("potion.noellesroles." + getPotionKey(currentPotionIndex));
+            Component potionLabel = Component.translatable("hud.alchemist.current_potion").withStyle(ChatFormatting.WHITE);
+            guiGraphics.drawString(font, potionLabel, xOffset - font.width(potionLabel) - font.width(potionName), dy,
+                    Color.WHITE.getRGB());
+            guiGraphics.drawString(font, potionName, xOffset - font.width(potionName), dy, Color.WHITE.getRGB());
+            dy -= font.lineHeight + 4;
+
+            // 显示调制花费
+            int goldCost = getPotionCost(currentPotionIndex);
+            Component costText = Component.translatable("hud.alchemist.craft_cost", goldCost,
+                    org.agmas.noellesroles.component.AlchemistPlayerComponent.MATERIALS_TO_CRAFT)
+                    .withStyle(ChatFormatting.GOLD);
+            guiGraphics.drawString(font, costText, xOffset - font.width(costText), dy, Color.WHITE.getRGB());
+            dy -= font.lineHeight + 4;
+
+            // 显示当前药剂的调制次数
+            int craftCount = alchemistComponent.getCurrentPotionCraftCount();
+            int maxCraftCount = org.agmas.noellesroles.component.AlchemistPlayerComponent.MAX_CRAFT_COUNT;
+            Component countText = Component.translatable("hud.alchemist.craft_count", craftCount, maxCraftCount)
+                    .withStyle(ChatFormatting.LIGHT_PURPLE);
+            guiGraphics.drawString(font, countText, xOffset - font.width(countText), dy, Color.WHITE.getRGB());
+            dy -= font.lineHeight + 4;
+
+            // 显示蹲下获取素材倒计时
+            if (client.player.isShiftKeyDown()) {
+                int remainingSeconds = alchemistComponent.getMaterialGatherRemainingSeconds();
+                Component gatherText = Component.translatable("hud.alchemist.gather_countdown", remainingSeconds)
+                        .withStyle(ChatFormatting.YELLOW);
+                guiGraphics.drawString(font, gatherText, xOffset - font.width(gatherText), dy, Color.WHITE.getRGB());
+                dy -= font.lineHeight + 4;
+            }
+
+            // 显示切换药剂提示
+            var toggleText = Component
+                    .translatable("hud.alchemist.switch_potion",
+                            NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                    .withStyle(ChatFormatting.GRAY);
+            guiGraphics.drawString(font, toggleText, xOffset - font.width(toggleText), dy, Color.WHITE.getRGB());
+        });
+    }
+
+    /**
+     * 获取药剂的key（用于翻译）
+     */
+    private static String getPotionKey(int potionIndex) {
+        return switch (potionIndex) {
+            case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_ADRENALINE -> "adrenaline";
+            case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_ANTIBIOTIC -> "antibiotic";
+            case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_HEDINGHONG -> "hedinghong";
+            case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_DOGSKIN_PLASTER -> "dogskin_plaster";
+            default -> "unknown";
+        };
+    }
+
+    /**
+     * 获取药剂的调制金币花费
+     */
+    private static int getPotionCost(int potionIndex) {
+        return switch (potionIndex) {
+            case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_ADRENALINE,
+                 org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_ANTIBIOTIC -> 100;
+            case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_HEDINGHONG -> 175;
+            case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_DOGSKIN_PLASTER -> 150;
+            default -> 0;
+        };
     }
 
 }

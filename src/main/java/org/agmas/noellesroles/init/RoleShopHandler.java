@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.agmas.noellesroles.component.SingerPlayerComponent;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.repack.HSRConstants;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.role.ModRoles;
@@ -86,6 +87,8 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> RESCUER_SHOP = new ArrayList<>();
     // ==================== 消防员商店 ====================
     public static ArrayList<ShopEntry> FIREFIGHTER_SHOP = new ArrayList<>();
+    // ==================== 会计商店 ====================
+    public static ArrayList<ShopEntry> ACCOUNTANT_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -459,6 +462,11 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.FIREFIGHTER_ID, FIREFIGHTER_SHOP);
+        }
+        // 会计商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.ACCOUNTANT_ID, ACCOUNTANT_SHOP);
         }
         // 风精灵
         {
@@ -878,6 +886,14 @@ public class RoleShopHandler {
         FIREFIGHTER_SHOP.add(new ShopEntry(
                 ModItems.EXTINGUISHER.getDefaultInstance(),
                 150,
+                ShopEntry.Type.TOOL));
+
+        // 会计商店
+        // TODO:存折只能购买一次
+        // 存折 - 100金币
+        ACCOUNTANT_SHOP.add(new ShopEntry(
+                ModItems.PASSBOOK.getDefaultInstance(),
+                100,
                 ShopEntry.Type.TOOL));
     }
 }

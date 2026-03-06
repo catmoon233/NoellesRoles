@@ -831,6 +831,18 @@ public class ModEventsRegister {
                 // 现在在NoellesRolesAbilityPlayerComponent serverTick中处理。
                 return;
             }
+            if (role.identifier().equals(ModRoles.ACCOUNTANT.identifier())) {
+                // 会计角色初始化
+                var accountantComponent = org.agmas.noellesroles.component.AccountantPlayerComponent.KEY.get(player);
+                accountantComponent.reset();
+                return;
+            }
+            if (role.identifier().equals(ModRoles.ALCHEMIST.identifier())) {
+                // 炼金师角色初始化
+                var alchemistComponent = org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY.get(player);
+                alchemistComponent.reset();
+                return;
+            }
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {
                 player.addItem(TMMItems.KNIFE.getDefaultInstance().copy());
                 return;
