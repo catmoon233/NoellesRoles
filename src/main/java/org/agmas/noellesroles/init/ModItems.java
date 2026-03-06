@@ -388,6 +388,14 @@ public class ModItems {
             new PassbookItem(new Item.Properties().stacksTo(1)),
             "passbook");
 
+    /**
+     * 炼金素材
+     * - 用于炼金相关合成
+     */
+    public static final Item ALCHEMY_MATERIAL = register(
+            new AlchemyMaterialItem(new Item.Properties().stacksTo(64)),
+            "alchemy_material");
+
     static {
         ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
         ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());
