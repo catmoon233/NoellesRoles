@@ -1328,7 +1328,8 @@ public class ModEventsRegister {
                 "exposure:photograph",
                 "noellesroles:mint_candies",
                 "noellesroles:pocket_watch",
-                "minecraft:clock"));
+                "minecraft:clock",
+                "minecraft:written_book"));
 
     }
 

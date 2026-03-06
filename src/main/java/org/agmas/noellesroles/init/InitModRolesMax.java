@@ -193,6 +193,12 @@ public class InitModRolesMax {
                 }
 
             }
+            // WRITER (作家) - 0.2%概率生成
+            if (random.nextInt(0, 1000) < 2) {
+                Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 0);
+            }
             initModifiersCount(players_count);
         });
     }

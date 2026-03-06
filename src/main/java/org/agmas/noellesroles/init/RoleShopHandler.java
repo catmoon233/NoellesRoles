@@ -80,6 +80,8 @@ public class RoleShopHandler {
     public static ArrayList<ShopEntry> THIEF_SHOP = new ArrayList<>();
     // ==================== 钟表匠商店 ====================
     public static ArrayList<ShopEntry> CLOCKMAKER_SHOP = new ArrayList<>();
+    // ==================== 作家商店 ====================
+    public static ArrayList<ShopEntry> WRITER_SHOP = new ArrayList<>();
 
     /**
      * 初始化框架角色商店
@@ -438,6 +440,11 @@ public class RoleShopHandler {
         {
             ShopContent.customEntries.put(
                     ModRoles.CLOCKMAKER_ID, CLOCKMAKER_SHOP);
+        }
+        // 作家商店
+        {
+            ShopContent.customEntries.put(
+                    ModRoles.WRITER_ID, WRITER_SHOP);
         }
         // 风精灵
         {
@@ -822,6 +829,13 @@ public class RoleShopHandler {
         // 怀表 - 100金币
         CLOCKMAKER_SHOP.add(new ShopEntry(
                 ModItems.POCKET_WATCH.getDefaultInstance(),
+                100,
+                ShopEntry.Type.TOOL));
+
+        // 作家商店
+        // 书与笔（原版） - 100金币
+        WRITER_SHOP.add(new ShopEntry(
+                Items.WRITABLE_BOOK.getDefaultInstance(),
                 100,
                 ShopEntry.Type.TOOL));
     }

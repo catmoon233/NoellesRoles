@@ -108,6 +108,7 @@ public class ModRoles {
   public static ResourceLocation CHEF_ID = Noellesroles.id("chef");
   public static ResourceLocation MAGICIAN_ID = Noellesroles.id("magician");
   public static ResourceLocation CLOCKMAKER_ID = Noellesroles.id("clockmaker");
+  public static final ResourceLocation WRITER_ID = Noellesroles.id("writer");
 
   // 杀手阵营角色 ID
   public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
@@ -234,6 +235,18 @@ public class ModRoles {
    * - 技能：开局自带一颗手榴弹
    */
   public static Role BEST_VIGILANTE;
+
+  /**
+   * 作家角色
+   * - 属于乘客阵营 (isInnocent = true)
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 在计分板上显示
+   * - 专属商店：书与笔(100金币)
+   * - 0.5%概率刷新
+   */
+  public static Role WRITER;
 
   // 杀手阵营角色
   public static Role CLEANER = TMMRoles
@@ -966,6 +979,17 @@ public class ModRoles {
         false // 显示计分板
     )).setVigilanteTeam(true).setCanPickUpRevolver(true).setComponentKey(ModComponents.BEST_VIGILANTE);
 
+    // 作家角色 - 乘客阵营
+    WRITER = TMMRoles.registerRole(new NoramlRole(
+        WRITER_ID, // 角色 ID
+        new Color(139, 69, 19).getRGB(), // 棕色 - 代表书与笔
+        true, // isInnocent = 乘客阵营
+        false, // canUseKiller = 无杀手能力
+        Role.MoodType.REAL, // 真实心情
+        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+        false // 不隐藏计分板
+    )).setCanSeeCoin(true);
+
     // ==================== 设置角色数量限制 ====================
     // 某些角色可能需要限制每局游戏中的数量
     // 复仇者每局只能有 1 个
@@ -1064,6 +1088,9 @@ public class ModRoles {
 
     // 红海军 - 设置为0（不会自然生成，只能通过远征队修饰符获得）
     Harpymodloader.setRoleMaximum(BETTER_VIGILANTE_ID, 0);
+
+    // 作家 - 默认为0，在 InitModRolesMax 中动态设置（0.5%概率刷新）
+    Harpymodloader.setRoleMaximum(WRITER_ID, 0);
 
     PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
     PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
