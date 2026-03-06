@@ -140,6 +140,17 @@ public class RoleInitialItems {
         banditItems.add(() -> org.agmas.noellesroles.repack.HSRItems.BANDIT_REVOLVER.getDefaultInstance());
         banditItems.add(() -> TMMItems.CROWBAR.getDefaultInstance());
         INITIAL_ITEMS_MAP.put(ModRoles.BANDIT, banditItems);
+
+        // 特警初始物品
+        List<Supplier<ItemStack>> swastItems = new ArrayList<>();
+        swastItems.add(() -> TMMItems.SNIPER_RIFLE.getDefaultInstance());
+        swastItems.add(() -> TMMItems.MAGNUM_BULLET.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.SWAST, swastItems);
+
+        // 武术教官初始物品
+        List<Supplier<ItemStack>> martialArtsInstructorItems = new ArrayList<>();
+        martialArtsInstructorItems.add(() -> TMMItems.NUNCHUCK.getDefaultInstance());
+        INITIAL_ITEMS_MAP.put(ModRoles.MARTIAL_ARTS_INSTRUCTOR, martialArtsInstructorItems);
     }
 
 }

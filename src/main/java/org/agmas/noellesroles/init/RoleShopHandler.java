@@ -88,6 +88,10 @@ public class RoleShopHandler {
   public static ArrayList<ShopEntry> FIREFIGHTER_SHOP = new ArrayList<>();
   // ==================== 会计商店 ====================
   public static ArrayList<ShopEntry> ACCOUNTANT_SHOP = new ArrayList<>();
+  // ==================== 特警商店 ====================
+  public static ArrayList<ShopEntry> SWAST_SHOP = new ArrayList<>();
+  // ==================== 武术教官商店 ====================
+  public static ArrayList<ShopEntry> MARTIAL_ARTS_INSTRUCTOR_SHOP = new ArrayList<>();
 
   /**
    * 初始化框架角色商店
@@ -541,6 +545,16 @@ public class RoleShopHandler {
     {
       ShopContent.customEntries.put(
           ModRoles.PATROLLER_ID, PATROLLER_SHOP);
+    }
+    // 特警商店
+    {
+      ShopContent.customEntries.put(
+          ModRoles.SWAST_ID, SWAST_SHOP);
+    }
+    // 武术教官商店
+    {
+      ShopContent.customEntries.put(
+          ModRoles.MARTIAL_ARTS_INSTRUCTOR_ID, MARTIAL_ARTS_INSTRUCTOR_SHOP);
     }
 
     // 故障机器人商店
@@ -997,5 +1011,24 @@ public class RoleShopHandler {
         return false;
       }
     });
+
+    // 特警商店
+    // 马格南子弹 - 150金币
+    SWAST_SHOP.add(new ShopEntry(
+        TMMItems.MAGNUM_BULLET.getDefaultInstance(),
+        150,
+        ShopEntry.Type.WEAPON));
+
+    // 瞄准镜 - 100金币
+    SWAST_SHOP.add(new ShopEntry(
+        TMMItems.SCOPE.getDefaultInstance(),
+        100,
+        ShopEntry.Type.WEAPON));
+
+    // 铁门钥匙 - 75金币
+    SWAST_SHOP.add(new ShopEntry(
+        TMMItems.IRON_DOOR_KEY.getDefaultInstance(),
+        75,
+        ShopEntry.Type.TOOL));
   }
 }

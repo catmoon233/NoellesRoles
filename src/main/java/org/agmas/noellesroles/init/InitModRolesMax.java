@@ -102,6 +102,12 @@ public class InitModRolesMax {
         // 巡警
         Harpymodloader.setRoleMaximum(ModRoles.PATROLLER_ID, 1);
 
+        // 特警（默认为0，在动态设置中根据地图判断）
+        Harpymodloader.setRoleMaximum(ModRoles.SWAST_ID, 0);
+
+        // 武术教官（默认为0，在动态设置中根据警卫数量判断）
+        Harpymodloader.setRoleMaximum(ModRoles.MARTIAL_ARTS_INSTRUCTOR_ID, 0);
+
         // 魔术师
         Harpymodloader.setRoleMaximum(ModRoles.MAGICIAN_ID, 1);
 
@@ -262,50 +268,140 @@ public class InitModRolesMax {
                 Harpymodloader.setRoleMaximum(ModRoles.BLOOD_FEUDIST_ID, 0);
             }
 
-            // 特殊警卫数量
-            {
-                int allSpecialPoliceCount = 0;
+                // 特殊警卫数量
+                {
+                    int allSpecialPoliceCount = 0;
 
-                if (players_count >= 48) {
-                    allSpecialPoliceCount = 4;
-                } else if (players_count >= 32) {
-                    allSpecialPoliceCount = 3;
-                } else if (players_count >= 18) {
-                    allSpecialPoliceCount = 2;
-                } else if (players_count >= 12) {
-                    allSpecialPoliceCount = 1;
-                } else {
-                    allSpecialPoliceCount = 0;
-                }
-                if (allSpecialPoliceCount > 0) {
-                    int PATROLLER_COUNT = 1;
-                    if (allSpecialPoliceCount >= 2)
-                        PATROLLER_COUNT = random.nextInt(1, allSpecialPoliceCount + 1);
-                    else if (allSpecialPoliceCount >= 1) {
+                    if (players_count >= 30) {
+                        allSpecialPoliceCount = 4;
+                    } else if (players_count >= 24) {
+                        allSpecialPoliceCount = 3;
+                    } else if (players_count >= 18) {
+                        allSpecialPoliceCount = 2;
+                    } else if (players_count >= 12) {
+                        allSpecialPoliceCount = 1;
+                    } else {
+                        allSpecialPoliceCount = 0;
+                    }
+
+                    // 基础角色：巡警、武术教官、游侠各有概率生成
+                    int PATROLLER_COUNT = 0;
+                    int MARTIAL_ARTS_INSTRUCTOR_COUNT = 0;
+                    int ELF_COUNT = 0;
+
+                    // 巡警：80%概率生成，其中20%概率生成两个
+                    if (random.nextInt(0, 100) < 80) {
                         PATROLLER_COUNT = 1;
+                        if (random.nextInt(0, 100) < 20) {
+                            PATROLLER_COUNT = 2;
+                        }
                     }
-                    if (PATROLLER_COUNT > allSpecialPoliceCount) {
-                        PATROLLER_COUNT = allSpecialPoliceCount;
+
+                    // 武术教官：60%概率生成
+                    if (random.nextInt(0, 100) < 60) {
+                        MARTIAL_ARTS_INSTRUCTOR_COUNT = 1;
                     }
-                    int ELF_COUNT = allSpecialPoliceCount - PATROLLER_COUNT;
-                    if (ELF_COUNT < 0)
-                        ELF_COUNT = 0;
+
+                    // 游侠：70%概率生成，其中10%概率生成两个
+                    if (random.nextInt(0, 100) < 70) {
+                        ELF_COUNT = 1;
+                        if (random.nextInt(0, 100) < 10) {
+                            ELF_COUNT = 2;
+                        }
+                    }
+
+                    // 根据allSpecialPoliceCount限制总数
+                    int currentTotal = PATROLLER_COUNT + MARTIAL_ARTS_INSTRUCTOR_COUNT + ELF_COUNT;
+                    while (currentTotal > allSpecialPoliceCount) {
+                        // 随机减少一个角色
+                        int reduceTarget = random.nextInt(3);
+                        if (reduceTarget == 0 && PATROLLER_COUNT > 0) {
+                            PATROLLER_COUNT--;
+                        } else if (reduceTarget == 1 && MARTIAL_ARTS_INSTRUCTOR_COUNT > 0) {
+                            MARTIAL_ARTS_INSTRUCTOR_COUNT--;
+                        } else if (reduceTarget == 2 && ELF_COUNT > 0) {
+                            ELF_COUNT--;
+                        }
+                        currentTotal = PATROLLER_COUNT + MARTIAL_ARTS_INSTRUCTOR_COUNT + ELF_COUNT;
+                    }
+
+                    // 特警和更好的义警初始为0
+                    int SWAST_COUNT = 0;
+                    int BEST_VIGILANTE_COUNT = 0;
+
+                    // 获取当前地图ID
+                    String currentMap = "unknown";
+                    if (serverLevel.getServer() != null) {
+                        var areas = dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent.KEY.get(serverLevel);
+                        if (areas != null && areas.mapName != null) {
+                            currentMap = areas.mapName;
+                        }
+                    }
+
+                    // 判断是否为特警可用地图 (areas1, areas3, areas4, areas7, areas10)
+                    boolean isSwastMap = currentMap.equals("areas1") || currentMap.equals("areas3") ||
+                                      currentMap.equals("areas4") || currentMap.equals("areas7") ||
+                                      currentMap.equals("areas10");
+
+                    // 如果是特警可用地图且有可用警卫位置，50%概率随机替换一个为特警
+                    if (isSwastMap && currentTotal > 0 && currentTotal >= allSpecialPoliceCount - 1 && random.nextInt(0, 100) < 50) {
+                        SWAST_COUNT = 1;
+                        // 随机选择替换的角色
+                        int replaceTarget = random.nextInt(3);
+                        if (replaceTarget == 0 && PATROLLER_COUNT > 0) {
+                            PATROLLER_COUNT--;
+                        } else if (replaceTarget == 1 && MARTIAL_ARTS_INSTRUCTOR_COUNT > 0) {
+                            MARTIAL_ARTS_INSTRUCTOR_COUNT--;
+                        } else if (replaceTarget == 2 && ELF_COUNT > 0) {
+                            ELF_COUNT--;
+                        } else if (PATROLLER_COUNT > 0) {
+                            PATROLLER_COUNT--;
+                        } else if (MARTIAL_ARTS_INSTRUCTOR_COUNT > 0) {
+                            MARTIAL_ARTS_INSTRUCTOR_COUNT--;
+                        } else if (ELF_COUNT > 0) {
+                            ELF_COUNT--;
+                        }
+                    }
+
+                    // 更好的义警符合条件时（0.1%概率），随机替换一个为更好的义警
+                    int totalRoles = PATROLLER_COUNT + MARTIAL_ARTS_INSTRUCTOR_COUNT + ELF_COUNT + SWAST_COUNT;
+                    if (random.nextInt(0, 10000) < 10 && totalRoles > 0) {
+                        BEST_VIGILANTE_COUNT = 1;
+                        // 随机选择替换的角色
+                        int replaceTarget = random.nextInt(4);
+                        if (replaceTarget == 0 && PATROLLER_COUNT > 0) {
+                            PATROLLER_COUNT--;
+                        } else if (replaceTarget == 1 && MARTIAL_ARTS_INSTRUCTOR_COUNT > 0) {
+                            MARTIAL_ARTS_INSTRUCTOR_COUNT--;
+                        } else if (replaceTarget == 2 && ELF_COUNT > 0) {
+                            ELF_COUNT--;
+                        } else if (replaceTarget == 3 && SWAST_COUNT > 0) {
+                            SWAST_COUNT--;
+                        } else if (PATROLLER_COUNT > 0) {
+                            PATROLLER_COUNT--;
+                        } else if (MARTIAL_ARTS_INSTRUCTOR_COUNT > 0) {
+                            MARTIAL_ARTS_INSTRUCTOR_COUNT--;
+                        } else if (ELF_COUNT > 0) {
+                            ELF_COUNT--;
+                        } else if (SWAST_COUNT > 0) {
+                            SWAST_COUNT--;
+                        }
+                    }
+
                     Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, PATROLLER_COUNT);
                     Harpymodloader.setRoleMaximum(ModRoles.ELF, ELF_COUNT);
+                    Harpymodloader.setRoleMaximum(ModRoles.SWAST_ID, SWAST_COUNT);
+                    Harpymodloader.setRoleMaximum(ModRoles.MARTIAL_ARTS_INSTRUCTOR_ID, MARTIAL_ARTS_INSTRUCTOR_COUNT);
+                    Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, BEST_VIGILANTE_COUNT);
 
-                    // BEST_VIGILANTE (更好的义警) - 0.1%概率生成
-                    if (random.nextInt(0, 10000) < 10) {
-                        Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 1);
-                    } else {
+                    if (allSpecialPoliceCount == 0) {
+                        Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
+                        Harpymodloader.setRoleMaximum(ModRoles.ELF, 0);
+                        Harpymodloader.setRoleMaximum(ModRoles.SWAST_ID, 0);
+                        Harpymodloader.setRoleMaximum(ModRoles.MARTIAL_ARTS_INSTRUCTOR_ID, 0);
                         Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 0);
                     }
-                } else {
-                    Harpymodloader.setRoleMaximum(ModRoles.PATROLLER, 0);
-                    Harpymodloader.setRoleMaximum(ModRoles.ELF, 0);
-                    Harpymodloader.setRoleMaximum(ModRoles.BEST_VIGILANTE_ID, 0);
                 }
-
-            }
             // WRITER (作家) - 0.2%概率生成
             if (random.nextInt(0, 1000) < 2) {
                 Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 1);

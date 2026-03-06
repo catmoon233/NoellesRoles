@@ -137,6 +137,8 @@ public class ModRoles {
     public static final ResourceLocation FIREFIGHTER_ID = Noellesroles.id("firefighter");
     public static final ResourceLocation ACCOUNTANT_ID = Noellesroles.id("accountant");
     public static final ResourceLocation ALCHEMIST_ID = Noellesroles.id("alchemist");
+    public static final ResourceLocation SWAST_ID = Noellesroles.id("swast");
+    public static final ResourceLocation MARTIAL_ARTS_INSTRUCTOR_ID = Noellesroles.id("martial_arts_instructor");
 
     // 杀手阵营角色 ID
     public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
@@ -392,6 +394,50 @@ public class ModRoles {
             TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
             false // 不隐藏计分板
     )).setCanSeeCoin(true).setComponentKey(org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY);
+
+    /**
+     * 特警角色
+     * - 属于警长阵营 (isInnocent = true, setVigilanteTeam = true)
+     * - 仅在特定地图生成（areas1/areas3/areas4/areas7/areas10）
+     * - 不能使用杀手能力 (canUseKiller = false)
+     * - 真实心情系统
+     * - 标准冲刺时间
+     * - 在计分板上显示
+     * - 无法捡起左轮手枪
+     * - 开局物品：狙击枪、马格南子弹×1
+     * - 专属商店：马格南子弹(150金币)、瞄准镜(100金币)、铁门钥匙(75金币)
+     */
+    // 特警角色 - 警长阵营
+    public static Role SWAST = TMMRoles.registerRole(new NoramlRole(
+            SWAST_ID, // 角色 ID
+            new Color(0, 191, 255).getRGB(), // 深天蓝色 - 代表特警的专业与冷静
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不隐藏计分板
+    )).setCanSeeCoin(true).setVigilanteTeam(true).setCanPickUpRevolver(false);
+
+    /**
+     * 武术教官角色
+     * - 属于警长阵营 (isInnocent = true, setVigilanteTeam = true)
+     * - 不能使用杀手能力 (canUseKiller = false)
+     * - 真实心情系统
+     * - 标准冲刺时间
+     * - 在计分板上显示
+     * - 无法捡起左轮手枪
+     * - 开局物品：双节棍
+     */
+    // 武术教官角色 - 警长阵营
+    public static Role MARTIAL_ARTS_INSTRUCTOR = TMMRoles.registerRole(new NoramlRole(
+            MARTIAL_ARTS_INSTRUCTOR_ID, // 角色 ID
+            new Color(255, 215, 0).getRGB(), // 金黄色 - 代表武术的荣耀与威严
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不隐藏计分板
+    )).setCanSeeCoin(true).setVigilanteTeam(true).setCanPickUpRevolver(false);
 
     // 杀手阵营角色
     public static Role CLEANER = TMMRoles
