@@ -30,7 +30,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 直接按技能键：花费175金币发动技能
  *
  * 收入模式：对玩家按下技能键查看其金币量是否超过300，如果是则给会计消息提示
- * 支出模式：查看半径4格内玩家30秒内总支出金币数量的大致范围（整百区间）
+ * 支出模式：标记一名玩家，20秒后对比金币数变化（上升/下降），提示给会计（被标记玩家无提示）
  *
  * 商店：可花费100金币购买存折
  */
@@ -56,8 +56,8 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
     /** 支出查询半径（4格） */
     public static final double EXPENSE_QUERY_RADIUS = 4.0;
 
-    /** 支出查询时间范围（30秒 = 600 tick） */
-    public static final int EXPENSE_QUERY_TIME_RANGE = 30 * 20;
+    /** 支出查询时间范围（20秒 = 400 tick） */
+    public static final int EXPENSE_QUERY_TIME_RANGE = 20 * 20;
 
     /** 收入模式 */
     public static final int MODE_INCOME = 0;
@@ -72,6 +72,15 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
 
     /** 当前模式：0=收入, 1=支出 */
     private int currentMode = MODE_INCOME;
+
+    /** 标记的玩家UUID */
+    private java.util.UUID markedPlayerUUID = null;
+
+    /** 标记时的金币数 */
+    private int markedPlayerInitialBalance = 0;
+
+    /** 标记计时器（tick） */
+    private int markTimer = 0;
 
     /**
      * 构造函数
@@ -89,18 +98,31 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
     public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.passiveIncomeTimer = tag.getInt("PassiveIncomeTimer");
         this.currentMode = tag.getInt("CurrentMode");
+        this.markTimer = tag.getInt("MarkTimer");
+        if (tag.hasUUID("MarkedPlayerUUID")) {
+            this.markedPlayerUUID = tag.getUUID("MarkedPlayerUUID");
+        }
+        this.markedPlayerInitialBalance = tag.getInt("MarkedPlayerInitialBalance");
     }
 
     @Override
     public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("PassiveIncomeTimer", this.passiveIncomeTimer);
         tag.putInt("CurrentMode", this.currentMode);
+        tag.putInt("MarkTimer", this.markTimer);
+        if (this.markedPlayerUUID != null) {
+            tag.putUUID("MarkedPlayerUUID", this.markedPlayerUUID);
+        }
+        tag.putInt("MarkedPlayerInitialBalance", this.markedPlayerInitialBalance);
     }
 
     @Override
     public void reset() {
         this.passiveIncomeTimer = 0;
         this.currentMode = MODE_INCOME;
+        this.markedPlayerUUID = null;
+        this.markedPlayerInitialBalance = 0;
+        this.markTimer = 0;
         sync();
     }
 
@@ -125,6 +147,15 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
                 }
             }
             passiveIncomeTimer = PASSIVE_INCOME_INTERVAL;
+        }
+
+        // 处理标记计时器
+        if (markTimer > 0) {
+            markTimer--;
+            if (markTimer == 0 && markedPlayerUUID != null) {
+                // 20秒到期，检查金币变化
+                checkMarkedPlayerBalance();
+            }
         }
     }
 
@@ -239,48 +270,103 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
 
     /**
      * 执行支出模式技能
-     * 查看半径4格内玩家在30秒内总支出金币数量的大致范围
+     * 标记一名玩家，20秒后对比其金币数变化
      */
     private void executeExpenseSkill(ServerPlayer serverPlayer) {
         // 播放翻书声
         serverPlayer.level().playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
                 SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 
-        // 获取半径4格内的玩家
-        java.util.List<ServerPlayer> nearbyPlayers = serverPlayer.level().players().stream()
-                .filter(p -> p != serverPlayer && !p.isSpectator() && p.distanceTo(serverPlayer) <= EXPENSE_QUERY_RADIUS)
-                .filter(p -> p instanceof ServerPlayer)
-                .map(p -> (ServerPlayer) p)
-                .toList();
-
-        if (nearbyPlayers.isEmpty()) {
+        // 获取准星对准的玩家
+        Player target = getTargetPlayer(serverPlayer);
+        if (target == null) {
             serverPlayer.displayClientMessage(
-                    Component.translatable("message.noellesroles.accountant.no_nearby_players")
+                    Component.translatable("message.noellesroles.accountant.no_target")
                             .withStyle(ChatFormatting.RED),
                     true);
             return;
         }
 
-        // TODO: 会计的支出技能，计算游戏时间30s内4格半径内玩家消耗的金币数量区间
-        int totalExpense = 0;
-        for (Player nearby : nearbyPlayers) {
-            // 模拟：使用一个随机值来模拟支出（实际应该记录真实支出）
-            // 这里简化为：根据玩家金币量给出一个估计范围
-            PlayerShopComponent nearbyShop = PlayerShopComponent.KEY.get(nearby);
-            // 使用伪随机但确定性的方法生成估计值
-            int estimatedExpense = (nearbyShop.balance / 3) % 500;
-            totalExpense += estimatedExpense;
-        }
+        // 标记玩家
+        markedPlayerUUID = target.getUUID();
+        PlayerShopComponent targetShop = PlayerShopComponent.KEY.get(target);
+        markedPlayerInitialBalance = targetShop.balance;
+        markTimer = EXPENSE_QUERY_TIME_RANGE;
 
-        // 计算整百区间
-        int lowerBound = (totalExpense / 100) * 100;
-        int upperBound = lowerBound + 100;
-
-        // 给予会计提示
+        // 给会计提示
         serverPlayer.displayClientMessage(
-                Component.translatable("message.noellesroles.accountant.expense.result", nearbyPlayers.size(), lowerBound, upperBound)
+                Component.translatable("message.noellesroles.accountant.expense.marked", target.getDisplayName())
                         .withStyle(ChatFormatting.AQUA),
                 true);
+
+        sync();
+    }
+
+    /**
+     * 检查被标记玩家的金币数变化
+     */
+    private void checkMarkedPlayerBalance() {
+        if (!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        // 查找被标记的玩家
+        Player target = null;
+        for (Player p : player.level().players()) {
+            if (p.getUUID().equals(markedPlayerUUID)) {
+                target = p;
+                break;
+            }
+        }
+
+        if (target == null) {
+            // 玩家已离线
+            serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.accountant.expense.player_left")
+                            .withStyle(ChatFormatting.GRAY),
+                    true);
+            clearMark();
+            return;
+        }
+
+        // 对比金币数
+        PlayerShopComponent targetShop = PlayerShopComponent.KEY.get(target);
+        int currentBalance = targetShop.balance;
+        int difference = currentBalance - markedPlayerInitialBalance;
+
+        if (difference > 0) {
+            // 金币上升
+            serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.accountant.expense.increased",
+                            target.getDisplayName(), difference)
+                            .withStyle(ChatFormatting.GREEN),
+                    true);
+        } else if (difference < 0) {
+            // 金币下降
+            serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.accountant.expense.decreased",
+                            target.getDisplayName(), -difference)
+                            .withStyle(ChatFormatting.RED),
+                    true);
+        } else {
+            // 金币不变
+            serverPlayer.displayClientMessage(
+                    Component.translatable("message.noellesroles.accountant.expense.unchanged",
+                            target.getDisplayName())
+                            .withStyle(ChatFormatting.GRAY),
+                    true);
+        }
+
+        clearMark();
+    }
+
+    /**
+     * 清除标记
+     */
+    private void clearMark() {
+        this.markedPlayerUUID = null;
+        this.markedPlayerInitialBalance = 0;
+        this.markTimer = 0;
+        sync();
     }
 
     /**
