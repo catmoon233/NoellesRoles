@@ -356,6 +356,16 @@ public class ModItems {
             new FireAxeItem(new Item.Properties().stacksTo(1).durability(3)),
             "fire_axe");
 
+    /**
+     * 绳索
+     * - 3点耐久
+     * - 右键：将前方直线距离10格内的离你最近的玩家拉到自己身前
+     * - 使用后进入20秒冷却并消耗1点耐久
+     */
+    public static final Item ROPE = register(
+            new RopeItem(new Item.Properties().stacksTo(1).durability(3)),
+            "rope");
+
     static {
         ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
         ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());
