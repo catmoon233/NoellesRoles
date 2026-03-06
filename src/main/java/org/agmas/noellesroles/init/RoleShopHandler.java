@@ -141,6 +141,31 @@ public class RoleShopHandler {
         initShops();
         ShopContent.register();
         {
+            // BAKA的商店
+            var SHOP = new ArrayList<ShopEntry>();
+            SHOP.add(new ShopEntry(FunnyItems.PROBLEM_SET.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+            ShopContent.customEntries.put(ModRoles.BAKA.getIdentifier(), SHOP);
+        }
+        {
+            // EXAMPLER的商店
+            var SHOP = new ArrayList<ShopEntry>();
+            var psychoItem = TMMItems.PSYCHO_MODE.getDefaultInstance();
+            var examplerPsychoLore = new ItemLore(
+                    List.of(Component.translatable("itemstack.exampler.shop.psychoitem.item_lore.1")));
+            psychoItem.set(DataComponents.LORE, examplerPsychoLore);
+
+            SHOP.add(new ShopEntry(psychoItem, 0, ShopEntry.Type.WEAPON) {
+                @Override
+                public boolean onBuy(@NotNull Player player) {
+                    // 启动疯狂模式
+                    if (TMMItemUtils.clearItem(player, TMMItems.PSYCHO_MODE, 1) > 0)
+                        return PlayerPsychoComponent.KEY.get(player).startPsycho();
+                    return false;
+                }
+            });
+            ShopContent.customEntries.put(ModRoles.EXAMPLER.getIdentifier(), SHOP);
+        }
+        {
             // 老人的商店
             var SHOP = new ArrayList<ShopEntry>();
 

@@ -1,6 +1,49 @@
 package org.agmas.noellesroles.role;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.agmas.harpymodloader.Harpymodloader;
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.component.AdmirerPlayerComponent;
+import org.agmas.noellesroles.component.AvengerPlayerComponent;
+import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
+import org.agmas.noellesroles.component.BomberPlayerComponent;
+import org.agmas.noellesroles.component.BoxerPlayerComponent;
+import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
+import org.agmas.noellesroles.component.ClockmakerPlayerComponent;
+import org.agmas.noellesroles.component.ConspiratorPlayerComponent;
+import org.agmas.noellesroles.component.DetectivePlayerComponent;
+import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
+import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
+import org.agmas.noellesroles.component.ModComponents;
+import org.agmas.noellesroles.component.MonitorPlayerComponent;
+import org.agmas.noellesroles.component.NianShouPlayerComponent;
+import org.agmas.noellesroles.component.PatrollerPlayerComponent;
+import org.agmas.noellesroles.component.PostmanPlayerComponent;
+import org.agmas.noellesroles.component.PsychologistPlayerComponent;
+import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
+import org.agmas.noellesroles.component.RecorderPlayerComponent;
+import org.agmas.noellesroles.component.SingerPlayerComponent;
+import org.agmas.noellesroles.component.StalkerPlayerComponent;
+import org.agmas.noellesroles.component.StarPlayerComponent;
+import org.agmas.noellesroles.component.TrapperPlayerComponent;
+import org.agmas.noellesroles.component.VeteranPlayerComponent;
+import org.agmas.noellesroles.roles.chef.ChefRole;
+import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
+import org.agmas.noellesroles.roles.gambler.GamblerRole;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorRole;
+import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
+import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
+import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
+import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
+
 import com.mojang.serialization.Codec;
+
 import dev.doctor4t.trainmurdermystery.api.NoramlRole;
 import dev.doctor4t.trainmurdermystery.api.NormalRole;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -10,25 +53,7 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import org.agmas.harpymodloader.Harpymodloader;
-import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.component.*;
-import org.agmas.noellesroles.roles.chef.ChefRole;
-import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
-import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
-import org.agmas.noellesroles.roles.gambler.GamblerRole;
-import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import net.minecraft.resources.ResourceLocation;
-import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
-import org.agmas.noellesroles.roles.manipulator.ManipulatorRole;
-import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
-import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
-import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
-import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 
 /**
  * 角色定义类
@@ -117,6 +142,11 @@ public class ModRoles {
     public static ResourceLocation EXECUTIONER_ID = Noellesroles.id("executioner");
     public static ResourceLocation GAMBLER_ID = Noellesroles.id("gambler");
     public static ResourceLocation POISONER_ID = Noellesroles.id("poisoner");
+    public static ResourceLocation BAKA_ID = Noellesroles.id("baka");
+    public static ResourceLocation MAID_SAKUYA_ID = Noellesroles.id("maid_sakuya");
+    public static ResourceLocation HOAN_MEIRIN_ID = Noellesroles.id("hoan_meirin");
+    public static ResourceLocation EXAMPLER_ID = Noellesroles.id("exampler");
+
     public static ResourceLocation THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Noellesroles
             .id("the_insane_damned_paranoid_killer");
     public static final ResourceLocation CONSPIRATOR_ID = Noellesroles.id("conspirator");
@@ -144,6 +174,20 @@ public class ModRoles {
 
     // ==================== 已注册角色定义 ====================
     // 乘客阵营角色
+    // 中立偏狼：小镇做题家
+    public static Role EXAMPLER = TMMRoles.registerRole(
+            new NormalRole(EXAMPLER_ID, new Color(213, 95, 214).getRGB(),
+                    false, false, Role.MoodType.FAKE,
+                    TMMRoles.CIVILIAN.getMaxSprintTime(), true))
+            .setCanSeeCoin(true).setNeutralForKiller(true).setCanSeeTeammateKiller(true)
+            .setCanUseInstinct(true);
+    // 好人：大妖精baka
+    public static Role BAKA = TMMRoles.registerRole(
+            new NormalRole(BAKA_ID, new Color(185, 240, 243).getRGB(),
+                    true, false, Role.MoodType.REAL,
+                    TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+            .setCanSeeCoin(true);
+
     public static Role OLDMAN = TMMRoles.registerRole(
             new NormalRole(OLDMAN_ID, new Color(112, 146, 190).getRGB(),
                     true, false, Role.MoodType.REAL,
@@ -162,7 +206,7 @@ public class ModRoles {
             .setVigilanteTeam(true).setCanSeeCoin(true).setCanPickUpRevolver(false);
     public static Role WIND_YAOSE = TMMRoles.registerRole(
             new NormalRole(WIND_YAOSE_ID, new Color(106, 255, 179).getRGB(),
-                    false, false, Role.MoodType.REAL,
+                    false, false, Role.MoodType.FAKE,
                     TMMRoles.CIVILIAN.getMaxSprintTime(), false))
             .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setCanUseInstinct(true)
             .setNeutralForKiller(true);

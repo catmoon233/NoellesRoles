@@ -461,6 +461,12 @@ public class ModEventsRegister {
         TMM.canDrop.add((player) -> {
             var mainHandItem = player.getMainHandItem();
             var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+
+            if (gameWorldComponent.isRole(player, ModRoles.BAKA)) {
+                if (mainHandItem.is(FunnyItems.PROBLEM_SET)) {
+                    return true;
+                }
+            }
             if (gameWorldComponent.isRole(player, ModRoles.CHEF)) {
                 if (mainHandItem.get(ModDataComponentTypes.COOKED) != null) {
                     return true;
