@@ -684,7 +684,8 @@ public class ModEventsRegister {
         ShouldDropOnDeath.EVENT.register(((itemStack) -> {
             final var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
             if ("exposure:album".equals(key) || "exposure:photograph".equals(key)
-                    || "exposure:stacked_photographs".equals(key) || itemStack.is(ModItems.PATROLLER_REVOLVER)) {
+                    || "exposure:stacked_photographs".equals(key) || itemStack.is(ModItems.PATROLLER_REVOLVER)
+                    || itemStack.is(ModItems.PASSBOOK)) {
                 return true;
             }
 
