@@ -475,11 +475,15 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
 
     @Override
     public void serverTick() {
-        if (getPlayer()==null)return;
+        if (getPlayer() == null)
+            return;
         Level level = getPlayer().level();
-        if (level.canSeeSky(getPlayer().blockPosition())){
-            if (level.isDay()){
-                if (getPlayer().getRemainingFireTicks()<=0){
+        if (!GameWorldComponent.KEY.get(level).isRole(player, ModRoles.DIO)) {
+            return;
+        }
+        if (level.canSeeSky(getPlayer().blockPosition())) {
+            if (level.isDay()) {
+                if (getPlayer().getRemainingFireTicks() <= 0) {
                     getPlayer().setRemainingFireTicks(5);
                 }
             }
