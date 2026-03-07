@@ -104,6 +104,7 @@ public abstract class CoronerHudMixin {
             if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.CORONER)
                     || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.VULTURE)
                     || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.WAYFARER)
+                    || gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.DIO)
                     || TMMClient.isPlayerSpectatingOrCreative()) {
                 var deathPenalty = ModComponents.DEATH_PENALTY.get(Minecraft.getInstance().player);
                 boolean hasPenalty = false;
@@ -206,7 +207,21 @@ public abstract class CoronerHudMixin {
                         }
                     }
                 }
+                if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.DIO)) {
+                    if (bodyDeathReasonComponent.vultured) {
+                        Component roleInfo = Component.translatable("hud.vulture.already_consumed")
+                                .withColor(ModRoles.VULTURE.color());
+                        context.drawString(renderer, roleInfo, -renderer.width(roleInfo) / 2, 48, CommonColors.WHITE);
+                    } else {
 
+                            Component roleInfo = Component
+                                    .translatable("hud.dio.eat")
+                                    .withColor(CommonColors.RED);
+                            context.drawString(renderer, roleInfo, -renderer.width(roleInfo) / 2, 48,
+                                    CommonColors.WHITE);
+
+                    }
+                }
                 context.pose().popPose();
                 return;
             }

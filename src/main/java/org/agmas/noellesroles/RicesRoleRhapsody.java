@@ -182,10 +182,7 @@ public class RicesRoleRhapsody implements ModInitializer {
             if (gameWorld.isRole(player, ModRoles.DIO)){
                 DIOPlayerComponent dioPlayerComponent = DIOPlayerComponent.KEY.get(player);
                 dioPlayerComponent.feedOnCorpse(body);
-                BodyDeathReasonComponent bodyDeathReasonComponent = BodyDeathReasonComponent.KEY.get(body);
 
-                bodyDeathReasonComponent.vultured = true;
-                bodyDeathReasonComponent.sync();
                 dioPlayerComponent.sync();
                 if (dioPlayerComponent.isFinalCarnivalActive){
                     player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);

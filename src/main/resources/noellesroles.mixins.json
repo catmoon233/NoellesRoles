@@ -59,6 +59,7 @@
     "roles.thief.ThiefsHonorMixin",
     "roles.veteran.VeteranKnifeLeftClickMixin",
     "roles.veteran.VeteranKnifeMixin",
+    "time_stop.PlayerMixin",
     "time_stop.ServerPacketBlocker"
   ],
   "injectors": {
@@ -95,10 +96,10 @@
     "client.roles.broadcaster.BroadcasterHudMixin",
     "client.roles.conductor.MasterKeyInvisibilityMixin",
     "client.roles.coroner.CoronerHudMixin",
-    "client.roles.dio.DIOHudMixin",
     "client.roles.coroner.CustomRolesRoleNameRendererMixin",
     "client.roles.detective.DetectivePassiveUiMixin",
     "client.roles.detective.PlaySoundEventMixin",
+    "client.roles.dio.DIOHudMixin",
     "client.roles.exampler.ExamplerScreenMixin",
     "client.roles.executioner.ExecutionerScreenMixin",
     "client.roles.executioner.ExecutionerShopScreenMixin",
