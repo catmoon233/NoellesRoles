@@ -44,15 +44,9 @@ public class StuckCommand {
             var blockState = level.getBlockState(playerInBlockPos);
             if (checkBlock(level, blockState, playerInBlockPos)) {
 
-                var playerInBlockPos2 = player.blockPosition();
-                var blockState2 = level.getBlockState(playerInBlockPos2);
-                if (checkBlock(level, blockState2, playerInBlockPos2)) {
-                    player.displayClientMessage(
-                            Component.translatable("message.noellesroles.commands.stuck.failed_cannot_out")
-                                    .withStyle(ChatFormatting.RED),
-                            true);
-                    return 0;
-                } else {
+                // var playerInBlockPos2 = player.blockPosition();
+                // var blockState2 = level.getBlockState(playerInBlockPos2);
+               {
                     player.teleportTo(player.getX(), player.getY() + 1, player.getZ());
 
                     player.displayClientMessage(

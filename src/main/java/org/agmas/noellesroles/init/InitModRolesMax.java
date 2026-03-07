@@ -114,6 +114,7 @@ public class InitModRolesMax {
 
         // 强盗
         Harpymodloader.setRoleMaximum(ModRoles.BANDIT_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.DIO_ID, 1);
 
         // 仇杀客 - 仅在12人及以上对局生成
         Harpymodloader.setRoleMaximum(ModRoles.BLOOD_FEUDIST_ID, 1);
@@ -140,7 +141,7 @@ public class InitModRolesMax {
         // 同时出现
         RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
         RoleAssignmentManager.addOccupationRole(ModRoles.BAKA, ModRoles.EXAMPLER);
-        RoleAssignmentManager.addOccupationRole(ModRoles.MAID_SAKUYA, ModRoles.DIO);
+        RoleAssignmentManager.addOccupationRole(ModRoles.DIO, ModRoles.JOJO);
 
         Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
         Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA, 0);
@@ -171,6 +172,7 @@ public class InitModRolesMax {
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.OLDMAN_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.JOJO_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.CHEF_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.FORTUNETELLER_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.WIND_YAOSE_ID, 1);
@@ -213,9 +215,11 @@ public class InitModRolesMax {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
             }
             if (players_count >= 12 && random.nextInt(0, 100) <= EGGS_CHANCE) {
-                Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA_ID, 1);
+                Harpymodloader.setRoleMaximum(ModRoles.DIO, 1);
+                Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA, 1);
             } else {
-                Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA_ID, 0);
+                Harpymodloader.setRoleMaximum(ModRoles.DIO, 0);
+                Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA, 0);
             }
             if (players_count >= 12 && random.nextInt(0, 100) <= EGGS_CHANCE) {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 1);

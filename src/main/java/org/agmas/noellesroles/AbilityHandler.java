@@ -56,7 +56,19 @@ public class AbilityHandler {
             } else {
                 TimeStopEffect.tryTriggerStart(player, 20 * 5, Component.translatable("title.maid_sakuya.timestopper")
                         .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
-                abilityPlayerComponent.setCooldown(20 * 120);
+                abilityPlayerComponent.setCooldown(20 * 240);
+            }
+            return;
+        }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.JOJO)) {
+            if (abilityPlayerComponent.cooldown > 0) {
+                context.player().displayClientMessage(Component.translatable(
+                        "tip.noellesroles.cooldown", abilityPlayerComponent.cooldown / 20)
+                        .withStyle(ChatFormatting.RED), true);
+            } else {
+                TimeStopEffect.tryTriggerStart(player, 20 * 3, Component.translatable("hud.noellesroles.jojo.the_world")
+                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+                abilityPlayerComponent.setCooldown(20 * 240);
             }
             return;
         }

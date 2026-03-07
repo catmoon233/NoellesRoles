@@ -66,6 +66,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
@@ -1052,18 +1053,18 @@ public class ModEventsRegister {
             }
         }));
         ServerTickEvents.START_SERVER_TICK.register(((server) -> {
-           if (TimeStopEffect.freezeTime>0){
-               TimeStopEffect.freezeTime--;
-               if (TimeStopEffect.freezeTime==0){
-                   server.getPlayerList().getPlayers().forEach((player) -> {
-                       if (TimeStopEffect.canMovePlayers.contains(player.getUUID())){
-                           player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 0, false, false,false));
-                       }
-                       ServerPlayNetworking.send(player, new RemoveStatusBarPayload("Time_Stop"));
-                   });
-                   server.tickRateManager().setFrozen(false);
-               }
-           }
+            if (TimeStopEffect.freezeTime > 0) {
+                TimeStopEffect.freezeTime--;
+                if (TimeStopEffect.freezeTime == 0) {
+                    server.getPlayerList().getPlayers().forEach((player) -> {
+                        if (TimeStopEffect.canMovePlayers.contains(player.getUUID())) {
+                            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 0, false, false, false));
+                        }
+                        ServerPlayNetworking.send(player, new RemoveStatusBarPayload("Time_Stop"));
+                    });
+                    server.tickRateManager().setFrozen(false);
+                }
+            }
         }));
         if (!NoellesRolesConfig.HANDLER.instance().shitpostRoles) {
             HarpyModLoaderConfig.HANDLER.load();
@@ -1108,6 +1109,8 @@ public class ModEventsRegister {
         });
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
+            var blackoutComponent = WorldBlackoutComponent.KEY.get(serverLevel);
+            blackoutComponent.blackOutRemainingTicks = 20 * 80;
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(p -> {

@@ -121,6 +121,41 @@ public class ClientHudRenderer {
             return;
         });
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            // 渲染JOJO的提示
+            var client = Minecraft.getInstance();
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null
+                    || !TMMClient.gameComponent.isRole(client.player, ModRoles.JOJO)) {
+                return;
+            }
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+            var abpc = NoellesRolesAbilityPlayerComponent.KEY.get(client.player);
+            if (abpc.cooldown > 0) {
+                var text = Component
+                        .translatable("hud.jojo.cooldown", abpc.cooldown / 20)
+                        .withStyle(ChatFormatting.AQUA);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            } else {
+                var THE_WORLD = Component.translatable("hud.noellesroles.jojo.the_world").withStyle(ChatFormatting.GOLD,
+                        ChatFormatting.BOLD);
+                var text = Component
+                        .translatable("hud.jojo.ready", NoellesrolesClient.abilityBind.getTranslatedKeyMessage(),
+                                THE_WORLD)
+                        .withStyle(ChatFormatting.GREEN);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            }
+            return;
+        });
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             // 渲染风精灵的提示
             var client = Minecraft.getInstance();
             if (client == null)
@@ -463,15 +498,16 @@ public class ClientHudRenderer {
             int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
             int xOffset = screenWidth - 10; // 距离右边缘
 
-            var accountantComponent = org.agmas.noellesroles.component.AccountantPlayerComponent.KEY.maybeGet(client.player).orElse(null);
+            var accountantComponent = org.agmas.noellesroles.component.AccountantPlayerComponent.KEY
+                    .maybeGet(client.player).orElse(null);
             if (accountantComponent == null)
                 return;
-
             int dy = yOffset;
 
             // 显示当前模式
             Component modeText;
-            if (accountantComponent.getCurrentMode() == org.agmas.noellesroles.component.AccountantPlayerComponent.MODE_INCOME) {
+            if (accountantComponent
+                    .getCurrentMode() == org.agmas.noellesroles.component.AccountantPlayerComponent.MODE_INCOME) {
                 modeText = Component.translatable("hud.accountant.mode.income").withStyle(ChatFormatting.GOLD);
             } else {
                 modeText = Component.translatable("hud.accountant.mode.expense").withStyle(ChatFormatting.AQUA);
@@ -522,7 +558,8 @@ public class ClientHudRenderer {
             int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
             int xOffset = screenWidth - 10; // 距离右边缘
 
-            var alchemistComponent = org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY.maybeGet(client.player).orElse(null);
+            var alchemistComponent = org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY
+                    .maybeGet(client.player).orElse(null);
             if (alchemistComponent == null)
                 return;
 
@@ -531,7 +568,8 @@ public class ClientHudRenderer {
             // 显示当前选择的药剂
             int currentPotionIndex = alchemistComponent.getCurrentPotionIndex();
             Component potionName = Component.translatable("potion.noellesroles." + getPotionKey(currentPotionIndex));
-            Component potionLabel = Component.translatable("hud.alchemist.current_potion").withStyle(ChatFormatting.WHITE);
+            Component potionLabel = Component.translatable("hud.alchemist.current_potion")
+                    .withStyle(ChatFormatting.WHITE);
             guiGraphics.drawString(font, potionLabel, xOffset - font.width(potionLabel) - font.width(potionName), dy,
                     Color.WHITE.getRGB());
             guiGraphics.drawString(font, potionName, xOffset - font.width(potionName), dy, Color.WHITE.getRGB());
@@ -590,7 +628,8 @@ public class ClientHudRenderer {
     private static int getPotionCost(int potionIndex) {
         return switch (potionIndex) {
             case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_ADRENALINE,
-                 org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_ANTIBIOTIC -> 100;
+                    org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_ANTIBIOTIC ->
+                100;
             case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_HEDINGHONG -> 175;
             case org.agmas.noellesroles.component.AlchemistPlayerComponent.POTION_DOGSKIN_PLASTER -> 150;
             default -> 0;
