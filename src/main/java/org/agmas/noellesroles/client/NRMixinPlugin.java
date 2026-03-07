@@ -17,7 +17,7 @@ public class NRMixinPlugin implements IMixinConfigPlugin {
     }
 
     public String getRefMapperConfig() {
-        return "";
+        return null;
     }
 
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
