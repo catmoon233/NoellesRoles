@@ -193,6 +193,7 @@
   "hud.noellesroles.dio.carnival_active": "激活中：%.1fs",
   "hud.noellesroles.dio.carnival_ready": "已就绪",
   "hud.noellesroles.dio.total_feeds": "总吸食：%d",
+  "hud.dio.eat": "与尸体交互以吸食尸体",
   "=============== 数学问题解决 Screen ===============": "",
   "screen.math_solver.title": "习题集",
   "screen.math_solver.start_hint_forced": "请注意：关闭界面即视为接受惩罚。你有 %s 次尝试机会。",

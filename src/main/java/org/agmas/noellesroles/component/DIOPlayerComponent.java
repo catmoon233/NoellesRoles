@@ -4,6 +4,7 @@ package org.agmas.noellesroles.component;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
@@ -28,6 +29,7 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.effects.TimeStopEffect;
 import org.agmas.noellesroles.init.ModEffects;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
@@ -273,14 +275,16 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
      * @return 是否成功吸食
      */
     public boolean feedOnCorpse(Entity corpse) {
-        if (corpse == null || !(corpse instanceof LivingEntity livingCorpse)) return false;
-        if (!livingCorpse.isDeadOrDying()) return false;
+        if (corpse == null || !(corpse instanceof PlayerBodyEntity livingCorpse)) return false;
         if (!(player instanceof ServerPlayer serverPlayer)) return false;
         
         // 检查距离
         double dist = player.distanceTo(corpse);
         if (dist > 3.0) return false;
-        
+        BodyDeathReasonComponent bodyDeathReasonComponent = BodyDeathReasonComponent.KEY.get(corpse);
+        if (bodyDeathReasonComponent.vultured)return false;
+        bodyDeathReasonComponent.vultured = true;
+        bodyDeathReasonComponent.sync();
         // 开始吸食
         this.isFeeding = true;
         this.feedingRemaining = 60; // 1 秒（假设）
@@ -482,7 +486,7 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
         // 处理吸食动作
         if (isFeeding) {
             if (feedingRemaining > 0) {
-                player.setPose(Pose.SWIMMING);
+                player.setSwimming(true);
                 feedingRemaining--;
                 
                 // 吸食期间无法移动（通过效果实现）
@@ -497,6 +501,7 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
                 }
             } else {
                 isFeeding = false;
+                player.setSwimming(false);
             }
         }
         

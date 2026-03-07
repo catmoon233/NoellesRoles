@@ -1,10 +1,9 @@
 package org.agmas.noellesroles.init;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemCooldowns;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.AbilityHandler;
@@ -305,10 +304,12 @@ public class ModPacketsReciever {
 
       final var player = context.player();
       if (player.getMainHandItem().is(ModItems.THROWING_KNIFE)){
-        if (player.getCooldowns().isOnCooldown(ModItems.THROWING_KNIFE))return;
+        ItemCooldowns cooldowns1 = player.getCooldowns();
+        Map<Item, ItemCooldowns.CooldownInstance> cooldowns = cooldowns1.cooldowns;
+        if (cooldowns1.isOnCooldown(ModItems.THROWING_KNIFE)&& cooldowns.get(ModItems.THROWING_KNIFE).endTime-cooldowns1.tickCount<=20)return;
         player.getMainHandItem().shrink(1);
-        if (!player.getCooldowns().isOnCooldown(ModItems.THROWING_KNIFE)) {
-          player.getCooldowns().addCooldown(ModItems.THROWING_KNIFE, 20);
+        if (!cooldowns1.isOnCooldown(ModItems.THROWING_KNIFE) ) {
+          cooldowns1.addCooldown(ModItems.THROWING_KNIFE, 20);
         }
         ThrowingKnifeEntity entity = new ThrowingKnifeEntity(ModEntities.THROWING_KNIFE, player.level());
         entity.setPos( player.getEyePosition().add(0, -0.2, 0));

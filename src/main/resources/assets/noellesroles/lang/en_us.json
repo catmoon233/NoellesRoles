@@ -823,5 +823,6 @@
   "item.noellesroles.extinguisher.cleaned_fuel": "Cleared the fuel from the target!"
   "death_reason.noellesroles.fire_axe": "Fire axe strike",
   "message.noellesroles.time_stop.the_world": "「The World」",
-  "message.noellesroles.dio.time_stop_start": "\\u00a76「The World」"
+  "message.noellesroles.dio.time_stop_start": "\\u00a76「The World」",
+  "hud.dio.eat": "与尸体右键交互以使用尸体"
 }
