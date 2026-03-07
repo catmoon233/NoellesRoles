@@ -551,6 +551,7 @@ public class ModEventsRegister {
                                 || deathReason.getPath().equals("arrow")
                                 || deathReason.getPath().equals("knife_stab")
                                 || deathReason.getPath().equals("fell_out_of_train")
+                                || deathReason.getPath().equals("poison")
                                 || deathReason.getPath().equals("throwing_knife_hit")
                                 || deathReason.getPath().equals("fire_axe")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
