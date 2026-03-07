@@ -134,10 +134,12 @@ public class ChairWheelRaceGame extends GameMode {
         isWin.clear();
         gamePrepareTime = 20 * 10;
         executeFunction(serverLevel.getServer().createCommandSourceStack(), "harpymodloader:chair_wheel_race/init");
+        for (ServerPlayer player : list) {
+            player.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 20 * 5));
+            gameWorldComponent.addRole(player, TMMRoles.DISCOVERY_CIVILIAN);
+        }
         GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(120, () -> {
             for (ServerPlayer player : list) {
-                player.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 20 * 5));
-                gameWorldComponent.addRole(player, TMMRoles.DISCOVERY_CIVILIAN);
                 var chair = new WheelchairEntity(ModEntities.WHEELCHAIR, serverLevel);
                 chair.setPos(player.getX(), player.getY(), player.getZ());
                 serverLevel.addFreshEntity(chair);
