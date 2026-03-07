@@ -169,6 +169,7 @@
   "tip.noellesroles.activing": "Ability will disappear in %ss",
   "tip.noellesroles.ready": "Ability ready - Press G",
   "tip.phantom": "Press %s to enter invisible state!",
+  "message.noellesroles.time_stop.the_world": "「The World」",
   "tip.phantom.exited": "You have exited invisible state!",
   "tip.phantom.activing": "Invisibility remaining: %ss, press %s to exit invisibility",
   "tip.recaller.not_enough_money": "Teleport costs 100\uE781.",

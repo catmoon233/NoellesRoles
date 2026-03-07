@@ -20,6 +20,7 @@
     "SpawnMixin",
     "accessor.PlayerPoisonComponentAccessor",
     "cca.PlayerMoodComponentMixin",
+    "item.ThrowingKnifeCooldownMixin",
     "roles.awesome_binglus.NoteEntityMixin",
     "roles.awesome_binglus.NoteMixin",
     "roles.coroner.CoronerAddDeathReasonMixin",
@@ -65,7 +66,8 @@
   },
   "client": [
     "LivingEntityAccessor",
-    "client.time_stop.GameTimeFreezeMixin",
+    "client.time_stop.StatusHudMixin",
+
     "client.HandCuffsKeyBindingMixin",
     "client.InstinctMixin",
     "client.LamBugFix",
@@ -98,6 +100,7 @@
     "client.roles.coroner.CustomRolesRoleNameRendererMixin",
     "client.roles.detective.DetectivePassiveUiMixin",
     "client.roles.detective.PlaySoundEventMixin",
+    "client.roles.exampler.ExamplerScreenMixin",
     "client.roles.executioner.ExecutionerScreenMixin",
     "client.roles.executioner.ExecutionerShopScreenMixin",
     "client.roles.glitch_robot.GlitchRobotMoodMixin",
@@ -123,7 +126,6 @@
     "client.roles.recaller.RecallerHudMixin",
     "client.roles.swapper.KeyBindingMixin",
     "client.roles.swapper.SwapperScreenMixin",
-    "client.roles.exampler.ExamplerScreenMixin",
     "client.roles.thief.ThiefHudMixin",
     "client.roles.trapper.TrapperHudMixin",
     "client.roles.voodoo.VoodooScreenMixin",
@@ -133,6 +135,7 @@
     "client.time_stop.CantControlMixin",
     "client.time_stop.EntityCantUpdatePositionMixin",
     "client.time_stop.GameRendererMixin",
+    "client.time_stop.GameTimeFreezeMixin",
     "client.time_stop.MouseHandleSuppressMixin",
     "roles.insanekiller.CrossHairFixer",
     "roles.photographer.BlindnessEffectMixin"

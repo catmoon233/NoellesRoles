@@ -1,9 +1,14 @@
 package org.agmas.noellesroles.effects;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
+import dev.doctor4t.trainmurdermystery.client.StatusInit;
+import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.network.TriggerStatusBarPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -53,13 +58,14 @@ public class TimeStopEffect extends MobEffect {
         canMovePlayers.add(serverPlayer.getUUID());
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.level());
         var broadcastMessage = Component
-                .translatable("message.noellesroles.time_stop.the_world")
+                .literal("「The World」")
                 .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
 
 
         serverPlayer.serverLevel().players().forEach(
                 player -> {
                     player.playNotifySound(NRSounds.TIME_STOP, SoundSource.PLAYERS, 1.0F, 1.0F);
+
                     BroadcastCommand.BroadcastMessage(player, broadcastMessage);
                     player.addEffect(new MobEffectInstance( (ModEffects.TIME_STOP),time,0,false,false,false));
 
@@ -97,7 +103,7 @@ public class TimeStopEffect extends MobEffect {
         clientPositions.clear();
 
     }
-
+    public static int effectStatedTime = 0;
     @Override
     public void onEffectStarted(LivingEntity livingEntity, int i) {
         super.onEffectStarted(livingEntity, i);
