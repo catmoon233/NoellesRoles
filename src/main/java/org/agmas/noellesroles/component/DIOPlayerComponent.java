@@ -202,13 +202,22 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
      * @return 是否成功使用
      */
     public boolean tryActivateTimeStop() {
+        if (!(player instanceof ServerPlayer serverPlayer))
+            return false;
+        if (timeStopCooldown > 0) {
+            player.displayClientMessage(Component.translatable(
+                    "tip.noellesroles.cooldown", timeStopCooldown / 20)
+                    .withStyle(ChatFormatting.RED), true);
+        }
         if (player.hasEffect(ModEffects.TIME_STOP))
             return false;
 
-        if (!canUseTimeStop())
+        if (!canUseTimeStop()) {
+            player.displayClientMessage(Component.translatable(
+                    "message.noellesroles.dio.no_charges", timeStopCooldown / 20)
+                    .withStyle(ChatFormatting.RED), true);
             return false;
-        if (!(player instanceof ServerPlayer serverPlayer))
-            return false;
+        }
 
         // 消耗一次使用次数
         this.timeStopCharges--;

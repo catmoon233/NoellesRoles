@@ -19,8 +19,12 @@ public class FunnyItems {
       Noellesroles.id("funny"));
   public static final ItemRegistrar registrar = new ItemRegistrar(Noellesroles.MOD_ID);
 
+  // 波纹勋章
+  public static final Item BOWEN_BADGE = register(
+      new BowenBadgeItem(new Item.Properties().stacksTo(1)),
+      "bowen_badge");
   public static final Item SHISIYE = register(
-      new ShisiyeItem(new Item.Properties().stacksTo(1).food(Foods.HONEY_BOTTLE)),
+    new ShisiyeItem(new Item.Properties().stacksTo(1).food(Foods.HONEY_BOTTLE)),
       "shisiye");
   public static final Item PROBLEM_SET = register(
       new ProblemSetItem(new Item.Properties().stacksTo(1)),

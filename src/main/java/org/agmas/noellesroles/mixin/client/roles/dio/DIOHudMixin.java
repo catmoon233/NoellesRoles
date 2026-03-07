@@ -52,8 +52,8 @@ public class DIOHudMixin {
         // 渲染位置 - 右下角（在设陷者下方或其他位置）
         int screenWidth = client.getWindow().getGuiScaledWidth();
         int screenHeight = client.getWindow().getGuiScaledHeight();
-        int x = screenWidth - 180; // 距离右边缘（比特拉普更靠左）
-        int y = screenHeight - 80; // 距离底部（比特拉普更高）
+        int x = screenWidth - 120; // 距离右边缘（比特拉普更靠左）
+        int y = screenHeight - 100; // 距离底部（比特拉普更高）
 
         Font textRenderer = client.font;
 
