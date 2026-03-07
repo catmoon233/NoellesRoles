@@ -359,7 +359,7 @@ public class InitModRolesMax {
                 // 判断是否为特警可用地图 (areas1, areas3, areas4, areas7, areas10)
                 boolean isSwastMap = false;
                 String[] swastMaps = NoellesRolesConfig.HANDLER.instance().swastMaps.split(Pattern.quote("|"));
-                if (swastMaps.length > 0) {
+                if (swastMaps!=null && swastMaps.length > 0) {
                     isSwastMap = Arrays.asList(swastMaps).contains(currentMap);
                 }
 
