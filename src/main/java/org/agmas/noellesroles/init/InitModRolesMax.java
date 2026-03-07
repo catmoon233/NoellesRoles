@@ -344,8 +344,8 @@ public class InitModRolesMax {
                                       currentMap.equals("areas4") || currentMap.equals("areas7") ||
                                       currentMap.equals("areas10");
 
-                    // 如果是特警可用地图且有可用警卫位置，50%概率随机替换一个为特警
-                    if (isSwastMap && currentTotal > 0 && currentTotal >= allSpecialPoliceCount - 1 && random.nextInt(0, 100) < 50) {
+                    // 如果是特警可用地图且有可用警卫位置，65%概率随机替换一个为特警
+                    if (isSwastMap && currentTotal > 0 && currentTotal >= allSpecialPoliceCount - 1 && random.nextInt(0, 100) < 65) {
                         SWAST_COUNT = 1;
                         // 随机选择替换的角色
                         int replaceTarget = random.nextInt(3);
