@@ -401,7 +401,9 @@ public class ModItems {
     public static final ItemStack ExamplerPsychoItemStack = TMMItems.PSYCHO_MODE.getDefaultInstance();
 
     static {
-        var examplerPsychoLore = new ItemLore(List.of(Component.translatable("itemstack.exampler.psychoitem.item_lore.1")));
+        var examplerPsychoLore = new ItemLore(
+                List.of(Component.translatable("itemstack.exampler.psychoitem.item_lore.1"),
+                        Component.translatable("itemstack.exampler.psychoitem.item_lore.2")));
         ExamplerPsychoItemStack.set(DataComponents.LORE, examplerPsychoLore);
         ExamplerPsychoItemStack.set(DataComponents.ITEM_NAME,
                 Component.translatable("itemstack.exampler.psychoitem.item_name"));
@@ -478,8 +480,8 @@ public class ModItems {
                 text.add(Component.translatable(tipString + "room").withStyle(stylizer));
                 var date = new LocalDateData();
                 text.add(Component.translatable(tipString + "tooltip1",
-                                Component.translatable(tipString + "date", date.getYear(),
-                                        date.getMonth(), date.getDay()))
+                        Component.translatable(tipString + "date", date.getYear(),
+                                date.getMonth(), date.getDay()))
                         .withStyle(stylizer));
                 text.add(Component.translatable(tipString + "tooltip2").withStyle(stylizer));
                 return new ItemLore(text);

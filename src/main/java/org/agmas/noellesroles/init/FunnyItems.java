@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +19,9 @@ public class FunnyItems {
       Noellesroles.id("funny"));
   public static final ItemRegistrar registrar = new ItemRegistrar(Noellesroles.MOD_ID);
 
+  public static final Item SHISIYE = register(
+      new ShisiyeItem(new Item.Properties().stacksTo(1).food(Foods.HONEY_BOTTLE)),
+      "shisiye");
   public static final Item PROBLEM_SET = register(
       new ProblemSetItem(new Item.Properties().stacksTo(1)),
       "problem_set");
