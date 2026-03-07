@@ -51,7 +51,7 @@ public class BowenBadgeItem extends Item {
 
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.CROSSBOW;
+        return UseAnim.BOW;
     }
 
     @Override
@@ -138,7 +138,7 @@ public class BowenBadgeItem extends Item {
                 );
                 
                 // 偶尔添加闪光粒子
-                if (level.random.nextInt(3) == 0) {
+                if (level.random.nextInt(15) == 0) {
                      serverLevel.sendParticles(
                         net.minecraft.core.particles.ParticleTypes.FLASH, 
                         particleX, 
@@ -193,11 +193,19 @@ public class BowenBadgeItem extends Item {
                     .normalize()
                     .scale(1.5);
             target.push(knockback.x, 0, knockback.z);
+            
+            // 被击退实体产生冲击波粒子
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION_EMITTER, 
+                    target.getX(), target.getY() + 1, target.getZ(), 
+                    1, 0, 0, 0, 0);
+            }
         }
 
-        // ── 启动平飞冲刺 ──
+        // ── 启动平飞冲刺与炫酷粒子特效 ──
         player.push(kNorm * f, 0.0, mNorm * f);
         player.startAutoSpinAttack(20, 8.0F, itemStack);
+        
         if (player.onGround()) {
             player.move(MoverType.SELF, new Vec3(0.0, 1.2, 0.0));
         }

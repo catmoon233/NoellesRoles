@@ -1147,6 +1147,7 @@ public class ModEventsRegister {
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             var blackoutComponent = WorldBlackoutComponent.KEY.get(serverLevel);
+
             GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(20, () -> {
                 blackoutComponent.triggerBlackout();
             }));

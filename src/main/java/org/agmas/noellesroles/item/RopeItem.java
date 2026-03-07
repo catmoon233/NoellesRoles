@@ -4,8 +4,10 @@ import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -92,6 +94,9 @@ public class RopeItem extends Item implements AdventureUsable {
             // 将目标玩家拉到玩家身前
             pullPlayer(player, target);
 
+            // 生成粒子效果
+            spawnRopeParticles(world, player, target);
+
             // 播放声音
             world.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.FISHING_BOBBER_RETRIEVE, SoundSource.PLAYERS, 1.0f, 1.0f);
@@ -148,21 +153,93 @@ public class RopeItem extends Item implements AdventureUsable {
      * 将目标玩家拉到玩家身前
      */
     private void pullPlayer(Player player, Player target) {
-        // 计算拉到的位置（玩家前方1.5格处）
+        // 计算拉到的位置（玩家前方 1.5 格处）
         var viewVector = player.getViewVector(1.0f);
         double pullDistance = 1.5;
-
+    
         var targetPos = player.position().add(
                 viewVector.x * pullDistance,
                 0,
                 viewVector.z * pullDistance
         );
-
+    
         // 传送目标玩家
         if (target instanceof ServerPlayer serverTarget) {
             serverTarget.teleportTo(targetPos.x, targetPos.y, targetPos.z);
         } else {
             target.moveTo(targetPos.x, targetPos.y, targetPos.z);
+        }
+    }
+    
+    /**
+     * 生成绳子拉拽的粒子效果
+     */
+    private void spawnRopeParticles(Level world, Player player, Player target) {
+        if (!(world instanceof ServerLevel serverLevel)) return;
+    
+        // 在玩家和目标之间生成绳索粒子
+        int particleCount = 20; // 粒子数量
+        double distance = player.distanceTo(target);
+    
+        for (int i = 0; i < particleCount; i++) {
+            // 计算从玩家到目标的插值位置
+            double ratio = i / (double) particleCount;
+            var particlePos = player.position().lerp(target.position(), ratio);
+    
+            // 添加一些随机偏移，让粒子更自然
+            double offsetX = (world.random.nextDouble() - 0.5) * 0.3;
+            double offsetY = (world.random.nextDouble() - 0.5) * 0.3 + 0.5; // 稍微向上
+            double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
+    
+            particlePos = particlePos.add(offsetX, offsetY, offsetZ);
+    
+            serverLevel.sendParticles(
+                    ParticleTypes.CRIT,
+                    particlePos.x,
+                    particlePos.y,
+                    particlePos.z,
+                    1, // 每个位置 1 个粒子
+                    0.0, 0.0, 0.0, // 无速度
+                    0.0 // 无额外参数
+            );
+        }
+    
+        // 在玩家位置生成烟雾粒子
+        serverLevel.sendParticles(
+                ParticleTypes.SMOKE,
+                player.getX(),
+                player.getY() + 1.0,
+                player.getZ(),
+                10, // 10 个烟雾粒子
+                0.3, 0.3, 0.3, // 扩散范围
+                0.02 // 粒子速度
+        );
+    
+        // 在目标位置生成烟雾粒子
+        serverLevel.sendParticles(
+                ParticleTypes.SMOKE,
+                target.getX(),
+                target.getY() + 1.0,
+                target.getZ(),
+                10, // 10 个烟雾粒子
+                0.3, 0.3, 0.3, // 扩散范围
+                0.02 // 粒子速度
+        );
+    
+        // 生成拉力线粒子（云团，表示力量）
+        for (int i = 0; i < 5; i++) {
+            var midPos = player.position().lerp(target.position(), 0.5);
+            serverLevel.sendParticles(
+                    ParticleTypes.CLOUD,
+                    midPos.x,
+                    midPos.y + 1.0,
+                    midPos.z,
+                    1,
+                    (world.random.nextDouble() - 0.5) * 0.5,
+                    (world.random.nextDouble() - 0.5) * 0.5,
+                    (world.random.nextDouble() - 0.5) * 0.5,
+                    0.0
+            );
         }
     }
 

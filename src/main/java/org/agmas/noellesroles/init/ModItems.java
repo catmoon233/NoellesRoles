@@ -28,6 +28,7 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.item.*;
 import org.agmas.noellesroles.item.charge_item.AntidoteChargeItem;
 import org.agmas.noellesroles.item.charge_item.AntidoteReagentChargeItem;
+import org.agmas.noellesroles.item.charge_item.BowenBadgeChargeItem;
 import org.agmas.noellesroles.item.charge_item.ToxinChargeItem;
 import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.utils.LocalDateData;
@@ -430,6 +431,7 @@ public class ModItems {
         ExamplerPsychoItemStack.set(DataComponents.ITEM_NAME,
                 Component.translatable("itemstack.exampler.psychoitem.item_name"));
         ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
+        ChargeableItemRegistry.register(FunnyItems.BOWEN_BADGE, new BowenBadgeChargeItem());
         ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());
         ChargeableItemRegistry.register(ModItems.THROWING_KNIFE, new KnifeChargeableItem());
         ChargeableItemRegistry.register(HSRItems.ANTIDOTE, new AntidoteChargeItem());
