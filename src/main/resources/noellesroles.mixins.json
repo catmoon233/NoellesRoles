@@ -5,10 +5,10 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "org.agmas.noellesroles.client.NRMixinPlugin",
   "mixins": [
-    "EntityMixinForInvisible",
     "AbstractContainerMenuMixin",
     "DecServerJoinPlayer",
     "EntityClear",
+    "EntityMixinForInvisible",
     "MagicianKillerCountMixin",
     "MagicianPlayerEntityMixin",
     "MasterKeyDoorMixin",
@@ -66,8 +66,6 @@
   },
   "client": [
     "LivingEntityAccessor",
-    "client.time_stop.StatusHudMixin",
-
     "client.HandCuffsKeyBindingMixin",
     "client.InstinctMixin",
     "client.LamBugFix",
@@ -137,6 +135,8 @@
     "client.time_stop.GameRendererMixin",
     "client.time_stop.GameTimeFreezeMixin",
     "client.time_stop.MouseHandleSuppressMixin",
+    "client.time_stop.SoundVolumeMixin",
+    "client.time_stop.StatusHudMixin",
     "roles.insanekiller.CrossHairFixer",
     "roles.photographer.BlindnessEffectMixin"
   ],
