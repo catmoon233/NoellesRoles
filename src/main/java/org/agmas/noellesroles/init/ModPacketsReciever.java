@@ -18,16 +18,11 @@ import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.SwapperPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.entity.ThrowingKnifeEntity;
 import org.agmas.noellesroles.events.OnVendingMachinesBuyItems;
 import org.agmas.noellesroles.item.ChefFoodItem;
-import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
-import org.agmas.noellesroles.packet.ChefCookC2SPacket;
-import org.agmas.noellesroles.packet.FireAxeStabPayload;
-import org.agmas.noellesroles.packet.GamblerSelectRoleC2SPacket;
-import org.agmas.noellesroles.packet.ProblemSetEventC2SPacket;
-import org.agmas.noellesroles.packet.RecorderC2SPacket;
-import org.agmas.noellesroles.packet.VendingBuyMessageCallBackS2CPacket;
-import org.agmas.noellesroles.packet.VendingMachinesBuyC2SPacket;
+import org.agmas.noellesroles.item.ThrowingKnife;
+import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
@@ -307,7 +302,26 @@ public class ModPacketsReciever {
       }
     });
 
-    ServerPlayNetworking.registerGlobalReceiver(ModPackets.VULTURE_PACKET, (payload, context) -> {
+    ServerPlayNetworking.registerGlobalReceiver(TryThrowKnifePacket.ID, (payload, context) -> {
+
+      final var player = context.player();
+      if (player.getMainHandItem().is(ModItems.THROWING_KNIFE)){
+        player.getMainHandItem().shrink(1);
+        player.getCooldowns().addCooldown(ModItems.THROWING_KNIFE, 20);
+        ThrowingKnifeEntity entity = new ThrowingKnifeEntity(ModEntities.THROWING_KNIFE, player.level());
+        entity.setPos( player.getEyePosition().add(0, -0.2, 0));
+        entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 1.0f);
+        entity.setOwner( player);
+        player.level().addFreshEntity(entity);
+        player.swing(InteractionHand.MAIN_HAND);
+        ServerLevel serverLevel = player.serverLevel();
+        serverLevel.players().forEach(p -> {
+        serverLevel.playSound(p, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0f, 1.0f);
+        });
+
+      }
+            });
+      ServerPlayNetworking.registerGlobalReceiver(ModPackets.VULTURE_PACKET, (payload, context) -> {
       final var player = context.player();
       GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
           .get(player.level());

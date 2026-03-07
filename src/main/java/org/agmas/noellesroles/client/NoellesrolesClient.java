@@ -7,6 +7,7 @@ import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.registerScre
 import static org.agmas.noellesroles.client.RicesRoleRhapsodyClient.setupItemCallbacks;
 import static org.agmas.noellesroles.component.InsaneKillerPlayerComponent.isPlayerBodyEntity;
 import static org.agmas.noellesroles.component.InsaneKillerPlayerComponent.playerBodyEntities;
+import static org.agmas.noellesroles.effects.TimeStopEffect.clientPositions;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -17,15 +18,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import net.minecraft.client.CameraType;
 
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.agmas.noellesroles.block_entity.VendingMachinesBlockEntity;
-import org.agmas.noellesroles.init.FunnyItems;
-import org.agmas.noellesroles.init.ModBlocks;
-import org.agmas.noellesroles.init.ModEntities;
-import org.agmas.noellesroles.init.ModItems;
-import org.agmas.noellesroles.init.NRSounds;
+import org.agmas.noellesroles.effects.TimeStopEffect;
+import org.agmas.noellesroles.init.*;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.client.event.MutableComponentResult;
@@ -423,6 +424,19 @@ public class NoellesrolesClient implements ClientModInitializer {
             }
 
         });
+        ClientPlayNetworking.registerGlobalReceiver(CanMoveInTimeStopS2CPacket.ID, (payload, context) -> {
+                clientPositions.clear();
+                Level level = context.player().level();
+                TimeStopEffect.freezeStatedTime = GameTimeComponent.KEY.get(level).time;
+
+                level.players().forEach(p -> {
+                    clientPositions.put(p.getUUID(), p.position());
+                });
+
+
+            TimeStopEffect.canMovePlayers.clear();
+            TimeStopEffect.canMovePlayers.addAll(payload.uuids() );
+        });
 
         // 注册打开物品展示 ui网络包处理
         ClientPlayNetworking.registerGlobalReceiver(DisplayItemS2CPacket.ID, (payload, context) -> {
@@ -451,73 +465,17 @@ public class NoellesrolesClient implements ClientModInitializer {
             return null;
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (taskInstinctBind.consumeClick()) {
-                isTaskInstinctEnabled = !isTaskInstinctEnabled;
-                if (isTaskInstinctEnabled) {
-                    client.player.displayClientMessage(Component.translatable("message.tip.taskpoint_instinct_enable")
-                            .withStyle(ChatFormatting.GREEN), true);
-                } else {
-                    client.player.displayClientMessage(Component.translatable("message.tip.taskpoint_instinct_disable")
-                            .withStyle(ChatFormatting.RED), true);
-                }
-            }
-            if (client == null || client.player == null)
-                return;
-
-            if (client.level != null && client.level.getGameTime() % 20 == 0) {
-                if (TMMClient.gameComponent != null && client.player != null) {
-                    // if (TMMClient.gameComponent.isRole(client.player, ModRoles.AWESOME_BINGLUS))
-                    // {
-                    // for (var p : client.player.level().players()) {
-                    // if (GameFunctions.isPlayerAliveAndSurvival(p)) {
-                    // if (p.distanceTo(client.player) <= 5) {
-                    // var aweC = AwesomePlayerComponent.KEY.maybeGet(p).orElse(null);
-                    // if (aweC != null) {
-                    // AwesomeClientHandler.renderParticleOfPlayer(client, p, aweC);
-                    // }
-                    // }
-                    // }
-                    // }
-                    // }
-                }
-            }
-            if (roleGuessNoteClientBind.consumeClick()) {
-                client.execute(() -> {
-                    client.setScreen(new GuessRoleScreen());
-                });
-            }
-            if (roleIntroClientBind.consumeClick()) {
-                client.execute(() -> {
-                    client.setScreen(new RoleIntroduceScreen(client.player));
-                });
-            }
-            if (client.player.isCreative()) {
-                if (abilityBind.consumeClick()) {
-                    if (TMMClient.gameComponent.isRole(client.player, ModRoles.ATTENDANT)) {
-                        ClientPlayNetworking.send(new AbilityC2SPacket());
-                    }
-                }
-                return;
-            }
-            if (!isPlayerInAdventureMode(client.player))
-                return;
-            insanityTime++;
-            if (insanityTime >= 20 * 6) {
-                insanityTime = 0;
-                List<UUID> keys = new ArrayList<UUID>(TMMClient.PLAYER_ENTRIES_CACHE.keySet());
-                List<UUID> originalkeys = new ArrayList<UUID>(TMMClient.PLAYER_ENTRIES_CACHE.keySet());
-                Collections.shuffle(keys);
-                int i = 0;
-                for (UUID o : originalkeys) {
-                    SHUFFLED_PLAYER_ENTRIES_CACHE.put(o, keys.get(i));
-                    i++;
-                }
-            }
-
-            handleStalkerContinuousInput(client);
-
-            if (abilityBind.consumeClick()) {
-                ClientAbilityHandler.handler(client);
+            if (client.player==null)return;
+            if (client.level != null) {
+                client.level.players().forEach(
+                        player -> {
+                            if (client.player.hasEffect((ModEffects.TIME_STOP))){
+                                if (clientPositions.containsKey(player.getUUID())&&!TimeStopEffect.canMovePlayers.contains(player.getUUID())){
+                                    player.setPos(clientPositions.get(player.getUUID()));
+                                }
+                            }
+                        }
+                );
             }
 
         });
