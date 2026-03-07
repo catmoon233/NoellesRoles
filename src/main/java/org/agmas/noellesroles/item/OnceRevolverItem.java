@@ -39,18 +39,6 @@ public class OnceRevolverItem extends Item {
         super(settings);
     }
 
-    public ItemStack getDefaultInstance() {
-        var itemStack = super.getDefaultInstance();
-        ArrayList<Component> list = new ArrayList<>();
-        var style = net.minecraft.network.chat.Style.EMPTY.withItalic(false).withColor(ChatFormatting.GRAY);
-        list.add(Component.translatable("item.lores.noellesroles.once_revolver.line1").setStyle(style));
-        list.add(Component.translatable("item.lores.noellesroles.once_revolver.line2").setStyle(style));
-        list.add(Component.translatable("item.lores.noellesroles.once_revolver.line3").setStyle(style).withStyle(ChatFormatting.RED));
-        var lores = new ItemLore(list);
-        itemStack.set(DataComponents.LORE, lores);
-        return itemStack;
-    }
-
     public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player user, InteractionHand hand) {
         ItemStack stack = user.getItemInHand(hand);
         GameWorldComponent gameComponent;
