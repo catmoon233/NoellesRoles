@@ -1276,5 +1276,8 @@
   "item.noellesroles.problem_set.tooltip.2": "右键自己做题，或丢给别人",
   "item.noellesroles.problem_set.tooltip.3": "琪露诺做对得200金币，其他人得100金币",
   "item.noellesroles.problem_set.tooltip.4": "答错琪露诺扣san，其他人死亡",
-  "=============== 其余 ===============": ""
+  "=============== 其余 ===============": "",
+  "message.noellesroles.commands.stuck.failed_no_stuck": "你并未卡在方块里！",
+  "message.noellesroles.commands.stuck.failed_cannot_out": "你卡在两格方块里，无法脱困！",
+  "message.noellesroles.commands.stuck.success": "已尝试将你脱困！"
 }
