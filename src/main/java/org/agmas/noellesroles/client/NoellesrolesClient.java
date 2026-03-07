@@ -19,8 +19,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
+import dev.doctor4t.trainmurdermystery.client.StatusBarHUD;
+import dev.doctor4t.trainmurdermystery.client.StatusInit;
+import dev.doctor4t.trainmurdermystery.network.RemoveStatusBarPayload;
+import dev.doctor4t.trainmurdermystery.network.TriggerStatusBarPayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.CameraType;
 
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -432,7 +438,10 @@ public class NoellesrolesClient implements ClientModInitializer {
                 level.players().forEach(p -> {
                     clientPositions.put(p.getUUID(), p.position());
                 });
-
+                if (context.player().hasEffect(ModEffects.TIME_STOP)) {
+                    TimeStopEffect.effectStatedTime = context.player().getEffect(ModEffects.TIME_STOP).getDuration();
+                }
+            StatusBarHUD.getInstance().addStatusBar(StatusInit.getStatusBar("Time_Stop"));
 
             TimeStopEffect.canMovePlayers.clear();
             TimeStopEffect.canMovePlayers.addAll(payload.uuids() );
@@ -587,6 +596,19 @@ public class NoellesrolesClient implements ClientModInitializer {
 
         // 7. 注册血粒子
         bloodMain.init();
+
+
+            StatusInit.statusBars.put("Time_Stop", new StatusInit.StatusBar("Time_Stop", "§7时间停止", () -> {
+                LocalPlayer player = Minecraft.getInstance().player;
+                if (player!=null){
+                    if (player.getEffect(ModEffects.TIME_STOP) != null) {
+                        return 1f-(player.getEffect(ModEffects.TIME_STOP).getDuration() / TimeStopEffect.freezeStatedTime);
+
+                    }
+                }
+                return 1f;
+            }));
+
     }
 
     private void ShowBroadcastMessage(Component message) {

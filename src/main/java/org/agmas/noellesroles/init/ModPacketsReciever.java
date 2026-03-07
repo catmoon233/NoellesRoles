@@ -307,16 +307,18 @@ public class ModPacketsReciever {
       final var player = context.player();
       if (player.getMainHandItem().is(ModItems.THROWING_KNIFE)){
         player.getMainHandItem().shrink(1);
-        player.getCooldowns().addCooldown(ModItems.THROWING_KNIFE, 20);
+        if (!player.getCooldowns().isOnCooldown(ModItems.THROWING_KNIFE)) {
+          player.getCooldowns().addCooldown(ModItems.THROWING_KNIFE, 30);
+        }
         ThrowingKnifeEntity entity = new ThrowingKnifeEntity(ModEntities.THROWING_KNIFE, player.level());
         entity.setPos( player.getEyePosition().add(0, -0.2, 0));
-        entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 1.0f);
+        entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.3f, 1.0f);
         entity.setOwner( player);
         player.level().addFreshEntity(entity);
         player.swing(InteractionHand.MAIN_HAND);
         ServerLevel serverLevel = player.serverLevel();
         serverLevel.players().forEach(p -> {
-        serverLevel.playSound(p, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0f, 1.0f);
+        serverLevel.playSound(p, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0f, 1.0f);
         });
 
       }
