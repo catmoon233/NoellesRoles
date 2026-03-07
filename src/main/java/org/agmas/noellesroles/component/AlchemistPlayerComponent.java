@@ -48,14 +48,14 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "alchemist"),
             AlchemistPlayerComponent.class);
 
-    /** 蹲下获取素材间隔（30秒 = 600 tick） */
-    public static final int MATERIAL_GATHER_INTERVAL = 30 * 20;
+    /** 蹲下获取素材间隔（20秒 = 400 tick） */
+    public static final int MATERIAL_GATHER_INTERVAL = 20 * 20;
 
     /** 每次蹲下获取的素材数量 */
     public static final int MATERIALS_PER_GATHER = 1;
 
     /** 调制药剂需要的素材数量 */
-    public static final int MATERIALS_TO_CRAFT = 2;
+    public static final int MATERIALS_TO_CRAFT = 1;
 
     /** 药剂最大调制次数 */
     public static final int MAX_CRAFT_COUNT = 2;
