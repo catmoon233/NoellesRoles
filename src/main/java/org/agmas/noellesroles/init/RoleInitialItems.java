@@ -64,6 +64,12 @@ public class RoleInitialItems {
     public static void initializeInitialItems() {
         INITIAL_ITEMS_MAP.clear();
 
+        {
+            // JOJO
+            List<Supplier<ItemStack>> items = new ArrayList<>();
+            items.add(() -> FunnyItems.BOWEN_BADGE.getDefaultInstance());
+            INITIAL_ITEMS_MAP.put(ModRoles.JOJO, items);
+        }
         // 故障机器人初始物品（无开局物品）
         INITIAL_ITEMS_MAP.put(ModRoles.GLITCH_ROBOT, new ArrayList<>());
 

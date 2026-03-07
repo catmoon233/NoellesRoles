@@ -24,6 +24,9 @@ public class NoellesRolesConfig {
     @SerialEntry(comment = "Allows the shitpost roles to retain their disable/enable state after a server restart")
     public boolean shitpostRoles = false;
 
+    @SerialEntry(comment = "Areas that will spawn Swast. Use | to split maps.")
+    public String swastMaps = "areas1|areas3|areas4|areas7|areas10";
+
     @SerialEntry(comment = "Role - The chance of egg roles")
     public int chanceOfEggRoles = 15;
     

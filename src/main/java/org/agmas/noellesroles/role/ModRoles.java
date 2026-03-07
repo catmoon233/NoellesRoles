@@ -177,15 +177,16 @@ public class ModRoles {
 
   public static final ResourceLocation WAYFARER_ID = Noellesroles.id("wayfarer");
   public static final ResourceLocation DIO_ID = Noellesroles.id("dio");
+  public static final ResourceLocation JOJO_ID = Noellesroles.id("jojo");
 
   // MAID_SAKUYA 十六夜咲夜
   public static Role MAID_SAKUYA = TMMRoles.registerRole(new NormalRole(
       MAID_SAKUYA_ID, // 角色 ID
-      new Color(164,173,193).getRGB(), // 蓝灰色
+      new Color(164, 173, 193).getRGB(), // 蓝灰色
       true, // isInnocent = 非乘客阵营（杀手）
       false, // canUseKiller = 杀手能力
       Role.MoodType.REAL, // 真实心情
-      Integer.MAX_VALUE, // 无限冲刺时间
+      TMMRoles.CIVILIAN.getMaxSprintTime() * 2, // 2 倍冲刺时间
       false // 不隐藏计分板
   )).setCanSeeCoin(true).setCanSeeTime(true);
   // DIO 迪奥
@@ -196,8 +197,18 @@ public class ModRoles {
       true, // canUseKiller = 杀手能力
       Role.MoodType.FAKE, // 真实心情
       Integer.MAX_VALUE, // 无限冲刺时间
+      true // 不隐藏计分板
+  )).setCanSeeCoin(true).setComponentKey(ModComponents.DIO).setOccupiedRoleCount(2);
+  // JOJO 承太郎
+  public static Role JOJO = TMMRoles.registerRole(new NoramlRole(
+      JOJO_ID, // 角色 ID
+      Color.YELLOW.getRGB(),
+      true, // isInnocent = 非乘客阵营（杀手）
+      false, // canUseKiller = 杀手能力
+      Role.MoodType.REAL, // 真实心情
+      TMMRoles.CIVILIAN.getMaxSprintTime(),
       false // 不隐藏计分板
-  )).setCanSeeCoin(true).setComponentKey(ModComponents.DIO);
+  )).setCanSeeCoin(true).setVigilanteTeam(true);
   // ==================== 已注册角色定义 ====================
   // 乘客阵营角色
   // 中立偏狼：小镇做题家

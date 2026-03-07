@@ -53,6 +53,7 @@ import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.voodoo.VoodooDeathHandler;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.utils.EntityClearUtils;
+import org.agmas.noellesroles.utils.MCItemsUtils;
 import org.agmas.noellesroles.utils.MapScanner;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.utils.ServerManager;
@@ -66,10 +67,12 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeathWithKiller;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
 import dev.doctor4t.trainmurdermystery.event.OnGameTrueStarted;
@@ -80,6 +83,8 @@ import dev.doctor4t.trainmurdermystery.event.OnTeammateKilledTeammate;
 import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.game.ServerTaskInfoClasses;
+import dev.doctor4t.trainmurdermystery.index.TMMDataComponentTypes;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -554,6 +559,7 @@ public class ModEventsRegister {
                                 || deathReason.getPath().equals("fell_out_of_train")
                                 || deathReason.getPath().equals("poison")
                                 || deathReason.getPath().equals("throwing_knife_hit")
+                                || deathReason.getPath().equals("bowen")
                                 || deathReason.getPath().equals("fire_axe")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
 
@@ -730,6 +736,35 @@ public class ModEventsRegister {
                 betterVigilantePlayerComponent.reset();
             }
         });
+        AfterShieldAllowPlayerDeathWithKiller.EVENT.register((player, killer, deathReason) -> {
+
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+            if (gameWorldComponent.isRole(player, ModRoles.STAR)) {
+                return true;
+            }
+            var lifeAndDeathShape = MCItemsUtils.getFirstMatchedItem(player, ModItems.LIFE_AND_DEATH_SHAPE);
+            if (lifeAndDeathShape == null)
+                return true;
+            String starPlayerName = lifeAndDeathShape.getOrDefault(TMMDataComponentTypes.OWNER, "");
+            for (var p : player.level().players()) {
+                if (gameWorldComponent.isRole(p, ModRoles.STAR)) {
+                    if (p.getScoreboardName().equals(starPlayerName)) {
+                        if (GameFunctions.isPlayerAliveAndSurvival(p)) {
+                            p.displayClientMessage(Component.translatable(
+                                    "hud.noellesroles.star.dead.life_and_death_shape", player.getDisplayName())
+                                    .withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD), true);
+                            player.displayClientMessage(Component.translatable(
+                                    "hud.noellesroles.star.dead.life_and_death_shape.victim", p.getDisplayName())
+                                    .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), true);
+                            GameFunctions.killPlayer(p, true, killer, deathReason);
+                            MCItemsUtils.clearItem(player, ModItems.LIFE_AND_DEATH_SHAPE, 1);
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        });
         AllowPlayerDeath.EVENT.register((player, deathReason) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
             WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(player.level());
@@ -826,6 +861,9 @@ public class ModEventsRegister {
             if (role.identifier().equals(ModRoles.DIO.identifier())) {
                 var tpc = DIOPlayerComponent.KEY.get(player);
                 tpc.reset();
+            }
+            if (role.identifier().equals(ModRoles.MAID_SAKUYA.identifier())) {
+                PlayerShopComponent.KEY.get(player).setBalance(100);
             }
             // 初始化记录员
             if (role.identifier().equals(ModRoles.RECORDER.identifier())) {
@@ -1052,18 +1090,18 @@ public class ModEventsRegister {
             }
         }));
         ServerTickEvents.START_SERVER_TICK.register(((server) -> {
-           if (TimeStopEffect.freezeTime>0){
-               TimeStopEffect.freezeTime--;
-               if (TimeStopEffect.freezeTime==0){
-                   server.getPlayerList().getPlayers().forEach((player) -> {
-                       if (TimeStopEffect.canMovePlayers.contains(player.getUUID())){
-                           player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 0, false, false,false));
-                       }
-                       ServerPlayNetworking.send(player, new RemoveStatusBarPayload("Time_Stop"));
-                   });
-                   server.tickRateManager().setFrozen(false);
-               }
-           }
+            if (TimeStopEffect.freezeTime > 0) {
+                TimeStopEffect.freezeTime--;
+                if (TimeStopEffect.freezeTime == 0) {
+                    server.getPlayerList().getPlayers().forEach((player) -> {
+                        if (TimeStopEffect.canMovePlayers.contains(player.getUUID())) {
+                            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 0, false, false, false));
+                        }
+                        ServerPlayNetworking.send(player, new RemoveStatusBarPayload("Time_Stop"));
+                    });
+                    server.tickRateManager().setFrozen(false);
+                }
+            }
         }));
         if (!NoellesRolesConfig.HANDLER.instance().shitpostRoles) {
             HarpyModLoaderConfig.HANDLER.load();
@@ -1108,6 +1146,13 @@ public class ModEventsRegister {
         });
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
+            var blackoutComponent = WorldBlackoutComponent.KEY.get(serverLevel);
+            GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(20, () -> {
+                blackoutComponent.triggerBlackout();
+            }));
+            GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(20 * 4, () -> {
+                blackoutComponent.reset();
+            }));
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(p -> {
@@ -1381,6 +1426,8 @@ public class ModEventsRegister {
                 "noellesroles:pocket_watch",
                 "noellesroles:throwing_knife",
                 "noellesroles:shisiye",
+                "noellesroles:signed_paper",
+                "noellesroles:life_and_death_shape",
                 "minecraft:clock",
                 "minecraft:written_book"));
 

@@ -19,15 +19,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
-import dev.doctor4t.trainmurdermystery.client.StatusBarHUD;
 import dev.doctor4t.trainmurdermystery.client.StatusInit;
-import dev.doctor4t.trainmurdermystery.network.RemoveStatusBarPayload;
-import dev.doctor4t.trainmurdermystery.network.TriggerStatusBarPayload;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.CameraType;
 
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.agmas.noellesroles.block_entity.VendingMachinesBlockEntity;
@@ -70,6 +65,7 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.client.StaminaRenderer;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
+import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AllowNameRender;
@@ -145,6 +141,8 @@ public class NoellesrolesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // 注册HUD渲染
+        LimitedInventoryScreen.NotAllowItemTakePredicates.add(stack -> stack.is(ModItems.BOMB));
+
         BlockEntityRenderers.register(
                 ModBlocks.VENDING_MACHINES_BLOCK_ENTITY,
                 VendingMachinesBlockEntityRenderer::new);
@@ -431,21 +429,19 @@ public class NoellesrolesClient implements ClientModInitializer {
 
         });
         ClientPlayNetworking.registerGlobalReceiver(CanMoveInTimeStopS2CPacket.ID, (payload, context) -> {
-                clientPositions.clear();
+            clientPositions.clear();
             LocalPlayer player = context.player();
             Level level = player.level();
-                TimeStopEffect.freezeStatedTime = GameTimeComponent.KEY.get(level).time;
+            TimeStopEffect.freezeStatedTime = GameTimeComponent.KEY.get(level).time;
 
-                level.players().forEach(p -> {
-                    clientPositions.put(p.getUUID(), p.position());
-                });
+            level.players().forEach(p -> {
+                clientPositions.put(p.getUUID(), p.position());
+            });
             player.stopUsingItem();
-                TimeStopEffect.effectStatedTime = payload.times();
-
-
+            TimeStopEffect.effectStatedTime = payload.times();
 
             TimeStopEffect.canMovePlayers.clear();
-            TimeStopEffect.canMovePlayers.addAll(payload.uuids() );
+            TimeStopEffect.canMovePlayers.addAll(payload.uuids());
         });
 
         // 注册打开物品展示 ui网络包处理
@@ -475,19 +471,71 @@ public class NoellesrolesClient implements ClientModInitializer {
             return null;
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player==null)return;
+            if (client.player == null)
+                return;
             if (client.level != null) {
                 client.level.players().forEach(
                         player -> {
-                            if (client.player.hasEffect((ModEffects.TIME_STOP))){
-                                if (clientPositions.containsKey(player.getUUID())&&!TimeStopEffect.canMovePlayers.contains(player.getUUID())){
+                            if (client.player.hasEffect((ModEffects.TIME_STOP))) {
+                                if (clientPositions.containsKey(player.getUUID())
+                                        && !TimeStopEffect.canMovePlayers.contains(player.getUUID())) {
                                     player.setPos(clientPositions.get(player.getUUID()));
                                 }
                             }
-                        }
-                );
+                        });
+            }
+        });
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (taskInstinctBind.consumeClick()) {
+                isTaskInstinctEnabled = !isTaskInstinctEnabled;
+                if (isTaskInstinctEnabled) {
+                    client.player.displayClientMessage(Component.translatable("message.tip.taskpoint_instinct_enable")
+                            .withStyle(ChatFormatting.GREEN), true);
+                } else {
+                    client.player.displayClientMessage(Component.translatable("message.tip.taskpoint_instinct_disable")
+                            .withStyle(ChatFormatting.RED), true);
+                }
+            }
+            if (client == null || client.player == null)
+                return;
+            if (roleGuessNoteClientBind.consumeClick()) {
+                client.execute(() -> {
+                    client.setScreen(new GuessRoleScreen());
+                });
+            }
+            if (roleIntroClientBind.consumeClick()) {
+                client.execute(() -> {
+                    client.setScreen(new RoleIntroduceScreen(client.player));
+                });
+            }
+            if (client.player.isCreative()) {
+                if (abilityBind.consumeClick()) {
+                    if (TMMClient.gameComponent.isRole(client.player, ModRoles.ATTENDANT)) {
+                        ClientPlayNetworking.send(new AbilityC2SPacket());
+                    }
+                }
+                return;
+            }
+            if (!isPlayerInAdventureMode(client.player))
+                return;
+            insanityTime++;
+            if (insanityTime >= 20 * 6) {
+                insanityTime = 0;
+                List<UUID> keys = new ArrayList<UUID>(TMMClient.PLAYER_ENTRIES_CACHE.keySet());
+                List<UUID> originalkeys = new ArrayList<UUID>(TMMClient.PLAYER_ENTRIES_CACHE.keySet());
+                Collections.shuffle(keys);
+                int i = 0;
+                for (UUID o : originalkeys) {
+                    SHUFFLED_PLAYER_ENTRIES_CACHE.put(o, keys.get(i));
+                    i++;
+                }
             }
 
+            handleStalkerContinuousInput(client);
+
+            if (abilityBind.consumeClick()) {
+                ClientAbilityHandler.handler(client);
+            }
         });
 
         ItemTooltipCallback.EVENT.register(((itemStack, tooltipContext, tooltipType, list) -> {
@@ -497,6 +545,9 @@ public class NoellesrolesClient implements ClientModInitializer {
             tooltipHelper(FunnyItems.PROBLEM_SET, itemStack, list);
             tooltipHelper(FunnyItems.SHISIYE, itemStack, list);
             tooltipHelper(FunnyItems.BOWEN_BADGE, itemStack, list);
+            tooltipHelper(ModItems.SIGNATURE_PAPER, itemStack, list);
+            tooltipHelper(ModItems.LIFE_AND_DEATH_SHAPE, itemStack, list);
+            tooltipHelper(ModItems.SIGNED_PAPER, itemStack, list);
             tooltipHelper(ModItems.THROWING_KNIFE, itemStack, list);
         }));
         // registerKeyBindings();
@@ -601,17 +652,17 @@ public class NoellesrolesClient implements ClientModInitializer {
         // 7. 注册血粒子
         bloodMain.init();
 
+        StatusInit.statusBars.put("Time_Stop", new StatusInit.StatusBar("Time_Stop", "§7时间停止", () -> {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                if (player.getEffect(ModEffects.TIME_STOP) != null) {
+                    return 1f
+                            - (player.getEffect(ModEffects.TIME_STOP).getDuration() / TimeStopEffect.freezeStatedTime);
 
-            StatusInit.statusBars.put("Time_Stop", new StatusInit.StatusBar("Time_Stop", "§7时间停止", () -> {
-                LocalPlayer player = Minecraft.getInstance().player;
-                if (player!=null){
-                    if (player.getEffect(ModEffects.TIME_STOP) != null) {
-                        return 1f-(player.getEffect(ModEffects.TIME_STOP).getDuration() / TimeStopEffect.freezeStatedTime);
-
-                    }
                 }
-                return 1f;
-            }));
+            }
+            return 1f;
+        }));
 
     }
 

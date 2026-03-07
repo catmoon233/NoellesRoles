@@ -11,9 +11,11 @@ import org.agmas.noellesroles.component.MonitorPlayerComponent;
 import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.WayfarerPlayerComponent;
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.utils.MCItemsUtils;
 import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -24,6 +26,7 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.OnGetInstinctHighlight;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.index.TMMDataComponentTypes;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 
@@ -39,7 +42,27 @@ import pro.fazeclan.river.stupid_express.role.arsonist.cca.DousedPlayerComponent
 
 public class InstinctRenderer {
     public static void registerInstinctEvents() {
-        //死亡惩罚
+        // 死亡惩罚
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            if (Minecraft.getInstance() == null)
+                return -1;
+            var self = Minecraft.getInstance().player;
+            if (!GameFunctions.isPlayerAliveAndSurvival(self))
+                return -1;
+            if (self == null)
+                return -1;
+            if (!(target instanceof Player targetPlayer))
+                return -1;
+            var itemStack = MCItemsUtils.getFirstMatchedItem(self, ModItems.SIGNED_PAPER);
+            if (itemStack != null) {
+                String owner = itemStack.getOrDefault(TMMDataComponentTypes.OWNER, "NULL");
+                if (targetPlayer.getScoreboardName().equals(owner)) {
+                    return new Color(254, 254, 254).getRGB();
+                }
+            }
+            return -1;
+        });
+        // 死亡惩罚
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
             if (Minecraft.getInstance() == null)
                 return -1;
@@ -466,9 +489,9 @@ public class InstinctRenderer {
                         return Color.ORANGE.getRGB();
                     } else {
                         // if (TMMClient.gameComponent.isRole(self, ModRoles.BOMBER)){
-                        //     if(target_player.getMainHandItem().is(ModItems.BOMB)){
-                        //         return ModRoles.BOMBER.color();
-                        //     }
+                        // if(target_player.getMainHandItem().is(ModItems.BOMB)){
+                        // return ModRoles.BOMBER.color();
+                        // }
                         // }
                         if (TMMClient.gameComponent.isRole(target_player, ModRoles.GAMBLER)) {
                             return -2;

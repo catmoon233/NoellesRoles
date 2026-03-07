@@ -3,7 +3,6 @@ package org.agmas.noellesroles.init;
 import dev.doctor4t.ratatouille.util.registrar.ItemRegistrar;
 import dev.doctor4t.trainmurdermystery.api.ChargeableItemRegistry;
 import dev.doctor4t.trainmurdermystery.api.impl.KnifeChargeableItem;
-import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
@@ -399,6 +398,28 @@ public class ModItems {
     public static final Item ALCHEMY_MATERIAL = register(
             new AlchemyMaterialItem(new Item.Properties().stacksTo(64)),
             "alchemy_material");
+
+    /**
+     * 签名纸
+     */
+    public static final Item SIGNATURE_PAPER = register(
+            new SignaturePaperItem(new Item.Properties().stacksTo(1)),
+            "signature_paper");
+
+    /**
+     * 生死状
+     */
+    public static final Item LIFE_AND_DEATH_SHAPE = register(
+            new SignedPaperItem(new Item.Properties().stacksTo(1)),
+            "life_and_death_shape");
+
+    /**
+     * 明星签名
+     */
+    public static final Item SIGNED_PAPER = register(
+            new SignedPaperItem(new Item.Properties().stacksTo(1)),
+            "signed_paper");
+
     public static final ItemStack ExamplerPsychoItemStack = TMMItems.PSYCHO_MODE.getDefaultInstance();
 
     static {
@@ -435,7 +456,6 @@ public class ModItems {
     }
 
     public static void init() {
-        LimitedInventoryScreen.NotAllowItemTakePredicates.add(stack -> stack.is(ModItems.BOMB));
         registrar.registerEntries();
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, MISC_CREATIVE_GROUP, FabricItemGroup.builder()
                 .title(Component.translatable("item_group.noellesroles.misc")).icon(() -> {

@@ -5,6 +5,7 @@ import org.agmas.noellesroles.component.DIOPlayerComponent;
 import org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -63,7 +64,8 @@ public class DIOHudMixin {
         int cooldown = dioComponent.timeStopCooldown;
 
         // 标题
-        Component timeStopTitle = Component.translatable("hud.noellesroles.dio.the_world");
+        Component timeStopTitle = Component.translatable("hud.noellesroles.dio.the_world")
+                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         context.drawString(textRenderer, timeStopTitle, x, y, 0xFFD700); // 金色
 
         // 时间停止使用次数
@@ -87,7 +89,7 @@ public class DIOHudMixin {
             float cooldownSeconds = cooldown / 20.0f;
             Component cooldownText = Component.translatable(
                     "hud.noellesroles.dio.cooldown",
-                    String.format("%.1f", cooldownSeconds));
+                    String.format("%.0f", cooldownSeconds));
             context.drawString(textRenderer, cooldownText, x, y + 24, CommonColors.RED);
         } else if (timeStopCharges > 0) {
             Component readyText = Component.translatable("hud.noellesroles.dio.ready",
