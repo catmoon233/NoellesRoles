@@ -24,14 +24,14 @@ import java.util.List;
  * 绳索
  * <p>
  * - 2点耐久
- * - 右键：将前方直线距离10格内的离你最近的玩家拉到自己身前
- * - 使用后进入20秒冷却并消耗1点耐久
+ * - 右键：将前方直线距离12格内的离你最近的玩家拉到自己身前
+ * - 使用后进入5秒冷却并消耗1点耐久
  * </p>
  */
 public class RopeItem extends Item implements AdventureUsable {
     private static final int MAX_DURABILITY = 2;
-    private static final int COOLDOWN = 20 * 20; // 20秒
-    private static final int MAX_DISTANCE = 10; // 最大距离10格
+    private static final int COOLDOWN = 5 * 20; // 5秒
+    private static final int MAX_DISTANCE = 12; // 最大距离12格
 
     public RopeItem(Properties settings) {
         super(settings);
