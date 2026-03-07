@@ -737,14 +737,18 @@ public class ModEventsRegister {
             }
         });
         AfterShieldAllowPlayerDeathWithKiller.EVENT.register((player, killer, deathReason) -> {
+
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+            if (gameWorldComponent.isRole(player, ModRoles.STAR)) {
+                return true;
+            }
             var lifeAndDeathShape = MCItemsUtils.getFirstMatchedItem(player, ModItems.LIFE_AND_DEATH_SHAPE);
             if (lifeAndDeathShape == null)
                 return true;
-            String starPlayerUuid = lifeAndDeathShape.getOrDefault(TMMDataComponentTypes.OWNER, "");
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+            String starPlayerName = lifeAndDeathShape.getOrDefault(TMMDataComponentTypes.OWNER, "");
             for (var p : player.level().players()) {
                 if (gameWorldComponent.isRole(p, ModRoles.STAR)) {
-                    if (p.getUUID().toString().equals(starPlayerUuid)) {
+                    if (p.getScoreboardName().equals(starPlayerName)) {
                         if (GameFunctions.isPlayerAliveAndSurvival(p)) {
                             p.displayClientMessage(Component.translatable(
                                     "hud.noellesroles.star.dead.life_and_death_shape", player.getDisplayName())

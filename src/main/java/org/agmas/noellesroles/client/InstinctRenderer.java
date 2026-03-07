@@ -56,7 +56,7 @@ public class InstinctRenderer {
             var itemStack = MCItemsUtils.getFirstMatchedItem(self, ModItems.SIGNED_PAPER);
             if (itemStack != null) {
                 String owner = itemStack.getOrDefault(TMMDataComponentTypes.OWNER, "NULL");
-                if (targetPlayer.getUUID().toString().equals(owner)) {
+                if (targetPlayer.getScoreboardName().equals(owner)) {
                     return new Color(254, 254, 254).getRGB();
                 }
             }

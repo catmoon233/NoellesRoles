@@ -35,7 +35,7 @@ public class SignaturePaperItem extends Item {
                     var itemName = Component.translatable("item.noellesroles.life_and_death_shape.rename",
                             player.getDisplayName());
                     itemStack.set(DataComponents.ITEM_NAME, itemName);
-                    itemStack.set(TMMDataComponentTypes.OWNER, player.getUUID().toString());
+                    itemStack.set(TMMDataComponentTypes.OWNER, player.getScoreboardName());
                     return InteractionResultHolder.success(itemStack);
 
                 } else {
@@ -51,7 +51,7 @@ public class SignaturePaperItem extends Item {
                 var itemName = Component.translatable("item.noellesroles.signed_paper.rename",
                         player.getDisplayName());
                 itemStack.set(DataComponents.ITEM_NAME, itemName);
-                itemStack.set(TMMDataComponentTypes.OWNER, player.getUUID().toString());
+                itemStack.set(TMMDataComponentTypes.OWNER, player.getScoreboardName());
                 return InteractionResultHolder.success(itemStack);
             }
         }
