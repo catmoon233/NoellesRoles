@@ -52,5 +52,14 @@
 			}
 		],
 		"subtitle": "subtitles.noellesroles.jester"
+	},
+	"noellesroles.time_stop": {
+		"sounds": [
+			{
+				"name": "noellesroles:time_stop",
+				"stream": true
+			}
+		],
+		"subtitle": "subtitles.noellesroles.time_stop"
 	}
 }
