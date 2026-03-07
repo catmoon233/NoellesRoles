@@ -418,7 +418,7 @@ public class ModItems {
      * 明星签名
      */
     public static final Item SIGNED_PAPER = register(
-            new Item(new Item.Properties().stacksTo(1)),
+            new SignaturePaperItem(new Item.Properties().stacksTo(1)),
             "signed_paper");
 
     public static final ItemStack ExamplerPsychoItemStack = TMMItems.PSYCHO_MODE.getDefaultInstance();
