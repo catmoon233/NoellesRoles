@@ -9,6 +9,7 @@ import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.PlayerVolumeComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.effects.TimeStopEffect;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
@@ -52,12 +53,21 @@ public class AbilityHandler {
                         "tip.noellesroles.cooldown", abilityPlayerComponent.cooldown / 20)
                         .withStyle(ChatFormatting.RED), true);
             } else {
-                for (var p : player.level().players()) {
-                    if (p.distanceTo(player) <= 30.) {
-                        // 30s
-                        PlayerVolumeComponent.KEY.get(p).setVolume(600, 0.05f);
-                    }
-                }
+                TimeStopEffect.tryTriggerStart(player, 20 * 5,Component.translatable("title.maid_sakuya.timestopper")
+                                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+                abilityPlayerComponent.setCooldown(20 * 120);
+            }
+            return;
+        }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.DIO)) {
+            if (abilityPlayerComponent.cooldown > 0) {
+                context.player().displayClientMessage(Component.translatable(
+                        "tip.noellesroles.cooldown", abilityPlayerComponent.cooldown / 20)
+                        .withStyle(ChatFormatting.RED), true);
+            } else {
+                TimeStopEffect.tryTriggerStart(player, 20 * 5,
+                        Component.translatable("message.noellesroles.time_stop.the_world")
+                                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
                 abilityPlayerComponent.setCooldown(20 * 120);
             }
             return;
@@ -349,7 +359,7 @@ public class AbilityHandler {
             }
             playerShopComponent.addToBalance(-50);
             if (targetPlayer != null && targetPlayer instanceof ServerPlayer sp) {
-                abilityPlayerComponent.setCooldown(20 * 30);
+                abilityPlayerComponent.setCooldown(60 * 20);
                 ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));
             }
             return;

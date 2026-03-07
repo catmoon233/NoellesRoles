@@ -31,7 +31,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.agmas.noellesroles.effects.TimeStopEffect;
 import org.agmas.noellesroles.init.ModEffects;
-import org.agmas.noellesroles.init.NRSounds;
 import pro.fazeclan.river.stupid_express.StupidExpress;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -508,7 +507,8 @@ public class GameFunctionsCommand {
 
   /**
    * 执行时间停止命令
-   * @param context 命令上下文
+   * 
+   * @param context  命令上下文
    * @param duration 持续时间（tick）
    * @return 1 表示成功
    */
@@ -522,18 +522,17 @@ public class GameFunctionsCommand {
     }
 
     // 触发时间停止效果
-    TimeStopEffect.triggerStart(executor, duration);
+    TimeStopEffect.triggerStart(executor, duration, Component.translatable("Test Time Stop!"));
 
     source.sendSuccess(() -> Component.translatable("Triggered time stop for %s ticks! Only you can move.", duration)
         .withStyle(ChatFormatting.GOLD), true);
-
-
 
     return 1;
   }
 
   /**
    * 停止时间停止效果
+   * 
    * @param context 命令上下文
    * @return 1 表示成功
    */
