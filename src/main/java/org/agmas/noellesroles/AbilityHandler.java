@@ -13,6 +13,7 @@ import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
+import org.agmas.noellesroles.packet.ProblemScreenOpenC2SPacket;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
@@ -23,6 +24,7 @@ import org.agmas.noellesroles.utils.RoleUtils;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -161,12 +163,16 @@ public class AbilityHandler {
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.OLDMAN)) {
             if (player.getVehicle() != null && player.getVehicle() instanceof WheelchairEntity we) {
+                if (player.getCooldowns().isOnCooldown(ModItems.WHEELCHAIR)) {
+                    return;
+                }
                 var chairDurability = we.durability;
                 we.discard();
                 var it = ModItems.WHEELCHAIR.getDefaultInstance();
                 it.setDamageValue(it.getMaxDamage() - chairDurability);
                 RoleUtils.insertStackInFreeSlot(player, it);
                 player.stopRiding();
+                player.getCooldowns().addCooldown(ModItems.WHEELCHAIR, 20);
                 player.displayClientMessage(
                         Component.translatable("message.oldman.get_back").withStyle(ChatFormatting.GOLD), true);
             }
@@ -272,6 +278,34 @@ public class AbilityHandler {
             clockmakerComponent.useSkill();
             return;
         }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.ACCOUNTANT)) {
+            org.agmas.noellesroles.component.AccountantPlayerComponent accountantComponent = org.agmas.noellesroles.component.AccountantPlayerComponent.KEY
+                    .get(context.player());
+
+            // 检查玩家是否在蹲下
+            if (context.player().isShiftKeyDown()) {
+                // 蹲下按技能键：切换模式
+                accountantComponent.toggleMode();
+            } else {
+                // 普通按技能键：使用技能
+                accountantComponent.useAbility();
+            }
+            return;
+        }
+        if (gameWorldComponent.isRole(context.player(), ModRoles.ALCHEMIST)) {
+            org.agmas.noellesroles.component.AlchemistPlayerComponent alchemistComponent = org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY
+                    .get(context.player());
+
+            // 检查玩家是否在蹲下
+            if (context.player().isShiftKeyDown()) {
+                // 蹲下按技能键：切换药剂
+                alchemistComponent.switchPotion();
+            } else {
+                // 普通按技能键：调制药剂
+                alchemistComponent.craftPotion();
+            }
+            return;
+        }
     }
 
     public static void handlerWithTarget(AbilityWithTargetC2SPacket payload, Context context) {
@@ -284,6 +318,26 @@ public class AbilityHandler {
                 .get(context.player().level());
         final ServerPlayer player = context.player();
         var targetPlayer = player.level().getPlayerByUUID(payload.target());
+        if (gameWorldComponent.isRole(player, ModRoles.EXAMPLER)) {
+            if (abilityPlayerComponent.cooldown > 0) {
+                player.displayClientMessage(
+                        Component.translatable("message.noellesroles.ability_cooldown").withStyle(ChatFormatting.RED),
+                        true);
+                return;
+            }
+            if (playerShopComponent.balance < 50) {
+                player.displayClientMessage(
+                        Component.translatable("message.noellesroles.insufficient_funds").withStyle(ChatFormatting.RED),
+                        true);
+                return;
+            }
+            playerShopComponent.addToBalance(-50);
+            if (targetPlayer != null && targetPlayer instanceof ServerPlayer sp) {
+                abilityPlayerComponent.setCooldown(20 * 30);
+                ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));
+            }
+            return;
+        }
         if (gameWorldComponent.isRole(player, ModRoles.FORTUNETELLER)) {
             if (abilityPlayerComponent.cooldown > 0) {
                 player.displayClientMessage(Component.translatable("message.noellesroles.ability_cooldown"), true);

@@ -462,6 +462,12 @@ public class ModEventsRegister {
         TMM.canDrop.add((player) -> {
             var mainHandItem = player.getMainHandItem();
             var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+
+            if (gameWorldComponent.isRole(player, ModRoles.BAKA)) {
+                if (mainHandItem.is(FunnyItems.PROBLEM_SET)) {
+                    return true;
+                }
+            }
             if (gameWorldComponent.isRole(player, ModRoles.CHEF)) {
                 if (mainHandItem.get(ModDataComponentTypes.COOKED) != null) {
                     return true;
@@ -685,7 +691,8 @@ public class ModEventsRegister {
         ShouldDropOnDeath.EVENT.register(((itemStack) -> {
             final var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
             if ("exposure:album".equals(key) || "exposure:photograph".equals(key)
-                    || "exposure:stacked_photographs".equals(key) || itemStack.is(ModItems.PATROLLER_REVOLVER)) {
+                    || "exposure:stacked_photographs".equals(key) || itemStack.is(ModItems.PATROLLER_REVOLVER)
+                    || itemStack.is(ModItems.PASSBOOK)) {
                 return true;
             }
 
@@ -815,6 +822,13 @@ public class ModEventsRegister {
                 var tpc = RecorderPlayerComponent.KEY.get(player);
                 tpc.initRecorder();
             }
+            if (role.identifier().equals(ModRoles.EXAMPLER.identifier())) {
+                var tpc = NoellesRolesAbilityPlayerComponent.KEY.get(player);
+                tpc.reset();
+                tpc.charges = 0;
+                tpc.sync();
+                return;
+            }
             if (role.identifier().equals(ModRoles.THIEF.identifier())) {
                 int totalPlayers = player.level().players().size();
                 var tpc = ThiefPlayerComponent.KEY.get(player);
@@ -829,6 +843,18 @@ public class ModEventsRegister {
             }
             if (role.identifier().equals(ModRoles.WIND_YAOSE.identifier())) {
                 // 现在在NoellesRolesAbilityPlayerComponent serverTick中处理。
+                return;
+            }
+            if (role.identifier().equals(ModRoles.ACCOUNTANT.identifier())) {
+                // 会计角色初始化
+                var accountantComponent = org.agmas.noellesroles.component.AccountantPlayerComponent.KEY.get(player);
+                accountantComponent.reset();
+                return;
+            }
+            if (role.identifier().equals(ModRoles.ALCHEMIST.identifier())) {
+                // 药剂师角色初始化
+                var alchemistComponent = org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY.get(player);
+                alchemistComponent.reset();
                 return;
             }
             if (role.identifier().equals(TMMRoles.KILLER.identifier())) {

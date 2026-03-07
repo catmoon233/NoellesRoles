@@ -72,7 +72,9 @@
         "noellesroles:ghost",
         "noellesroles:thief",
         "noellesroles:manipulator",
-        "noellesroles:writer"
+        "noellesroles:writer",
+        "noellesroles:rescuer",
+        "noellesroles:firefighter"
       ]
     },
     "modifiers": {
@@ -151,7 +153,9 @@
         "stupid_express:initiate",
         "stupid_express:avaricious",
         "stupid_express:necromancer",
-        "noellesroles:best_vigilante"
+        "noellesroles:best_vigilante",
+        "noellesroles:rescuer",
+        "noellesroles:firefighter"
       ],
       "disabled": [
         "noellesroles:thief",
@@ -262,7 +266,9 @@
         "noellesroles:chef",
         "noellesroles:fortuneteller",
         "noellesroles:manipulator",
-        "noellesroles:writer"
+        "noellesroles:writer",
+        "noellesroles:rescuer",
+        "noellesroles:firefighter"
       ],
       "disabled": []
     },

@@ -13,7 +13,8 @@ public class NoellesRolesConfig {
             .createBuilder(NoellesRolesConfig.class)
             .id(ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(FabricLoader.getInstance().getConfigDir().resolve(Noellesroles.MOD_ID + ".json5"))
+                    .setPath(FabricLoader.getInstance().getConfigDir()
+                            .resolve(Noellesroles.MOD_ID + ".json5"))
                     .setJson5(true)
                     .build())
             .build();
@@ -23,6 +24,9 @@ public class NoellesRolesConfig {
     @SerialEntry(comment = "Allows the shitpost roles to retain their disable/enable state after a server restart")
     public boolean shitpostRoles = false;
 
+    @SerialEntry(comment = "Role - The chance of egg roles")
+    public int chanceOfEggRoles = 15;
+    
     @SerialEntry(comment = "Modifier - The chance of Refugee")
     public int chanceOfModifierRefugee = 10;
 

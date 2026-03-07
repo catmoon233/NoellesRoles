@@ -37,6 +37,7 @@ import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
@@ -149,6 +150,7 @@ public class ModPacketsReciever {
     });
     ServerPlayNetworking.registerGlobalReceiver(ProblemSetEventC2SPacket.ID, (payload, context) -> {
       ServerPlayer player = context.player();
+      boolean isForced = payload.forced();
       var mainHandItem = player.getMainHandItem();
       var offHandItem = player.getOffhandItem();
       if (mainHandItem.is(FunnyItems.PROBLEM_SET)) {
@@ -158,10 +160,70 @@ public class ModPacketsReciever {
           offHandItem.shrink(1);
         }
       }
+      var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+
       if (payload.success()) {
-        player.displayClientMessage(Component.literal("Success"), false);
+        var psc = PlayerShopComponent.KEY.get(player);
+        if (isForced) {
+          player.displayClientMessage(
+              Component.translatable("death_reason.noellesroles.success").withStyle(ChatFormatting.GREEN), true);
+          // 没奖励，太抠门了。
+        } else {
+          if (gameWorldComponent.isRole(player, ModRoles.BAKA)) {
+            player.displayClientMessage(
+                Component.translatable("message.baka.problem_set.success").withStyle(ChatFormatting.GREEN), true);
+            psc.addToBalance(200);
+          } else {
+            player.displayClientMessage(
+                Component.translatable("message.baka.not_baka.problem_set.success").withStyle(ChatFormatting.GREEN),
+                true);
+            psc.addToBalance(100);
+          }
+        }
       } else {
-        player.displayClientMessage(Component.literal("Failed"), false);
+        if (gameWorldComponent.isRole(player, ModRoles.BAKA)) {
+          player.displayClientMessage(
+              Component.translatable("message.baka.problem_set.failed").withStyle(ChatFormatting.YELLOW), true);
+          var pmc = PlayerMoodComponent.KEY.get(player);
+          pmc.setMood(pmc.getMood() * 0.3f);
+          return;
+        }
+
+        if (isForced) {
+          player.displayClientMessage(
+              Component.translatable("message.exampler.problem_set.failed").withStyle(ChatFormatting.YELLOW),
+              true);
+          // 如果是小镇做题家给的则杀死玩家
+          var killer = player.level().players().stream().filter((p) -> {
+            return gameWorldComponent.isRole(p, ModRoles.EXAMPLER);
+          }).findFirst().orElse(null);
+          if (killer != null) {
+            var abpc = NoellesRolesAbilityPlayerComponent.KEY.get(killer);
+            abpc.charges++;
+            // Noellesroles.LOGGER.info("Increase 1");
+            if (abpc.charges >= 3) {
+              if (RoleUtils.insertStackInFreeSlot(player, ModItems.ExamplerPsychoItemStack.copy())) {
+                killer.displayClientMessage(
+                    Component.translatable("message.exampler.get_test_psycho").withStyle(ChatFormatting.GOLD),
+                    true);
+                abpc.charges -= 3;
+              }
+            }
+            abpc.sync();
+          }
+          if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+            GameFunctions.killPlayer(player, true, killer, Noellesroles.id("fail_exam"));
+          }
+        } else {
+          player.displayClientMessage(
+              Component.translatable("message.baka.not_baka.problem_set.failed").withStyle(ChatFormatting.YELLOW),
+              true);
+          // 如果是baka给的则杀死玩家
+          if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+            GameFunctions.killPlayer(player, true, null, Noellesroles.id("baka"));
+          }
+        }
+        // player.displayClientMessage(Component.literal("Failed"), true);
       }
     });
     ServerPlayNetworking.registerGlobalReceiver(ChefCookC2SPacket.ID, (payload, context) -> {
@@ -451,74 +513,72 @@ public class ModPacketsReciever {
       component.sync();
     });
     ServerPlayNetworking.registerGlobalReceiver(RecorderC2SPacket.TYPE, RecorderC2SPacket::handle);
-    
+
     // 消防斧攻击包处理
     ServerPlayNetworking.registerGlobalReceiver(FireAxeStabPayload.ID, (payload, context) -> {
-        ServerPlayer player = context.player();
-        
-        // 验证目标是否存在且在范围内
-        if (!(player.serverLevel().getEntity(payload.target()) instanceof ServerPlayer target))
-            return;
-        if (target.distanceTo(player) > 3.0)
-            return;
-            
-        GameWorldComponent game = GameWorldComponent.KEY.get(player.level());
-        
-        // 检查目标是否存活
-        if (!GameFunctions.isPlayerAliveAndSurvival(target)) {
-            player.displayClientMessage(
-                    Component.translatable("item.noellesroles.fire_axe.target_dead")
-                            .withStyle(ChatFormatting.RED),
-                    true);
-            return;
-        }
+      ServerPlayer player = context.player();
 
-        // 获取玩家手中的消防斧
-        var stack = player.getMainHandItem();
-        if (!stack.is(ModItems.FIRE_AXE)) {
-            return;
-        }
+      // 验证目标是否存在且在范围内
+      if (!(player.serverLevel().getEntity(payload.target()) instanceof ServerPlayer target))
+        return;
+      if (target.distanceTo(player) > 3.0)
+        return;
 
-        // 检查耐久是否满
-        if (stack.getDamageValue() > 0) {
-            player.displayClientMessage(
-                    Component.translatable("item.noellesroles.fire_axe.not_full_durability")
-                            .withStyle(ChatFormatting.RED),
-                    true);
-            return;
-        }
+      // 检查目标是否存活
+      if (!GameFunctions.isPlayerAliveAndSurvival(target)) {
+        player.displayClientMessage(
+            Component.translatable("item.noellesroles.fire_axe.target_dead")
+                .withStyle(ChatFormatting.RED),
+            true);
+        return;
+      }
 
-        // 检查冷却
-        if (player.getCooldowns().isOnCooldown(ModItems.FIRE_AXE)) {
-            player.displayClientMessage(
-                    Component.translatable("item.noellesroles.fire_axe.on_cooldown")
-                            .withStyle(ChatFormatting.RED),
-                    true);
-            return;
-        }
+      // 获取玩家手中的消防斧
+      var stack = player.getMainHandItem();
+      if (!stack.is(ModItems.FIRE_AXE)) {
+        return;
+      }
 
-        // 消耗耐久
-        if (!player.isCreative()) {
-            stack.hurtAndBreak(3, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
-        }
+      // 检查耐久是否满
+      if (stack.getDamageValue() > 0) {
+        player.displayClientMessage(
+            Component.translatable("item.noellesroles.fire_axe.not_full_durability")
+                .withStyle(ChatFormatting.RED),
+            true);
+        return;
+      }
 
-        // 添加冷却
-        if (!player.isCreative()) {
-            player.getCooldowns().addCooldown(ModItems.FIRE_AXE, 60 * 20); // 60秒冷却
-        }
+      // 检查冷却
+      if (player.getCooldowns().isOnCooldown(ModItems.FIRE_AXE)) {
+        player.displayClientMessage(
+            Component.translatable("item.noellesroles.fire_axe.on_cooldown")
+                .withStyle(ChatFormatting.RED),
+            true);
+        return;
+      }
 
-        // 执行击杀
-        GameFunctions.killPlayer(target, true, player, org.agmas.noellesroles.item.FireAxeItem.DEATH_REASON_FIRE_AXE);
-        target.playSound(TMMSounds.ITEM_KNIFE_STAB, 1.0f, 1.0f);
-        player.swing(InteractionHand.MAIN_HAND);
+      // 消耗耐久
+      if (!player.isCreative()) {
+        stack.hurtAndBreak(3, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+      }
 
-        // 回放记录
-        if (TMM.REPLAY_MANAGER != null) {
-            TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
-                    net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ModItems.FIRE_AXE));
-        }
+      // 添加冷却
+      if (!player.isCreative()) {
+        player.getCooldowns().addCooldown(ModItems.FIRE_AXE, 60 * 20); // 60秒冷却
+      }
+
+      // 执行击杀
+      GameFunctions.killPlayer(target, true, player, org.agmas.noellesroles.item.FireAxeItem.DEATH_REASON_FIRE_AXE);
+      target.playSound(TMMSounds.ITEM_KNIFE_STAB, 1.0f, 1.0f);
+      player.swing(InteractionHand.MAIN_HAND);
+
+      // 回放记录
+      if (TMM.REPLAY_MANAGER != null) {
+        TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),
+            net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ModItems.FIRE_AXE));
+      }
     });
-    
+
     ServerPlayNetworking.registerGlobalReceiver(ModPackets.MONITOR_MARK_PACKET, (payload, context) -> {
       GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
           .get(context.player().level());

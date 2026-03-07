@@ -24,7 +24,6 @@ import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
@@ -45,8 +44,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
 import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.effects.TimeStopEffect;
-import org.agmas.noellesroles.init.ModEffects;
+import org.agmas.noellesroles.packet.ProblemScreenOpenC2SPacket;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 import org.agmas.noellesroles.utils.MapScannerManager;
 import org.jetbrains.annotations.Nullable;
@@ -59,6 +57,16 @@ public class GameFunctionsCommand {
     CommandRegistrationCallback.EVENT.register(
         (dispatcher, registryAccess, environment) -> {
           dispatcher.register(Commands.literal("tmm:game").requires(source -> source.hasPermission(2))
+              .then(Commands.literal("tests")
+                  .then(Commands.literal("math").executes((context) -> {
+                    ServerPlayNetworking.send(context.getSource().getPlayerOrException(),
+                        new ProblemScreenOpenC2SPacket(false, 3));
+                    return 1;
+                  }).then(Commands.literal("forced").executes((context) -> {
+                    ServerPlayNetworking.send(context.getSource().getPlayerOrException(),
+                        new ProblemScreenOpenC2SPacket(true, 3));
+                    return 1;
+                  }))))
               .then(Commands.literal("tasks")
                   .then(Commands.literal("list").executes((context) -> {
                     var source = context.getSource();
@@ -494,7 +502,7 @@ public class GameFunctionsCommand {
       return builder.buildFuture();
     }
   }
-  
+
   /**
    * 执行时间停止命令
    * @param context 命令上下文
@@ -504,23 +512,23 @@ public class GameFunctionsCommand {
   public static int executeTimeStop(CommandContext<CommandSourceStack> context, int duration) {
     var source = context.getSource();
     ServerPlayer executor = source.getPlayer();
-    
+
     if (executor == null) {
       source.sendFailure(Component.literal("Only players can use this command!").withStyle(ChatFormatting.RED));
       return 0;
     }
-    
+
     // 触发时间停止效果
     TimeStopEffect.triggerStart(executor, duration);
-    
+
     source.sendSuccess(() -> Component.translatable("Triggered time stop for %s ticks! Only you can move.", duration)
         .withStyle(ChatFormatting.GOLD), true);
 
 
-    
+
     return 1;
   }
-  
+
   /**
    * 停止时间停止效果
    * @param context 命令上下文
@@ -528,16 +536,16 @@ public class GameFunctionsCommand {
    */
   public static int executeTimeStopStop(CommandContext<CommandSourceStack> context) {
     var source = context.getSource();
-    
+
     // 清除所有玩家的时间停止效果
     for (ServerPlayer player : source.getLevel().players()) {
       player.removeEffect((ModEffects.TIME_STOP));
     }
-    
+
     // 清空可移动玩家列表
     TimeStopEffect.canMovePlayers.clear();
     TimeStopEffect.clientPositions.clear();
-    
+
     source.sendSuccess(() -> Component.translatable("Stopped time stop! All players can now move.")
         .withStyle(ChatFormatting.GREEN), true);
 

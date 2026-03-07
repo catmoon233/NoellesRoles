@@ -26,12 +26,41 @@ public class MathSolverScreen extends Screen {
     private final int BUTTON_WIDTH = 100;
     private final int BUTTON_HEIGHT = 20;
 
+    private int maxTrial = 0;
     private boolean hasStarted = false;
     private long startTime = 0;
     private boolean failed = false;
+    private boolean forced = false;
 
     public MathSolverScreen() {
+        this(false, 1);
+    }
+
+    public MathSolverScreen(boolean forced, int maxTrial) {
         super(Component.translatable("screen.math_solver.title"));
+        this.forced = forced;
+        this.maxTrial = maxTrial;
+        resetProblems();
+        hasStarted = false;
+        currentIndex = -1;
+        startTime = 0;
+        failed = false;
+    }
+
+    public void startMathSolving() {
+        this.hasStarted = true;
+        startTime = this.minecraft.level.getGameTime();
+        this.currentIndex = -1;
+        nextProblem();
+    }
+
+    public void restart() {
+        resetProblems();
+        this.failed = false;
+        this.startMathSolving();
+    }
+
+    private void resetProblems() {
         this.MathProblems.clear();
         MathProblemsManager manager = new MathProblemsManager();
         int maxT = 4;
@@ -51,17 +80,11 @@ public class MathSolverScreen extends Screen {
             this.MathProblems.add(newP);
         }
         this.maxTime = maxT * 20;
-        hasStarted = false;
-        currentIndex = -1;
-        startTime = 0;
-        failed = false;
     }
 
-    public void startMathSolving() {
-        this.hasStarted = true;
-        startTime = this.minecraft.level.getGameTime();
-        this.currentIndex = -1;
-        nextProblem();
+    public void solveFailed_and_sendPacket() {
+        maxTrial = 0;
+        ClientPlayNetworking.send(new ProblemSetEventC2SPacket(false, forced));
     }
 
     public void solveFailed() {
@@ -69,8 +92,8 @@ public class MathSolverScreen extends Screen {
             return;
         failed = true;
         this.currentIndex = -2;
-        this.initFinished();
-        ClientPlayNetworking.send(new ProblemSetEventC2SPacket(false));
+        maxTrial--;
+        this.initFailed();
     }
 
     @Override
@@ -83,8 +106,7 @@ public class MathSolverScreen extends Screen {
 
     public void solveSuccess() {
         initFinished();
-
-        ClientPlayNetworking.send(new ProblemSetEventC2SPacket(true));
+        ClientPlayNetworking.send(new ProblemSetEventC2SPacket(true, forced));
     }
 
     public void nextProblem() {
@@ -98,8 +120,12 @@ public class MathSolverScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (hasStarted && this.currentIndex >= 0 && this.currentIndex < this.totalPages) {
-            solveFailed();
+        if (!hasStarted && forced) {
+            solveFailed_and_sendPacket();
+        } else if (currentIndex == -2) {
+            solveFailed_and_sendPacket();
+        } else if (hasStarted && this.currentIndex >= 0 && this.currentIndex < this.totalPages) {
+            solveFailed_and_sendPacket();
         }
         super.onClose();
     }
@@ -127,9 +153,19 @@ public class MathSolverScreen extends Screen {
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
         int buttonY = maxHeight / 2;
-        Button btn = Button.builder(Component.translatable("screen.noellesroles.close"), (bbtn) -> {
+        Button btn2 = Button.builder(Component.translatable("screen.math_solver.try_again", maxTrial), (bbtn) -> {
+            this.restart();
+        }).bounds(buttonX, buttonY - 30 - BUTTON_HEIGHT - 10, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        btn2.setTooltip(Tooltip.create(Component.translatable("screen.math_solver.max_trial")));
+
+        if (this.maxTrial <= 0) {
+            btn2.active = false;
+        }
+        this.addRenderableWidget(btn2);
+
+        Button btn = Button.builder(Component.translatable("screen.math_solver.failed_close"), (bbtn) -> {
             this.onClose();
-        }).bounds(buttonX, buttonY - 30, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        }).bounds(buttonX, buttonY - 10, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(btn);
     }
 
@@ -168,6 +204,7 @@ public class MathSolverScreen extends Screen {
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
         int buttonY = maxHeight / 2;
+
         Button btn = Button.builder(Component.translatable("screen.math_solver.close"), (bbtn) -> {
             this.onClose();
         }).bounds(buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
@@ -181,7 +218,10 @@ public class MathSolverScreen extends Screen {
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
         int buttonY = maxHeight / 2;
-        var startHint = Component.translatable("screen.math_solver.start_hint");
+        var startHint = Component.translatable("screen.math_solver.start_hint", maxTrial);
+        if (forced)
+            startHint = Component.translatable("screen.math_solver.start_hint_forced", maxTrial)
+                    .withStyle(ChatFormatting.RED);
         Button btn = Button.builder(Component.translatable("screen.math_solver.start"), (bbtn) -> {
             this.startMathSolving();
         }).bounds(buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
@@ -249,8 +289,11 @@ public class MathSolverScreen extends Screen {
             guiGraphics.drawCenteredString(font, startHint, width / 2, height / 2 - 30, 0x888888);
         }
         if (this.hasStarted == false && this.currentIndex == -1) {
-            Component startHint = Component.translatable("screen.math_solver.start_hint")
+            Component startHint = Component.translatable("screen.math_solver.start_hint", maxTrial)
                     .withStyle(ChatFormatting.YELLOW);
+            if (forced)
+                startHint = Component.translatable("screen.math_solver.start_hint_forced", maxTrial)
+                        .withStyle(ChatFormatting.RED);
             guiGraphics.drawCenteredString(font, startHint, width / 2, height / 2 + 30, 0x888888);
         }
 

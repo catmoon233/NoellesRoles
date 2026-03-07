@@ -21,8 +21,8 @@ public abstract class InsaneShopMixin {
     @Final
     private ItemStack stack;
 
-    @Inject(method = "onBuy", at = @At("HEAD"), cancellable = true)
-    private void onBuy(@NotNull Player player, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "canBuy", at = @At("HEAD"), cancellable = true)
+    private void cantBuy(@NotNull Player player, CallbackInfoReturnable<Boolean> cir) {
         if (GameWorldComponent.KEY.get(player.level()).isRole(player,
                 ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
             var ikpc = InsaneKillerPlayerComponent.KEY.get(player);
