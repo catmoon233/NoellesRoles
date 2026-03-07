@@ -2,6 +2,9 @@ package org.agmas.noellesroles.init;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import dev.doctor4t.trainmurdermystery.network.RemoveStatusBarPayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import org.agmas.harpymodloader.Harpymodloader;
 import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
@@ -1045,6 +1048,9 @@ public class ModEventsRegister {
            if (TimeStopEffect.freezeTime>0){
                TimeStopEffect.freezeTime--;
                if (TimeStopEffect.freezeTime==0){
+                   server.getPlayerList().getPlayers().forEach((player) -> {
+                       ServerPlayNetworking.send(player, new RemoveStatusBarPayload("Time_Stop"));
+                   });
                    server.tickRateManager().setFrozen(false);
                }
            }
