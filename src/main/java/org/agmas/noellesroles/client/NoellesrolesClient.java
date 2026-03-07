@@ -105,7 +105,7 @@ import walksy.crosshairaddons.CrosshairAddons;
 import net.minecraft.sounds.SoundSource;
 
 public class NoellesrolesClient implements ClientModInitializer {
-
+    public static boolean hasInitStatusBar = false;
     public static int insanityTime = 0;
     public static KeyMapping roleGuessNoteClientBind;
     public static KeyMapping abilityBind;
@@ -433,7 +433,9 @@ public class NoellesrolesClient implements ClientModInitializer {
             LocalPlayer player = context.player();
             Level level = player.level();
             TimeStopEffect.freezeStatedTime = GameTimeComponent.KEY.get(level).time;
-
+            var effect = player.getEffect(ModEffects.TIME_STOP);
+            if (effect != null)
+                TimeStopEffect.freezeMaxTime = effect.getDuration();
             level.players().forEach(p -> {
                 clientPositions.put(p.getUUID(), p.position());
             });
@@ -469,6 +471,24 @@ public class NoellesrolesClient implements ClientModInitializer {
                 }
             }
             return null;
+        });
+        ClientTickEvents.END_WORLD_TICK.register((client) -> {
+            if (!hasInitStatusBar) {
+                hasInitStatusBar = true;
+                StatusInit.statusBars.put("Time_Stop", new StatusInit.StatusBar("Time_Stop",
+                        Component.translatable("mob_effect.noellesroles.time_stop").getString(), () -> {
+                            LocalPlayer player = Minecraft.getInstance().player;
+                            if (player != null) {
+                                if (player.getEffect(ModEffects.TIME_STOP) != null) {
+                                    return 1f
+                                            - (player.getEffect(ModEffects.TIME_STOP).getDuration()
+                                                    / TimeStopEffect.freezeMaxTime);
+
+                                }
+                            }
+                            return 1f;
+                        }));
+            }
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null)
@@ -651,18 +671,6 @@ public class NoellesrolesClient implements ClientModInitializer {
 
         // 7. 注册血粒子
         bloodMain.init();
-
-        StatusInit.statusBars.put("Time_Stop", new StatusInit.StatusBar("Time_Stop", "§7时间停止", () -> {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null) {
-                if (player.getEffect(ModEffects.TIME_STOP) != null) {
-                    return 1f
-                            - (player.getEffect(ModEffects.TIME_STOP).getDuration() / TimeStopEffect.freezeStatedTime);
-
-                }
-            }
-            return 1f;
-        }));
 
     }
 
