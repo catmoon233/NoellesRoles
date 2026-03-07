@@ -433,9 +433,7 @@ public class NoellesrolesClient implements ClientModInitializer {
             LocalPlayer player = context.player();
             Level level = player.level();
             TimeStopEffect.freezeStatedTime = GameTimeComponent.KEY.get(level).time;
-            var effect = player.getEffect(ModEffects.TIME_STOP);
-            if (effect != null)
-                TimeStopEffect.freezeMaxTime = effect.getDuration();
+            TimeStopEffect.freezeMaxTime = payload.times();
             level.players().forEach(p -> {
                 clientPositions.put(p.getUUID(), p.position());
             });
