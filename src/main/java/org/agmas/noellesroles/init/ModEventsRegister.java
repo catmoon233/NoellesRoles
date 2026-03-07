@@ -556,6 +556,7 @@ public class ModEventsRegister {
                                 || deathReason.getPath().equals("fell_out_of_train")
                                 || deathReason.getPath().equals("poison")
                                 || deathReason.getPath().equals("throwing_knife_hit")
+                                || deathReason.getPath().equals("bowen")
                                 || deathReason.getPath().equals("fire_axe")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
 
@@ -828,6 +829,9 @@ public class ModEventsRegister {
             if (role.identifier().equals(ModRoles.DIO.identifier())) {
                 var tpc = DIOPlayerComponent.KEY.get(player);
                 tpc.reset();
+            }
+            if (role.identifier().equals(ModRoles.MAID_SAKUYA.identifier())) {
+                PlayerShopComponent.KEY.get(player).setBalance(100);
             }
             // 初始化记录员
             if (role.identifier().equals(ModRoles.RECORDER.identifier())) {

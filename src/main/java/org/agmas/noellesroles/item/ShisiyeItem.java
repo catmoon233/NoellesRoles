@@ -1,4 +1,4 @@
-package org.agmas.noellesroles.init;
+package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.item.CocktailItem;
 import net.minecraft.server.level.ServerPlayer;

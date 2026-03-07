@@ -22,6 +22,7 @@
     "cca.PlayerMoodComponentMixin",
     "item.ThrowingKnifeCooldownMixin",
     "roles.awesome_binglus.NoteEntityMixin",
+    "roles.jojo.GunCooldownMixin",
     "roles.awesome_binglus.NoteMixin",
     "roles.coroner.CoronerAddDeathReasonMixin",
     "roles.elf.ArrowMixin",
