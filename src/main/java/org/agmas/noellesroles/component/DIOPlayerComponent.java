@@ -25,6 +25,7 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -35,7 +36,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  * - 最后的狂欢：被动技能，免疫死亡并获得临时生命
  * - 吸食：右键尸体吸食，获得金钱和速度加成
  */
-public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent {
+public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
     @Override
     public Player getPlayer() {
         return player;
@@ -255,7 +256,7 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
         this.timeStopCooldown = TIME_STOP_COOLDOWN;
 
         TimeStopEffect.triggerStart(serverPlayer, TIME_STOP_DURATION,
-                Component.translatable("message.noellesroles.dio.time_stop_start"));
+                Component.translatable("message.noellesroles.time_stop.the_world"));
 
         // 播放音效
         Level world = player.level();
@@ -480,6 +481,8 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
 
         if (timeStopCooldown > 0) {
             timeStopCooldown--;
+            if (timeStopCooldown % 100 == 0)
+                sync();
         }
 
         // 处理吸食动作
@@ -544,5 +547,12 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
         this.isFeeding = tag.contains("isFeeding") && tag.getBoolean("isFeeding");
         this.feedingRemaining = tag.contains("feedingRemaining") ? tag.getInt("feedingRemaining") : 0;
 
+    }
+
+    @Override
+    public void clientTick() {
+        if (this.timeStopCooldown > 1) {
+            this.timeStopCooldown--;
+        }
     }
 }

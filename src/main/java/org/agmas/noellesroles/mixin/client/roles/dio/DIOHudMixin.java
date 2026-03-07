@@ -89,7 +89,7 @@ public class DIOHudMixin {
             float cooldownSeconds = cooldown / 20.0f;
             Component cooldownText = Component.translatable(
                     "hud.noellesroles.dio.cooldown",
-                    String.format("%.1f", cooldownSeconds));
+                    String.format("%.0f", cooldownSeconds));
             context.drawString(textRenderer, cooldownText, x, y + 24, CommonColors.RED);
         } else if (timeStopCharges > 0) {
             Component readyText = Component.translatable("hud.noellesroles.dio.ready",

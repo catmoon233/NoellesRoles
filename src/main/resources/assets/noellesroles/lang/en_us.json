@@ -821,8 +821,4 @@
   "item.noellesroles.extinguisher.tooltip.hold": "Hold Right Click: Continuous spray for up to 5 seconds",
   "item.noellesroles.extinguisher.empty": "Fire extinguisher is empty!",
   "item.noellesroles.extinguisher.cleaned_fuel": "Cleared the fuel from the target!"
-  "death_reason.noellesroles.fire_axe": "Fire axe strike",
-  "message.noellesroles.time_stop.the_world": "「The World」",
-  "message.noellesroles.dio.time_stop_start": "\\u00a76「The World」",
-  "hud.dio.eat": "与尸体右键交互以使用尸体"
 }
