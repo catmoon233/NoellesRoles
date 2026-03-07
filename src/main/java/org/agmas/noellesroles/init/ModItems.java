@@ -2,7 +2,6 @@ package org.agmas.noellesroles.init;
 
 import dev.doctor4t.ratatouille.util.registrar.ItemRegistrar;
 import dev.doctor4t.trainmurdermystery.api.ChargeableItemRegistry;
-import dev.doctor4t.trainmurdermystery.api.impl.KnifeChargeableItem;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.ChatFormatting;
@@ -37,14 +36,16 @@ import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.item.KnifeItem;
 
 public class ModItems {
-    public static ResourceKey<CreativeModeTab> MISC_CREATIVE_GROUP = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
+    public static ResourceKey<CreativeModeTab> MISC_CREATIVE_GROUP = ResourceKey.create(
+            Registries.CREATIVE_MODE_TAB,
             Noellesroles.id("misc"));
     public static final ItemRegistrar registrar = new ItemRegistrar(Noellesroles.MOD_ID);
 
     public static final Item COOKED_FOOD = register(
             new ChefFoodItem(new Item.Properties().stacksTo(1)), "cooked_food");
     public static final Item A_BOTTLE_OF_WATER = register(
-            new ChefWaterItem((new Item.Properties()).stacksTo(1).food(Foods.HONEY_BOTTLE)), "a_bottle_of_water");
+            new ChefWaterItem((new Item.Properties()).stacksTo(1).food(Foods.HONEY_BOTTLE)),
+            "a_bottle_of_water");
     public static final Item LINGSHI = register(
             new ChefFoodItem((new Item.Properties()).stacksTo(1)), "lingshi");
 
@@ -52,13 +53,11 @@ public class ModItems {
             new FoodStuffItem((new Item.Properties()).stacksTo(16)), "foodstuff");
     public static final Item PAN = register(
             new PanItem((new Item.Properties()).stacksTo(1)), "pan");
-    public static final Item THROWING_KNIFE = register(
-            new ThrowingKnife((new Item.Properties()).stacksTo(1)), "throwing_knife");
     public static final Item BUCKET_OF_H2SO4 = register(
             new H2SO4AcidItem((new Item.Properties()).stacksTo(1)), "bucket_of_h2so4");
     public static final Item LETTER_ITEM = register(
             new LetterItem((new Item.Properties()).stacksTo(1)), "letter");
-            
+
     public static final Item ONCE_REVOLVER = register(
             new OnceRevolverItem((new Item.Properties()).stacksTo(1).durability(1)), "once_revolver");
     public static final Item HANDCUFFS = register(
@@ -358,12 +357,57 @@ public class ModItems {
     public static final Item FIRE_AXE = register(
             new FireAxeItem(new Item.Properties().stacksTo(1).durability(3)),
             "fire_axe");
+    public static final Item THROWING_KNIFE = register(
+            new ThrowingKnife((new Item.Properties()).stacksTo(1)), "throwing_knife");
+    /**
+     * 绳索
+     * - 3点耐久
+     * - 右键：将前方直线距离10格内的离你最近的玩家拉到自己身前
+     * - 使用后进入20秒冷却并消耗1点耐久
+     */
+    public static final Item ROPE = register(
+            new RopeItem(new Item.Properties().stacksTo(1).durability(3)),
+            "rope");
+
+    /**
+     * 灭火器
+     * - 5点耐久
+     * - 右键对人喷射：每使用一次消耗1点耐久
+     * 长按右键持续喷射：最多持续5秒，持续消耗耐久
+     * - 对人喷射效果：缓慢 + 失明（持续1.5秒）
+     * - 持续喷射同一人会刷新效果时间
+     * - 如果被喷射的人被纵火犯浇湿，则清除浇湿状态
+     */
+    public static final Item EXTINGUISHER = register(
+            new ExtinguisherItem(new Item.Properties().stacksTo(1).durability(5)),
+            "extinguisher");
+
+    /**
+     * 存折
+     * - 用于查看和记录金币数量
+     * - 右键使用显示当前金币
+     */
+    public static final Item PASSBOOK = register(
+            new PassbookItem(new Item.Properties().stacksTo(1)),
+            "passbook");
+
+    /**
+     * 药剂素材
+     * - 用于药剂相关合成
+     */
+    public static final Item ALCHEMY_MATERIAL = register(
+            new AlchemyMaterialItem(new Item.Properties().stacksTo(64)),
+            "alchemy_material");
+    public static final ItemStack ExamplerPsychoItemStack = TMMItems.PSYCHO_MODE.getDefaultInstance();
 
     static {
+        var examplerPsychoLore = new ItemLore(List.of(Component.translatable("itemstack.exampler.psychoitem.item_lore.1")));
+        ExamplerPsychoItemStack.set(DataComponents.LORE, examplerPsychoLore);
+        ExamplerPsychoItemStack.set(DataComponents.ITEM_NAME,
+                Component.translatable("itemstack.exampler.psychoitem.item_name"));
         ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
         ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());
         ChargeableItemRegistry.register(HSRItems.ANTIDOTE, new AntidoteChargeItem());
-        ChargeableItemRegistry.register(THROWING_KNIFE, new KnifeChargeableItem());
     }
     // public static final Item SHERIFF_GUN_MAINTENANCE = register(
     // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
@@ -378,11 +422,12 @@ public class ModItems {
     public static Item register(Item item, String id) {
         // Create the identifier for the item.
         // Register the item.
+        var registeredItem = registrar.create(id, item, new ResourceKey[] { MISC_CREATIVE_GROUP });
         // Item registeredItem = Registry.register(BuiltInRegistries.ITEM, itemID,
         // item);
 
         // Return the registered item!
-        return registrar.create(id, item, new ResourceKey[] { MISC_CREATIVE_GROUP });
+        return registeredItem;
     }
 
     public static void init() {
@@ -433,8 +478,8 @@ public class ModItems {
                 text.add(Component.translatable(tipString + "room").withStyle(stylizer));
                 var date = new LocalDateData();
                 text.add(Component.translatable(tipString + "tooltip1",
-                        Component.translatable(tipString + "date", date.getYear(),
-                                date.getMonth(), date.getDay()))
+                                Component.translatable(tipString + "date", date.getYear(),
+                                        date.getMonth(), date.getDay()))
                         .withStyle(stylizer));
                 text.add(Component.translatable(tipString + "tooltip2").withStyle(stylizer));
                 return new ItemLore(text);

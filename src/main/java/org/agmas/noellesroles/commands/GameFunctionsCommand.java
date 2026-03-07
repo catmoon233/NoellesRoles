@@ -29,6 +29,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import org.agmas.noellesroles.effects.TimeStopEffect;
+import org.agmas.noellesroles.init.ModEffects;
+import org.agmas.noellesroles.init.NRSounds;
 import pro.fazeclan.river.stupid_express.StupidExpress;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -540,6 +543,7 @@ public class GameFunctionsCommand {
     // 清除所有玩家的时间停止效果
     for (ServerPlayer player : source.getLevel().players()) {
       player.removeEffect((ModEffects.TIME_STOP));
+
     }
 
     // 清空可移动玩家列表

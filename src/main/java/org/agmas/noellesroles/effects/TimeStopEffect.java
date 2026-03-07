@@ -10,6 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTickRateManager;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.agmas.noellesroles.init.ModEffects;
+import org.agmas.noellesroles.init.NRSounds;
 import org.agmas.noellesroles.packet.CanMoveInTimeStopS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
 
@@ -57,6 +59,7 @@ public class TimeStopEffect extends MobEffect {
 
         serverPlayer.serverLevel().players().forEach(
                 player -> {
+                    player.playNotifySound(NRSounds.TIME_STOP, SoundSource.PLAYERS, 1.0F, 1.0F);
                     BroadcastCommand.BroadcastMessage(player, broadcastMessage);
                     player.addEffect(new MobEffectInstance( (ModEffects.TIME_STOP),time,0,false,false,false));
 

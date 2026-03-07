@@ -1,6 +1,48 @@
 package org.agmas.noellesroles.role;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.component.AdmirerPlayerComponent;
+import org.agmas.noellesroles.component.AvengerPlayerComponent;
+import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
+import org.agmas.noellesroles.component.BomberPlayerComponent;
+import org.agmas.noellesroles.component.BoxerPlayerComponent;
+import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
+import org.agmas.noellesroles.component.ClockmakerPlayerComponent;
+import org.agmas.noellesroles.component.ConspiratorPlayerComponent;
+import org.agmas.noellesroles.component.DetectivePlayerComponent;
+import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
+import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
+import org.agmas.noellesroles.component.ModComponents;
+import org.agmas.noellesroles.component.MonitorPlayerComponent;
+import org.agmas.noellesroles.component.NianShouPlayerComponent;
+import org.agmas.noellesroles.component.PatrollerPlayerComponent;
+import org.agmas.noellesroles.component.PostmanPlayerComponent;
+import org.agmas.noellesroles.component.PsychologistPlayerComponent;
+import org.agmas.noellesroles.component.PuppeteerPlayerComponent;
+import org.agmas.noellesroles.component.RecorderPlayerComponent;
+import org.agmas.noellesroles.component.SingerPlayerComponent;
+import org.agmas.noellesroles.component.StalkerPlayerComponent;
+import org.agmas.noellesroles.component.StarPlayerComponent;
+import org.agmas.noellesroles.component.TrapperPlayerComponent;
+import org.agmas.noellesroles.component.VeteranPlayerComponent;
+import org.agmas.noellesroles.roles.chef.ChefRole;
+import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
+import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
+import org.agmas.noellesroles.roles.gambler.GamblerRole;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
+import org.agmas.noellesroles.roles.manipulator.ManipulatorRole;
+import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
+import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
+import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
+import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
+
 import com.mojang.serialization.Codec;
+
 import dev.doctor4t.trainmurdermystery.api.NoramlRole;
 import dev.doctor4t.trainmurdermystery.api.NormalRole;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -10,33 +52,15 @@ import dev.doctor4t.trainmurdermystery.cca.PlayerPoisonComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementTexts;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import org.agmas.harpymodloader.Harpymodloader;
-import org.agmas.noellesroles.Noellesroles;
-import org.agmas.noellesroles.component.*;
-import org.agmas.noellesroles.roles.chef.ChefRole;
-import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
-import org.agmas.noellesroles.roles.gambler.GamblerPlayerComponent;
-import org.agmas.noellesroles.roles.gambler.GamblerRole;
-import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import net.minecraft.resources.ResourceLocation;
-import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
-import org.agmas.noellesroles.roles.manipulator.ManipulatorRole;
-import org.agmas.noellesroles.roles.morphling.MorphlingPlayerComponent;
-import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
-import org.agmas.noellesroles.roles.voodoo.VoodooPlayerComponent;
-import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 
 /**
  * 角色定义类
- * 
+ *
  * 在这里定义所有自定义角色
- * 
+ *
  * ==================== 角色参数说明 ====================
- * 
+ *
  * Role 构造函数参数：
  * 1. identifier - 角色唯一标识符 (Identifier)
  * 2. color - 角色颜色 (int RGB)，用于 UI 显示
@@ -55,9 +79,9 @@ import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
  * 7. hideOnScoreboard - 是否在计分板上隐藏 (boolean)
  * true = 隐藏（杀手/中立通常隐藏）
  * false = 显示（乘客通常显示）
- * 
+ *
  * ==================== 阵营类型 ====================
- * 
+ *
  * | 阵营 | isInnocent | canUseKiller | 说明 |
  * |----------|------------|--------------|------|
  * | 乘客 | true | false | 普通平民，需要完成任务 |
@@ -68,8 +92,8 @@ import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 public class ModRoles {
   @SuppressWarnings("deprecation")
   public static final AttachmentType<String> ENTITY_NOTE_MAKER = AttachmentRegistry.<String>builder()
-      .persistent(Codec.STRING)
-      .buildAndRegister(Noellesroles.id("entity_note_maker"));
+          .persistent(Codec.STRING)
+          .buildAndRegister(Noellesroles.id("entity_note_maker"));
   // ==================== 角色 ID 定义 ====================
   // 建议格式：MOD_ID:role_name
 
@@ -109,6 +133,13 @@ public class ModRoles {
   public static ResourceLocation MAGICIAN_ID = Noellesroles.id("magician");
   public static ResourceLocation CLOCKMAKER_ID = Noellesroles.id("clockmaker");
   public static final ResourceLocation WRITER_ID = Noellesroles.id("writer");
+  public static final ResourceLocation RESCUER_ID = Noellesroles.id("rescuer");
+  public static final ResourceLocation FIREFIGHTER_ID = Noellesroles.id("firefighter");
+  public static final ResourceLocation ACCOUNTANT_ID = Noellesroles.id("accountant");
+  public static final ResourceLocation ALCHEMIST_ID = Noellesroles.id("alchemist");
+  public static final ResourceLocation SWAST_ID = Noellesroles.id("swast");
+  public static final ResourceLocation MARTIAL_ARTS_INSTRUCTOR_ID = Noellesroles.id("martial_arts_instructor");
+
 
   // 杀手阵营角色 ID
   public static ResourceLocation MORPHLING_ID = Noellesroles.id("morphling");
@@ -117,9 +148,13 @@ public class ModRoles {
   public static ResourceLocation EXECUTIONER_ID = Noellesroles.id("executioner");
   public static ResourceLocation GAMBLER_ID = Noellesroles.id("gambler");
   public static ResourceLocation POISONER_ID = Noellesroles.id("poisoner");
-  public static ResourceLocation DIO_ID = Noellesroles.id("dio");
+  public static ResourceLocation BAKA_ID = Noellesroles.id("baka");
+  public static ResourceLocation MAID_SAKUYA_ID = Noellesroles.id("maid_sakuya");
+  public static ResourceLocation HOAN_MEIRIN_ID = Noellesroles.id("hoan_meirin");
+  public static ResourceLocation EXAMPLER_ID = Noellesroles.id("exampler");
+
   public static ResourceLocation THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Noellesroles
-      .id("the_insane_damned_paranoid_killer");
+          .id("the_insane_damned_paranoid_killer");
   public static final ResourceLocation CONSPIRATOR_ID = Noellesroles.id("conspirator");
   public static final ResourceLocation CLEANER_ID = Noellesroles.id("cleaner");
   public static final ResourceLocation TRAPPER_ID = Noellesroles.id("trapper");
@@ -142,89 +177,104 @@ public class ModRoles {
   public static final ResourceLocation FORTUNETELLER_ID = Noellesroles.id("fortuneteller");
 
   public static final ResourceLocation WAYFARER_ID = Noellesroles.id("wayfarer");
-
+  public static final ResourceLocation DIO_ID = Noellesroles.id("dio");
+  public static Role DIO;
   // ==================== 已注册角色定义 ====================
   // 乘客阵营角色
+  // 中立偏狼：小镇做题家
+  public static Role EXAMPLER = TMMRoles.registerRole(
+                  new NormalRole(EXAMPLER_ID, new Color(213, 95, 214).getRGB(),
+                          false, true, Role.MoodType.FAKE,
+                          TMMRoles.CIVILIAN.getMaxSprintTime(), true))
+          .setCanSeeCoin(true).setCanSeeTeammateKiller(true)
+          .setCanUseInstinct(true);
+  // 好人：大妖精baka
+  public static Role BAKA = TMMRoles.registerRole(
+                  new NormalRole(BAKA_ID, new Color(185, 240, 243).getRGB(),
+                          true, false, Role.MoodType.REAL,
+                          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+          .setCanSeeCoin(true);
+
   public static Role OLDMAN = TMMRoles.registerRole(
-      new NormalRole(OLDMAN_ID, new Color(112, 146, 190).getRGB(),
-          true, false, Role.MoodType.REAL,
-          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
-      .setCanSeeCoin(true);
+                  new NormalRole(OLDMAN_ID, new Color(112, 146, 190).getRGB(),
+                          true, false, Role.MoodType.REAL,
+                          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+          .setCanSeeCoin(true);
   // 算命大师
   public static Role FORTUNETELLER = TMMRoles.registerRole(
-      new NormalRole(FORTUNETELLER_ID, new Color(239, 228, 176).getRGB(),
-          true, false, Role.MoodType.REAL,
-          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
-      .setCanSeeCoin(true).setCanSeeTime(true);
+                  new NormalRole(FORTUNETELLER_ID, new Color(239, 228, 176).getRGB(),
+                          true, false, Role.MoodType.REAL,
+                          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+          .setCanSeeCoin(true).setCanSeeTime(true);
   public static Role ELF = TMMRoles.registerRole(
-      new NormalRole(ELF_ID, new Color(106, 255, 179).getRGB(),
-          true, false, Role.MoodType.REAL,
-          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
-      .setVigilanteTeam(true).setCanSeeCoin(true).setCanPickUpRevolver(false);
+                  new NormalRole(ELF_ID, new Color(106, 255, 179).getRGB(),
+                          true, false, Role.MoodType.REAL,
+                          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+          .setVigilanteTeam(true).setCanSeeCoin(true).setCanPickUpRevolver(false);
   public static Role WIND_YAOSE = TMMRoles.registerRole(
-      new NormalRole(WIND_YAOSE_ID, new Color(106, 255, 179).getRGB(),
-          false, false, Role.MoodType.REAL,
-          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
-      .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setCanUseInstinct(true)
-      .setNeutralForKiller(true);
+                  new NormalRole(WIND_YAOSE_ID, new Color(106, 255, 179).getRGB(),
+                          false, false, Role.MoodType.FAKE,
+                          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+          .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setCanUseInstinct(true)
+          .setNeutralForKiller(true);
   public static Role CHEF = TMMRoles.registerRole(
-      new ChefRole(CHEF_ID, new Color(229, 255, 0).getRGB(),
-          true, false, Role.MoodType.REAL,
-          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
-      .setCanSeeCoin(true).setCanPickUpRevolver(true);
+                  new ChefRole(CHEF_ID, new Color(229, 255, 0).getRGB(),
+                          true, false, Role.MoodType.REAL,
+                          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+          .setCanSeeCoin(true).setCanPickUpRevolver(true);
   // 红尘客
   public static Role WAYFARER = TMMRoles.registerRole(
-      new NormalRole(WAYFARER_ID, new Color(255, 54, 105).getRGB(),
-          false, false, Role.MoodType.FAKE,
-          Integer.MAX_VALUE, false))
-      .setCanSeeCoin(true).setNeutrals(true).setCanPickUpRevolver(false)
-      .setComponentKey(ModComponents.WAYFARER);
+                  new NormalRole(WAYFARER_ID, new Color(255, 54, 105).getRGB(),
+                          false, false, Role.MoodType.FAKE,
+                          Integer.MAX_VALUE, false))
+          .setCanSeeCoin(true).setNeutrals(true).setCanPickUpRevolver(false)
+          .setComponentKey(ModComponents.WAYFARER);
   public static Role JESTER = TMMRoles
-      .registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
-          false, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
-      .setNeutralForKiller(true).setCanSeeTeammateKiller(false);
+          .registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
+                  false, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
+          .setNeutralForKiller(true).setCanSeeTeammateKiller(false);
   public static Role CONDUCTOR = TMMRoles
-      .registerRole(new NoramlRole(CONDUCTOR_ID, new Color(184, 134, 11).getRGB(), true,
-          false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+          .registerRole(new NoramlRole(CONDUCTOR_ID, new Color(184, 134, 11).getRGB(), true,
+                  false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
   public static Role BARTENDER = TMMRoles
-      .registerRole(new NoramlRole(BARTENDER_ID, new Color(217, 241, 240).getRGB(), true,
-          false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+          .registerRole(new NoramlRole(BARTENDER_ID, new Color(217, 241, 240).getRGB(), true,
+                  false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
   public static Role NOISEMAKER = TMMRoles
-      .registerRole(new NoramlRole(NOISEMAKER_ID, new Color(200, 255, 0).getRGB(), true,
-          false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+          .registerRole(new NoramlRole(NOISEMAKER_ID, new Color(200, 255, 0).getRGB(), true,
+                  false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
   public static Role AWESOME_BINGLUS = TMMRoles
-      .registerRole(new NoramlRole(AWESOME_BINGLUS_ID, new Color(155, 255, 168).getRGB(), true, false,
-          Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+          .registerRole(new NoramlRole(AWESOME_BINGLUS_ID, new Color(155, 255, 168).getRGB(), true, false,
+                  Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
   public static Role VOODOO = TMMRoles
-      .registerRole(new NoramlRole(VOODOO_ID, new Color(128, 114, 253).getRGB(), true,
-          false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false)
-          .setComponentKey(VoodooPlayerComponent.KEY));
+          .registerRole(new NoramlRole(VOODOO_ID, new Color(128, 114, 253).getRGB(), true,
+                  false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false)
+                  .setComponentKey(VoodooPlayerComponent.KEY));
   public static Role RECALLER = TMMRoles
-      .registerRole(new NoramlRole(RECALLER_ID, new Color(135, 206, 235).getRGB(), true,
-          false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false)
-          .setComponentKey(RecallerPlayerComponent.KEY));
+          .registerRole(new NoramlRole(RECALLER_ID, new Color(135, 206, 235).getRGB(), true,
+                  false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false)
+                  .setComponentKey(RecallerPlayerComponent.KEY));
   public static Role BETTER_VIGILANTE = TMMRoles
-      .registerRole(new NoramlRole(BETTER_VIGILANTE_ID, new Color(0, 255, 255).getRGB(), true, false,
-          Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false)
-          .setComponentKey(BetterVigilantePlayerComponent.KEY));
+          .registerRole(new NoramlRole(BETTER_VIGILANTE_ID, new Color(0, 255, 255).getRGB(), true, false,
+                  Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false)
+                  .setComponentKey(BetterVigilantePlayerComponent.KEY));
   public static Role BROADCASTER = TMMRoles
-      .registerRole(new NoramlRole(BROADCASTER_ID, new Color(0, 255, 0).getRGB(), true,
-          false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true)
-          .setComponentKey(BroadcasterPlayerComponent.KEY));
+          .registerRole(new NoramlRole(BROADCASTER_ID, new Color(0, 255, 0).getRGB(), true,
+                  false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true)
+                  .setComponentKey(BroadcasterPlayerComponent.KEY));
   public static Role GHOST = TMMRoles
-      .registerRole(new NoramlRole(GHOST_ID, new Color(200, 200, 200).getRGB(), true, false,
-          Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
+          .registerRole(new NoramlRole(GHOST_ID, new Color(200, 200, 200).getRGB(), true, false,
+                  Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), true));
   public static Role DOCTOR = TMMRoles
-      .registerRole(new NoramlRole(DOCTOR_ID, new Color(30, 144, 255).getRGB(), true,
-          false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+          .registerRole(new NoramlRole(DOCTOR_ID, new Color(30, 144, 255).getRGB(), true,
+                  false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
   public static Role ATTENDANT = TMMRoles
-      .registerRole(new NoramlRole(ATTENDANT_ID, (new Color(198, 185, 36)).getRGB(),
-          true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+          .registerRole(new NoramlRole(ATTENDANT_ID, (new Color(198, 185, 36)).getRGB(),
+                  true, false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
   public static Role PATROLLER = TMMRoles
-      .registerRole(new NoramlRole(PATROLLER_ID, 0x1B8AE5, true, false, Role.MoodType.REAL,
-          dev.doctor4t.trainmurdermystery.game.GameConstants.getInTicks(0, 10), false)
-          .setVigilanteTeam(true).setComponentKey(PatrollerPlayerComponent.KEY))
-      .setCanPickUpRevolver(true);
+          .registerRole(new NoramlRole(PATROLLER_ID, 0x1B8AE5, true, false, Role.MoodType.REAL,
+                  dev.doctor4t.trainmurdermystery.game.GameConstants.getInTicks(0, 10), false)
+                  .setVigilanteTeam(true).setComponentKey(PatrollerPlayerComponent.KEY))
+          .setCanPickUpRevolver(true);
 
   /**
    * 更好的义警角色
@@ -247,62 +297,204 @@ public class ModRoles {
    * - 专属商店：书与笔(100金币)
    * - 0.5%概率刷新
    */
-  public static Role WRITER;
+  // 作家角色 - 乘客阵营
+  public static Role WRITER = TMMRoles.registerRole(new NoramlRole(
+          WRITER_ID, // 角色 ID
+          new Color(254, 254, 254).getRGB(), // 白色 - 代表书与笔
+          true, // isInnocent = 乘客阵营
+          false, // canUseKiller = 无杀手能力
+          Role.MoodType.REAL, // 真实心情
+          TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+          false // 不隐藏计分板
+  )).setCanSeeCoin(true);
+
+  /**
+   * 搜救员角色
+   * - 属于乘客阵营 (isInnocent = true)
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 在计分板上显示
+   * - 专属商店：绳索(150金币)、裹尸袋(150金币)
+   * - 只在中级及高级场中出现
+   */
+  // 搜救员角色 - 乘客阵营
+  public static Role RESCUER = TMMRoles.registerRole(new NoramlRole(
+          RESCUER_ID, // 角色 ID
+          new Color(255, 140, 0).getRGB(), // 橙色 - 代表救援
+          true, // isInnocent = 乘客阵营
+          false, // canUseKiller = 无杀手能力
+          Role.MoodType.REAL, // 真实心情
+          TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+          false // 不隐藏计分板
+  )).setCanSeeCoin(true);
+
+  /**
+   * 消防员角色
+   * - 属于乘客阵营 (isInnocent = true)
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 在计分板上显示
+   * - 专属商店：消防斧(150金币)、灭火器(150金币)
+   * - 只在中级及高级场中出现
+   */
+  // 消防员角色 - 乘客阵营
+  public static Role FIREFIGHTER = TMMRoles.registerRole(new NoramlRole(
+          FIREFIGHTER_ID, // 角色 ID
+          new Color(255, 69, 0).getRGB(), // 红橙色 - 代表消防
+          true, // isInnocent = 乘客阵营
+          false, // canUseKiller = 无杀手能力
+          Role.MoodType.REAL, // 真实心情
+          TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+          false // 不隐藏计分板
+  )).setCanSeeCoin(true);
+
+  /**
+   * 会计角色
+   * - 属于乘客阵营 (isInnocent = true)
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 在计分板上显示
+   * - 被动：每60秒获得25金币
+   * - 技能：蹲下按技能键切换收入/支出模式，直接按技能键花费175金币发动技能
+   * - 收入模式：查看目标玩家金币量是否超过300
+   * - 支出模式：查看半径4格内玩家30秒内总支出金币数量的大致范围
+   * - 专属商店：存折(100金币)
+   */
+  // 会计角色 - 乘客阵营
+  public static Role ACCOUNTANT = TMMRoles.registerRole(new NoramlRole(
+          ACCOUNTANT_ID, // 角色 ID
+          new Color(0, 128, 128).getRGB(), // 青色 - 代表会计
+          true, // isInnocent = 乘客阵营
+          false, // canUseKiller = 无杀手能力
+          Role.MoodType.REAL, // 真实心情
+          TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+          false // 不隐藏计分板
+  )).setCanSeeCoin(true).setComponentKey(org.agmas.noellesroles.component.AccountantPlayerComponent.KEY);
+
+  /**
+   * 药剂师角色
+   * - 属于乘客阵营 (isInnocent = true)
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 在计分板上显示
+   * - 被动：持续蹲下每30秒获取一次药剂素材
+   * - 技能：蹲下按技能键切换药剂，直接按技能键调制药剂
+   * - 药剂：肾上腺素(100金币)、抗生素(100金币)、鹤顶红(200金币)、狗皮膏药(150金币)
+   * - 限制：每种药剂只能调两次
+   */
+  // 药剂师角色 - 乘客阵营
+  public static Role ALCHEMIST = TMMRoles.registerRole(new NoramlRole(
+          ALCHEMIST_ID, // 角色 ID
+          new Color(128, 0, 128).getRGB(), // 紫色 - 代表药剂
+          true, // isInnocent = 乘客阵营
+          false, // canUseKiller = 无杀手能力
+          Role.MoodType.REAL, // 真实心情
+          TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+          false // 不隐藏计分板
+  )).setCanSeeCoin(true).setComponentKey(org.agmas.noellesroles.component.AlchemistPlayerComponent.KEY);
+
+  /**
+   * 特警角色
+   * - 属于警长阵营 (isInnocent = true, setVigilanteTeam = true)
+   * - 仅在特定地图生成（areas1/areas3/areas4/areas7/areas10）
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 在计分板上显示
+   * - 无法捡起左轮手枪
+   * - 开局物品：狙击枪、马格南子弹×1
+   * - 专属商店：马格南子弹(150金币)、瞄准镜(100金币)、铁门钥匙(75金币)
+   */
+  // 特警角色 - 警长阵营
+  public static Role SWAST = TMMRoles.registerRole(new NoramlRole(
+          SWAST_ID, // 角色 ID
+          new Color(0, 191, 255).getRGB(), // 深天蓝色 - 代表特警的专业与冷静
+          true, // isInnocent = 乘客阵营
+          false, // canUseKiller = 无杀手能力
+          Role.MoodType.REAL, // 真实心情
+          TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+          false // 不隐藏计分板
+  )).setCanSeeCoin(true).setVigilanteTeam(true).setCanPickUpRevolver(false);
+
+  /**
+   * 武术教官角色
+   * - 属于警长阵营 (isInnocent = true, setVigilanteTeam = true)
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 在计分板上显示
+   * - 无法捡起左轮手枪
+   * - 开局物品：双节棍
+   */
+  // 武术教官角色 - 警长阵营
+  public static Role MARTIAL_ARTS_INSTRUCTOR = TMMRoles.registerRole(new NoramlRole(
+          MARTIAL_ARTS_INSTRUCTOR_ID, // 角色 ID
+          new Color(255, 215, 0).getRGB(), // 金黄色 - 代表武术的荣耀与威严
+          true, // isInnocent = 乘客阵营
+          false, // canUseKiller = 无杀手能力
+          Role.MoodType.REAL, // 真实心情
+          TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+          false // 不隐藏计分板
+  )).setCanSeeCoin(true).setVigilanteTeam(true).setCanPickUpRevolver(false);
 
   // 杀手阵营角色
   public static Role CLEANER = TMMRoles
-      .registerRole(new NoramlRole(CLEANER_ID, new Color(255, 1, 124).getRGB(), false,
-          true, Role.MoodType.FAKE, Integer.MAX_VALUE, true).setCanPickUpRevolver(true));
+          .registerRole(new NoramlRole(CLEANER_ID, new Color(255, 1, 124).getRGB(), false,
+                  true, Role.MoodType.FAKE, Integer.MAX_VALUE, true).setCanPickUpRevolver(true));
   public static Role MORPHLING = TMMRoles
-      .registerRole(new NoramlRole(MORPHLING_ID, new Color(220, 20, 60).getRGB(), false,
-          true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
-          .setComponentKey(MorphlingPlayerComponent.KEY));
+          .registerRole(new NoramlRole(MORPHLING_ID, new Color(220, 20, 60).getRGB(), false,
+                  true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
+                  .setComponentKey(MorphlingPlayerComponent.KEY));
   public static Role MANIPULATOR = TMMRoles
-      .registerRole(new ManipulatorRole(MANIPULATOR_ID, new Color(90, 20, 61).getRGB(), false,
-          true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
-          .setComponentKey(ManipulatorPlayerComponent.KEY))
-      .setComponentKey(ModComponents.MANIPULATOR);
+          .registerRole(new ManipulatorRole(MANIPULATOR_ID, new Color(90, 20, 61).getRGB(), false,
+                  true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
+                  .setComponentKey(ManipulatorPlayerComponent.KEY))
+          .setComponentKey(ModComponents.MANIPULATOR);
   public static Role PHANTOM = TMMRoles
-      .registerRole(new NoramlRole(PHANTOM_ID, new Color(80, 5, 5, 192).getRGB(), false,
-          true, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
-      .setComponentKey(ModComponents.ABILITY);
+          .registerRole(new NoramlRole(PHANTOM_ID, new Color(80, 5, 5, 192).getRGB(), false,
+                  true, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
+          .setComponentKey(ModComponents.ABILITY);
   public static Role SWAPPER = TMMRoles
-      .registerRole(new NoramlRole(SWAPPER_ID, new Color(255, 0, 255).getRGB(), false,
-          true, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
-      .setComponentKey(ModComponents.SWAPPER);
+          .registerRole(new NoramlRole(SWAPPER_ID, new Color(255, 0, 255).getRGB(), false,
+                  true, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
+          .setComponentKey(ModComponents.SWAPPER);
   public static Role EXECUTIONER = TMMRoles
-      .registerRole(new NoramlRole(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),
-          false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
-          .setComponentKey(ExecutionerPlayerComponent.KEY));
+          .registerRole(new NoramlRole(EXECUTIONER_ID, new Color(74, 27, 5).getRGB(),
+                  false, true, Role.MoodType.FAKE, Integer.MAX_VALUE, true)
+                  .setComponentKey(ExecutionerPlayerComponent.KEY));
   public static Role GAMBLER = TMMRoles
-      .registerRole(new GamblerRole(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
-          false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true))
-      .setCanPickUpRevolver(true).setComponentKey(GamblerPlayerComponent.KEY).setNeutrals(true);
+          .registerRole(new GamblerRole(GAMBLER_ID, new Color(72, 61, 139).getRGB(), false,
+                  false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true))
+          .setCanPickUpRevolver(true).setComponentKey(GamblerPlayerComponent.KEY).setNeutrals(true);
   public static Role POISONER = TMMRoles
-      .registerRole(new NoramlRole(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false,
-          true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
+          .registerRole(new NoramlRole(POISONER_ID, (new Color(115, 0, 57)).getRGB(), false,
+                  true, Role.MoodType.FAKE, Integer.MAX_VALUE, true));
 
   public static Role THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES = TMMRoles
-      .registerRole(new NoramlRole(
-          THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID,
-          new Color(255, 0, 0, 192).getRGB(), false, true, Role.MoodType.FAKE,
-          Integer.MAX_VALUE, true).setComponentKey(InsaneKillerPlayerComponent.KEY));
+          .registerRole(new NoramlRole(
+                  THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID,
+                  new Color(255, 0, 0, 192).getRGB(), false, true, Role.MoodType.FAKE,
+                  Integer.MAX_VALUE, true).setComponentKey(InsaneKillerPlayerComponent.KEY));
 
   // 中立阵营角色
   public static Role COMMANDER = TMMRoles.registerRole(
-      new NormalRole(COMMANDER_ID, new Color(185, 122, 87).getRGB(),
-          false, false, Role.MoodType.FAKE,
-          Integer.MAX_VALUE, true))
-      .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setNeutralForKiller(true)
-      .setCanUseInstinct(true);
+                  new NormalRole(COMMANDER_ID, new Color(185, 122, 87).getRGB(),
+                          false, false, Role.MoodType.FAKE,
+                          Integer.MAX_VALUE, true))
+          .setCanSeeCoin(true).setCanPickUpRevolver(false).setNeutrals(true).setNeutralForKiller(true)
+          .setCanUseInstinct(true);
   public static Role VULTURE = TMMRoles
-      .registerRole(new NoramlRole(VULTURE_ID, new Color(210, 105, 30).getRGB(), false,
-          false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true)
-          .setComponentKey(VulturePlayerComponent.KEY))
-      .setNeutralForKiller(true).setCanSeeTeammateKiller(false);
+          .registerRole(new NoramlRole(VULTURE_ID, new Color(210, 105, 30).getRGB(), false,
+                  false, Role.MoodType.FAKE, TMMRoles.CIVILIAN.getMaxSprintTime(), true)
+                  .setComponentKey(VulturePlayerComponent.KEY))
+          .setNeutralForKiller(true).setCanSeeTeammateKiller(false);
   public static Role CORONER = TMMRoles
-      .registerRole(new NoramlRole(CORONER_ID, new Color(122, 122, 122).getRGB(), true,
-          false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
+          .registerRole(new NoramlRole(CORONER_ID, new Color(122, 122, 122).getRGB(), true,
+                  false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
 
   // ==================== 自定义角色对象定义 ====================
   // 乘客阵营角色
@@ -641,8 +833,6 @@ public class ModRoles {
    */
   public static Role CLOCKMAKER;
 
-  public static Role DIO;
-
   /**
    * 强盗角色 - 杀手阵营
    * - 杀手阵营 (isInnocent = false, canUseKiller = true)
@@ -662,6 +852,7 @@ public class ModRoles {
   public static Role BANDIT;
   public static Role BLOOD_FEUDIST;
 
+
   // ==================== 其他变量定义 ====================
   public static ArrayList<Role> SHOW_MONEY_ROLES = new ArrayList<>();
   public static HashMap<Role, RoleAnnouncementTexts.RoleAnnouncementText> roleRoleAnnouncementTextHashMap = new HashMap<>();
@@ -674,437 +865,322 @@ public class ModRoles {
     // ==================== 注册乘客阵营角色 ====================
     // 复仇者角色 - 乘客阵营
     AVENGER = TMMRoles.registerRole(new NoramlRole(
-        AVENGER_ID, // 角色 ID
-        new Color(139, 0, 0).getRGB(), // 暗红色 - 代表复仇的血色
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            AVENGER_ID, // 角色 ID
+            new Color(139, 0, 0).getRGB(), // 暗红色 - 代表复仇的血色
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(AvengerPlayerComponent.KEY));
 
     // 滑头鬼角色 - 中立阵营（使用专属商店）
     SLIPPERY_GHOST = TMMRoles.registerRole(new NoramlRole(
-        SLIPPERY_GHOST_ID, // 角色 ID
-        new Color(176, 196, 222).getRGB(), // 灰色 - 代表滑头鬼的隐匿
-        false, // isInnocent = 非乘客阵营
-        false, // canUseKiller = 无杀手能力（使用专属商店）
-        Role.MoodType.FAKE, // 假心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        true // 隐藏计分板
+            SLIPPERY_GHOST_ID, // 角色 ID
+            new Color(176, 196, 222).getRGB(), // 灰色 - 代表滑头鬼的隐匿
+            false, // isInnocent = 非乘客阵营
+            false, // canUseKiller = 无杀手能力（使用专属商店）
+            Role.MoodType.FAKE, // 假心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            true // 隐藏计分板
     )).setNeutralForKiller(true).setCanSeeTeammateKiller(false);
 
     // 工程师角色 - 乘客阵营
     ENGINEER = TMMRoles.registerRole(new NoramlRole(
-        ENGINEER_ID, // 角色 ID
-        new Color(255, 140, 0).getRGB(), // 橙色 - 代表工程帽/工具
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            ENGINEER_ID, // 角色 ID
+            new Color(255, 140, 0).getRGB(), // 橙色 - 代表工程帽/工具
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ));
 
     // 拳击手角色 - 乘客阵营
     BOXER = TMMRoles.registerRole(new NoramlRole(
-        BOXER_ID, // 角色 ID
-        new Color(205, 92, 92).getRGB(), // 猩红色 - 代表热血/格斗
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            BOXER_ID, // 角色 ID
+            new Color(205, 92, 92).getRGB(), // 猩红色 - 代表热血/格斗
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(BoxerPlayerComponent.KEY));
 
     // 邮差角色 - 乘客阵营
     POSTMAN = TMMRoles.registerRole(new NoramlRole(
-        POSTMAN_ID, // 角色 ID
-        new Color(70, 130, 180).getRGB(), // 钢蓝色 - 代表邮差制服
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            POSTMAN_ID, // 角色 ID
+            new Color(70, 130, 180).getRGB(), // 钢蓝色 - 代表邮差制服
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(PostmanPlayerComponent.KEY));
 
     // 私家侦探角色 - 乘客阵营
     DETECTIVE = TMMRoles.registerRole(new NoramlRole(
-        DETECTIVE_ID, // 角色 ID
-        new Color(205, 133, 63).getRGB(), // 棕色 - 代表侦探风衣
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            DETECTIVE_ID, // 角色 ID
+            new Color(205, 133, 63).getRGB(), // 棕色 - 代表侦探风衣
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(DetectivePlayerComponent.KEY));
 
     // 运动员角色 - 乘客阵营
     ATHLETE = TMMRoles.registerRole(new NoramlRole(
-        ATHLETE_ID, // 角色 ID
-        new Color(65, 105, 225).getRGB(), // 天蓝色 - 代表运动/活力
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        Integer.MAX_VALUE, // 无限冲刺
-        false // 不显示计分板
+            ATHLETE_ID, // 角色 ID
+            new Color(65, 105, 225).getRGB(), // 天蓝色 - 代表运动/活力
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            Integer.MAX_VALUE, // 无限冲刺
+            false // 不显示计分板
     ));
 
     // 明星角色 - 乘客阵营
     STAR = TMMRoles.registerRole(new NoramlRole(
-        STAR_ID, // 角色 ID
-        new Color(255, 215, 0).getRGB(), // 金色 - 代表明星的光芒
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            STAR_ID, // 角色 ID
+            new Color(255, 215, 0).getRGB(), // 金色 - 代表明星的光芒
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(StarPlayerComponent.KEY));
 
     // 退伍军人角色 - 好人阵营
     VETERAN = TMMRoles.registerRole(new NoramlRole(
-        VETERAN_ID, // 角色 ID
-        new Color(85, 107, 47).getRGB(), // 暗橄榄绿 - 代表军装颜色
-        true, // isInnocent = 好人阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            VETERAN_ID, // 角色 ID
+            new Color(85, 107, 47).getRGB(), // 暗橄榄绿 - 代表军装颜色
+            true, // isInnocent = 好人阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(VeteranPlayerComponent.KEY));
 
     // 歌手角色 - 好人阵营
     SINGER = TMMRoles.registerRole(new NoramlRole(
-        SINGER_ID, // 角色 ID
-        new Color(255, 105, 180).getRGB(), // 热粉色 - 代表音乐与激情
-        true, // isInnocent = 好人阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            SINGER_ID, // 角色 ID
+            new Color(255, 105, 180).getRGB(), // 热粉色 - 代表音乐与激情
+            true, // isInnocent = 好人阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(SingerPlayerComponent.KEY));
 
     // 心理学家角色 - 好人阵营
     PSYCHOLOGIST = TMMRoles.registerRole(new NoramlRole(
-        PSYCHOLOGIST_ID, // 角色 ID
-        new Color(64, 224, 208).getRGB(), // 青绿色 - 代表心灵治愈
-        true, // isInnocent = 好人阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            PSYCHOLOGIST_ID, // 角色 ID
+            new Color(64, 224, 208).getRGB(), // 青绿色 - 代表心灵治愈
+            true, // isInnocent = 好人阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(PsychologistPlayerComponent.KEY));
 
     // 摄影师角色 - 好人阵营
     PHOTOGRAPHER = TMMRoles.registerRole(new NoramlRole(
-        PHOTOGRAPHER_ID, // 角色 ID
-        new Color(72, 209, 204).getRGB(), // 青石色 - 代表相机镜头
-        true, // isInnocent = 好人阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            PHOTOGRAPHER_ID, // 角色 ID
+            new Color(72, 209, 204).getRGB(), // 青石色 - 代表相机镜头
+            true, // isInnocent = 好人阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ));
 
     // ==================== 注册杀手阵营角色 ====================
     // 阴谋家角色 - 杀手阵营
     CONSPIRATOR = TMMRoles.registerRole(new NoramlRole(
-        CONSPIRATOR_ID, // 角色 ID
-        new Color(85, 26, 139).getRGB(), // 深紫色 - 代表阴谋与神秘
-        false, // isInnocent = 非乘客阵营
-        true, // canUseKiller = 有杀手能力（可以使用地道、杀手聊天）
-        Role.MoodType.FAKE, // 假心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        true // 隐藏计分板
+            CONSPIRATOR_ID, // 角色 ID
+            new Color(85, 26, 139).getRGB(), // 深紫色 - 代表阴谋与神秘
+            false, // isInnocent = 非乘客阵营
+            true, // canUseKiller = 有杀手能力（可以使用地道、杀手聊天）
+            Role.MoodType.FAKE, // 假心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            true // 隐藏计分板
     ).setComponentKey(ConspiratorPlayerComponent.KEY));
 
     // 设陷者角色 - 杀手阵营
     TRAPPER = TMMRoles.registerRole(new NoramlRole(
-        TRAPPER_ID, // 角色 ID
-        new Color(239, 69, 30).getRGB(), // 棕色 - 代表陷阱与大地
-        false, // isInnocent = 非乘客阵营
-        true, // canUseKiller = 有杀手能力
-        Role.MoodType.FAKE, // 假心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        true // 隐藏计分板
+            TRAPPER_ID, // 角色 ID
+            new Color(239, 69, 30).getRGB(), // 棕色 - 代表陷阱与大地
+            false, // isInnocent = 非乘客阵营
+            true, // canUseKiller = 有杀手能力
+            Role.MoodType.FAKE, // 假心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            true // 隐藏计分板
     ).setComponentKey(TrapperPlayerComponent.KEY));
 
     // 炸弹客角色 - 杀手阵营
     BOMBER = TMMRoles.registerRole(new NoramlRole(
-        BOMBER_ID, // 角色 ID
-        new Color(51, 51, 51).getRGB(), // 黑色/深灰色
-        false, // isInnocent = 非乘客阵营
-        true, // canUseKiller = 有杀手能力
-        Role.MoodType.FAKE, // 假心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        true // 隐藏计分板
+            BOMBER_ID, // 角色 ID
+            new Color(51, 51, 51).getRGB(), // 黑色/深灰色
+            false, // isInnocent = 非乘客阵营
+            true, // canUseKiller = 有杀手能力
+            Role.MoodType.FAKE, // 假心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            true // 隐藏计分板
     ).setComponentKey(BomberPlayerComponent.KEY));
 
     // ==================== 注册中立阵营角色 ====================
     // 跟踪者角色 - 杀手阵营（一开始就是杀手，通过阶段控制能力）
     STALKER = TMMRoles.registerRole(new NoramlRole(
-        STALKER_ID, // 角色 ID
-        new Color(47, 79, 79).getRGB(), // 暗紫色 #4B0082
-        false, // isInnocent = 非乘客阵营
-        true, // canUseKiller = 杀手阵营
-        Role.MoodType.FAKE, // 假心情
-        Integer.MAX_VALUE, // 无限冲刺
-        true // 隐藏计分板
-    ).setComponentKey(StalkerPlayerComponent.KEY))
-        .setMaxSprintTime(StalkerPlayerComponent.MAX_SPRINT_TIME_IntSupplier);
+                    STALKER_ID, // 角色 ID
+                    new Color(47, 79, 79).getRGB(), // 暗紫色 #4B0082
+                    false, // isInnocent = 非乘客阵营
+                    true, // canUseKiller = 杀手阵营
+                    Role.MoodType.FAKE, // 假心情
+                    Integer.MAX_VALUE, // 无限冲刺
+                    true // 隐藏计分板
+            ).setComponentKey(StalkerPlayerComponent.KEY))
+            .setMaxSprintTime(StalkerPlayerComponent.MAX_SPRINT_TIME_IntSupplier);
 
     // 慕恋者角色 - 中立阵营
     ADMIRER = TMMRoles.registerRole(new NoramlRole(
-        ADMIRER_ID, // 角色 ID
-        new Color(255, 192, 203).getRGB(), false, false, Role.MoodType.FAKE, Integer.MAX_VALUE,
-        true)).setComponentKey(AdmirerPlayerComponent.KEY).setNeutralForKiller(true)
-        .setCanSeeTeammateKiller(false);
+                    ADMIRER_ID, // 角色 ID
+                    new Color(255, 192, 203).getRGB(), false, false, Role.MoodType.FAKE, Integer.MAX_VALUE,
+                    true)).setComponentKey(AdmirerPlayerComponent.KEY).setNeutralForKiller(true)
+            .setCanSeeTeammateKiller(false);
 
     // 傀儡师角色 - 中立阵营（初始）
     PUPPETEER = TMMRoles.registerRole(new NoramlRole(
-        PUPPETEER_ID, // 角色 ID
-        new Color(138, 43, 226).getRGB(), // 深紫罗兰色 - 代表操控与神秘
-        false, // isInnocent = 非乘客阵营
-        false, // canUseKiller = 无杀手能力（初始）
-        Role.MoodType.FAKE, // 假心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        true // 隐藏计分板
-    )).setComponentKey(PuppeteerPlayerComponent.KEY).setAutoReset(false).setNeutralForKiller(true)
-        .setCanUseInstinct(false);
-
+                    PUPPETEER_ID, // 角色 ID
+                    new Color(138, 43, 226).getRGB(), // 深紫罗兰色 - 代表操控与神秘
+                    false, // isInnocent = 非乘客阵营
+                    false, // canUseKiller = 无杀手能力（初始）
+                    Role.MoodType.FAKE, // 假心情
+                    TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+                    true // 隐藏计分板
+            )).setComponentKey(PuppeteerPlayerComponent.KEY).setAutoReset(false).setNeutralForKiller(true)
+            .setCanUseInstinct(false);
+    // DIO - 杀手
+    DIO = TMMRoles.registerRole(new NoramlRole(
+            DIO_ID, // 角色 ID
+            new Color(255, 215, 0).getRGB(), // 黄色 - 代表 DIO 的金色气场
+            false, // isInnocent = 非乘客阵营（杀手）
+            true, // canUseKiller = 杀手能力
+            Role.MoodType.FAKE, // 真实心情
+            Integer.MAX_VALUE, // 无限冲刺时间
+            false // 不隐藏计分板
+    )).setCanSeeCoin(true);
     // 记录员角色 - 中立阵营
     RECORDER = TMMRoles.registerRole(new NormalRole(
-        RECORDER_ID, // 角色 ID
-        new Color(95, 158, 160).getRGB(), // 矢车菊蓝
-        false, // isInnocent = 非乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.FAKE, // 假心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        true // 隐藏计分板
+            RECORDER_ID, // 角色 ID
+            new Color(95, 158, 160).getRGB(), // 矢车菊蓝
+            false, // isInnocent = 非乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.FAKE, // 假心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            true // 隐藏计分板
     )).setComponentKey(RecorderPlayerComponent.KEY);
 
     // 故障机器人角色 - 乘客阵营
     GLITCH_ROBOT = TMMRoles.registerRole(new NoramlRole(
-        GLITCH_ROBOT_ID, // 角色 ID
-        new Color(211, 196, 250).getRGB(), // 灰色 - 代表机器人
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.FAKE, // 小丑心情（假心情）
-        TMMRoles.CIVILIAN.getMaxSprintTime() * 2, // 双倍体力上限
-        false // 不隐藏计分板
+            GLITCH_ROBOT_ID, // 角色 ID
+            new Color(211, 196, 250).getRGB(), // 灰色 - 代表机器人
+            true, // isInnocent = 乘客阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.FAKE, // 小丑心情（假心情）
+            TMMRoles.CIVILIAN.getMaxSprintTime() * 2, // 双倍体力上限
+            false // 不隐藏计分板
     )).setComponentKey(GlitchRobotPlayerComponent.KEY).setCanSeeCoin(true);
 
     // 监察员角色 - 好人阵营
     MONITOR = TMMRoles.registerRole(new NoramlRole(
-        MONITOR_ID, // 角色 ID
-        new Color(0, 255, 255).getRGB(), // 青色
-        true, // isInnocent = 好人阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
+            MONITOR_ID, // 角色 ID
+            new Color(0, 255, 255).getRGB(), // 青色
+            true, // isInnocent = 好人阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 不显示计分板
     ).setComponentKey(MonitorPlayerComponent.KEY).setCanSeeCoin(true));
 
     // 年兽角色 - 中立阵营
     NIAN_SHOU = TMMRoles.registerRole(new NianShouRole(
-        NIAN_SHOU_ID, // 角色 ID
-        new Color(255, 69, 0).getRGB(), // 红橙色 - 代表年兽的颜色
-        false, // isInnocent = 非乘客阵营（中立）
-        false, // canUseKiller = 无杀手能力（但可以购买关灯）
-        Role.MoodType.REAL, // 真实心情
-        (int) (TMMRoles.CIVILIAN.getMaxSprintTime() * 1.5), // 1.5倍体力
-        true // 隐藏计分板
+            NIAN_SHOU_ID, // 角色 ID
+            new Color(255, 69, 0).getRGB(), // 红橙色 - 代表年兽的颜色
+            false, // isInnocent = 非乘客阵营（中立）
+            false, // canUseKiller = 无杀手能力（但可以购买关灯）
+            Role.MoodType.REAL, // 真实心情
+            (int) (TMMRoles.CIVILIAN.getMaxSprintTime() * 1.5), // 1.5倍体力
+            true // 隐藏计分板
     ).setComponentKey(NianShouPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true));
 
     // 小偷角色 - 中立阵营
     THIEF = TMMRoles.registerRole(new NoramlRole(
-        THIEF_ID, // 角色 ID
-        new Color(255, 215, 0).getRGB(), // 金色 - 代表财富
-        false, // isInnocent = 非乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.FAKE, // 假心情
-        Integer.MAX_VALUE, // 无限冲刺时间
-        true // 隐藏计分板
-    )).setComponentKey(ThiefPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true)
-        .setCanSeeTeammateKiller(false);
+                    THIEF_ID, // 角色 ID
+                    new Color(255, 215, 0).getRGB(), // 金色 - 代表财富
+                    false, // isInnocent = 非乘客阵营
+                    false, // canUseKiller = 无杀手能力
+                    Role.MoodType.FAKE, // 假心情
+                    Integer.MAX_VALUE, // 无限冲刺时间
+                    true // 隐藏计分板
+            )).setComponentKey(ThiefPlayerComponent.KEY).setCanSeeCoin(true).setNeutrals(true)
+            .setCanSeeTeammateKiller(false);
 
     // 魔术师角色 - 好人阵营
     MAGICIAN = TMMRoles.registerRole(new NoramlRole(
-        MAGICIAN_ID, // 角色 ID
-        new Color(255, 165, 0).getRGB(), // 橙色 - 代表魔术师的魅力
-        true, // isInnocent = 好人阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不显示计分板
-    )).setCanPickUpRevolver(true).setCanSeeCoin(true)
-        .setNeutralForKiller(true).setCanSeeTeammateKiller(false).setNeutrals(false);
+                    MAGICIAN_ID, // 角色 ID
+                    new Color(255, 165, 0).getRGB(), // 橙色 - 代表魔术师的魅力
+                    true, // isInnocent = 好人阵营
+                    false, // canUseKiller = 无杀手能力
+                    Role.MoodType.REAL, // 真实心情
+                    TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+                    false // 不显示计分板
+            )).setCanPickUpRevolver(true).setCanSeeCoin(true)
+            .setNeutralForKiller(true).setCanSeeTeammateKiller(false).setNeutrals(false);
 
     // 强盗角色 - 杀手阵营
     BANDIT = TMMRoles.registerRole(new NoramlRole(
-        BANDIT_ID, // 角色 ID
-        new Color(139, 69, 19).getRGB(), // 棕色 - 代表强盗的粗糙感
-        false, // isInnocent = 非乘客阵营
-        true, // canUseKiller = 有杀手能力
-        Role.MoodType.FAKE, // 假心情
-        Integer.MAX_VALUE, // 无限冲刺时间
-        true // 隐藏计分板
+            BANDIT_ID, // 角色 ID
+            new Color(139, 69, 19).getRGB(), // 棕色 - 代表强盗的粗糙感
+            false, // isInnocent = 非乘客阵营
+            true, // canUseKiller = 有杀手能力
+            Role.MoodType.FAKE, // 假心情
+            Integer.MAX_VALUE, // 无限冲刺时间
+            true // 隐藏计分板
     )).setComponentKey(ModComponents.BANDIT);
 
     // 仇杀客角色 - 杀手阵营
     BLOOD_FEUDIST = TMMRoles.registerRole(new NoramlRole(
-        BLOOD_FEUDIST_ID, // 角色 ID
-        new Color(178, 34, 34).getRGB(), // 暗红色 - 代表复仇与愤怒
-        false, // isInnocent = 非乘客阵营
-        true, // canUseKiller = 有杀手能力
-        Role.MoodType.FAKE, // 假心情
-        Integer.MAX_VALUE, // 无限冲刺时间
-        true // 隐藏计分板
+            BLOOD_FEUDIST_ID, // 角色 ID
+            new Color(178, 34, 34).getRGB(), // 暗红色 - 代表复仇与愤怒
+            false, // isInnocent = 非乘客阵营
+            true, // canUseKiller = 有杀手能力
+            Role.MoodType.FAKE, // 假心情
+            Integer.MAX_VALUE, // 无限冲刺时间
+            true // 隐藏计分板
     )).setComponentKey(ModComponents.BLOOD_FEUDIST).setCanSeeCoin(true);
 
     // 钟表匠角色 - 好人阵营
     CLOCKMAKER = TMMRoles.registerRole(new NoramlRole(
-        CLOCKMAKER_ID, // 角色 ID
-        new Color(218, 165, 32).getRGB(), // 金色 - 代表钟表与时间
-        true, // isInnocent = 好人阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        true // 不显示计分板
+            CLOCKMAKER_ID, // 角色 ID
+            new Color(218, 165, 32).getRGB(), // 金色 - 代表钟表与时间
+            true, // isInnocent = 好人阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            true // 不显示计分板
     )).setComponentKey(ClockmakerPlayerComponent.KEY).setCanSeeTime(true).setCanSeeCoin(true);
 
     // 更好的义警角色 - 警长阵营
     BEST_VIGILANTE = TMMRoles.registerRole(new NoramlRole(
-        BEST_VIGILANTE_ID, // 角色 ID
-        new Color(0, 128, 128).getRGB(), // 深青色 - 代表更强悍的义警
-        true, // isInnocent = 警长阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 显示计分板
+            BEST_VIGILANTE_ID, // 角色 ID
+            new Color(0, 128, 128).getRGB(), // 深青色 - 代表更强悍的义警
+            true, // isInnocent = 警长阵营
+            false, // canUseKiller = 无杀手能力
+            Role.MoodType.REAL, // 真实心情
+            TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+            false // 显示计分板
     )).setVigilanteTeam(true).setCanPickUpRevolver(true).setComponentKey(ModComponents.BEST_VIGILANTE);
-
-    // 作家角色 - 乘客阵营
-    WRITER = TMMRoles.registerRole(new NoramlRole(
-        WRITER_ID, // 角色 ID
-        new Color(139, 69, 19).getRGB(), // 棕色 - 代表书与笔
-        true, // isInnocent = 乘客阵营
-        false, // canUseKiller = 无杀手能力
-        Role.MoodType.REAL, // 真实心情
-        TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
-        false // 不隐藏计分板
-    )).setCanSeeCoin(true);
-
-    // DIO - 杀手
-    DIO = TMMRoles.registerRole(new NoramlRole(
-        DIO_ID, // 角色 ID
-        new Color(255, 215, 0).getRGB(), // 黄色 - 代表 DIO 的金色气场
-        false, // isInnocent = 非乘客阵营（杀手）
-        true, // canUseKiller = 杀手能力
-        Role.MoodType.FAKE, // 真实心情
-            Integer.MAX_VALUE, // 无限冲刺时间
-        false // 不隐藏计分板
-    )).setCanSeeCoin(true);
-
-    // ==================== 设置角色数量限制 ====================
-    // 某些角色可能需要限制每局游戏中的数量
-    // 复仇者每局只能有 1 个
-    Harpymodloader.setRoleMaximum(AVENGER_ID, 1);
-
-    // 滑头鬼每局只能有 1 个
-    Harpymodloader.setRoleMaximum(SLIPPERY_GHOST_ID, 1);
-
-    // 工程师每局只能有 1 个
-    Harpymodloader.setRoleMaximum(ENGINEER_ID, 1);
-
-    // 拳击手每局只能有 1 个
-    Harpymodloader.setRoleMaximum(BOXER_ID, 1);
-
-    // 小偷每局只能有 1 个
-    Harpymodloader.setRoleMaximum(THIEF_ID, 1);
-
-    // 邮差每局只能有 1 个
-    Harpymodloader.setRoleMaximum(POSTMAN_ID, 1);
-
-    // 私家侦探每局只能有 1 个
-    Harpymodloader.setRoleMaximum(DETECTIVE_ID, 1);
-
-    // 运动员每局只能有 1 个
-    Harpymodloader.setRoleMaximum(ATHLETE_ID, 1);
-
-    // 明星每局只能有 1 个
-    Harpymodloader.setRoleMaximum(STAR_ID, 1);
-
-    // 退伍军人每局只能有 1 个
-    Harpymodloader.setRoleMaximum(VETERAN_ID, 1);
-
-    // 歌手每局只能有 1 个
-    Harpymodloader.setRoleMaximum(SINGER_ID, 1);
-
-    // 心理学家每局只能有 1 个
-    Harpymodloader.setRoleMaximum(PSYCHOLOGIST_ID, 1);
-
-    // 摄影师每局只能有 1 个
-    Harpymodloader.setRoleMaximum(PHOTOGRAPHER_ID, 1);
-
-    // 阴谋家每局只能有 1 个
-    // Harpymodloader.setRoleMaximum(CONSPIRATOR_ID, 1);
-
-    // 设陷者每局只能有 1 个
-    // Harpymodloader.setRoleMaximum(TRAPPER_ID, 1);
-
-    // 炸弹客每局只能有 1 个
-    Harpymodloader.setRoleMaximum(BOMBER_ID, 1);
-
-    // 跟踪者每局只能有 1 个
-    Harpymodloader.setRoleMaximum(STALKER_ID, 1);
-
-    // 慕恋者每局只能有 1 个
-    Harpymodloader.setRoleMaximum(ADMIRER_ID, 1);
-
-    Harpymodloader.setRoleMaximum(POISONER, 1);
-
-    Harpymodloader.setRoleMaximum(ADMIRER_ID, 1);
-
-    // 傀儡师每局只能有 1 个
-    Harpymodloader.setRoleMaximum(PUPPETEER_ID, 1);
-
-    // 记录员每局只能有 1 个
-    Harpymodloader.setRoleMaximum(RECORDER_ID, 1);
-
-    // 监察员每局只能有 1 个
-    Harpymodloader.setRoleMaximum(MONITOR_ID, 1);
-
-    // 故障机器人每局只能有 1 个
-    Harpymodloader.setRoleMaximum(GLITCH_ROBOT_ID, 1);
-
-    // 年兽每局只能有 1 个
-    Harpymodloader.setRoleMaximum(NIAN_SHOU_ID, 1);
-
-    // 游侠
-    Harpymodloader.setRoleMaximum(ELF_ID, 1);
-
-    // 巡警
-    Harpymodloader.setRoleMaximum(PATROLLER_ID, 1);
-
-    // 魔术师
-    Harpymodloader.setRoleMaximum(MAGICIAN_ID, 1);
-
-    // 强盗
-    Harpymodloader.setRoleMaximum(BANDIT_ID, 1);
-
-    // 仇杀客 - 仅在12人及以上对局生成
-    Harpymodloader.setRoleMaximum(BLOOD_FEUDIST_ID, 1);
-
-    // 钟表匠 - 仅在12人及以上对局生成
-    // 注意：具体限制在 InitModRolesMax 中设置
-
-    // 更好的义警 - 仅在12人及以上对局生成，0.5%概率
-    Harpymodloader.setRoleMaximum(BEST_VIGILANTE_ID, 0); // 默认为0，在 InitModRolesMax 中动态设置
-
-    // 红海军 - 设置为0（不会自然生成，只能通过远征队修饰符获得）
-    Harpymodloader.setRoleMaximum(BETTER_VIGILANTE_ID, 0);
-
-    // 作家 - 默认为0，在 InitModRolesMax 中动态设置（0.5%概率刷新）
-    Harpymodloader.setRoleMaximum(WRITER_ID, 0);
 
     PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.POISONER_ID.getPath());
     PlayerPoisonComponent.canSyncedRolePaths.add(ModRoles.BARTENDER_ID.getPath());
