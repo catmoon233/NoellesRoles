@@ -8,6 +8,7 @@ import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerAFKComponent;
 import dev.doctor4t.trainmurdermystery.cca.TrainWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
+import dev.doctor4t.trainmurdermystery.game.ServerTaskInfoClasses;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.ChatFormatting;
@@ -131,15 +132,17 @@ public class ChairWheelRaceGame extends GameMode {
         ((TrainWorldComponent) TrainWorldComponent.KEY.get(serverLevel))
                 .setTimeOfDay(TrainWorldComponent.TimeOfDay.DAY);
         isWin.clear();
-        gamePrepareTime = 20 * 5;
+        gamePrepareTime = 20 * 10;
         executeFunction(serverLevel.getServer().createCommandSourceStack(), "harpymodloader:chair_wheel_race/init");
-        for (ServerPlayer player : list) {
-            player.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 20 * 5));
-            gameWorldComponent.addRole(player, TMMRoles.DISCOVERY_CIVILIAN);
-            var chair = new WheelchairEntity(ModEntities.WHEELCHAIR, serverLevel);
-            chair.setPos(player.getX(), player.getY(), player.getZ());
-            serverLevel.addFreshEntity(chair);
-            player.startRiding(chair, true);
-        }
+        GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(120, () -> {
+            for (ServerPlayer player : list) {
+                player.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 20 * 5));
+                gameWorldComponent.addRole(player, TMMRoles.DISCOVERY_CIVILIAN);
+                var chair = new WheelchairEntity(ModEntities.WHEELCHAIR, serverLevel);
+                chair.setPos(player.getX(), player.getY(), player.getZ());
+                serverLevel.addFreshEntity(chair);
+                player.startRiding(chair, true);
+            }
+        }));
     }
 }
