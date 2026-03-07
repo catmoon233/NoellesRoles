@@ -1,5 +1,7 @@
 package org.agmas.noellesroles.item;
 
+
+import net.minecraft.server.level.ServerLevel;
 import org.agmas.noellesroles.Noellesroles;
 
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
@@ -85,6 +87,74 @@ public class BowenBadgeItem extends Item {
     }
 
     @Override
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int remainingUseDuration) {
+        if (level instanceof ServerLevel serverLevel && livingEntity instanceof Player player) {
+            // 计算蓄力进度 (0.0 - 1.0)，总时长为 getUseDuration 返回的 ticks
+            int maxDuration = getUseDuration(itemStack, livingEntity);
+            int usedTicks = maxDuration - remainingUseDuration;
+            float progress = Math.min(1.0f, (float) usedTicks / maxDuration);
+
+            // 获取玩家位置和朝向
+            double x = player.getX();
+            double y = player.getY() + 1.5; // 从胸部/头部高度发射
+            double z = player.getZ();
+            
+            float yaw = player.getYRot();
+            float pitch = player.getXRot();
+
+            // 将角度转换为弧度
+            float yawRad = yaw * ((float) Math.PI / 180F);
+            float pitchRad = pitch * ((float) Math.PI / 180F);
+
+            // 计算前方偏移量，随蓄力时间增加范围
+            float radius = 0.5f + (progress * 1.5f); 
+            int particleCount = 2 + (int) (progress * 4); // 粒子数量随蓄力增加
+
+            for (int i = 0; i < particleCount; i++) {
+                // 在玩家周围随机分布，但偏向移动/朝向方向
+                float angle = (level.random.nextFloat() * 360F) * ((float) Math.PI / 180F);
+                float horizontalOffset = radius * Mth.cos(angle);
+                float verticalOffset = (level.random.nextFloat() - 0.5f) * 1.5f;
+                float depthOffset = radius * Mth.sin(angle);
+
+                // 旋转偏移量以匹配玩家朝向 (简单的水平环绕效果)
+                double offsetX = horizontalOffset * Mth.cos(yawRad) - depthOffset * Mth.sin(yawRad);
+                double offsetZ = horizontalOffset * Mth.sin(yawRad) + depthOffset * Mth.cos(yawRad);
+
+                double particleX = x + offsetX;
+                double particleY = y + verticalOffset;
+                double particleZ = z + offsetZ;
+
+                // 发送炫酷的粒子特效 (使用 END_ROD 或 CRIT 作为能量聚集效果，颜色可自定义若需更复杂)
+                // 这里使用 PORTAL 粒子模拟紫色/蓝色的能量波动，或者 CRIT 表示锐利能量
+                serverLevel.sendParticles(
+                    net.minecraft.core.particles.ParticleTypes.PORTAL, 
+                    particleX, 
+                    particleY, 
+                    particleZ, 
+                    1, 
+                    0.0, 0.0, 0.0, 
+                    0.05 * progress // 速度/扩散随蓄力变化
+                );
+                
+                // 偶尔添加闪光粒子
+                if (level.random.nextInt(3) == 0) {
+                     serverLevel.sendParticles(
+                        net.minecraft.core.particles.ParticleTypes.FLASH, 
+                        particleX, 
+                        particleY, 
+                        particleZ, 
+                        1, 
+                        0.0, 0.0, 0.0, 
+                        0.0
+                    );
+                }
+            }
+        }
+        super.onUseTick(level, livingEntity, itemStack, remainingUseDuration);
+    }
+
+    @Override
     public ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
         if (!(livingEntity instanceof Player player))
             return itemStack;
@@ -132,7 +202,54 @@ public class BowenBadgeItem extends Item {
             player.move(MoverType.SELF, new Vec3(0.0, 1.2, 0.0));
         }
 
-        level.playSound(null, player, holder.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
+        // 生成更炫酷的冲刺粒子效果
+        if (level instanceof ServerLevel serverLevel) {
+            // 1. 核心爆发粒子 (END_ROD 模拟能量束)
+            for (int i = 0; i < 20; i++) {
+                double angle = level.random.nextDouble() * Math.PI * 2;
+                double radius = 0.5 + level.random.nextDouble() * 0.5;
+                double px = player.getX() + Math.cos(angle) * radius;
+                double pz = player.getZ() + Math.sin(angle) * radius;
+                double py = player.getY() + 1.0 + level.random.nextDouble() * 0.5;
+                
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, 
+                    px, py, pz, 
+                    1, 
+                    (level.random.nextDouble() - 0.5) * 0.2, 
+                    (level.random.nextDouble() - 0.5) * 0.2, 
+                    (level.random.nextDouble() - 0.5) * 0.2, 
+                    0.05);
+            }
+
+            // 2. 环形冲击波 (PORTAL 粒子模拟波纹扩散)
+            for (int ring = 0; ring < 3; ring++) {
+                int count = 15 + ring * 5;
+                for (int i = 0; i < count; i++) {
+                    double angle = (i / (double) count) * Math.PI * 2;
+                    double r = 1.0 + ring * 0.8;
+                    double px = player.getX() + Math.cos(angle) * r;
+                    double pz = player.getZ() + Math.sin(angle) * r;
+                    double py = player.getY() + 1.0;
+                    
+                    serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL, 
+                        px, py, pz, 
+                        1, 
+                        0, 0, 0, 
+                        0.1);
+                }
+            }
+            
+            // 3. 拖尾火花 (FLAME 或 CRIT)
+            for (int i = 0; i < 10; i++) {
+                 double offsetX = (level.random.nextDouble() - 0.5) * 0.5;
+                 double offsetZ = (level.random.nextDouble() - 0.5) * 0.5;
+                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT, 
+                    player.getX() + offsetX, player.getY() + 1.5, player.getZ() + offsetZ, 
+                    1, 0, 0, 0, 0.2);
+            }
+        }
+
+        level.playSound(null, player, holder.value(), SoundSource.PLAYERS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
         if (GameFunctions.isPlayerAliveAndSurvival(player)) {
             applyCooldownToItem(player, itemStack);
         }
