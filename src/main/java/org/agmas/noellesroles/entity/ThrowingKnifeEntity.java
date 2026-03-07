@@ -51,7 +51,7 @@ public class ThrowingKnifeEntity extends AbstractArrow {
             if (!serverPlayer.getUUID().equals(getOwner().getUUID())){
                 Vec3 location = entityHitResult.getLocation();
                 ServerLevel serverLevel = serverPlayer.serverLevel();
-                serverLevel.sendParticles(ParticleTypes.CRIT, location.x, location.y, location.z, 10, 0.3, 0.3, 0.3, 0.15);
+                serverLevel.sendParticles(ParticleTypes.CRIT, location.x, location.y+1.25f, location.z, 10, 0.3, 0.3, 0.3, 0.15);
                 serverLevel.players().forEach(player -> {
                     serverLevel.playSound(player, location.x, location.y, location.z, SoundEvents.CHAIN_HIT, SoundSource.PLAYERS, 1.0f, 1.0f);
                 });

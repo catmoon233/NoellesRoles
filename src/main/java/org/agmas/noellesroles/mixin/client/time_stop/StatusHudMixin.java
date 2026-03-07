@@ -22,7 +22,7 @@ public class StatusHudMixin {
             }
         }
     }
-    @Inject(method = "render", at = @At("TAIL"))
+    @Inject(method = "render", at = @At("RETURN"))
     public void render2(GuiGraphics guiGraphics, float partialTicks, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player!=null) {
