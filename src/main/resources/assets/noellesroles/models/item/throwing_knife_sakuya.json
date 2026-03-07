@@ -1,5 +1,5 @@
 {
-    "parent": "item/throwing_knife",
+    "parent": "noellesroles:item/throwing_knife",
     "textures": {
         "layer0": "noellesroles:item/throwing_knife_sakuya"
     }
