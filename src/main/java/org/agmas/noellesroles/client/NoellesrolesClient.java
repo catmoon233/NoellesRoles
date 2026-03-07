@@ -438,10 +438,10 @@ public class NoellesrolesClient implements ClientModInitializer {
                 level.players().forEach(p -> {
                     clientPositions.put(p.getUUID(), p.position());
                 });
-                if (context.player().hasEffect(ModEffects.TIME_STOP)) {
-                    TimeStopEffect.effectStatedTime = context.player().getEffect(ModEffects.TIME_STOP).getDuration();
-                }
-            StatusBarHUD.getInstance().addStatusBar(StatusInit.getStatusBar("Time_Stop"));
+
+                    TimeStopEffect.effectStatedTime = payload.times();
+
+
 
             TimeStopEffect.canMovePlayers.clear();
             TimeStopEffect.canMovePlayers.addAll(payload.uuids() );

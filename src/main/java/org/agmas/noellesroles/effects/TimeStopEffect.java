@@ -62,12 +62,13 @@ public class TimeStopEffect extends MobEffect {
                 .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
 
 
+        ServerPlayNetworking.send(serverPlayer,new TriggerStatusBarPayload("Time_Stop"));
         serverPlayer.serverLevel().players().forEach(
                 player -> {
                     player.playNotifySound(NRSounds.TIME_STOP, SoundSource.PLAYERS, 1.0F, 1.0F);
 
                     BroadcastCommand.BroadcastMessage(player, broadcastMessage);
-                    player.addEffect(new MobEffectInstance( (ModEffects.TIME_STOP),time,0,false,false,false));
+
 
                     if (!GameFunctions.isPlayerAliveAndSurvival(player)){
                         canMovePlayers.add(player.getUUID());
@@ -81,7 +82,9 @@ public class TimeStopEffect extends MobEffect {
         );
         serverPlayer.serverLevel().players().forEach(
                 player -> {
-                    ServerPlayNetworking.send(player,new CanMoveInTimeStopS2CPacket(canMovePlayers ));
+                    player.addEffect(new MobEffectInstance( (ModEffects.TIME_STOP),time,0,false,false,false));
+                    ServerPlayNetworking.send(player,new CanMoveInTimeStopS2CPacket(canMovePlayers,time ));
+
                 }
         );
         MinecraftServer server = serverPlayer.getServer();

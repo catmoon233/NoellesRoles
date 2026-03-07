@@ -306,9 +306,10 @@ public class ModPacketsReciever {
 
       final var player = context.player();
       if (player.getMainHandItem().is(ModItems.THROWING_KNIFE)){
+        if (player.getCooldowns().isOnCooldown(ModItems.THROWING_KNIFE))return;
         player.getMainHandItem().shrink(1);
         if (!player.getCooldowns().isOnCooldown(ModItems.THROWING_KNIFE)) {
-          player.getCooldowns().addCooldown(ModItems.THROWING_KNIFE, 30);
+          player.getCooldowns().addCooldown(ModItems.THROWING_KNIFE, 20);
         }
         ThrowingKnifeEntity entity = new ThrowingKnifeEntity(ModEntities.THROWING_KNIFE, player.level());
         entity.setPos( player.getEyePosition().add(0, -0.2, 0));
