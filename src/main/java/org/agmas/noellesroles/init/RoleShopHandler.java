@@ -158,6 +158,12 @@ public class RoleShopHandler {
     {
       // BAKA的商店
       var SHOP = new ArrayList<ShopEntry>();
+      SHOP.add(new ShopEntry(ModItems.SIGNATURE_PAPER.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
+      ShopContent.customEntries.put(ModRoles.STAR.getIdentifier(), SHOP);
+    }
+    {
+      // BAKA的商店
+      var SHOP = new ArrayList<ShopEntry>();
       SHOP.add(new ShopEntry(FunnyItems.PROBLEM_SET.getDefaultInstance(), 100, ShopEntry.Type.TOOL));
       ShopContent.customEntries.put(ModRoles.BAKA.getIdentifier(), SHOP);
     }

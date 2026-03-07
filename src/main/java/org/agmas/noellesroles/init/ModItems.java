@@ -404,14 +404,14 @@ public class ModItems {
      * 签名纸
      */
     public static final Item SIGNATURE_PAPER = register(
-            new Item(new Item.Properties().stacksTo(1)),
+            new SignaturePaperItem(new Item.Properties().stacksTo(1)),
             "signature_paper");
 
     /**
      * 生死状
      */
     public static final Item LIFE_AND_DEATH_SHAPE = register(
-            new Item(new Item.Properties().stacksTo(1)),
+            new SignaturePaperItem(new Item.Properties().stacksTo(1)),
             "life_and_death_shape");
 
     /**

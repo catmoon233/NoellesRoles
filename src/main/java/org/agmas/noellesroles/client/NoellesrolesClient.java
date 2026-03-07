@@ -542,6 +542,9 @@ public class NoellesrolesClient implements ClientModInitializer {
             tooltipHelper(FunnyItems.PROBLEM_SET, itemStack, list);
             tooltipHelper(FunnyItems.SHISIYE, itemStack, list);
             tooltipHelper(FunnyItems.BOWEN_BADGE, itemStack, list);
+            tooltipHelper(ModItems.SIGNATURE_PAPER, itemStack, list);
+            tooltipHelper(ModItems.LIFE_AND_DEATH_SHAPE, itemStack, list);
+            tooltipHelper(ModItems.SIGNED_PAPER, itemStack, list);
             tooltipHelper(ModItems.THROWING_KNIFE, itemStack, list);
         }));
         // registerKeyBindings();

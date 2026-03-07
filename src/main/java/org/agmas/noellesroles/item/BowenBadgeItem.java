@@ -121,8 +121,8 @@ public class BowenBadgeItem extends Item {
                     .subtract(playerPos)
                     .multiply(1, 0, 1)
                     .normalize()
-                    .scale(2.5);
-            target.push(knockback.x, 0.4, knockback.z);
+                    .scale(1.5);
+            target.push(knockback.x, 0, knockback.z);
         }
 
         // ── 启动平飞冲刺 ──

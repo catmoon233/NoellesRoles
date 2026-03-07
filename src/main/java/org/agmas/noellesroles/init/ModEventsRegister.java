@@ -53,6 +53,7 @@ import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.voodoo.VoodooDeathHandler;
 import org.agmas.noellesroles.roles.vulture.VulturePlayerComponent;
 import org.agmas.noellesroles.utils.EntityClearUtils;
+import org.agmas.noellesroles.utils.MCItemsUtils;
 import org.agmas.noellesroles.utils.MapScanner;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.utils.ServerManager;
@@ -71,6 +72,7 @@ import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.compat.TrainVoicePlugin;
 import dev.doctor4t.trainmurdermystery.entity.NoteEntity;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
+import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeathWithKiller;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
 import dev.doctor4t.trainmurdermystery.event.OnGameTrueStarted;
@@ -82,6 +84,7 @@ import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.ServerTaskInfoClasses;
+import dev.doctor4t.trainmurdermystery.index.TMMDataComponentTypes;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -732,6 +735,31 @@ public class ModEventsRegister {
                 final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
                 betterVigilantePlayerComponent.reset();
             }
+        });
+        AfterShieldAllowPlayerDeathWithKiller.EVENT.register((player, killer, deathReason) -> {
+            var lifeAndDeathShape = MCItemsUtils.getFirstMatchedItem(player, ModItems.LIFE_AND_DEATH_SHAPE);
+            if (lifeAndDeathShape == null)
+                return true;
+            String starPlayerUuid = lifeAndDeathShape.getOrDefault(TMMDataComponentTypes.OWNER, "");
+            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+            for (var p : player.level().players()) {
+                if (gameWorldComponent.isRole(p, ModRoles.STAR)) {
+                    if (p.getUUID().toString().equals(starPlayerUuid)) {
+                        if (GameFunctions.isPlayerAliveAndSurvival(p)) {
+                            p.displayClientMessage(Component.translatable(
+                                    "hud.noellesroles.star.dead.life_and_death_shape", player.getDisplayName())
+                                    .withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD), true);
+                            player.displayClientMessage(Component.translatable(
+                                    "hud.noellesroles.star.dead.life_and_death_shape.victim", p.getDisplayName())
+                                    .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), true);
+                            GameFunctions.killPlayer(p, true, killer, deathReason);
+                            MCItemsUtils.clearItem(player, ModItems.LIFE_AND_DEATH_SHAPE, 1);
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         });
         AllowPlayerDeath.EVENT.register((player, deathReason) -> {
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
@@ -1394,6 +1422,8 @@ public class ModEventsRegister {
                 "noellesroles:pocket_watch",
                 "noellesroles:throwing_knife",
                 "noellesroles:shisiye",
+                "noellesroles:signed_paper",
+                "noellesroles:life_and_death_shape",
                 "minecraft:clock",
                 "minecraft:written_book"));
 
