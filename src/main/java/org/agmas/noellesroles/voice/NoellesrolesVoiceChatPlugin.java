@@ -17,6 +17,8 @@ import net.minecraft.world.entity.player.Player;
 
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.component.PlayerVolumeComponent;
+import org.agmas.noellesroles.effects.TimeStopEffect;
+import org.agmas.noellesroles.init.ModEffects;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHandler;
 
@@ -52,6 +54,7 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
       }
     }
   }
+
   public void vtMode_Entity(EntitySoundPacketEvent event) {
     // VoicechatServerApi api = event.getVoicechat();
     VoicechatConnection senderConnection = event.getSenderConnection();
@@ -73,6 +76,7 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
       }
     }
   }
+
   public void vtMode_Locational(LocationalSoundPacketEvent event) {
     // VoicechatServerApi api = event.getVoicechat();
     VoicechatConnection senderConnection = event.getSenderConnection();
@@ -95,8 +99,58 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
     }
   }
 
-  public void paranoidEvent(MicrophonePacketEvent event) {
+  public static boolean shouldBanVoice(VoicechatConnection senderConnection, VoicechatConnection receiverConnection) {
+    if (senderConnection == null || receiverConnection == null)
+      return false;
 
+    if (!(senderConnection.getPlayer().getPlayer() instanceof Player senderPlayer))
+      return false;
+    if (!(receiverConnection.getPlayer().getPlayer() instanceof Player receiverPlayer))
+      return false;
+    if (senderPlayer.getEffect(ModEffects.TIME_STOP) != null) {
+      if (!TimeStopEffect.canMovePlayers.contains(senderPlayer.getUUID())) {
+        return true;
+      }
+    }
+    if (receiverPlayer.getEffect(ModEffects.TIME_STOP) != null) {
+      if (!TimeStopEffect.canMovePlayers.contains(receiverPlayer.getUUID())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public void timeStopper_Static(StaticSoundPacketEvent event) {
+    // VoicechatServerApi api = event.getVoicechat();
+    VoicechatConnection senderConnection = event.getSenderConnection();
+    VoicechatConnection receiverConnection = event.getReceiverConnection();
+    if (shouldBanVoice(senderConnection, receiverConnection)) {
+      event.cancel();
+      return;
+    }
+  }
+
+  public void timeStopper_Entity(EntitySoundPacketEvent event) {
+    // VoicechatServerApi api = event.getVoicechat();
+    VoicechatConnection senderConnection = event.getSenderConnection();
+    VoicechatConnection receiverConnection = event.getReceiverConnection();
+    if (shouldBanVoice(senderConnection, receiverConnection)) {
+      event.cancel();
+      return;
+    }
+  }
+
+  public void timeStopper_Locational(LocationalSoundPacketEvent event) {
+    // VoicechatServerApi api = event.getVoicechat();
+    VoicechatConnection senderConnection = event.getSenderConnection();
+    VoicechatConnection receiverConnection = event.getReceiverConnection();
+    if (shouldBanVoice(senderConnection, receiverConnection)) {
+      event.cancel();
+      return;
+    }
+  }
+
+  public void paranoidEvent(MicrophonePacketEvent event) {
     VoicechatServerApi api = event.getVoicechat();
     var connection = event.getSenderConnection();
     if (connection != null && connection.isInstalled() && connection.isConnected()) {
@@ -145,6 +199,11 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
   @Override
   public void registerEvents(EventRegistration registration) {
     registration.registerEvent(MicrophonePacketEvent.class, this::paranoidEvent);
+
+    registration.registerEvent(LocationalSoundPacketEvent.class, this::timeStopper_Locational);
+    registration.registerEvent(StaticSoundPacketEvent.class, this::timeStopper_Static);
+    registration.registerEvent(EntitySoundPacketEvent.class, this::timeStopper_Entity);
+
     registration.registerEvent(LocationalSoundPacketEvent.class, this::vtMode_Locational);
     registration.registerEvent(StaticSoundPacketEvent.class, this::vtMode_Static);
     registration.registerEvent(EntitySoundPacketEvent.class, this::vtMode_Entity);

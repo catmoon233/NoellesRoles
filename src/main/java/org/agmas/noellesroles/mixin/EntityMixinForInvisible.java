@@ -35,9 +35,6 @@ public class EntityMixinForInvisible {
         }
         if (!viewer.isSpectator())
             return;
-        if (cir.getReturnValue()) {
-            return;
-        }
         var deathPenaltyComponent = ModComponents.DEATH_PENALTY.get(viewer);
         if (deathPenaltyComponent.hasPenalty()) {
             cir.setReturnValue(true);
