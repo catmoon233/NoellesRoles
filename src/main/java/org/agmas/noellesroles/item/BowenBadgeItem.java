@@ -1,7 +1,13 @@
 package org.agmas.noellesroles.item;
 
 
+import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
+import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.agmas.noellesroles.Noellesroles;
 
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
@@ -29,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.agmas.noellesroles.init.FunnyItems;
 
 public class BowenBadgeItem extends Item {
 
@@ -77,8 +84,14 @@ public class BowenBadgeItem extends Item {
             if (!(e instanceof Player targetPlayer))
                 continue;
 
-            // 撞到目标：停止水平移动
+            // 撞到目标：停止水平移动并推开旁边的人
             player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
+            
+            // 计算击退向量（从玩家指向目标）
+            Vec3 knockbackDir = targetPlayer.position().subtract(playerPos).multiply(1, 0, 1).normalize();
+            // 施加击退效果，将目标推开
+            targetPlayer.push(knockbackDir.x * 2.5, 0.5, knockbackDir.z * 2.5);
+
             if (GameFunctions.isPlayerAliveAndSurvival(targetPlayer)) {
                 GameFunctions.killPlayer(targetPlayer, true, player, Noellesroles.id("bowen"));
             }
@@ -273,19 +286,50 @@ public class BowenBadgeItem extends Item {
             cooldowns.addCooldown(stack.getItem(), 20 * 60);
         }
     }
-
+    @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = world.getBlockState(pos);
+        if (player.getCooldowns().isOnCooldown(FunnyItems.BOWEN_BADGE))return InteractionResult.PASS;
+        player.getCooldowns().addCooldown(FunnyItems.BOWEN_BADGE, 20 );
         if (state.getBlock() instanceof SmallDoorBlock) {
-            return InteractionResult.PASS;
-        } else {
-            if (player != null) {
-                context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+            BlockPos lowerPos = state.getValue(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+            if (world.getBlockEntity(lowerPos) instanceof SmallDoorBlockEntity entity) {
+                if (player.isShiftKeyDown()) {
+                    entity.jam();
+
+                    if (!player.isCreative()) {
+                        if (TMM.REPLAY_MANAGER != null) {
+                            TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(), BuiltInRegistries.ITEM.getKey(this));
+                        }
+
+                    }
+
+                    if (!world.isClientSide)
+                        world.playSound(null, lowerPos.getX() + .5f, lowerPos.getY() + 1, lowerPos.getZ() + .5f, TMMSounds.ITEM_LOCKPICK_DOOR, SoundSource.BLOCKS, 1f, 1f);
+                    return InteractionResult.SUCCESS;
+                }
             }
-            return super.useOn(context);
+
+            return InteractionResult.PASS;
         }
+
+        return super.useOn(context);
     }
+//    public InteractionResult useOn(UseOnContext context) {
+//        Player player = context.getPlayer();
+//        Level world = context.getLevel();
+//        BlockPos pos = context.getClickedPos();
+//        BlockState state = world.getBlockState(pos);
+//        if (state.getBlock() instanceof SmallDoorBlock) {
+//            return InteractionResult.PASS;
+//        } else {
+//            if (player != null) {
+//                context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+//            }
+//            return super.useOn(context);
+//        }
+//    }
 }

@@ -1154,8 +1154,10 @@ public class ModEventsRegister {
             GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(20 * 4, () -> {
                 blackoutComponent.reset();
             }));
+
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(serverLevel);
+            boolean hasDio = serverLevel.players().stream().anyMatch(p -> gameWorldComponent.isRole(p, ModRoles.DIO));
             serverLevel.players().forEach(p -> {
                 if (worldModifierComponent.isModifier(p, NRModifiers.EXPEDITION)) {
                     Role role = gameWorldComponent.getRole(p);
@@ -1189,6 +1191,14 @@ public class ModEventsRegister {
                         false, // showParticles（显示粒子）
                         false // showIcon（显示图标）
                 ));
+
+                if (hasDio) {
+                    GameFunctions.serverTaskQueue.add(new ServerTaskInfoClasses.SchedulerTask(20 * 8, () -> {
+                        if (p != null) {
+                            p.playNotifySound(NRSounds.DIO_SPAWN, SoundSource.PLAYERS, 0.5F, 1.0F);
+                        }
+                    }));
+                }
             });
             serverLevel.players().forEach(player -> {
                 if (gameWorldComponent.isRole(player, ModRoles.THIEF)) {
