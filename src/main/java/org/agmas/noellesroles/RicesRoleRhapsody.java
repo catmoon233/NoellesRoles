@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.agmas.noellesroles.component.*;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.init.FunnyItems;
+import org.agmas.noellesroles.init.ModEffects;
 import org.agmas.noellesroles.init.ModEntities;
 import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.packet.*;
@@ -129,6 +130,9 @@ public class RicesRoleRhapsody implements ModInitializer {
 
         // 3. 注册物品
         ModItems.init();
+
+        ModEffects.init();
+
         FunnyItems.init();
 
         // 4. 注册实体

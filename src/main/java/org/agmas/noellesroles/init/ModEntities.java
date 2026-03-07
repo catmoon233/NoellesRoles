@@ -33,6 +33,16 @@ public class ModEntities {
                     .trackedUpdateRate(10)
                     .build());
 
+    @SuppressWarnings("deprecation")
+    public static final EntityType<ThrowingKnifeEntity> THROWING_KNIFE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "throwing_knife"),
+            FabricEntityTypeBuilder.<ThrowingKnifeEntity>create(MobCategory.MISC, ThrowingKnifeEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.2F, 0.2F))
+                    .trackRangeBlocks(4)
+                    .trackedUpdateRate(10)
+                    .build());
+
     /**
      * 氯气弹实体 - 可投掷物品，落地时使范围内玩家中毒
      */

@@ -23,13 +23,13 @@ import java.util.List;
 /**
  * 绳索
  * <p>
- * - 3点耐久
+ * - 2点耐久
  * - 右键：将前方直线距离10格内的离你最近的玩家拉到自己身前
  * - 使用后进入20秒冷却并消耗1点耐久
  * </p>
  */
 public class RopeItem extends Item implements AdventureUsable {
-    private static final int MAX_DURABILITY = 3;
+    private static final int MAX_DURABILITY = 2;
     private static final int COOLDOWN = 20 * 20; // 20秒
     private static final int MAX_DISTANCE = 10; // 最大距离10格
 
@@ -41,7 +41,7 @@ public class RopeItem extends Item implements AdventureUsable {
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        // 检查耐久（耐久值为3时已损坏，不能使用）
+        // 检查耐久（耐久值为2时已损坏，不能使用）
         if (stack.getDamageValue() >= MAX_DURABILITY) {
             if (!world.isClientSide) {
                 player.displayClientMessage(
