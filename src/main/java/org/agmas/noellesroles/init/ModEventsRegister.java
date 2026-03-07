@@ -81,8 +81,6 @@ import dev.doctor4t.trainmurdermystery.event.OnTeammateKilledTeammate;
 import dev.doctor4t.trainmurdermystery.event.ShouldDropOnDeath;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.game.ServerTaskInfoClasses;
-import dev.doctor4t.trainmurdermystery.game.ServerTaskInfoClasses.ServerTaskInfo;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -1112,10 +1110,7 @@ public class ModEventsRegister {
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             var blackoutComponent = WorldBlackoutComponent.KEY.get(serverLevel);
-            blackoutComponent.triggerBlackout();
-            GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(40, () -> {
-                blackoutComponent.reset();
-            }));
+            blackoutComponent.blackOutRemainingTicks = 20 * 80;
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(serverLevel);
             serverLevel.players().forEach(p -> {

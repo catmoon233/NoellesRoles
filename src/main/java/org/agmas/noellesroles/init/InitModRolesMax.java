@@ -114,6 +114,7 @@ public class InitModRolesMax {
 
         // 强盗
         Harpymodloader.setRoleMaximum(ModRoles.BANDIT_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.DIO_ID, 1);
 
         // 仇杀客 - 仅在12人及以上对局生成
         Harpymodloader.setRoleMaximum(ModRoles.BLOOD_FEUDIST_ID, 1);
@@ -171,6 +172,7 @@ public class InitModRolesMax {
         Harpymodloader.setRoleMaximum(ModRoles.SHERIFF_ID, NoellesRolesConfig.HANDLER.instance().sheriffMax);
         Harpymodloader.setRoleMaximum(ModRoles.BOMBER_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.OLDMAN_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.JOJO_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.CHEF_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.FORTUNETELLER_ID, 1);
         Harpymodloader.setRoleMaximum(ModRoles.WIND_YAOSE_ID, 1);
