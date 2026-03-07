@@ -150,8 +150,8 @@ public class ClockmakerPlayerComponent implements RoleComponent, ServerTickingCo
         long newTime = Math.max(MIN_GAME_TIME_TICKS, currentTime - TIME_REDUCTION_TICKS);
 
         // 设置新的游戏时间
-//        gameTime.setTime((int) newTime);
-        level.getServer().tickRateManager().requestGameToSprint((int) (currentTime-newTime));
+        gameTime.setTime((int) newTime);
+//        level.getServer().tickRateManager().requestGameToSprint((int) (currentTime-newTime));
         // 加快世界时间（Minecraft原版时间）
         if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             long currentDayTime = serverLevel.getDayTime();
