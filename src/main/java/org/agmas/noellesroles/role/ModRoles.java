@@ -117,6 +117,7 @@ public class ModRoles {
   public static ResourceLocation EXECUTIONER_ID = Noellesroles.id("executioner");
   public static ResourceLocation GAMBLER_ID = Noellesroles.id("gambler");
   public static ResourceLocation POISONER_ID = Noellesroles.id("poisoner");
+  public static ResourceLocation DIO_ID = Noellesroles.id("dio");
   public static ResourceLocation THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Noellesroles
       .id("the_insane_damned_paranoid_killer");
   public static final ResourceLocation CONSPIRATOR_ID = Noellesroles.id("conspirator");
@@ -640,6 +641,8 @@ public class ModRoles {
    */
   public static Role CLOCKMAKER;
 
+  public static Role DIO;
+
   /**
    * 强盗角色 - 杀手阵营
    * - 杀手阵营 (isInnocent = false, canUseKiller = true)
@@ -987,6 +990,17 @@ public class ModRoles {
         false, // canUseKiller = 无杀手能力
         Role.MoodType.REAL, // 真实心情
         TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+        false // 不隐藏计分板
+    )).setCanSeeCoin(true);
+
+    // DIO - 杀手
+    DIO = TMMRoles.registerRole(new NoramlRole(
+        DIO_ID, // 角色 ID
+        new Color(255, 215, 0).getRGB(), // 黄色 - 代表 DIO 的金色气场
+        false, // isInnocent = 非乘客阵营（杀手）
+        true, // canUseKiller = 杀手能力
+        Role.MoodType.FAKE, // 真实心情
+            Integer.MAX_VALUE, // 无限冲刺时间
         false // 不隐藏计分板
     )).setCanSeeCoin(true);
 

@@ -56,14 +56,15 @@
     "roles.thief.DelayedCoinDisplayMixin",
     "roles.thief.ThiefsHonorMixin",
     "roles.veteran.VeteranKnifeLeftClickMixin",
-    "roles.veteran.VeteranKnifeMixin"
+    "roles.veteran.VeteranKnifeMixin",
+    "time_stop.ServerPacketBlocker"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
-    "roles.insanekiller.CrossHairFixer",
     "LivingEntityAccessor",
+    "client.time_stop.GameTimeFreezeMixin",
     "client.HandCuffsKeyBindingMixin",
     "client.InstinctMixin",
     "client.LamBugFix",
@@ -72,6 +73,7 @@
     "client.game.ChairWheelKeyMappingMixin",
     "client.general.InventoryIntroductionRenderer",
     "client.general.MessageBelowMoney",
+    "client.general.ThrowKnifeMixin",
     "client.roles.AvengerHudMixin",
     "client.roles.BomberHudMixin",
     "client.roles.BoxerHudMixin",
@@ -126,6 +128,11 @@
     "client.roles.vulture.VultureEatenBodyMixin",
     "client.roles.vulture.VultureHudMixin",
     "client.roles.wayfarer.TargetEntityHudmixin",
+    "client.time_stop.CantControlMixin",
+    "client.time_stop.EntityCantUpdatePositionMixin",
+    "client.time_stop.GameRendererMixin",
+    "client.time_stop.MouseHandleSuppressMixin",
+    "roles.insanekiller.CrossHairFixer",
     "roles.photographer.BlindnessEffectMixin"
   ],
   "overwrites": {

@@ -24,6 +24,7 @@ import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
@@ -44,6 +45,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
 import org.agmas.noellesroles.Noellesroles;
+import org.agmas.noellesroles.effects.TimeStopEffect;
+import org.agmas.noellesroles.init.ModEffects;
 import org.agmas.noellesroles.packet.ScanAllTaskPointsPayload;
 import org.agmas.noellesroles.utils.MapScannerManager;
 import org.jetbrains.annotations.Nullable;
@@ -279,7 +282,17 @@ public class GameFunctionsCommand {
                                 ResourceLocation deathReason = ResourceLocationArgument.getId(context,
                                     "death_reason");
                                 return executeKillPlayer(context, victim, killer, deathReason, spawnBody);
-                              })))))));
+                              }))))))
+              .then(Commands.literal("timestop")
+                  .then(Commands.argument("duration", IntegerArgumentType.integer(20, 1200))
+                      .executes((context) -> {
+                        int duration = IntegerArgumentType.getInteger(context, "duration");
+                        return executeTimeStop(context, duration);
+                      }))
+                  .then(Commands.literal("stop")
+                      .executes((context) -> {
+                        return executeTimeStopStop(context);
+                      }))));
         });
   }
 
@@ -480,5 +493,54 @@ public class GameFunctionsCommand {
 
       return builder.buildFuture();
     }
+  }
+  
+  /**
+   * 执行时间停止命令
+   * @param context 命令上下文
+   * @param duration 持续时间（tick）
+   * @return 1 表示成功
+   */
+  public static int executeTimeStop(CommandContext<CommandSourceStack> context, int duration) {
+    var source = context.getSource();
+    ServerPlayer executor = source.getPlayer();
+    
+    if (executor == null) {
+      source.sendFailure(Component.literal("Only players can use this command!").withStyle(ChatFormatting.RED));
+      return 0;
+    }
+    
+    // 触发时间停止效果
+    TimeStopEffect.triggerStart(executor, duration);
+    
+    source.sendSuccess(() -> Component.translatable("Triggered time stop for %s ticks! Only you can move.", duration)
+        .withStyle(ChatFormatting.GOLD), true);
+
+
+    
+    return 1;
+  }
+  
+  /**
+   * 停止时间停止效果
+   * @param context 命令上下文
+   * @return 1 表示成功
+   */
+  public static int executeTimeStopStop(CommandContext<CommandSourceStack> context) {
+    var source = context.getSource();
+    
+    // 清除所有玩家的时间停止效果
+    for (ServerPlayer player : source.getLevel().players()) {
+      player.removeEffect((ModEffects.TIME_STOP));
+    }
+    
+    // 清空可移动玩家列表
+    TimeStopEffect.canMovePlayers.clear();
+    TimeStopEffect.clientPositions.clear();
+    
+    source.sendSuccess(() -> Component.translatable("Stopped time stop! All players can now move.")
+        .withStyle(ChatFormatting.GREEN), true);
+
+    return 1;
   }
 }

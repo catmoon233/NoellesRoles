@@ -28,6 +28,7 @@ import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.StalkerPlayerComponent;
 import org.agmas.noellesroles.component.WayfarerPlayerComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.effects.TimeStopEffect;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.entity.SmokeAreaManager;
@@ -1014,6 +1015,14 @@ public class ModEventsRegister {
                 Noellesroles.gunsCooled = false;
             }
         }));
+        ServerTickEvents.START_SERVER_TICK.register(((server) -> {
+           if (TimeStopEffect.freezeTime>0){
+               TimeStopEffect.freezeTime--;
+               if (TimeStopEffect.freezeTime==0){
+                   server.tickRateManager().setFrozen(false);
+               }
+           }
+        }));
         if (!NoellesRolesConfig.HANDLER.instance().shitpostRoles) {
             HarpyModLoaderConfig.HANDLER.load();
 
@@ -1328,6 +1337,7 @@ public class ModEventsRegister {
                 "exposure:photograph",
                 "noellesroles:mint_candies",
                 "noellesroles:pocket_watch",
+                "noellesroles:throwing_knife",
                 "minecraft:clock",
                 "minecraft:written_book"));
 

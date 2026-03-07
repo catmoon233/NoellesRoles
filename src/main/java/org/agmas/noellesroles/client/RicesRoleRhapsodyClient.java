@@ -3,12 +3,9 @@ package org.agmas.noellesroles.client;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.CameraType;
 
+import org.agmas.noellesroles.client.renderer.*;
 import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.init.ModEntities;
-import org.agmas.noellesroles.client.renderer.CalamityMarkEntityRenderer;
-import org.agmas.noellesroles.client.renderer.LockEntityRender;
-import org.agmas.noellesroles.client.renderer.ManipulatorBodyEntityRenderer;
-import org.agmas.noellesroles.client.renderer.PuppeteerBodyEntityRenderer;
 import org.agmas.noellesroles.client.screen.*;
 
 import org.agmas.noellesroles.component.*;
@@ -615,6 +612,7 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
      * 注册实体渲染器
      */
     public static void registerEntityRenderers() {
+        EntityRendererRegistry.register(ModEntities.THROWING_KNIFE, ThrowingKnifeRenderer::new);
         // 烟雾弹实体渲染器 - 使用飞行物品渲染器
         EntityRendererRegistry.register(ModEntities.SMOKE_GRENADE, ThrownItemRenderer::new);
 

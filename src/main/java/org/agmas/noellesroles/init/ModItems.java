@@ -2,6 +2,7 @@ package org.agmas.noellesroles.init;
 
 import dev.doctor4t.ratatouille.util.registrar.ItemRegistrar;
 import dev.doctor4t.trainmurdermystery.api.ChargeableItemRegistry;
+import dev.doctor4t.trainmurdermystery.api.impl.KnifeChargeableItem;
 import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.ChatFormatting;
@@ -51,6 +52,8 @@ public class ModItems {
             new FoodStuffItem((new Item.Properties()).stacksTo(16)), "foodstuff");
     public static final Item PAN = register(
             new PanItem((new Item.Properties()).stacksTo(1)), "pan");
+    public static final Item THROWING_KNIFE = register(
+            new ThrowingKnife((new Item.Properties()).stacksTo(1)), "throwing_knife");
     public static final Item BUCKET_OF_H2SO4 = register(
             new H2SO4AcidItem((new Item.Properties()).stacksTo(1)), "bucket_of_h2so4");
     public static final Item LETTER_ITEM = register(
@@ -360,6 +363,7 @@ public class ModItems {
         ChargeableItemRegistry.register(ANTIDOTE_REAGENT, new AntidoteReagentChargeItem());
         ChargeableItemRegistry.register(HSRItems.TOXIN, new ToxinChargeItem());
         ChargeableItemRegistry.register(HSRItems.ANTIDOTE, new AntidoteChargeItem());
+        ChargeableItemRegistry.register(THROWING_KNIFE, new KnifeChargeableItem());
     }
     // public static final Item SHERIFF_GUN_MAINTENANCE = register(
     // new SheriffGunMaintenanceItem(new Item.Settings().maxCount(1)),
@@ -374,12 +378,11 @@ public class ModItems {
     public static Item register(Item item, String id) {
         // Create the identifier for the item.
         // Register the item.
-        var registeredItem = registrar.create(id, item, new ResourceKey[] { MISC_CREATIVE_GROUP });
         // Item registeredItem = Registry.register(BuiltInRegistries.ITEM, itemID,
         // item);
 
         // Return the registered item!
-        return registeredItem;
+        return registrar.create(id, item, new ResourceKey[] { MISC_CREATIVE_GROUP });
     }
 
     public static void init() {
