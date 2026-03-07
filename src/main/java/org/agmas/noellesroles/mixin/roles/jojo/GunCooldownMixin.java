@@ -1,5 +1,8 @@
 package org.agmas.noellesroles.mixin.roles.jojo;
 
+import java.util.ArrayList;
+
+import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.utils.MCItemsUtils;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.index.tag.TMMItemTags;
 import dev.doctor4t.trainmurdermystery.network.tmm.GunShootPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -41,10 +45,14 @@ public class GunCooldownMixin {
         if (!player.isCreative()) {
             var cooldowns = player.getCooldowns();
 
-            MCItemsUtils.getItemsByTag(player.level(), TMMItemTags.GUNS).forEach((item) -> {
+            var items = new ArrayList<>(MCItemsUtils.getItemsByTag(player.serverLevel(), TMMItemTags.GUNS));
+            // Noellesroles.LOGGER.info("itemSize:" + items.size());
+            int REVOLVER_COOLDOWN = GameConstants.ITEM_COOLDOWNS.getOrDefault(TMMItems.REVOLVER, 0);
+            items.remove(ModItems.FAKE_REVOLVER);
+            items.forEach((item) -> {
                 if (!cooldowns.isOnCooldown(item))
                     cooldowns.addCooldown(item,
-                            (Integer) GameConstants.ITEM_COOLDOWNS.getOrDefault(item, 0));
+                            (Integer) GameConstants.ITEM_COOLDOWNS.getOrDefault(item, REVOLVER_COOLDOWN));
             });
         }
     }

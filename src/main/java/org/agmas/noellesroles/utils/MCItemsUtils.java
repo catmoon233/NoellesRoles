@@ -10,16 +10,16 @@ import dev.doctor4t.trainmurdermystery.util.TMMItemUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 
 public class MCItemsUtils extends TMMItemUtils {
 
-    public static List<Item> getItemsByTag(Level level, TagKey<Item> tag) {
-        var opt2 = level.registryAccess()
+    public static List<Item> getItemsByTag(ServerLevel level, TagKey<Item> tag) {
+        var opt2 = level.getServer().registryAccess()
                 .registry(Registries.ITEM);
         if (opt2.isEmpty())
             return List.of();
