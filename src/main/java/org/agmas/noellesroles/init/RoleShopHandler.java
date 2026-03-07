@@ -969,16 +969,16 @@ public class RoleShopHandler {
     // THIEF_SHOP.add(THIEF_SHOP_ENTRY);
 
     // 钟表匠商店
-    // 时钟（原版） - 50金币
+    // 时钟（原版） - 100金币
     CLOCKMAKER_SHOP.add(new ShopEntry(
         Items.CLOCK.getDefaultInstance(),
-        50,
+        100,
         ShopEntry.Type.TOOL));
 
-    // 怀表 - 100金币
+    // 怀表 - 150金币
     CLOCKMAKER_SHOP.add(new ShopEntry(
         ModItems.POCKET_WATCH.getDefaultInstance(),
-        100,
+        150,
         ShopEntry.Type.TOOL));
 
     // 作家商店
