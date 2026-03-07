@@ -140,7 +140,7 @@ public class InitModRolesMax {
         // 同时出现
         RoleAssignmentManager.addOccupationRole(ModRoles.POISONER, ModRoles.DOCTOR);
         RoleAssignmentManager.addOccupationRole(ModRoles.BAKA, ModRoles.EXAMPLER);
-        RoleAssignmentManager.addOccupationRole(ModRoles.MAID_SAKUYA, ModRoles.DIO);
+        RoleAssignmentManager.addOccupationRole(ModRoles.DIO, ModRoles.JOJO);
 
         Harpymodloader.setRoleMaximum(ModRoles.CONDUCTOR_ID, NoellesRolesConfig.HANDLER.instance().conductorMax);
         Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA, 0);
@@ -213,9 +213,11 @@ public class InitModRolesMax {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
             }
             if (players_count >= 12 && random.nextInt(0, 100) <= EGGS_CHANCE) {
-                Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA_ID, 1);
+                Harpymodloader.setRoleMaximum(ModRoles.DIO, 1);
+                Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA, 1);
             } else {
-                Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA_ID, 0);
+                Harpymodloader.setRoleMaximum(ModRoles.DIO, 0);
+                Harpymodloader.setRoleMaximum(ModRoles.MAID_SAKUYA, 0);
             }
             if (players_count >= 12 && random.nextInt(0, 100) <= EGGS_CHANCE) {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 1);
