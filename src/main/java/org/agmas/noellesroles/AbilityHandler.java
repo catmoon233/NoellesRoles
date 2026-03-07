@@ -3,6 +3,7 @@ package org.agmas.noellesroles;
 import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.BomberPlayerComponent;
 import org.agmas.noellesroles.component.ClockmakerPlayerComponent;
+import org.agmas.noellesroles.component.DIOPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
@@ -53,8 +54,8 @@ public class AbilityHandler {
                         "tip.noellesroles.cooldown", abilityPlayerComponent.cooldown / 20)
                         .withStyle(ChatFormatting.RED), true);
             } else {
-                TimeStopEffect.tryTriggerStart(player, 20 * 5,Component.translatable("title.maid_sakuya.timestopper")
-                                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+                TimeStopEffect.tryTriggerStart(player, 20 * 5, Component.translatable("title.maid_sakuya.timestopper")
+                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
                 abilityPlayerComponent.setCooldown(20 * 120);
             }
             return;
@@ -65,10 +66,7 @@ public class AbilityHandler {
                         "tip.noellesroles.cooldown", abilityPlayerComponent.cooldown / 20)
                         .withStyle(ChatFormatting.RED), true);
             } else {
-                TimeStopEffect.tryTriggerStart(player, 20 * 5,
-                        Component.translatable("message.noellesroles.time_stop.the_world")
-                                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
-                abilityPlayerComponent.setCooldown(20 * 120);
+                DIOPlayerComponent.KEY.get(player).tryActivateTimeStop();
             }
             return;
         }
