@@ -100,6 +100,7 @@ public class GamblerPlayerComponent implements RoleComponent, ServerTickingCompo
                 .filter(role -> !HarpyModLoaderConfig.HANDLER.instance().disabled.contains(role.identifier().getPath()))
                 .filter(role -> !role.identifier().equals(ModRoles.GAMBLER_ID))
                 .filter(role -> !role.identifier().equals(ModRoles.DOCTOR_ID))
+                .filter(role -> !role.identifier().equals(ModRoles.DIO_ID))
                 .filter(role -> !role.identifier().equals(ModRoles.POISONER_ID))
                 .filter(role -> !role.identifier().equals(ModRoles.BEST_VIGILANTE_ID)) // 排除更好的义警
                 .filter(role -> !role.identifier().equals(TMMRoles.LOOSE_END.identifier())) // 排除亡命徒
