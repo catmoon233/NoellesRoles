@@ -74,7 +74,13 @@
         "noellesroles:manipulator",
         "noellesroles:writer",
         "noellesroles:rescuer",
-        "noellesroles:firefighter"
+        "noellesroles:firefighter",
+        "noellesroles:swast",
+        "noellesroles:martial_arts_instructor",
+        "noellesroles:baka",
+        "noellesroles:maid_sakuya",
+        "noellesroles:exampler",
+        "noellesroles:dio"
       ]
     },
     "modifiers": {
@@ -172,7 +178,13 @@
         "noellesroles:chef",
         "noellesroles:fortuneteller",
         "noellesroles:cleaner",
-        "noellesroles:writer"
+        "noellesroles:writer",
+        "noellesroles:swast",
+        "noellesroles:martial_arts_instructor",
+        "noellesroles:baka",
+        "noellesroles:maid_sakuya",
+        "noellesroles:exampler",
+        "noellesroles:dio"
       ]
     },
     "modifiers": {
@@ -268,7 +280,13 @@
         "noellesroles:manipulator",
         "noellesroles:writer",
         "noellesroles:rescuer",
-        "noellesroles:firefighter"
+        "noellesroles:firefighter",
+        "noellesroles:swast",
+        "noellesroles:martial_arts_instructor",
+        "noellesroles:baka",
+        "noellesroles:maid_sakuya",
+        "noellesroles:exampler",
+        "noellesroles:dio"
       ],
       "disabled": []
     },

@@ -21,7 +21,6 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.entity.ThrowingKnifeEntity;
 import org.agmas.noellesroles.events.OnVendingMachinesBuyItems;
 import org.agmas.noellesroles.item.ChefFoodItem;
-import org.agmas.noellesroles.item.ThrowingKnife;
 import org.agmas.noellesroles.packet.*;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
