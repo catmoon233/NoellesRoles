@@ -197,7 +197,7 @@ public class ModRoles {
       Role.MoodType.FAKE, // 真实心情
       Integer.MAX_VALUE, // 无限冲刺时间
       false // 不隐藏计分板
-  )).setCanSeeCoin(true);
+  )).setCanSeeCoin(true).setComponentKey(ModComponents.DIO);
   // ==================== 已注册角色定义 ====================
   // 乘客阵营角色
   // 中立偏狼：小镇做题家

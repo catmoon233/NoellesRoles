@@ -29,6 +29,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
@@ -334,6 +335,44 @@ public class RoleShopHandler {
     // ModRoles.BANDIT_ID, HSRConstants.BANDIT_SHOP_ENTRIES);
     ShopContent.customEntries.put(
         ModRoles.JESTER_ID, FRAMING_ROLES_SHOP);
+    {
+      // DIO
+      List<ShopEntry> entries = new ArrayList<>();
+      entries.add(new ShopEntry(ModItems.THROWING_KNIFE.getDefaultInstance(), 100,
+          ShopEntry.Type.TOOL));
+      entries.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 95,
+          ShopEntry.Type.TOOL));
+      entries.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 175,
+          ShopEntry.Type.TOOL) {
+        public boolean onBuy(@NotNull Player player) {
+          player.getCooldowns().addCooldown(TMMItems.BLACKOUT,
+              Math.min((Integer) GameConstants.ITEM_COOLDOWNS
+                  .getOrDefault(TMMItems.BLACKOUT, 0), 60));
+          boolean triggered = ((WorldBlackoutComponent) WorldBlackoutComponent.KEY
+              .get(player.level()))
+              .triggerBlackout();
+          if (triggered) {
+            TMM.REPLAY_MANAGER.recordSkillUsed(player.getUUID(),
+                BuiltInRegistries.ITEM.getKey(TMMItems.BLACKOUT));
+          }
+          return triggered;
+        }
+      });
+      ShopContent.customEntries.put(
+          ModRoles.DIO_ID, entries);
+    }
+    {
+      // 女仆咲夜
+      List<ShopEntry> entries = new ArrayList<>();
+      var SAKUYA_KNIFE = ModItems.THROWING_KNIFE.getDefaultInstance();
+      SAKUYA_KNIFE.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
+      entries.add(new ShopEntry(SAKUYA_KNIFE, 250,
+          ShopEntry.Type.TOOL));
+      entries.add(new ShopEntry(FunnyItems.SHISIYE.getDefaultInstance(), 440,
+          ShopEntry.Type.TOOL));
+      ShopContent.customEntries.put(
+          ModRoles.MAID_SAKUYA_ID, entries);
+    }
     {
       List<ShopEntry> entries = new ArrayList<>();
       entries.add(new ShopEntry(TMMItems.DEFENSE_VIAL.getDefaultInstance(), 200,

@@ -551,9 +551,9 @@ public class ModEventsRegister {
                                 || deathReason.getPath().equals("arrow")
                                 || deathReason.getPath().equals("knife_stab")
                                 || deathReason.getPath().equals("fell_out_of_train")
-                                || deathReason.getPath().equals("fire_axe")
                                 || deathReason.getPath().equals("poison")
-                                || deathReason.getPath().equals("throwing_knife_hit")) {
+                                || deathReason.getPath().equals("throwing_knife_hit")
+                                || deathReason.getPath().equals("fire_axe")) {
                             GameFunctions.killPlayer(killer, true, null, Noellesroles.id("shot_innocent"));
 
                             // 仇杀客事件：误杀发生时强化仇杀客
@@ -1051,6 +1051,9 @@ public class ModEventsRegister {
                TimeStopEffect.freezeTime--;
                if (TimeStopEffect.freezeTime==0){
                    server.getPlayerList().getPlayers().forEach((player) -> {
+                       if (TimeStopEffect.canMovePlayers.contains(player.getUUID())){
+                           player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 0, false, false,false));
+                       }
                        ServerPlayNetworking.send(player, new RemoveStatusBarPayload("Time_Stop"));
                    });
                    server.tickRateManager().setFrozen(false);

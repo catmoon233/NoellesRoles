@@ -95,6 +95,7 @@
     "client.roles.broadcaster.BroadcasterHudMixin",
     "client.roles.conductor.MasterKeyInvisibilityMixin",
     "client.roles.coroner.CoronerHudMixin",
+    "client.roles.dio.DIOHudMixin",
     "client.roles.coroner.CustomRolesRoleNameRendererMixin",
     "client.roles.detective.DetectivePassiveUiMixin",
     "client.roles.detective.PlaySoundEventMixin",

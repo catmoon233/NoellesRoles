@@ -3,6 +3,7 @@ package org.agmas.noellesroles.component;
 import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
@@ -140,23 +141,25 @@ public class ClockmakerPlayerComponent implements RoleComponent, ServerTickingCo
      */
     private void executeTimeReduction() {
         // 获取当前游戏时间
-        GameTimeComponent gameTime = GameTimeComponent.KEY.get(player.level());
+        Level level = player.level();
+
+        GameTimeComponent gameTime = GameTimeComponent.KEY.get(level);
         long currentTime = gameTime.getTime();
 
         // 计算新的游戏时间
         long newTime = Math.max(MIN_GAME_TIME_TICKS, currentTime - TIME_REDUCTION_TICKS);
 
         // 设置新的游戏时间
-        gameTime.setTime((int) newTime);
-
+//        gameTime.setTime((int) newTime);
+        level.getServer().tickRateManager().requestGameToSprint((int) (currentTime-newTime));
         // 加快世界时间（Minecraft原版时间）
-        if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+        if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             long currentDayTime = serverLevel.getDayTime();
             serverLevel.setDayTime(currentDayTime + WORLD_TIME_BOOST_TICKS);
         }
 
         // 播放音效
-        player.level().playSound(null, player.blockPosition(),
+        level.playSound(null, player.blockPosition(),
                 SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1.0F, 1.5F);
 
         // 发送成功消息
