@@ -17,6 +17,7 @@ import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
 import org.agmas.noellesroles.component.BoxerPlayerComponent;
 import org.agmas.noellesroles.component.BroadcasterPlayerComponent;
+import org.agmas.noellesroles.component.DIOPlayerComponent;
 import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
@@ -822,6 +823,10 @@ public class ModEventsRegister {
 
             // 初始化仇杀客事件
             BloodFeudistPlayerComponent.registerEvents();
+            if (role.identifier().equals(ModRoles.DIO.identifier())) {
+                var tpc = DIOPlayerComponent.KEY.get(player);
+                tpc.reset();
+            }
             // 初始化记录员
             if (role.identifier().equals(ModRoles.RECORDER.identifier())) {
                 var tpc = RecorderPlayerComponent.KEY.get(player);
@@ -1375,6 +1380,7 @@ public class ModEventsRegister {
                 "noellesroles:mint_candies",
                 "noellesroles:pocket_watch",
                 "noellesroles:throwing_knife",
+                "noellesroles:shisiye",
                 "minecraft:clock",
                 "minecraft:written_book"));
 

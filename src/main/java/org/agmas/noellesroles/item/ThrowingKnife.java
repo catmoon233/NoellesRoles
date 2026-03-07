@@ -1,7 +1,7 @@
 package org.agmas.noellesroles.item;
 
-import org.agmas.noellesroles.init.ModItems;
-import org.agmas.noellesroles.packet.TryThrowKnifePacket;
+// import org.agmas.noellesroles.init.ModItems;
+// import org.agmas.noellesroles.packet.TryThrowKnifePacket;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
@@ -48,9 +48,9 @@ public class ThrowingKnife extends KnifeItem {
                         CrosshairaddonsCompat.onAttack(target);
                     } else {
                         // 发射飞刀
-                        if (attacker.getMainHandItem().is(ModItems.THROWING_KNIFE)) {
-                            ClientPlayNetworking.send(new TryThrowKnifePacket());
-                        }
+                        // if (attacker.getMainHandItem().is(ModItems.THROWING_KNIFE)) {
+                        //     ClientPlayNetworking.send(new TryThrowKnifePacket());
+                        // }
                     }
                     return;
                 }

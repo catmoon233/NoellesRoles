@@ -61,13 +61,7 @@ public class AbilityHandler {
             return;
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.DIO)) {
-            if (abilityPlayerComponent.cooldown > 0) {
-                context.player().displayClientMessage(Component.translatable(
-                        "tip.noellesroles.cooldown", abilityPlayerComponent.cooldown / 20)
-                        .withStyle(ChatFormatting.RED), true);
-            } else {
-                DIOPlayerComponent.KEY.get(player).tryActivateTimeStop();
-            }
+            DIOPlayerComponent.KEY.get(player).tryActivateTimeStop();
             return;
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.WIND_YAOSE)) {
