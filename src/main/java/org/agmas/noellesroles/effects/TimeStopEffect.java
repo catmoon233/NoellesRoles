@@ -1,5 +1,6 @@
 package org.agmas.noellesroles.effects;
 
+import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.network.TriggerStatusBarPayload;
@@ -56,9 +57,12 @@ public class TimeStopEffect extends MobEffect {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.level());
         var broadcastMessage = displaySkillTitle;
 
+        GameTimeComponent gameTimeComponent = GameTimeComponent.KEY.get(serverPlayer.level());
+        gameTimeComponent.setTime(gameTimeComponent.time + time);
         ServerPlayNetworking.send(serverPlayer, new TriggerStatusBarPayload("Time_Stop"));
         serverPlayer.serverLevel().players().forEach(
                 player -> {
+                    player.stopUsingItem();
                     player.playNotifySound(NRSounds.TIME_STOP, SoundSource.PLAYERS, 1.0F, 1.0F);
 
                     BroadcastCommand.BroadcastMessage(player, broadcastMessage);
