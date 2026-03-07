@@ -63,7 +63,7 @@ public class ThrowingKnifeEntity extends AbstractArrow {
 
     @Override
     protected ItemStack getDefaultPickupItem() {
-        return ItemStack.EMPTY;
+        return ModItems.THROWING_KNIFE.getDefaultInstance();
     }
 
 //    @Override

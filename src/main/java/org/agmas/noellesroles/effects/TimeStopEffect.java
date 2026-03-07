@@ -34,6 +34,7 @@ public class TimeStopEffect extends MobEffect {
     public static Map<UUID, Vec3> clientPositions = new java.util.HashMap<>();
     public static int freezeTime = 0;
     public static int freezeStatedTime = 0;
+    public static int freezeMaxTime = 0;
 
     public TimeStopEffect() {
         super(MobEffectCategory.NEUTRAL, Color.white.getRGB());
@@ -79,7 +80,6 @@ public class TimeStopEffect extends MobEffect {
                 player -> {
                     player.addEffect(new MobEffectInstance((ModEffects.TIME_STOP), time, 0, false, false, false));
                     ServerPlayNetworking.send(player, new CanMoveInTimeStopS2CPacket(canMovePlayers, time));
-
                 });
         MinecraftServer server = serverPlayer.getServer();
         ServerTickRateManager serverTickRateManager = server.tickRateManager();
