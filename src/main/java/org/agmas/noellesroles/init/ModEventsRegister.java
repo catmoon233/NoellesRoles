@@ -1110,6 +1110,7 @@ public class ModEventsRegister {
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
             var blackoutComponent = WorldBlackoutComponent.KEY.get(serverLevel);
+            blackoutComponent.triggerBlackout();
             blackoutComponent.blackOutRemainingTicks = 20 * 80;
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverLevel);
             WorldModifierComponent worldModifierComponent = WorldModifierComponent.KEY.get(serverLevel);

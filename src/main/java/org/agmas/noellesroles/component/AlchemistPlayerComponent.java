@@ -18,6 +18,8 @@ import org.agmas.noellesroles.role.ModRoles;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -39,7 +41,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  *
  * 限制：每种药剂只能调两次，游戏结束时重置
  */
-public class AlchemistPlayerComponent implements RoleComponent, ServerTickingComponent {
+public class AlchemistPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 
     /** 组件键 */
     public static final ComponentKey<AlchemistPlayerComponent> KEY = ComponentRegistry.getOrCreate(
@@ -59,9 +61,9 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     public static final int MAX_CRAFT_COUNT = 2;
 
     /** 药剂类型枚举 */
-    public static final int POTION_ADRENALINE = 0;    // 肾上腺素 - 100金币
-    public static final int POTION_ANTIBIOTIC = 1;   // 抗生素 - 100金币
-    public static final int POTION_HEDINGHONG = 2;   // 鹤顶红 - 175金币
+    public static final int POTION_ADRENALINE = 0; // 肾上腺素 - 100金币
+    public static final int POTION_ANTIBIOTIC = 1; // 抗生素 - 100金币
+    public static final int POTION_HEDINGHONG = 2; // 鹤顶红 - 175金币
     public static final int POTION_DOGSKIN_PLASTER = 3; // 狗皮膏药 - 150金币
 
     /** 药剂总数 */
@@ -130,16 +132,20 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     @Override
     public void serverTick() {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-        
+
         // 检查游戏是否开始、玩家是否是药剂师角色
         if (gameWorldComponent != null && gameWorldComponent.isRunning() &&
-            gameWorldComponent.isRole(player, ModRoles.ALCHEMIST)) {
+                gameWorldComponent.isRole(player, ModRoles.ALCHEMIST)) {
             // 检查玩家是否蹲下
             if (player.isShiftKeyDown()) {
                 if (materialGatherTimer > 0) {
+                    if (materialGatherTimer % 100 == 5) { // 5s / sync
+                        sync();
+                    }
                     // 计时中，减少计时器
                     materialGatherTimer--;
                     if (materialGatherTimer == 0) {
+                        sync();
                         // 计时结束，获取素材
                         gatherMaterials();
                         // 重置计时器为初始状态（需要重新蹲下30秒）
@@ -370,6 +376,27 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     private void sync() {
         if (!player.level().isClientSide) {
             KEY.sync(player);
+        }
+    }
+
+    @Override
+    public void clientTick() {
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+
+        // 检查游戏是否开始、玩家是否是药剂师角色
+        if (gameWorldComponent != null && gameWorldComponent.isRunning() &&
+                gameWorldComponent.isRole(player, ModRoles.ALCHEMIST)) {
+            // 检查玩家是否蹲下
+            if (player.isShiftKeyDown()) {
+                if (materialGatherTimer > 1) {
+                    // 计时中，减少计时器
+                    materialGatherTimer--;
+                }
+                // 如果计时器为0，说明刚获得素材，已经被重置为MATERIAL_GATHER_INTERVAL，需要继续蹲下30秒
+            } else {
+                // 不蹲下时重置计时器到初始状态
+                materialGatherTimer = MATERIAL_GATHER_INTERVAL;
+            }
         }
     }
 }
