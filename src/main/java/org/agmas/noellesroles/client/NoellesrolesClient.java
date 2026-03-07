@@ -432,14 +432,15 @@ public class NoellesrolesClient implements ClientModInitializer {
         });
         ClientPlayNetworking.registerGlobalReceiver(CanMoveInTimeStopS2CPacket.ID, (payload, context) -> {
                 clientPositions.clear();
-                Level level = context.player().level();
+            LocalPlayer player = context.player();
+            Level level = player.level();
                 TimeStopEffect.freezeStatedTime = GameTimeComponent.KEY.get(level).time;
 
                 level.players().forEach(p -> {
                     clientPositions.put(p.getUUID(), p.position());
                 });
-
-                    TimeStopEffect.effectStatedTime = payload.times();
+            player.stopUsingItem();
+                TimeStopEffect.effectStatedTime = payload.times();
 
 
 

@@ -1051,6 +1051,9 @@ public class ModEventsRegister {
                TimeStopEffect.freezeTime--;
                if (TimeStopEffect.freezeTime==0){
                    server.getPlayerList().getPlayers().forEach((player) -> {
+                       if (TimeStopEffect.canMovePlayers.contains(player.getUUID())){
+                           player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 0, false, false,false));
+                       }
                        ServerPlayNetworking.send(player, new RemoveStatusBarPayload("Time_Stop"));
                    });
                    server.tickRateManager().setFrozen(false);

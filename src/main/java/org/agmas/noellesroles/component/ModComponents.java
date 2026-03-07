@@ -195,6 +195,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
 
     public static final ComponentKey<AlchemistPlayerComponent> ALCHEMIST = AlchemistPlayerComponent.KEY;
 
+    public static final ComponentKey<DIOPlayerComponent> DIO = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "dio"),
+            DIOPlayerComponent.class);
+
     public static final ComponentKey<org.agmas.noellesroles.modifier.expedition.ExpeditionComponent> EXPEDITION =
             org.agmas.noellesroles.modifier.expedition.ExpeditionComponent.KEY;
 
@@ -433,6 +437,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, ALCHEMIST)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(AlchemistPlayerComponent::new);
+
+        // 注册迪奥组件 - 存储时间停止、吸食尸体、最后的狂欢状态
+        registry.beginRegistration(Player.class, DIO)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(DIOPlayerComponent::new);
 
         // ==================== 示例：注册更多组件 ====================
         //
