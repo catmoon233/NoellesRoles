@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,6 +38,7 @@ import org.agmas.noellesroles.packet.Loot.LootPoolsInfoS2CPacket;
 import org.agmas.noellesroles.packet.Loot.LootRequestC2SPacket;
 import org.agmas.noellesroles.packet.Loot.LootResultS2CPacket;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.agmas.noellesroles.screen.DetectiveInspectScreenHandler;
 import org.agmas.noellesroles.screen.ModScreenHandlers;
 import org.agmas.noellesroles.screen.PostmanScreenHandler;
@@ -174,8 +176,23 @@ public class RicesRoleRhapsody implements ModInitializer {
             if (!GameFunctions.isPlayerAliveAndSurvival(player))
                 return net.minecraft.world.InteractionResult.PASS;
 
+
             // 检查玩家是否是傀儡师
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(world);
+            if (gameWorld.isRole(player, ModRoles.DIO)){
+                DIOPlayerComponent dioPlayerComponent = DIOPlayerComponent.KEY.get(player);
+                dioPlayerComponent.feedOnCorpse(body);
+                BodyDeathReasonComponent bodyDeathReasonComponent = BodyDeathReasonComponent.KEY.get(body);
+
+                bodyDeathReasonComponent.vultured = true;
+                bodyDeathReasonComponent.sync();
+                dioPlayerComponent.sync();
+                if (dioPlayerComponent.isFinalCarnivalActive){
+                    player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+                    dioPlayerComponent.extendTempLife();
+                }
+
+            }
             if (!gameWorld.isRole(player, ModRoles.PUPPETEER))
                 return net.minecraft.world.InteractionResult.PASS;
 
