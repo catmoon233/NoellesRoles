@@ -28,11 +28,14 @@ public class EntityMixinForInvisible {
             return;
         if (!self.isInvisible())
             return;
-        if (!viewer.isSpectator())
-            return;
         if (viewer.isCreative() && viewer.hasPermissions(2)) {
             // 创造的 op 可以看见
             cir.setReturnValue(false);
+            return;
+        }
+        if (!viewer.isSpectator())
+            return;
+        if (cir.getReturnValue()) {
             return;
         }
         var deathPenaltyComponent = ModComponents.DEATH_PENALTY.get(viewer);
