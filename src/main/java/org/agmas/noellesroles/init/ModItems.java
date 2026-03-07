@@ -3,7 +3,6 @@ package org.agmas.noellesroles.init;
 import dev.doctor4t.ratatouille.util.registrar.ItemRegistrar;
 import dev.doctor4t.trainmurdermystery.api.ChargeableItemRegistry;
 import dev.doctor4t.trainmurdermystery.api.impl.KnifeChargeableItem;
-import dev.doctor4t.trainmurdermystery.client.gui.screen.ingame.LimitedInventoryScreen;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
@@ -457,7 +456,6 @@ public class ModItems {
     }
 
     public static void init() {
-        LimitedInventoryScreen.NotAllowItemTakePredicates.add(stack -> stack.is(ModItems.BOMB));
         registrar.registerEntries();
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, MISC_CREATIVE_GROUP, FabricItemGroup.builder()
                 .title(Component.translatable("item_group.noellesroles.misc")).icon(() -> {
