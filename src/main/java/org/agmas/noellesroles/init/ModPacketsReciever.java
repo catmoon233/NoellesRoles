@@ -303,28 +303,31 @@ public class ModPacketsReciever {
     ServerPlayNetworking.registerGlobalReceiver(TryThrowKnifePacket.ID, (payload, context) -> {
 
       final var player = context.player();
-      if (player.getMainHandItem().is(ModItems.THROWING_KNIFE)){
+      if (player.getMainHandItem().is(ModItems.THROWING_KNIFE)) {
         ItemCooldowns cooldowns1 = player.getCooldowns();
         Map<Item, ItemCooldowns.CooldownInstance> cooldowns = cooldowns1.cooldowns;
-        if (cooldowns1.isOnCooldown(ModItems.THROWING_KNIFE)&& cooldowns.get(ModItems.THROWING_KNIFE).endTime-cooldowns1.tickCount<=20)return;
+        if (cooldowns1.isOnCooldown(ModItems.THROWING_KNIFE)
+            && cooldowns.get(ModItems.THROWING_KNIFE).endTime - cooldowns1.tickCount <= 20)
+          return;
         player.getMainHandItem().shrink(1);
-        if (!cooldowns1.isOnCooldown(ModItems.THROWING_KNIFE) ) {
+        if (!cooldowns1.isOnCooldown(ModItems.THROWING_KNIFE)) {
           cooldowns1.addCooldown(ModItems.THROWING_KNIFE, 20);
         }
         ThrowingKnifeEntity entity = new ThrowingKnifeEntity(ModEntities.THROWING_KNIFE, player.level());
-        entity.setPos( player.getEyePosition().add(0, -0.2, 0));
+        entity.setPos(player.getEyePosition().add(0, -0.2, 0));
         entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.3f, 1.0f);
-        entity.setOwner( player);
+        entity.setOwner(player);
         player.level().addFreshEntity(entity);
         player.swing(InteractionHand.MAIN_HAND);
         ServerLevel serverLevel = player.serverLevel();
         serverLevel.players().forEach(p -> {
-        serverLevel.playSound(p, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0f, 1.0f);
+          serverLevel.playSound(p, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TRIDENT_THROW,
+              SoundSource.PLAYERS, 1.0f, 1.0f);
         });
 
       }
-            });
-      ServerPlayNetworking.registerGlobalReceiver(ModPackets.VULTURE_PACKET, (payload, context) -> {
+    });
+    ServerPlayNetworking.registerGlobalReceiver(ModPackets.VULTURE_PACKET, (payload, context) -> {
       final var player = context.player();
       GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
           .get(player.level());
