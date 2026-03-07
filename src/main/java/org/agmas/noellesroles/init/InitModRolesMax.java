@@ -288,7 +288,9 @@ public class InitModRolesMax {
             {
                 int allSpecialPoliceCount = 0;
 
-                if (players_count >= 30) {
+                if (players_count >= 36) {
+                    allSpecialPoliceCount = 5;
+                } else if (players_count >= 30) {
                     allSpecialPoliceCount = 4;
                 } else if (players_count >= 24) {
                     allSpecialPoliceCount = 3;
