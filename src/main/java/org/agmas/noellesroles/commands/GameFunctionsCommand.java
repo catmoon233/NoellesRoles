@@ -227,7 +227,36 @@ public class GameFunctionsCommand {
 
                         return 1;
                       }))))
-              .then(Commands.literal("scan")
+              .then(Commands.literal("scan").executes((context) -> {
+                var source = context.getSource();
+                var level = source.getLevel();
+                var areas = AreasWorldComponent.KEY.get(level);
+                if (areas.mapName == null) {
+                  context.getSource()
+                      .sendFailure(Component
+                          .literal("You should load map first to scan points!\nUsage: /tmm:switchmap load <MapID>")
+                          .withStyle(ChatFormatting.RED));
+                  return 0;
+                }
+                MapResetManager.scanArea(level, areas);
+                MapResetManager.saveArea(level);
+                context.getSource().sendSuccess(
+                    () -> Component.translatable("Scanned and saved reset points for map %s ! Total %s blocks!",
+                        Component.nullToEmpty(areas.mapName), GameFunctions.resetPoints.size()),
+                    true);
+                MapScannerManager.scanAndSaveScannerArea(level, areas);
+                HashMap<Integer, Boolean> map = new HashMap<>();
+                for (Entry<BlockPos, Integer> entry : GameFunctions.taskBlocks.entrySet()) {
+                  map.putIfAbsent(entry.getValue(), true);
+                }
+                context.getSource().sendSuccess(
+                    () -> Component.translatable("Scanned Task points! Total %s types!", map.size()), true);
+
+                for (var player : context.getSource().getLevel().players()) {
+                  ServerPlayNetworking.send(player, new ScanAllTaskPointsPayload(GameFunctions.taskBlocks));
+                }
+                return 1;
+              })
                   .then(Commands.literal("reset_points").executes((context) -> {
                     var source = context.getSource();
                     var level = source.getLevel();
@@ -247,7 +276,7 @@ public class GameFunctionsCommand {
                         true);
                     return 1;
                   }))
-                  .then(Commands.literal("tasks").executes((context) -> {
+                  .then(Commands.literal("task_points").executes((context) -> {
                     var level = context.getSource().getLevel();
                     var areas = AreasWorldComponent.KEY.get(level);
                     MapScannerManager.scanAndSaveScannerArea(level, areas);

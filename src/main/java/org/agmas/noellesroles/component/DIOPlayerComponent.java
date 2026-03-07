@@ -278,6 +278,7 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
      * @param corpse 尸体实体
      * @return 是否成功吸食
      */
+
     public boolean feedOnCorpse(Entity corpse) {
         if (corpse == null || !(corpse instanceof PlayerBodyEntity))
             return false;
@@ -474,6 +475,19 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
 
     @Override
     public void serverTick() {
+        if (getPlayer() == null)
+            return;
+        Level level = getPlayer().level();
+        if (!GameWorldComponent.KEY.get(level).isRole(player, ModRoles.DIO)) {
+            return;
+        }
+        if (level.canSeeSky(getPlayer().blockPosition())) {
+            if (level.isDay()) {
+                if (getPlayer().getRemainingFireTicks() <= 0) {
+                    getPlayer().setRemainingFireTicks(5);
+                }
+            }
+        }
         tickCounter++;
         if (tickCounter % 20 == 0) {
             sync();

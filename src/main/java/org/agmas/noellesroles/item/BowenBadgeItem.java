@@ -49,7 +49,7 @@ public class BowenBadgeItem extends Item {
 
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.SPEAR;
+        return UseAnim.CROSSBOW;
     }
 
     @Override

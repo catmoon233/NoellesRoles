@@ -480,7 +480,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                                 if (player.getEffect(ModEffects.TIME_STOP) != null) {
                                     return 1f
                                             - (player.getEffect(ModEffects.TIME_STOP).getDuration()
-                                                    / TimeStopEffect.freezeMaxTime);
+                                                    / (float)TimeStopEffect.freezeMaxTime);
 
                                 }
                             }
