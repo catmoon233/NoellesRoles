@@ -12,6 +12,7 @@ public class NRSounds {
     public static final SoundEvent WIND = registrar.create("noellesroles.wind");
     public static final SoundEvent JESTER_AMBIENT = registrar.create("noellesroles.jester");
     public static final SoundEvent TIME_STOP = registrar.create("noellesroles.time_stop");
+    public static final SoundEvent TIME_START = registrar.create("noellesroles.time_start");
     public static void initialize() {
         registrar.registerEntries();
     }

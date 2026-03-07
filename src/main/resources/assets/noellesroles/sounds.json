@@ -61,5 +61,14 @@
 			}
 		],
 		"subtitle": "subtitles.noellesroles.time_stop"
+	},
+	"noellesroles.time_start": {
+		"sounds": [
+			{
+				"name": "noellesroles:time_start",
+				"stream": true
+			}
+		],
+		"subtitle": "subtitles.noellesroles.time_start"
 	}
 }
