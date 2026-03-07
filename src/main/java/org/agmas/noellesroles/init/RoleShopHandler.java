@@ -995,10 +995,10 @@ public class RoleShopHandler {
         150,
         ShopEntry.Type.TOOL));
 
-    // 裹尸袋 - 150金币
+    // 裹尸袋 - 75金币
     RESCUER_SHOP.add(new ShopEntry(
         TMMItems.BODY_BAG.getDefaultInstance(),
-        150,
+        75,
         ShopEntry.Type.TOOL));
 
     // 消防员商店
