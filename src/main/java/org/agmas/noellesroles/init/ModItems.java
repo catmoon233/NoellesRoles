@@ -411,14 +411,14 @@ public class ModItems {
      * 生死状
      */
     public static final Item LIFE_AND_DEATH_SHAPE = register(
-            new Item(new Item.Properties().stacksTo(1)),
+            new SignedPaperItem(new Item.Properties().stacksTo(1)),
             "life_and_death_shape");
 
     /**
      * 明星签名
      */
     public static final Item SIGNED_PAPER = register(
-            new Item(new Item.Properties().stacksTo(1)),
+            new SignedPaperItem(new Item.Properties().stacksTo(1)),
             "signed_paper");
 
     public static final ItemStack ExamplerPsychoItemStack = TMMItems.PSYCHO_MODE.getDefaultInstance();
