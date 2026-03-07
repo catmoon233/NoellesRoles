@@ -145,11 +145,11 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
                     // 计时中，减少计时器
                     materialGatherTimer--;
                     if (materialGatherTimer == 0) {
-                        sync();
                         // 计时结束，获取素材
                         gatherMaterials();
                         // 重置计时器为初始状态（需要重新蹲下30秒）
                         materialGatherTimer = MATERIAL_GATHER_INTERVAL;
+                        sync();
                     }
                 }
                 // 如果计时器为0，说明刚获得素材，已经被重置为MATERIAL_GATHER_INTERVAL，需要继续蹲下30秒

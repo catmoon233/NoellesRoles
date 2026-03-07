@@ -118,7 +118,7 @@ public class InitModRolesMax {
 
         // 强盗
         Harpymodloader.setRoleMaximum(ModRoles.BANDIT_ID, 1);
-        Harpymodloader.setRoleMaximum(ModRoles.DIO_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.DIO_ID, 0);
 
         // 仇杀客 - 仅在12人及以上对局生成
         Harpymodloader.setRoleMaximum(ModRoles.BLOOD_FEUDIST_ID, 1);
@@ -213,7 +213,7 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.WAYFARER_ID, 0);
             }
-            if (players_count >= 12 && random.nextInt(0, 100) < 50) {
+            if (players_count >= 12 && random.nextInt(0, 100) < 40) {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
