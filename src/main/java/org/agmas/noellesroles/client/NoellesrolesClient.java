@@ -644,6 +644,21 @@ public class NoellesrolesClient implements ClientModInitializer {
             }
             return null;
         });
+        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
+            if (TMMClient.gameComponent != null) {
+                if (TMMClient.gameComponent.isRunning()) {
+
+                            return new MutableComponentResult(
+                                    Component
+                                            .translatable("message.tip.voice_setting",
+                                                    Component.keybind("key.voice_chat_settings"))
+                                            .withStyle(ChatFormatting.WHITE));
+                        }
+                    }
+
+
+            return null;
+        });
 
         OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
             if (TMMClient.gameComponent != null && !taskBlocks.isEmpty()) {
