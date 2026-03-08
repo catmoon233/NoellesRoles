@@ -130,11 +130,10 @@ public class InstinctRenderer {
             }
             if (GameFunctions.isPlayerSpectatingOrCreative(client.player))
                 return -1;
-            if (target instanceof Player target_player) {
+            if (target instanceof Player) {
                 PuppeteerPlayerComponent selfPuppeteerComp = ModComponents.PUPPETEER.get(client.player);
                 if (selfPuppeteerComp.isControllingPuppet && TMMClient.isPlayerAliveAndInSurvival()) {
-                    int entityOffset = target_player.getId() * 7;
-                    return (getGradientColor(entityOffset));
+                    return ModRoles.PUPPETEER.color();
                 }
             }
             return -1;
@@ -447,7 +446,7 @@ public class InstinctRenderer {
 
                     if (RoleUtils.compareRole(target_role, ModRoles.PUPPETEER)) {
                         int entityOffset = target_player.getId() * 7;
-                        return (getGradientColor(entityOffset + 10));
+                        return (ModRoles.PUPPETEER.color());
                     }
                     if (TMMClient.gameComponent.isRole(self, ModRoles.COMMANDER)) {
                         if (isKillerTeam(target_role)) {
