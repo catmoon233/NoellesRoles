@@ -22,7 +22,10 @@ import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import dev.doctor4t.trainmurdermystery.client.StatusInit;
 import net.minecraft.client.CameraType;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.agmas.noellesroles.block_entity.VendingMachinesBlockEntity;
@@ -119,7 +122,7 @@ public class NoellesrolesClient implements ClientModInitializer {
     public static Map<UUID, UUID> SHUFFLED_PLAYER_ENTRIES_CACHE = Maps.newHashMap();
     public static ArrayList<BroadcastMessageInfo> currentBroadcastMessage = new ArrayList<>();
     public static BloodMain bloodMain = new BloodMain();
-
+    public static Map<UUID, AbstractClientPlayer> lastTimeStopRenderPlayer = new HashMap<>();
     public static long lastClientTickTime = 0;
     public static final long CLIENT_TICK_INTERVAL_MS = 50; // 1000ms / 20 ticks per second = 50ms per tick
     /**
@@ -438,9 +441,24 @@ public class NoellesrolesClient implements ClientModInitializer {
             Level level = player.level();
             TimeStopEffect.freezeStatedTime = GameTimeComponent.KEY.get(level).time;
             TimeStopEffect.freezeMaxTime = payload.times();
-            level.players().forEach(p -> {
-                clientPositions.put(p.getUUID(), p.position());
-            });
+            lastTimeStopRenderPlayer.clear();
+            ClientLevel clientLevel = Minecraft.getInstance().level;
+            if (clientLevel != null) {
+                clientLevel.players().forEach(p -> {
+                    RemotePlayer value = new RemotePlayer(clientLevel, p.getGameProfile());
+                    value.setPos(p.position());
+                    value.setYRot(p.getYRot());
+                    value.setXRot(p.getXRot());
+                    value.setYBodyRot(p.yBodyRot);
+                    value.setYHeadRot(p.getYHeadRot());
+
+                    value.setItemInHand(InteractionHand.MAIN_HAND,p.getItemInHand(InteractionHand.MAIN_HAND));
+                    value.setPose(p.getPose());
+
+                    lastTimeStopRenderPlayer.put(p.getUUID(), value);
+                    clientPositions.put(p.getUUID(), p.position());
+                });
+            }
             player.stopUsingItem();
             TimeStopEffect.effectStatedTime = payload.times();
 

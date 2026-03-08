@@ -22,7 +22,6 @@
     "cca.PlayerMoodComponentMixin",
     "item.ThrowingKnifeCooldownMixin",
     "roles.awesome_binglus.NoteEntityMixin",
-    "roles.jojo.GunCooldownMixin",
     "roles.awesome_binglus.NoteMixin",
     "roles.coroner.CoronerAddDeathReasonMixin",
     "roles.elf.ArrowMixin",
@@ -47,6 +46,7 @@
     "roles.jester.FakeRevolverMixin",
     "roles.jester.JesterItemEntityMixin",
     "roles.jester.JesterJestMixin",
+    "roles.jojo.GunCooldownMixin",
     "roles.manipulator.PlayerControlMixin",
     "roles.manipulator.PlayerDeathMixin",
     "roles.noisemaker.NoisemakerKillMixin",
@@ -67,6 +67,7 @@
     "defaultRequire": 1
   },
   "client": [
+    "client.time_stop.LivingEntityUseCallbackMixin",
     "LivingEntityAccessor",
     "client.HandCuffsKeyBindingMixin",
     "client.InstinctMixin",
@@ -138,6 +139,7 @@
     "client.time_stop.GameRendererMixin",
     "client.time_stop.GameTimeFreezeMixin",
     "client.time_stop.MouseHandleSuppressMixin",
+    "client.time_stop.PlayerAnimationStopMixin",
     "client.time_stop.SoundVolumeMixin",
     "client.time_stop.StatusHudMixin",
     "roles.insanekiller.CrossHairFixer",
