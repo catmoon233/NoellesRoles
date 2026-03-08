@@ -16,7 +16,7 @@ public class MathProblemsManager {
      */
     public MathProblem generateProblem() {
         // 随机选择题目类型：0 表示加减乘除，1 表示简单求导
-        int type = random.nextInt(40);
+        int type = random.nextInt(50);
         return type == 0 ? generateDerivativeProblem() : generateArithmeticProblem();
     }
 
