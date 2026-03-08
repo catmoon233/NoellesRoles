@@ -651,7 +651,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                             return new MutableComponentResult(
                                     Component
                                             .translatable("message.tip.voice_setting",
-                                                    Component.keybind("key.voice_chat_settings"))
+                                                    Component.keybind("key.voice_chat"))
                                             .withStyle(ChatFormatting.WHITE));
                         }
                     }
