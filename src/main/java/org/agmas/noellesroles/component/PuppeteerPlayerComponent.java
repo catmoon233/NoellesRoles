@@ -9,7 +9,6 @@ import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -535,8 +534,6 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
         PlayerShopComponent playerShop = PlayerShopComponent.KEY.get(serverPlayer);
         final var balance = playerShop.balance;
         // 恢复为傀儡师角色
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
-        gameWorld.addRole(player, ModRoles.PUPPETEER);
 
         // 触发角色分配事件 - 这会通知所有模组的监听器清除之前的角色状态
         // 其他扩展模组（如 NoellesRoles）会在 onRoleAssigned 中检测角色变化并自动清除组件
