@@ -1,40 +1,52 @@
 #version 150
 
 uniform sampler2D DiffuseSampler;
-uniform float TimeProgress;   // 时间停止进度 (0~1)，控制动画强度
-uniform float StopAmount;     // 灰白程度 (0~1)
-uniform float TimeTotal;      // 累计时间，用于脉动动画
+
+uniform float TimeProgress;
+uniform float StopAmount;
+uniform float TimeTotal;
+uniform vec2 OutSize;
 
 in vec2 texCoord;
 out vec4 fragColor;
 
+float rand(vec2 co) {
+    return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
 void main() {
     vec2 uv = texCoord;
-    float d = length(uv - vec2(0.5, 0.5)); // 到屏幕中心的距离
+    vec2 center = vec2(0.5, 0.5);
+    float dist = distance(uv, center);
 
-    // 动态脉动因子 (0~1 之间变化)
-    float pulse = (1.0 + sin(TimeTotal * 6.0)) * 0.5; // 频率可调
-    float strength = TimeProgress * pulse;            // 动画强度
-    strength = strength * strength;                   // 非线性增强
+    // 时间波纹（扭曲）
+    float ripple = sin(dist * 30.0 - TimeProgress * 15.0) * 0.015 * StopAmount;
+    uv += normalize(uv - center) * ripple;
 
-    // 色差偏移量：越靠近边缘偏移越大，最大偏移约 0.05 * TimeProgress
-    float blur = strength * 0.05 * d;
+    // 微抖动
+    float jitter = (rand(uv + TimeTotal) - 0.5) * 0.005 * StopAmount;
+    uv += jitter;
 
-    // 分别采样 R/G/B 通道，制造色差
+    // 色差
+    float aberr = 0.002 * StopAmount;
     vec3 col;
-    col.r = texture(DiffuseSampler, vec2(uv.x + blur, uv.y)).r;
+    col.r = texture(DiffuseSampler, uv + vec2(aberr, 0.0)).r;
     col.g = texture(DiffuseSampler, uv).g;
-    col.b = texture(DiffuseSampler, vec2(uv.x - blur, uv.y)).b;
+    col.b = texture(DiffuseSampler, uv - vec2(aberr, 0.0)).b;
 
-    // 计算灰度值 (用于灰白混合)
+    // 转为灰度
     float gray = dot(col, vec3(0.299, 0.587, 0.114));
-    vec3 grayColor = vec3(gray);
 
-    // 根据 StopAmount 混合灰白
-    col = mix(col, grayColor, StopAmount);
+    // 颗粒噪声
+    float grain = (rand(vec2(uv.x + TimeProgress, uv.y - TimeProgress)) - 0.5) * 0.12 * StopAmount;
+    gray += grain;
 
-    // 根据 TimeProgress 添加轻微暗角，增强停止感
-    col *= 1.0 - d * 0.5 * TimeProgress;
+    // 暗角
+    float vignette = smoothstep(0.9, 0.3, dist);
+    gray *= vignette;
 
-    fragColor = vec4(col, 1.0);
+    // 根据 StopAmount 混合彩色原图与黑白特效
+    vec3 finalColor = mix(col, vec3(gray), StopAmount);
+
+    fragColor = vec4(finalColor, 1.0);
 }
