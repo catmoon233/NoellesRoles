@@ -15,7 +15,10 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
@@ -34,7 +37,7 @@ import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
  *
  * 商店：可花费100金币购买存折
  */
-public class AccountantPlayerComponent implements RoleComponent, ServerTickingComponent {
+public class AccountantPlayerComponent implements RoleComponent, ServerTickingComponent, ClientTickingComponent {
 
     /** 组件键 */
     public static final ComponentKey<AccountantPlayerComponent> KEY = ComponentRegistry.getOrCreate(
@@ -133,24 +136,26 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
 
     @Override
     public void serverTick() {
+        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (gameWorldComponent == null)
+            return;
+        if (!gameWorldComponent.isRunning())
+            return;
+        // 检查玩家是否是会计角色
+        if (!gameWorldComponent.isRole(player, ModRoles.ACCOUNTANT)) {
+            return;
+        }
         // 处理被动收入 - 只在游戏开始后且玩家是会计时生效
         boolean shouldSync = false;
         if (passiveIncomeTimer > 0) {
             passiveIncomeTimer--;
-            // 每秒同步一次到客户端，确保HUD实时更新
-            if (passiveIncomeTimer % 20 == 0) {
+            // 每10秒同步一次到客户端，确保HUD准确更新
+            if (passiveIncomeTimer % 200 == 0) {
                 shouldSync = true;
             }
         } else {
             // 检查游戏是否正在运行
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-            if (gameWorldComponent != null && gameWorldComponent.isRunning()) {
-                // 检查玩家是否是会计角色
-                if (gameWorldComponent.isRole(player, ModRoles.ACCOUNTANT)) {
-                    // 给予被动收入
-                    givePassiveIncome();
-                }
-            }
+            givePassiveIncome();
             passiveIncomeTimer = PASSIVE_INCOME_INTERVAL;
             shouldSync = true;
         }
@@ -267,13 +272,17 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
         if (targetBalance >= INCOME_QUERY_THRESHOLD) {
             // 金币超过300，给予提示
             serverPlayer.displayClientMessage(
-                    Component.translatable("message.noellesroles.accountant.income.rich", target.getDisplayName(), targetBalance)
+                    Component
+                            .translatable("message.noellesroles.accountant.income.rich", target.getDisplayName(),
+                                    targetBalance)
                             .withStyle(ChatFormatting.GREEN),
                     true);
         } else {
             // 金币未超过300，给予提示
             serverPlayer.displayClientMessage(
-                    Component.translatable("message.noellesroles.accountant.income.poor", target.getDisplayName(), targetBalance)
+                    Component
+                            .translatable("message.noellesroles.accountant.income.poor", target.getDisplayName(),
+                                    targetBalance)
                             .withStyle(ChatFormatting.YELLOW),
                     true);
         }
@@ -432,6 +441,13 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
     private void sync() {
         if (!player.level().isClientSide) {
             KEY.sync(player);
+        }
+    }
+
+    @Override
+    public void clientTick() {
+        if (passiveIncomeTimer > 1) {
+            passiveIncomeTimer--;
         }
     }
 }

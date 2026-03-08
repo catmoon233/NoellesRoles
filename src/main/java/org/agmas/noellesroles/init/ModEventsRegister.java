@@ -888,6 +888,9 @@ public class ModEventsRegister {
             if (role.identifier().equals(ModRoles.MAID_SAKUYA.identifier())) {
                 PlayerShopComponent.KEY.get(player).setBalance(100);
             }
+            if (role.identifier().equals(ModRoles.JOJO.identifier())) {
+                PlayerShopComponent.KEY.get(player).setBalance(100);
+            }
             // 初始化记录员
             if (role.identifier().equals(ModRoles.RECORDER.identifier())) {
                 var tpc = RecorderPlayerComponent.KEY.get(player);

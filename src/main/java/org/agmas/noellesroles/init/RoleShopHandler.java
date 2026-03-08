@@ -344,7 +344,7 @@ public class RoleShopHandler {
     {
       // DIO
       List<ShopEntry> entries = new ArrayList<>();
-      entries.add(new ShopEntry(ModItems.THROWING_KNIFE.getDefaultInstance(), 110,
+      entries.add(new ShopEntry(ModItems.THROWING_KNIFE.getDefaultInstance(), 120,
           ShopEntry.Type.TOOL));
       entries.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 95,
           ShopEntry.Type.TOOL));

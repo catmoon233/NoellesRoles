@@ -97,7 +97,7 @@ public class TaskBlockOverlayRenderer {
             double centerX = (localAABB.minX + localAABB.maxX) / 2.0;
             double centerY = (localAABB.minY + localAABB.maxY) / 2.0;
             double centerZ = (localAABB.minZ + localAABB.maxZ) / 2.0;
-            if (cameraPos.distanceTo(blockPos.getCenter()) <= 8)
+            if (cameraPos.distanceTo(blockPos.getCenter()) <= 3)
                 renderTextAtAABBCenter(context, blockPos, centerX, centerY, centerZ, text,
                         textScale, color.getRGB(),
                         true);
