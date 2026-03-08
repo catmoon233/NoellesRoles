@@ -153,10 +153,10 @@ public class MathSolverScreen extends Screen {
         int maxHeight = this.height;
         int buttonX = maxWidth / 2 - BUTTON_WIDTH / 2;
         int buttonY = maxHeight / 2;
-        Button btn2 = Button.builder(Component.translatable("screen.math_solver.try_again", maxTrial), (bbtn) -> {
+        Button btn2 = Button.builder(Component.translatable("screen.math_solver.try_again"), (bbtn) -> {
             this.restart();
         }).bounds(buttonX, buttonY - 30 - BUTTON_HEIGHT - 10, BUTTON_WIDTH, BUTTON_HEIGHT).build();
-        btn2.setTooltip(Tooltip.create(Component.translatable("screen.math_solver.max_trial")));
+        btn2.setTooltip(Tooltip.create(Component.translatable("screen.math_solver.max_trial", maxTrial)));
 
         if (this.maxTrial <= 0) {
             btn2.active = false;
@@ -244,7 +244,7 @@ public class MathSolverScreen extends Screen {
         // int titleBgHeight = 40;
         // guiGraphics.fillGradient(0, titleBgY, width, titleBgY + titleBgHeight,
         // 0x80000000, 0x00000000);
-        
+
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         // 绘制标题
@@ -306,7 +306,7 @@ public class MathSolverScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        
+
         // // 创建更现代化的渐变背景
         int topColor = 0x521A1A2E; // 深蓝色
         int bottomColor = 0x5216213E; // 更深的蓝色
@@ -314,15 +314,17 @@ public class MathSolverScreen extends Screen {
 
         // // 添加一些装饰性粒子效果（可选）
         // if (minecraft.level != null) {
-        //     long time = minecraft.level.getGameTime();
-        //     for (int i = 0; i < 20; i++) {
-        //         float x = (float) ((time * 0.5 + i * 50) % width);
-        //         float y = (float) ((Math.sin(time * 0.02 + i) * 20 + height / 2 + i * 10) % height);
-        //         float size = 2 + (float) Math.sin(time * 0.1 + i) * 1;
-        //         int alpha = (int) (100 + 155 * Math.sin(time * 0.05 + i));
-        //         int starColor = (alpha << 24) | 0xFFFFFF;
-        //         guiGraphics.fill((int) x, (int) y, (int) (x + size), (int) (y + size), starColor);
-        //     }
+        // long time = minecraft.level.getGameTime();
+        // for (int i = 0; i < 20; i++) {
+        // float x = (float) ((time * 0.5 + i * 50) % width);
+        // float y = (float) ((Math.sin(time * 0.02 + i) * 20 + height / 2 + i * 10) %
+        // height);
+        // float size = 2 + (float) Math.sin(time * 0.1 + i) * 1;
+        // int alpha = (int) (100 + 155 * Math.sin(time * 0.05 + i));
+        // int starColor = (alpha << 24) | 0xFFFFFF;
+        // guiGraphics.fill((int) x, (int) y, (int) (x + size), (int) (y + size),
+        // starColor);
+        // }
         // }
     }
 
