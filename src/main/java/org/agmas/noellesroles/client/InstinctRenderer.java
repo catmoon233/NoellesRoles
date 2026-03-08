@@ -287,7 +287,8 @@ public class InstinctRenderer {
                                 }
                             }
                         }
-                        return -2;
+                        if (GameFunctions.isPlayerAliveAndSurvival(self))
+                            return -2;
                     }
 
                 }
