@@ -721,6 +721,13 @@ public class ModEventsRegister {
                 final var insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY.get(playerEntity);
                 insaneKillerPlayerComponent.reset();
             }
+            if (gameWorldComponent.isRole(playerEntity, ModRoles.JOJO)) {
+                int dropCount = 1;
+                while (dropCount > 0) {
+                    playerEntity.drop(TMMItems.REVOLVER.getDefaultInstance(), false);
+                    dropCount--;
+                }
+            }
             if (gameWorldComponent.isRole(playerEntity, ModRoles.ELF)) {
                 int bowcount = TMMItemUtils.clearItem(playerEntity, Items.BOW);
                 int crossbowcount = TMMItemUtils.clearItem(playerEntity, Items.CROSSBOW);
@@ -1182,6 +1189,7 @@ public class ModEventsRegister {
                 }
                 p.getCooldowns().addCooldown(HSRItems.BANDIT_REVOLVER, 30 * 20);
                 p.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, 30 * 20);
+                p.getCooldowns().addCooldown(ModItems.THROWING_KNIFE, 30 * 20);
 
                 p.addEffect(new MobEffectInstance(
                         MobEffects.WATER_BREATHING,

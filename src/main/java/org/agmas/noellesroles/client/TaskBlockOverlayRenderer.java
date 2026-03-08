@@ -98,9 +98,9 @@ public class TaskBlockOverlayRenderer {
             double centerY = (localAABB.minY + localAABB.maxY) / 2.0;
             double centerZ = (localAABB.minZ + localAABB.maxZ) / 2.0;
             if (cameraPos.distanceTo(blockPos.getCenter()) <= 8)
-            renderTextAtAABBCenter(context, blockPos, centerX, centerY, centerZ, text,
-            textScale, color.getRGB(),
-            true);
+                renderTextAtAABBCenter(context, blockPos, centerX, centerY, centerZ, text,
+                        textScale, color.getRGB(),
+                        true);
         }
 
         matrices.popPose();
@@ -159,7 +159,7 @@ public class TaskBlockOverlayRenderer {
         return shape.bounds();
     }
 
-    private static void renderTextAtAABBCenter(WorldRenderContext context,
+    public static void renderTextAtAABBCenter(WorldRenderContext context,
             BlockPos blockPos,
             double localCX, double localCY, double localCZ,
             Component text, float scale, int color, boolean shadow) {
