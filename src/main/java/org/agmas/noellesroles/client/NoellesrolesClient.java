@@ -624,21 +624,6 @@ public class NoellesrolesClient implements ClientModInitializer {
         OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
             if (TMMClient.gameComponent != null) {
                 if (TMMClient.gameComponent.isRunning()) {
-                    if (!TMMClient.isPlayerAliveAndInSurvival()) {
-                        return new MutableComponentResult(
-                                Component
-                                        .translatable("message.tip.for_death_vt",
-                                                Component.literal("/vt_mode").withStyle(ChatFormatting.GREEN))
-                                        .withStyle(ChatFormatting.WHITE));
-                    }
-                    // is_taskpoint_able
-                }
-            }
-            return null;
-        });
-        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
-            if (TMMClient.gameComponent != null) {
-                if (TMMClient.gameComponent.isRunning()) {
                     var role = TMMClient.gameComponent.getRole(minecraft.player);
                     if (role != null) {
                         if (role.canUseKiller()) {
@@ -690,6 +675,22 @@ public class NoellesrolesClient implements ClientModInitializer {
             }
             return null;
         });
+        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
+            if (TMMClient.gameComponent != null) {
+                if (TMMClient.gameComponent.isRunning()) {
+                    if (!TMMClient.isPlayerAliveAndInSurvival()) {
+                        return new MutableComponentResult(
+                                Component
+                                        .translatable("message.tip.for_death_vt",
+                                                Component.literal("/vt_mode").withStyle(ChatFormatting.GREEN))
+                                        .withStyle(ChatFormatting.WHITE));
+                    }
+                    // is_taskpoint_able
+                }
+            }
+            return null;
+        });
+
         // 5. 注册实体渲染器
         registerEntityRenderers();
 

@@ -161,7 +161,7 @@ public class AbilityHandler {
                         true);
                 return;
             } else {
-                abilityPlayerComponent.setCooldown(90 * 20);
+                abilityPlayerComponent.setCooldown(240 * 20);
                 player.serverLevel().players().forEach(sp -> {
                     if (GameFunctions.isPlayerAliveAndSurvival(sp)) {
                         ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));

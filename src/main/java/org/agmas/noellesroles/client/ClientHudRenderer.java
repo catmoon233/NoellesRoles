@@ -217,7 +217,7 @@ public class ClientHudRenderer {
                                 NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
                         .withStyle(ChatFormatting.GOLD);
                 guiGraphics.drawString(font, allneiJuanSkill, xOffset - font.width(allneiJuanSkill),
-                        yOffset - font.lineHeight * 3 - 8,
+                        yOffset - font.lineHeight * 3 - 12,
                         Color.WHITE.getRGB());
                 if (psc.balance < 100) {
                     var text = Component
