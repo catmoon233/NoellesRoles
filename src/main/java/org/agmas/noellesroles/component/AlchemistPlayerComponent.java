@@ -132,15 +132,17 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     @Override
     public void serverTick() {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-
+        if (!gameWorldComponent.isRunning())
+            return;
+        if (!gameWorldComponent.isRole(player, ModRoles.ALCHEMIST))
+            return;
         // 检查游戏是否开始、玩家是否是药剂师角色
-        if (gameWorldComponent != null && gameWorldComponent.isRunning() &&
-                gameWorldComponent.isRole(player, ModRoles.ALCHEMIST)) {
+        {
             // 检查玩家是否蹲下
             if (player.isShiftKeyDown()) {
                 if (materialGatherTimer > 0) {
-                    // 每秒同步一次到客户端，确保HUD实时更新
-                    if (materialGatherTimer % 20 == 0) {
+                    // 每10秒同步一次到客户端
+                    if (materialGatherTimer % 200 == 0) {
                         sync();
                     }
                     // 计时中，减少计时器
@@ -158,7 +160,6 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
                 // 不蹲下时重置计时器到初始状态
                 if (materialGatherTimer != MATERIAL_GATHER_INTERVAL) {
                     materialGatherTimer = MATERIAL_GATHER_INTERVAL;
-                    sync();
                 }
             }
         }
@@ -386,10 +387,12 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
     @Override
     public void clientTick() {
         GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-
+        if (!gameWorldComponent.isRunning())
+            return;
+        if (!gameWorldComponent.isRole(player, ModRoles.ALCHEMIST))
+            return;
         // 检查游戏是否开始、玩家是否是药剂师角色
-        if (gameWorldComponent != null && gameWorldComponent.isRunning() &&
-                gameWorldComponent.isRole(player, ModRoles.ALCHEMIST)) {
+        {
             // 检查玩家是否蹲下
             if (player.isShiftKeyDown()) {
                 if (materialGatherTimer > 1) {

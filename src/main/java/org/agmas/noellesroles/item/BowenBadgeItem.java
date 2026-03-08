@@ -1,9 +1,7 @@
 package org.agmas.noellesroles.item;
 
-
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
-import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
@@ -21,7 +19,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
@@ -53,7 +50,7 @@ public class BowenBadgeItem extends Item {
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return 3 * 20;
+        return 10 * 20;
     }
 
     @Override
@@ -86,7 +83,7 @@ public class BowenBadgeItem extends Item {
 
             // 撞到目标：停止水平移动并推开旁边的人
             player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
-            
+
             // 计算击退向量（从玩家指向目标）
             Vec3 knockbackDir = targetPlayer.position().subtract(playerPos).multiply(1, 0, 1).normalize();
             // 施加击退效果，将目标推开
@@ -111,7 +108,7 @@ public class BowenBadgeItem extends Item {
             double x = player.getX();
             double y = player.getY() + 1.5; // 从胸部/头部高度发射
             double z = player.getZ();
-            
+
             float yaw = player.getYRot();
             float pitch = player.getXRot();
 
@@ -120,7 +117,7 @@ public class BowenBadgeItem extends Item {
             float pitchRad = pitch * ((float) Math.PI / 180F);
 
             // 计算前方偏移量，随蓄力时间增加范围
-            float radius = 0.5f + (progress * 1.5f); 
+            float radius = 0.5f + (progress * 1.5f);
             int particleCount = 2 + (int) (progress * 4); // 粒子数量随蓄力增加
 
             for (int i = 0; i < particleCount; i++) {
@@ -141,26 +138,25 @@ public class BowenBadgeItem extends Item {
                 // 发送炫酷的粒子特效 (使用 END_ROD 或 CRIT 作为能量聚集效果，颜色可自定义若需更复杂)
                 // 这里使用 PORTAL 粒子模拟紫色/蓝色的能量波动，或者 CRIT 表示锐利能量
                 serverLevel.sendParticles(
-                    net.minecraft.core.particles.ParticleTypes.PORTAL, 
-                    particleX, 
-                    particleY, 
-                    particleZ, 
-                    1, 
-                    0.0, 0.0, 0.0, 
-                    0.05 * progress // 速度/扩散随蓄力变化
+                        net.minecraft.core.particles.ParticleTypes.PORTAL,
+                        particleX,
+                        particleY,
+                        particleZ,
+                        1,
+                        0.0, 0.0, 0.0,
+                        0.05 * progress // 速度/扩散随蓄力变化
                 );
-                
+
                 // 偶尔添加闪光粒子
                 if (level.random.nextInt(15) == 0) {
-                     serverLevel.sendParticles(
-                        net.minecraft.core.particles.ParticleTypes.FLASH, 
-                        particleX, 
-                        particleY, 
-                        particleZ, 
-                        1, 
-                        0.0, 0.0, 0.0, 
-                        0.0
-                    );
+                    serverLevel.sendParticles(
+                            net.minecraft.core.particles.ParticleTypes.FLASH,
+                            particleX,
+                            particleY,
+                            particleZ,
+                            1,
+                            0.0, 0.0, 0.0,
+                            0.0);
                 }
             }
         }
@@ -168,10 +164,15 @@ public class BowenBadgeItem extends Item {
     }
 
     @Override
-    public ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
+    public void releaseUsing(ItemStack itemStack, Level level, LivingEntity livingEntity, int remainingUseDuration) {
         if (!(livingEntity instanceof Player player))
-            return itemStack;
-
+            return;
+        if (this.getUseDuration(itemStack, livingEntity) - remainingUseDuration < 20 * 2) {
+            return;
+        }
+        if (livingEntity.isSpectator()) {
+            return;
+        }
         var holder = EnchantmentHelper
                 .pickHighestLevel(itemStack, EnchantmentEffectComponents.TRIDENT_SOUND)
                 .orElse(SoundEvents.TRIDENT_THROW);
@@ -206,19 +207,19 @@ public class BowenBadgeItem extends Item {
                     .normalize()
                     .scale(1.5);
             target.push(knockback.x, 0, knockback.z);
-            
+
             // 被击退实体产生冲击波粒子
             if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION_EMITTER, 
-                    target.getX(), target.getY() + 1, target.getZ(), 
-                    1, 0, 0, 0, 0);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION_EMITTER,
+                        target.getX(), target.getY() + 1, target.getZ(),
+                        1, 0, 0, 0, 0);
             }
         }
 
         // ── 启动平飞冲刺与炫酷粒子特效 ──
         player.push(kNorm * f, 0.0, mNorm * f);
         player.startAutoSpinAttack(20, 8.0F, itemStack);
-        
+
         if (player.onGround()) {
             player.move(MoverType.SELF, new Vec3(0.0, 1.2, 0.0));
         }
@@ -232,14 +233,14 @@ public class BowenBadgeItem extends Item {
                 double px = player.getX() + Math.cos(angle) * radius;
                 double pz = player.getZ() + Math.sin(angle) * radius;
                 double py = player.getY() + 1.0 + level.random.nextDouble() * 0.5;
-                
-                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, 
-                    px, py, pz, 
-                    1, 
-                    (level.random.nextDouble() - 0.5) * 0.2, 
-                    (level.random.nextDouble() - 0.5) * 0.2, 
-                    (level.random.nextDouble() - 0.5) * 0.2, 
-                    0.05);
+
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                        px, py, pz,
+                        1,
+                        (level.random.nextDouble() - 0.5) * 0.2,
+                        (level.random.nextDouble() - 0.5) * 0.2,
+                        (level.random.nextDouble() - 0.5) * 0.2,
+                        0.05);
             }
 
             // 2. 环形冲击波 (PORTAL 粒子模拟波纹扩散)
@@ -251,31 +252,30 @@ public class BowenBadgeItem extends Item {
                     double px = player.getX() + Math.cos(angle) * r;
                     double pz = player.getZ() + Math.sin(angle) * r;
                     double py = player.getY() + 1.0;
-                    
-                    serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL, 
-                        px, py, pz, 
-                        1, 
-                        0, 0, 0, 
-                        0.1);
+
+                    serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL,
+                            px, py, pz,
+                            1,
+                            0, 0, 0,
+                            0.1);
                 }
             }
-            
+
             // 3. 拖尾火花 (FLAME 或 CRIT)
             for (int i = 0; i < 10; i++) {
-                 double offsetX = (level.random.nextDouble() - 0.5) * 0.5;
-                 double offsetZ = (level.random.nextDouble() - 0.5) * 0.5;
-                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT, 
-                    player.getX() + offsetX, player.getY() + 1.5, player.getZ() + offsetZ, 
-                    1, 0, 0, 0, 0.2);
+                double offsetX = (level.random.nextDouble() - 0.5) * 0.5;
+                double offsetZ = (level.random.nextDouble() - 0.5) * 0.5;
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT,
+                        player.getX() + offsetX, player.getY() + 1.5, player.getZ() + offsetZ,
+                        1, 0, 0, 0, 0.2);
             }
         }
 
-        level.playSound(null, player, holder.value(), SoundSource.PLAYERS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
+        level.playSound(null, player, holder.value(), SoundSource.PLAYERS, 1.0F,
+                0.8F + level.random.nextFloat() * 0.4F);
         if (GameFunctions.isPlayerAliveAndSurvival(player)) {
             applyCooldownToItem(player, itemStack);
         }
-
-        return itemStack;
     }
 
     // 攻击方式:
@@ -286,14 +286,16 @@ public class BowenBadgeItem extends Item {
             cooldowns.addCooldown(stack.getItem(), 20 * 60);
         }
     }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = world.getBlockState(pos);
-        if (player.getCooldowns().isOnCooldown(FunnyItems.BOWEN_BADGE))return InteractionResult.PASS;
-        player.getCooldowns().addCooldown(FunnyItems.BOWEN_BADGE, 20 );
+        if (player.getCooldowns().isOnCooldown(FunnyItems.BOWEN_BADGE))
+            return InteractionResult.PASS;
+        player.getCooldowns().addCooldown(FunnyItems.BOWEN_BADGE, 20);
         if (state.getBlock() instanceof SmallDoorBlock) {
             BlockPos lowerPos = state.getValue(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
             if (world.getBlockEntity(lowerPos) instanceof SmallDoorBlockEntity entity) {
@@ -308,7 +310,8 @@ public class BowenBadgeItem extends Item {
                     }
 
                     if (!world.isClientSide)
-                        world.playSound(null, lowerPos.getX() + .5f, lowerPos.getY() + 1, lowerPos.getZ() + .5f, TMMSounds.ITEM_LOCKPICK_DOOR, SoundSource.BLOCKS, 1f, 1f);
+                        world.playSound(null, lowerPos.getX() + .5f, lowerPos.getY() + 1, lowerPos.getZ() + .5f,
+                                TMMSounds.ITEM_LOCKPICK_DOOR, SoundSource.BLOCKS, 1f, 1f);
                     return InteractionResult.SUCCESS;
                 }
             }
@@ -318,18 +321,18 @@ public class BowenBadgeItem extends Item {
 
         return super.useOn(context);
     }
-//    public InteractionResult useOn(UseOnContext context) {
-//        Player player = context.getPlayer();
-//        Level world = context.getLevel();
-//        BlockPos pos = context.getClickedPos();
-//        BlockState state = world.getBlockState(pos);
-//        if (state.getBlock() instanceof SmallDoorBlock) {
-//            return InteractionResult.PASS;
-//        } else {
-//            if (player != null) {
-//                context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-//            }
-//            return super.useOn(context);
-//        }
-//    }
+    // public InteractionResult useOn(UseOnContext context) {
+    // Player player = context.getPlayer();
+    // Level world = context.getLevel();
+    // BlockPos pos = context.getClickedPos();
+    // BlockState state = world.getBlockState(pos);
+    // if (state.getBlock() instanceof SmallDoorBlock) {
+    // return InteractionResult.PASS;
+    // } else {
+    // if (player != null) {
+    // context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+    // }
+    // return super.useOn(context);
+    // }
+    // }
 }
