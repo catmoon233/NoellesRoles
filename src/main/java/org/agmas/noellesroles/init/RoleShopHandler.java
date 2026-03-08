@@ -175,9 +175,29 @@ public class RoleShopHandler {
           120,
           ShopEntry.Type.TOOL));
       SHOP.add(new ShopEntry(
+          dev.doctor4t.trainmurdermystery.index.TMMItems.REVOLVER.getDefaultInstance(),
+          400,
+          ShopEntry.Type.TOOL));
+      SHOP.add(new ShopEntry(
           dev.doctor4t.trainmurdermystery.index.TMMItems.LOCKPICK.getDefaultInstance(),
           50,
           ShopEntry.Type.TOOL));
+      SHOP.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 200,
+          ShopEntry.Type.TOOL) {
+        public boolean onBuy(@NotNull Player player) {
+          player.getCooldowns().addCooldown(TMMItems.BLACKOUT,
+              Math.min((Integer) GameConstants.ITEM_COOLDOWNS
+                  .getOrDefault(TMMItems.BLACKOUT, 0), 60));
+          boolean triggered = ((WorldBlackoutComponent) WorldBlackoutComponent.KEY
+              .get(player.level()))
+              .triggerBlackout();
+          if (triggered) {
+            TMM.REPLAY_MANAGER.recordSkillUsed(player.getUUID(),
+                BuiltInRegistries.ITEM.getKey(TMMItems.BLACKOUT));
+          }
+          return triggered;
+        }
+      });
       var psychoItem = TMMItems.PSYCHO_MODE.getDefaultInstance();
       var examplerPsychoLore = new ItemLore(
           List.of(Component.translatable(

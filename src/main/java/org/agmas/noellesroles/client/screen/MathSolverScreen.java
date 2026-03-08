@@ -240,11 +240,11 @@ public class MathSolverScreen extends Screen {
         renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         // 绘制标题背景
-        int titleBgY = 20;
-        int titleBgHeight = 40;
-        guiGraphics.fillGradient(0, titleBgY, width, titleBgY + titleBgHeight,
-                0x80000000, 0x00000000);
-
+        // int titleBgY = 20;
+        // int titleBgHeight = 40;
+        // guiGraphics.fillGradient(0, titleBgY, width, titleBgY + titleBgHeight,
+        // 0x80000000, 0x00000000);
+        
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         // 绘制标题
@@ -306,23 +306,24 @@ public class MathSolverScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // 创建更现代化的渐变背景
-        int topColor = 0xFF1A1A2E; // 深蓝色
-        int bottomColor = 0xFF16213E; // 更深的蓝色
+        
+        // // 创建更现代化的渐变背景
+        int topColor = 0x521A1A2E; // 深蓝色
+        int bottomColor = 0x5216213E; // 更深的蓝色
         guiGraphics.fillGradient(0, 0, width, height, topColor, bottomColor);
 
-        // 添加一些装饰性粒子效果（可选）
-        if (minecraft.level != null) {
-            long time = minecraft.level.getGameTime();
-            for (int i = 0; i < 20; i++) {
-                float x = (float) ((time * 0.5 + i * 50) % width);
-                float y = (float) ((Math.sin(time * 0.02 + i) * 20 + height / 2 + i * 10) % height);
-                float size = 2 + (float) Math.sin(time * 0.1 + i) * 1;
-                int alpha = (int) (100 + 155 * Math.sin(time * 0.05 + i));
-                int starColor = (alpha << 24) | 0xFFFFFF;
-                guiGraphics.fill((int) x, (int) y, (int) (x + size), (int) (y + size), starColor);
-            }
-        }
+        // // 添加一些装饰性粒子效果（可选）
+        // if (minecraft.level != null) {
+        //     long time = minecraft.level.getGameTime();
+        //     for (int i = 0; i < 20; i++) {
+        //         float x = (float) ((time * 0.5 + i * 50) % width);
+        //         float y = (float) ((Math.sin(time * 0.02 + i) * 20 + height / 2 + i * 10) % height);
+        //         float size = 2 + (float) Math.sin(time * 0.1 + i) * 1;
+        //         int alpha = (int) (100 + 155 * Math.sin(time * 0.05 + i));
+        //         int starColor = (alpha << 24) | 0xFFFFFF;
+        //         guiGraphics.fill((int) x, (int) y, (int) (x + size), (int) (y + size), starColor);
+        //     }
+        // }
     }
 
     public void selectedSelection(int selectionIndex) {

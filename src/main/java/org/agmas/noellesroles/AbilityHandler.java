@@ -381,8 +381,8 @@ public class AbilityHandler {
             playerShopComponent.addToBalance(-100);
             if (targetPlayer != null && targetPlayer instanceof ServerPlayer sp) {
                 abilityPlayerComponent.setCooldown(90 * 20);
-                ServerPlayNetworking.send(player, new ProblemScreenOpenC2SPacket(true, 3));
-                ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));
+                ServerPlayNetworking.send(player, new ProblemScreenOpenC2SPacket(true, 2));
+                ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 2));
             }
             return;
         }
