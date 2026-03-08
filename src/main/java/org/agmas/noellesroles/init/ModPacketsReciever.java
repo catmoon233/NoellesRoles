@@ -360,6 +360,7 @@ public class ModPacketsReciever {
               ArrayList<Role> shuffledKillerRoles = new ArrayList<>(Noellesroles.getEnableKillerRoles());
               shuffledKillerRoles.removeIf(role -> role.identifier().equals(ModRoles.EXECUTIONER_ID)
                   || role.identifier().equals(ModRoles.POISONER_ID)
+                  || role.identifier().equals(ModRoles.DIO_ID)
                   || Harpymodloader.VANNILA_ROLES.contains(role) || !role.canUseKiller()
                   || HarpyModLoaderConfig.HANDLER.instance().disabled
                       .contains(role.identifier().getPath()));
