@@ -3,11 +3,14 @@ package org.agmas.noellesroles.roles.morphling;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
+import org.agmas.noellesroles.role.ModRoles;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentProvider;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
@@ -59,6 +62,8 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     public void serverTick() {
+        if (!GameWorldComponent.KEY.get(this.player.level()).isRole(this.player, ModRoles.MORPHLING))
+            return;
         if (this.morphTicks != 0) {
             ++tickR;
             if (this.morphTicks > 0) {
