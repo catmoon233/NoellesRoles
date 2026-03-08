@@ -186,7 +186,8 @@ public class ModPacketsReciever {
           pmc.setMood(pmc.getMood() * 0.3f);
           return;
         }
-
+        if (!gameWorldComponent.isRunning())
+          return;
         if (isForced) {
           player.displayClientMessage(
               Component.translatable("message.exampler.problem_set.failed").withStyle(ChatFormatting.YELLOW),
