@@ -139,7 +139,7 @@ public class Noellesroles implements ModInitializer {
         ArrayList<Role> clone = new ArrayList<>(TMMRoles.ROLES.values());
         clone.removeIf(
                 r -> !r.canUseKiller()
-                        || r.getIdentifier()==ModRoles.DIO_ID
+                        || r.getIdentifier() == ModRoles.DIO_ID
                         || HarpyModLoaderConfig.HANDLER.instance().disabled.contains(r.getIdentifier().toString()));
         return clone;
     }
@@ -221,7 +221,7 @@ public class Noellesroles implements ModInitializer {
         // 注册血液粒子工厂
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, Noellesroles.id("deathblood"),
                 BloodMain.BLOOD_PARTICLE);
-        
+
         // 注册药水效果
         ModEffects.init();
     }
