@@ -715,6 +715,7 @@ public class ModEventsRegister {
         WayfarerPlayerComponent.registerEvents();
         OnPlayerDeath.EVENT.register((playerEntity, reason) -> {
             FortunetellerPlayerComponent.KEY.get(playerEntity).reset();
+            PuppeteerPlayerComponent.KEY.get(playerEntity).clear();
             RoleUtils.RemoveAllEffects(playerEntity);
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.level());
             if (gameWorldComponent.isRole(playerEntity,
