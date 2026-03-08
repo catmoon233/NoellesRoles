@@ -79,9 +79,6 @@ public class MagicianPlayerComponent implements RoleComponent, ServerTickingComp
         psychoComponent.setPsychoTicks(GameConstants.getPsychoTimer());
         psychoComponent.setArmour(GameConstants.getPsychoModeArmour());
 
-        // 更新疯狂模式计数
-        GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
-        gameWorldComponent.setPsychosActive(gameWorldComponent.getPsychosActive() + 1);
 
         // 发送状态栏
         if (player instanceof ServerPlayer serverPlayer) {
