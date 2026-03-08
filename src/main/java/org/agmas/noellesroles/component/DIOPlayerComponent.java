@@ -8,6 +8,7 @@ import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,6 +25,7 @@ import org.agmas.noellesroles.init.ModEffects;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.coroner.BodyDeathReasonComponent;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
@@ -200,18 +202,9 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
                 if (dio == null)
                     return true;
 
-                // 如果"最后的狂欢"已激活，尝试免疫伤害
+                // 如果"最后的狂欢"已激活，直接去世
                 if (dio.isFinalCarnivalActive) {
-                    // 50% 概率免疫伤害
-                    if (dio.tryImmuneDamage(999.0f)) {
-                        return false; // 阻止死亡
-                    }
-
-                    // 如果临时生命时间足够，消耗时间来避免死亡
-                    if (dio.tempLifeRemaining > 500) { // 至少需要 25 秒
-                        dio.tempLifeRemaining -= 500; // 消耗 25 秒
-                        return false; // 阻止死亡
-                    }
+                    return true;
                 }
 
                 // 如果未激活但已解锁，且受到致命伤害，激活"最后的狂欢"
@@ -378,15 +371,24 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
 
         // 给予生命恢复和速度加成
         player.addEffect(new MobEffectInstance(
-                MobEffects.REGENERATION, TEMP_LIFE_BASE_DURATION, 1, false, false, true));
+                MobEffects.REGENERATION, 20 * 5, 1, false, false, true));
         player.addEffect(new MobEffectInstance(
-                MobEffects.MOVEMENT_SPEED, TEMP_LIFE_BASE_DURATION, 1, false, false, true));
+                MobEffects.MOVEMENT_SPEED, 20 * 5, 1, false, false, true));
 
         serverPlayer.displayClientMessage(
                 Component.translatable("message.noellesroles.dio.final_carnival_activate")
                         .withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
                 true);
-
+                
+        serverPlayer.serverLevel().sendParticles(
+                new DustParticleOptions(new Vector3f(1,0,0), 1f),
+                player.getX(),
+                player.getY(),
+                player.getZ(),
+                1,
+                0.0, 0.0, 0.0,
+                0.05 // 速度/扩散随蓄力变化
+        );
         this.sync();
     }
 
@@ -401,9 +403,9 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
 
         // 刷新效果
         player.addEffect(new MobEffectInstance(
-                MobEffects.REGENERATION, tempLifeRemaining, 1, false, false, true));
+                MobEffects.REGENERATION, 20 * 5, 1, false, false, true));
         player.addEffect(new MobEffectInstance(
-                MobEffects.MOVEMENT_SPEED, tempLifeRemaining, 2, false, false, true));
+                MobEffects.MOVEMENT_SPEED, 20 * 5, 2, false, false, true));
 
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.displayClientMessage(
@@ -482,21 +484,24 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
             return;
         }
         if (level.canSeeSky(getPlayer().blockPosition())) {
-            if (level.isDay()) {
+            if (level.isDay() && level.getGameTime() % 20 == 0) {
                 if (getPlayer().getRemainingFireTicks() <= 0) {
-                    getPlayer().setRemainingFireTicks(5);
+                    getPlayer().setRemainingFireTicks(30);
                 }
             }
         }
         tickCounter++;
-        if (tickCounter % 20 == 0) {
-            sync();
-        }
 
         if (timeStopCooldown > 0) {
             timeStopCooldown--;
-            if (timeStopCooldown % 100 == 0)
+            if (timeStopCooldown % 200 == 0) {
+                tickCounter = 0;
                 sync();
+            }
+        } else {
+            if (tickCounter % 200 == 0) { // 10s / 次
+                sync();
+            }
         }
 
         // 处理吸食动作
@@ -517,12 +522,20 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
             } else {
                 isFeeding = false;
                 player.setSwimming(false);
+                sync();
             }
         }
 
         // 处理"最后的狂欢"
         if (isFinalCarnivalActive) {
             if (tempLifeRemaining > 0) {
+                if (tempLifeRemaining % 60 == 0) {
+                    // 给予生命恢复和速度加成
+                    player.addEffect(new MobEffectInstance(
+                            MobEffects.REGENERATION, 20 * 5, 1, false, false, true));
+                    player.addEffect(new MobEffectInstance(
+                            MobEffects.MOVEMENT_SPEED, 20 * 5, 2, false, false, true));
+                }
                 tempLifeRemaining--;
 
                 if (tempLifeRemaining == 0) {
@@ -567,6 +580,12 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
     public void clientTick() {
         if (this.timeStopCooldown > 1) {
             this.timeStopCooldown--;
+        }
+        if (this.feedingRemaining > 1) {
+            this.feedingRemaining--;
+        }
+        if (this.tempLifeRemaining > 1) {
+            this.tempLifeRemaining--;
         }
     }
 }

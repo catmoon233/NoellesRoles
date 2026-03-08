@@ -200,7 +200,7 @@ public class ModPacketsReciever {
             abpc.charges++;
             // Noellesroles.LOGGER.info("Increase 1");
             if (abpc.charges >= 3) {
-              if (RoleUtils.insertStackInFreeSlot(player, ModItems.ExamplerPsychoItemStack.copy())) {
+              if (RoleUtils.insertStackInFreeSlot(killer, ModItems.ExamplerPsychoItemStack.copy())) {
                 killer.displayClientMessage(
                     Component.translatable("message.exampler.get_test_psycho").withStyle(ChatFormatting.GOLD),
                     true);

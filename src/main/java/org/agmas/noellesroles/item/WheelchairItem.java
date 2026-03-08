@@ -50,7 +50,7 @@ public class WheelchairItem extends Item {
          var we = ModEntities.WHEELCHAIR.spawn((ServerLevel) level, itemStack, useOnContext.getPlayer(), blockPos2,
                MobSpawnType.SPAWN_EGG, true,
                !Objects.equals(blockPos, blockPos2) && direction == Direction.UP);
-         useOnContext.getPlayer().getCooldowns().addCooldown(ModItems.WHEELCHAIR, 20);
+         useOnContext.getPlayer().getCooldowns().addCooldown(ModItems.WHEELCHAIR, 40);
          if (we != null) {
             we.durability = itemStack.getMaxDamage() - itemStack.getDamageValue();
             itemStack.consume(1, useOnContext.getPlayer());
@@ -74,7 +74,7 @@ public class WheelchairItem extends Item {
          return InteractionResultHolder.success(itemStack);
       EntityType<WheelchairEntity> entityType = ModEntities.WHEELCHAIR;
       BlockPos bc = player.getOnPos();
-      player.getCooldowns().addCooldown(ModItems.WHEELCHAIR, 20);
+      player.getCooldowns().addCooldown(ModItems.WHEELCHAIR, 40);
       WheelchairEntity entity = entityType.spawn((ServerLevel) level, itemStack, player, bc.above(),
             MobSpawnType.SPAWN_EGG, false, false);
       if (entity == null) {

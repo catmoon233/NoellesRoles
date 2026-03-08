@@ -175,19 +175,18 @@ public class RicesRoleRhapsody implements ModInitializer {
             if (!GameFunctions.isPlayerAliveAndSurvival(player))
                 return net.minecraft.world.InteractionResult.PASS;
 
-
             // 检查玩家是否是傀儡师
             GameWorldComponent gameWorld = GameWorldComponent.KEY.get(world);
-            if (gameWorld.isRole(player, ModRoles.DIO)){
+            if (gameWorld.isRole(player, ModRoles.DIO)) {
                 DIOPlayerComponent dioPlayerComponent = DIOPlayerComponent.KEY.get(player);
-                dioPlayerComponent.feedOnCorpse(body);
-
-                dioPlayerComponent.sync();
-                if (dioPlayerComponent.isFinalCarnivalActive){
-                    player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
-                    dioPlayerComponent.extendTempLife();
+                boolean success = dioPlayerComponent.feedOnCorpse(body);
+                if (success) {
+                    dioPlayerComponent.sync();
+                    if (dioPlayerComponent.isFinalCarnivalActive) {
+                        player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+                        dioPlayerComponent.extendTempLife();
+                    }
                 }
-
             }
             if (!gameWorld.isRole(player, ModRoles.PUPPETEER))
                 return net.minecraft.world.InteractionResult.PASS;

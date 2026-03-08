@@ -100,7 +100,7 @@ public class BowenBadgeItem extends Item {
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int remainingUseDuration) {
         if (level instanceof ServerLevel serverLevel && livingEntity instanceof Player player) {
             // 计算蓄力进度 (0.0 - 1.0)，总时长为 getUseDuration 返回的 ticks
-            int maxDuration = getUseDuration(itemStack, livingEntity);
+            int maxDuration = 40;
             int usedTicks = maxDuration - remainingUseDuration;
             float progress = Math.min(1.0f, (float) usedTicks / maxDuration);
 
@@ -114,7 +114,7 @@ public class BowenBadgeItem extends Item {
 
             // 将角度转换为弧度
             float yawRad = yaw * ((float) Math.PI / 180F);
-            float pitchRad = pitch * ((float) Math.PI / 180F);
+            // float pitchRad = pitch * ((float) Math.PI / 180F);
 
             // 计算前方偏移量，随蓄力时间增加范围
             float radius = 0.5f + (progress * 1.5f);
@@ -148,7 +148,7 @@ public class BowenBadgeItem extends Item {
                 );
 
                 // 偶尔添加闪光粒子
-                if (level.random.nextInt(15) == 0) {
+                if (level.random.nextInt(100) == 0) {
                     serverLevel.sendParticles(
                             net.minecraft.core.particles.ParticleTypes.FLASH,
                             particleX,
@@ -283,7 +283,7 @@ public class BowenBadgeItem extends Item {
     private void applyCooldownToItem(Player player, ItemStack stack) {
         var cooldowns = player.getCooldowns();
         if (!stack.isEmpty() && !cooldowns.isOnCooldown(stack.getItem())) {
-            cooldowns.addCooldown(stack.getItem(), 20 * 60);
+            cooldowns.addCooldown(stack.getItem(), 20 * 30);
         }
     }
 

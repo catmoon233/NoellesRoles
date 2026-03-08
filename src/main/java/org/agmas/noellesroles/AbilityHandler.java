@@ -73,7 +73,7 @@ public class AbilityHandler {
             return;
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.DIO)) {
-            
+
             DIOPlayerComponent.KEY.get(player).tryActivateTimeStop();
             return;
         }
@@ -203,7 +203,7 @@ public class AbilityHandler {
                 it.setDamageValue(it.getMaxDamage() - chairDurability);
                 RoleUtils.insertStackInFreeSlot(player, it);
                 player.stopRiding();
-                player.getCooldowns().addCooldown(ModItems.WHEELCHAIR, 20);
+                player.getCooldowns().addCooldown(ModItems.WHEELCHAIR, 40);
                 player.displayClientMessage(
                         Component.translatable("message.oldman.get_back").withStyle(ChatFormatting.GOLD), true);
             }

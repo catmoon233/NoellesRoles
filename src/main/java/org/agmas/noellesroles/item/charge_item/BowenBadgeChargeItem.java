@@ -10,7 +10,7 @@ import java.awt.*;
 public class BowenBadgeChargeItem implements ChargeableItem {
     @Override
     public int getMaxChargeTime(ItemStack itemStack, Player player) {
-         return 3 * 20;
+         return 2 * 20;
     }
 
     @Override
@@ -20,7 +20,7 @@ public class BowenBadgeChargeItem implements ChargeableItem {
 
     @Override
     public float getMaxStamina(ItemStack stack, Player player) {
-        return 3 * 20;
+        return 2 * 20;
     }
 
     @Override

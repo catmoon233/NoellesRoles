@@ -100,7 +100,8 @@ public class DIOHudMixin {
         // ==================== 显示最后的狂欢状态 ====================
         int carnivalY = y + 40;
 
-        Component carnivalTitle = Component.translatable("hud.noellesroles.dio.final_carnival");
+        Component carnivalTitle = Component.translatable("hud.noellesroles.dio.final_carnival")
+                .withStyle(ChatFormatting.DARK_RED);
         context.drawString(textRenderer, carnivalTitle, x, carnivalY, 0x8B0000); // 深红色
 
         if (!dioComponent.hasFinalCarnival()) {

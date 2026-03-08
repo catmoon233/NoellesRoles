@@ -17,6 +17,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.phys.Vec3;
+import pro.fazeclan.river.stupid_express.constants.SEModifiers;
+
+import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.commands.BroadcastCommand;
 import org.agmas.noellesroles.init.ModEffects;
 import org.agmas.noellesroles.init.NRSounds;
@@ -68,9 +71,19 @@ public class TimeStopEffect extends MobEffect {
                     BroadcastCommand.BroadcastMessage(player, broadcastMessage);
 
                     if (!GameFunctions.isPlayerAliveAndSurvival(player)) {
-                        canMovePlayers.add(player.getUUID());
-                    } else {
+                        if (WorldModifierComponent.KEY.get(player.level()).isModifier(player,
+                                SEModifiers.SPLIT_PERSONALITY)) {
 
+                        } else {
+                            canMovePlayers.add(player.getUUID());
+                        }
+                    } else {
+                        if (gameWorldComponent.isRole(player, ModRoles.MAID_SAKUYA)) {
+                            canMovePlayers.add(player.getUUID());
+                        }
+                        // if (gameWorldComponent.isRole(player, ModRoles.JOJO)) {
+                        //     canMovePlayers.add(player.getUUID());
+                        // }
                         if (gameWorldComponent.isRole(player, ModRoles.CLOCKMAKER)) {
                             canMovePlayers.add(player.getUUID());
                         }

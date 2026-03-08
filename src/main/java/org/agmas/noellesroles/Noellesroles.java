@@ -19,6 +19,7 @@ import org.agmas.harpymodloader.config.HarpyModLoaderConfig;
 import org.agmas.noellesroles.commands.*;
 import org.agmas.noellesroles.presets.Preset;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.RightClickBlockManager;
 import org.agmas.noellesroles.utils.RoleUtils;
 import org.agmas.noellesroles.blood.BloodMain;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -150,6 +151,7 @@ public class Noellesroles implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        RightClickBlockManager.init();
         ArgumentTypeRegistry.registerArgumentType(
                 Noellesroles.id("color"), // 唯一 ID
                 ModColorArgument.class, // 你的参数类
