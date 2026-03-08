@@ -26,7 +26,7 @@ public class ConfigWorldComponent implements AutoSyncedComponent, ServerTickingC
     public boolean insaneSeesMorphs = true;
     public boolean naturalVoodoosAllowed = false;
     public int masterKeyVisibleCount = 0;
-    public boolean masterKeyIsVisible = false;
+    public boolean masterKeyIsVisible = true;
     private final Level world;
     private final Map<UUID, Integer> redPacketTimers = new HashMap<>();
     private static final int RED_PACKET_DELAY_TICKS = 300; // 15秒 = 300 ticks

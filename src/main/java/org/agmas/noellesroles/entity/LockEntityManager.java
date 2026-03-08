@@ -7,6 +7,8 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+
+import org.agmas.noellesroles.init.FunnyItems;
 import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.utils.BlockUtils;
 import org.agmas.noellesroles.utils.Pair;
@@ -27,6 +29,7 @@ public class LockEntityManager {
         canBeAffectedItems.add(TMMItems.LOCKPICK);
         canBeAffectedItems.add(ModItems.MASTER_KEY);
         canBeAffectedItems.add(ModItems.MASTER_KEY_P);
+        canBeAffectedItems.add(FunnyItems.BOWEN_BADGE);
         // 在此处添加可以撬锁的物品
         canBeUsedToUnLock.add(TMMItems.LOCKPICK);
         canBeUsedToUnLock.add(ModItems.MASTER_KEY_P);
