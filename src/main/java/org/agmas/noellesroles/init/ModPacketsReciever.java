@@ -211,7 +211,16 @@ public class ModPacketsReciever {
             abpc.sync();
           }
           if (GameFunctions.isPlayerAliveAndSurvival(player)) {
-            GameFunctions.killPlayer(player, true, killer, Noellesroles.id("fail_exam"));
+            var psc = PlayerShopComponent.KEY.get(player);
+            if (psc.balance >= 200) {
+              psc.addToBalance(-200);
+              player.displayClientMessage(
+                  Component.translatable("message.exampler.xiaozai").withStyle(ChatFormatting.GREEN,
+                      ChatFormatting.BOLD),
+                  true);
+            } else {
+              GameFunctions.killPlayer(player, true, killer, Noellesroles.id("fail_exam"));
+            }
           }
         } else {
           player.displayClientMessage(
