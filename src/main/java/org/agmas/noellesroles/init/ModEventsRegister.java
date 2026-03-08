@@ -731,6 +731,22 @@ public class ModEventsRegister {
                 }
             }
 
+            if (gameWorldComponent.isRole(playerEntity, ModRoles.MARTIAL_ARTS_INSTRUCTOR)) {
+                int nunchuckCount = TMMItemUtils.clearItem(playerEntity, TMMItems.NUNCHUCK);
+                while (nunchuckCount > 0) {
+                    playerEntity.drop(TMMItems.REVOLVER.getDefaultInstance(), false);
+                    nunchuckCount--;
+                }
+            }
+
+            if (gameWorldComponent.isRole(playerEntity, ModRoles.SWAST)) {
+                int sniperRifleCount = TMMItemUtils.clearItem(playerEntity, TMMItems.SNIPER_RIFLE);
+                while (sniperRifleCount > 0) {
+                    playerEntity.drop(TMMItems.REVOLVER.getDefaultInstance(), false);
+                    sniperRifleCount--;
+                }
+            }
+
             if (gameWorldComponent.isRole(playerEntity, ModRoles.BETTER_VIGILANTE)) {
                 final var betterVigilantePlayerComponent = BetterVigilantePlayerComponent.KEY.get(playerEntity);
                 betterVigilantePlayerComponent.reset();
