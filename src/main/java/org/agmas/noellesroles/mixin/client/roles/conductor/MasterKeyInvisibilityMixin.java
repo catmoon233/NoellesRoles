@@ -17,9 +17,9 @@ public class MasterKeyInvisibilityMixin {
     private ItemStack view(LivingEntity instance, Operation<ItemStack> original) {
 
         ItemStack ret = original.call(instance);
-        if (ret.is(ModItems.MASTER_KEY) && !ConfigWorldComponent.KEY.get(instance.getCommandSenderWorld()).masterKeyIsVisible) {
-            ret = TMMItems.LOCKPICK.getDefaultInstance();
-        }
+        // if (ret.is(ModItems.MASTER_KEY) && !(ConfigWorldComponent.KEY.get(instance.level()).masterKeyIsVisible || !ConfigWorldComponent.KEY.get(instance.level()).masterKeyIsVisible)) {
+        //     ret = TMMItems.LOCKPICK.getDefaultInstance();
+        // }
 
         return ret;
     }

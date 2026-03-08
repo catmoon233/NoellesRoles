@@ -375,11 +375,6 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
      */
     private Role getRandomKillerRole() {
         final var availableKillerRoles = getAvailableKillerRoles();
-        availableKillerRoles.removeIf(a -> a.getIdentifier().equals(ModRoles.STALKER_ID));
-        availableKillerRoles.removeIf(a -> a.getIdentifier().equals(ModRoles.POISONER_ID));
-        availableKillerRoles.removeIf(a -> a.getIdentifier().equals(ModRoles.EXECUTIONER_ID));
-        availableKillerRoles.removeIf(a -> a.getIdentifier()
-                .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID));
 
         if (availableKillerRoles.isEmpty()) {
             // 如果没有可用的杀手角色，使用原版杀手
@@ -401,11 +396,21 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
         for (Role role : Noellesroles.getEnableKillerRoles()) {
             // 杀手阵营：canUseKiller = true
             // 排除傀儡师自己（避免傀儡师变成傀儡师）
+            if (role.identifier().equals(ModRoles.STALKER_ID))
+                continue;
+            if (role.identifier().equals(ModRoles.POISONER_ID))
+                continue;
+            if (role.identifier().equals(ModRoles.EXECUTIONER_ID))
+                continue;
+            if (role.identifier()
+                    .equals(ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID))
+                continue;
+            if (role.identifier().equals(ModRoles.DIO_ID))
+                continue;
             if (!role.identifier().equals(ModRoles.PUPPETEER_ID)) {
                 killerRoles.add(role);
             }
         }
-
         return killerRoles;
     }
 
