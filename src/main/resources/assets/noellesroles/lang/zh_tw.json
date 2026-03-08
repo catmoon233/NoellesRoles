@@ -238,7 +238,7 @@
   "death_reason.noellesroles.success": "你及格了，避免了掛科。",
   "death_reason.noellesroles.fail_exam": "掛科",
   "death_reason.noellesroles.bowen": "波紋勳章衝刺",
-  "message.exampler.xiaozai": "你花費了200金幣抵消了這次死亡",
+  "message.exampler.xiaozai": "你花費了%s金幣抵消了這次死亡",
   "message.exampler.problem_set.failed": "你因為自己的愚蠢而掛科了",
   "announcement.win.exampler": "殺手勝利！",
   "=============== 琪露諾 ===============": "",
