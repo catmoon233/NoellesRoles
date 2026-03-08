@@ -221,7 +221,7 @@ public class NoellesrolesClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(ProblemScreenOpenC2SPacket.ID, (payload, context) -> {
             var client = context.client();
             client.execute(() -> {
-                if (client.screen instanceof MathSolverScreen) {
+                if (client.screen != null && client.screen instanceof MathSolverScreen) {
                     return;
                 } else {
                     client.setScreen(new MathSolverScreen(payload.forced(), payload.maxTrial()));
