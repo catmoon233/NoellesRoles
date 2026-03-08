@@ -212,8 +212,8 @@ public class ModPacketsReciever {
           }
           if (GameFunctions.isPlayerAliveAndSurvival(player)) {
             var psc = PlayerShopComponent.KEY.get(player);
-            if (psc.balance >= 200) {
-              psc.addToBalance(-200);
+            if (psc.balance >= 100) {
+              psc.addToBalance(-100);
               player.displayClientMessage(
                   Component.translatable("message.exampler.xiaozai").withStyle(ChatFormatting.GREEN,
                       ChatFormatting.BOLD),
