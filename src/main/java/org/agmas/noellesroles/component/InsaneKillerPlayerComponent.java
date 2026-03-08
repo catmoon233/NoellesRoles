@@ -226,7 +226,7 @@ public class InsaneKillerPlayerComponent
             // if (cooldown == 0){
             //
             // }
-            if (cooldown % 40 == 0)
+            if (cooldown % 100 == 0)
                 sync();
         }
         if (deathState > 0) {
@@ -235,7 +235,7 @@ public class InsaneKillerPlayerComponent
             if (deathState == 1) {
                 GameFunctions.killPlayer(player, true, null, Noellesroles.id("insane_killer_death"));
             }
-            if (deathState % 40 == 0 || deathState == 1 || deathState == 0) {
+            if (deathState % 100 == 0 || deathState == 1 || deathState == 0) {
                 sync();
             }
         }
