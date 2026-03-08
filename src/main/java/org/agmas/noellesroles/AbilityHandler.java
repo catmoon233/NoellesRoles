@@ -162,14 +162,14 @@ public class AbilityHandler {
                 return;
             } else {
                 PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY.get(context.player());
-                if (playerShopComponent.balance < 100) {
+                if (playerShopComponent.balance < 300) {
                     player.displayClientMessage(
-                            Component.translatable("message.noellesroles.insufficient_funds")
+                            Component.translatable("message.noellesroles.insufficient_funds_money", 300)
                                     .withStyle(ChatFormatting.RED),
                             true);
                     return;
                 }
-                playerShopComponent.addToBalance(-100);
+                playerShopComponent.addToBalance(-300);
                 abilityPlayerComponent.setCooldown(240 * 20);
                 player.serverLevel().players().forEach(sp -> {
                     if (GameFunctions.isPlayerAliveAndSurvival(sp)) {

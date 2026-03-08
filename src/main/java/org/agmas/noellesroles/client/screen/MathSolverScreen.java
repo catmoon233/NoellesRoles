@@ -68,10 +68,10 @@ public class MathSolverScreen extends Screen {
             var newP = manager.generateProblem();
             switch (newP.getType()) {
                 case 1:
-                    maxT += 3;
+                    maxT += 4;
                     break;
                 case 2:
-                    maxT += 6;
+                    maxT += 8;
                     break;
                 default:
                     maxT += 2;
