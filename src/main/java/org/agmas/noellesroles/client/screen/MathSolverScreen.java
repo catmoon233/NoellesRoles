@@ -63,7 +63,7 @@ public class MathSolverScreen extends Screen {
     private void resetProblems() {
         this.MathProblems.clear();
         MathProblemsManager manager = new MathProblemsManager();
-        int maxT = 4;
+        int maxT = 0;
         for (int i = 0; i < totalPages; i++) {
             var newP = manager.generateProblem();
             switch (newP.getType()) {

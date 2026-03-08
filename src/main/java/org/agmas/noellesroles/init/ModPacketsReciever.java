@@ -215,7 +215,7 @@ public class ModPacketsReciever {
             if (psc.balance >= 100) {
               psc.addToBalance(-100);
               player.displayClientMessage(
-                  Component.translatable("message.exampler.xiaozai").withStyle(ChatFormatting.GREEN,
+                  Component.translatable("message.exampler.xiaozai", 100).withStyle(ChatFormatting.GREEN,
                       ChatFormatting.BOLD),
                   true);
             } else {
