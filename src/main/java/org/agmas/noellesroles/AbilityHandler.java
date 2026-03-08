@@ -6,7 +6,6 @@ import org.agmas.noellesroles.component.ClockmakerPlayerComponent;
 import org.agmas.noellesroles.component.DIOPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
-import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.PlayerVolumeComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
@@ -21,11 +20,13 @@ import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
 import org.agmas.noellesroles.roles.noise_maker.NoiseMakerPlayerComponent;
 import org.agmas.noellesroles.roles.recaller.RecallerPlayerComponent;
+import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
+import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context;
 import net.minecraft.ChatFormatting;
@@ -152,6 +153,21 @@ public class AbilityHandler {
                 abilityPlayerComponent.setCooldown(60 * 20);
             AttendantHandler.openLight(context.player());
             return;
+        }
+        if (gameWorldComponent.isRole(player, ModRoles.EXAMPLER)) {
+            if (abilityPlayerComponent.cooldown > 0) {
+                player.displayClientMessage(
+                        Component.translatable("message.noellesroles.ability_cooldown").withStyle(ChatFormatting.RED),
+                        true);
+                return;
+            } else {
+                abilityPlayerComponent.setCooldown(90 * 20);
+                player.serverLevel().players().forEach(sp -> {
+                    if (GameFunctions.isPlayerAliveAndSurvival(sp)) {
+                        ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));
+                    }
+                });
+            }
         }
         if (gameWorldComponent.isRole(context.player(), ModRoles.BOMBER)) {
             BomberPlayerComponent bomberPlayerComponent = ModComponents.BOMBER.get(context.player());
@@ -356,15 +372,16 @@ public class AbilityHandler {
                         true);
                 return;
             }
-            if (playerShopComponent.balance < 50) {
+            if (playerShopComponent.balance < 100) {
                 player.displayClientMessage(
                         Component.translatable("message.noellesroles.insufficient_funds").withStyle(ChatFormatting.RED),
                         true);
                 return;
             }
-            playerShopComponent.addToBalance(-50);
+            playerShopComponent.addToBalance(-100);
             if (targetPlayer != null && targetPlayer instanceof ServerPlayer sp) {
-                abilityPlayerComponent.setCooldown(60 * 20);
+                abilityPlayerComponent.setCooldown(90 * 20);
+                ServerPlayNetworking.send(player, new ProblemScreenOpenC2SPacket(true, 3));
                 ServerPlayNetworking.send(sp, new ProblemScreenOpenC2SPacket(true, 3));
             }
             return;

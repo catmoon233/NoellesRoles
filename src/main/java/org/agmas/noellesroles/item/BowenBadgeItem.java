@@ -3,6 +3,7 @@ package org.agmas.noellesroles.item;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
+import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -34,7 +35,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.agmas.noellesroles.init.FunnyItems;
 
-public class BowenBadgeItem extends Item {
+public class BowenBadgeItem extends Item implements AdventureUsable{
 
     public BowenBadgeItem(Properties properties) {
         super(properties);

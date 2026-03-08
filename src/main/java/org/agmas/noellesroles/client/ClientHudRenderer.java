@@ -211,18 +211,28 @@ public class ClientHudRenderer {
                         .withStyle(ChatFormatting.RED);
                 guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
                         Color.WHITE.getRGB());
-            } else if (psc.balance < 100) {
-                var text = Component
-                        .translatable("hud.exampler.money")
-                        .withStyle(ChatFormatting.YELLOW);
-                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
-                        Color.WHITE.getRGB());
             } else {
-                var text = Component
-                        .translatable("hud.exampler.ready")
-                        .withStyle(ChatFormatting.AQUA);
-                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                var allneiJuanSkill = Component
+                        .translatable("hud.exampler.all_neijuan",
+                                NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                        .withStyle(ChatFormatting.GOLD);
+                guiGraphics.drawString(font, allneiJuanSkill, xOffset - font.width(allneiJuanSkill),
+                        yOffset - font.lineHeight * 3 - 8,
                         Color.WHITE.getRGB());
+                if (psc.balance < 100) {
+                    var text = Component
+                            .translatable("hud.exampler.money")
+                            .withStyle(ChatFormatting.YELLOW);
+                    guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                            Color.WHITE.getRGB());
+                } else {
+                    var text = Component
+                            .translatable("hud.exampler.ready")
+                            .withStyle(ChatFormatting.AQUA);
+                    guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                            Color.WHITE.getRGB());
+                }
+
             }
             var chargeText = Component
                     .translatable("hud.exampler.charges", abpc.charges)

@@ -480,7 +480,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                                 if (player.getEffect(ModEffects.TIME_STOP) != null) {
                                     return 1f
                                             - (player.getEffect(ModEffects.TIME_STOP).getDuration()
-                                                    / (float)TimeStopEffect.freezeMaxTime);
+                                                    / (float) TimeStopEffect.freezeMaxTime);
 
                                 }
                             }
@@ -624,6 +624,21 @@ public class NoellesrolesClient implements ClientModInitializer {
         OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
             if (TMMClient.gameComponent != null) {
                 if (TMMClient.gameComponent.isRunning()) {
+                    if (!TMMClient.isPlayerAliveAndInSurvival()) {
+                        return new MutableComponentResult(
+                                Component
+                                        .translatable("message.tip.for_death_vt",
+                                                Component.literal("/vt_mode").withStyle(ChatFormatting.GREEN))
+                                        .withStyle(ChatFormatting.WHITE));
+                    }
+                    // is_taskpoint_able
+                }
+            }
+            return null;
+        });
+        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
+            if (TMMClient.gameComponent != null) {
+                if (TMMClient.gameComponent.isRunning()) {
                     var role = TMMClient.gameComponent.getRole(minecraft.player);
                     if (role != null) {
                         if (role.canUseKiller()) {
@@ -648,14 +663,13 @@ public class NoellesrolesClient implements ClientModInitializer {
             if (TMMClient.gameComponent != null) {
                 if (TMMClient.gameComponent.isRunning()) {
 
-                            return new MutableComponentResult(
-                                    Component
-                                            .translatable("message.tip.voice_setting",
-                                                    Component.keybind("key.voice_chat"))
-                                            .withStyle(ChatFormatting.WHITE));
-                        }
-                    }
-
+                    return new MutableComponentResult(
+                            Component
+                                    .translatable("message.tip.voice_setting",
+                                            Component.keybind("key.voice_chat"))
+                                    .withStyle(ChatFormatting.WHITE));
+                }
+            }
 
             return null;
         });
