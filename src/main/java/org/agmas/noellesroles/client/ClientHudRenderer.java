@@ -212,13 +212,6 @@ public class ClientHudRenderer {
                 guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
                         Color.WHITE.getRGB());
             } else {
-                var allneiJuanSkill = Component
-                        .translatable("hud.exampler.all_neijuan",
-                                NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
-                        .withStyle(ChatFormatting.GOLD);
-                guiGraphics.drawString(font, allneiJuanSkill, xOffset - font.width(allneiJuanSkill),
-                        yOffset - font.lineHeight * 3 - 12,
-                        Color.WHITE.getRGB());
                 if (psc.balance < 100) {
                     var text = Component
                             .translatable("hud.exampler.money")
@@ -226,6 +219,13 @@ public class ClientHudRenderer {
                     guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
                             Color.WHITE.getRGB());
                 } else {
+                    var allneiJuanSkill = Component
+                            .translatable("hud.exampler.all_neijuan",
+                                    NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                            .withStyle(ChatFormatting.GOLD);
+                    guiGraphics.drawString(font, allneiJuanSkill, xOffset - font.width(allneiJuanSkill),
+                            yOffset - font.lineHeight * 3 - 12,
+                            Color.WHITE.getRGB());
                     var text = Component
                             .translatable("hud.exampler.ready")
                             .withStyle(ChatFormatting.AQUA);
