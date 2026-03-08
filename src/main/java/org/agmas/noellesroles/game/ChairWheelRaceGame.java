@@ -136,7 +136,7 @@ public class ChairWheelRaceGame extends GameMode {
         executeFunction(serverLevel.getServer().createCommandSourceStack(), "harpymodloader:chair_wheel_race/init");
         for (ServerPlayer player : list) {
             player.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 20 * 5));
-            gameWorldComponent.addRole(player, TMMRoles.DISCOVERY_CIVILIAN);
+            gameWorldComponent.addRole(player, TMMRoles.DISCOVERY_CIVILIAN, false);
         }
         GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(120, () -> {
             for (ServerPlayer player : list) {
@@ -146,5 +146,6 @@ public class ChairWheelRaceGame extends GameMode {
                 player.startRiding(chair, true);
             }
         }));
+        gameWorldComponent.syncRoles();
     }
 }
