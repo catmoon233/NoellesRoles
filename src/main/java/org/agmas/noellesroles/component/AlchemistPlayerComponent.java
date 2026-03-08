@@ -139,7 +139,8 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
             // 检查玩家是否蹲下
             if (player.isShiftKeyDown()) {
                 if (materialGatherTimer > 0) {
-                    if (materialGatherTimer % 100 == 5) { // 5s / sync
+                    // 每秒同步一次到客户端，确保HUD实时更新
+                    if (materialGatherTimer % 20 == 0) {
                         sync();
                     }
                     // 计时中，减少计时器
@@ -155,7 +156,10 @@ public class AlchemistPlayerComponent implements RoleComponent, ServerTickingCom
                 // 如果计时器为0，说明刚获得素材，已经被重置为MATERIAL_GATHER_INTERVAL，需要继续蹲下30秒
             } else {
                 // 不蹲下时重置计时器到初始状态
-                materialGatherTimer = MATERIAL_GATHER_INTERVAL;
+                if (materialGatherTimer != MATERIAL_GATHER_INTERVAL) {
+                    materialGatherTimer = MATERIAL_GATHER_INTERVAL;
+                    sync();
+                }
             }
         }
     }
