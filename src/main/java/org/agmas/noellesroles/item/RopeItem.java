@@ -26,7 +26,7 @@ import java.util.List;
  * 绳索
  * <p>
  * - 2点耐久
- * - 右键：将前方直线距离12格内的离你最近的玩家拉到自己身前
+ * - 右键：将前方直线距离12格内你瞄准的玩家拉到自己身前
  * - 使用后进入5秒冷却并消耗1点耐久
  * </p>
  */
@@ -34,6 +34,10 @@ public class RopeItem extends Item implements AdventureUsable {
     private static final int MAX_DURABILITY = 2;
     private static final int COOLDOWN = 5 * 20; // 5秒
     private static final int MAX_DISTANCE = 12; // 最大距离12格
+    private static final int TARGET_IMMUNITY_DURATION = 10 * 20; // 被拉取后10秒免疫
+    
+    // 存储玩家被拉取的时间（UUID -> 时间戳）
+    private static final java.util.Map<java.util.UUID, Long> ropeImmunityMap = new java.util.HashMap<>();
 
     public RopeItem(Properties settings) {
         super(settings);
@@ -65,8 +69,8 @@ public class RopeItem extends Item implements AdventureUsable {
             return InteractionResultHolder.fail(stack);
         }
 
-        // 查找前方直线距离10格内最近的玩家
-        Player target = findClosestPlayerInView(world, player);
+        // 查找前方直线距离12格内你瞄准的玩家
+        Player target = findTargetedPlayerInView(world, player);
 
         if (target == null) {
             if (!world.isClientSide) {
@@ -93,6 +97,9 @@ public class RopeItem extends Item implements AdventureUsable {
 
             // 将目标玩家拉到玩家身前
             pullPlayer(player, target);
+            
+            // 标记目标玩家，10秒内无法被再次拉取
+            ropeImmunityMap.put(target.getUUID(), System.currentTimeMillis());
 
             // 生成粒子效果
             spawnRopeParticles(world, player, target);
@@ -111,42 +118,113 @@ public class RopeItem extends Item implements AdventureUsable {
     }
 
     /**
-     * 查找前方直线距离10格内最近的玩家
+     * 查找前方直线距离12格内你瞄准的玩家（使用视线投射）
      */
-    private Player findClosestPlayerInView(Level world, Player player) {
-        Player closestPlayer = null;
-        double closestDistance = Double.MAX_VALUE;
+    private Player findTargetedPlayerInView(Level world, Player player) {
+        Player targetedPlayer = null;
+        double bestDistance = MAX_DISTANCE;
 
-        // 获取玩家视线方向
+        // 获取玩家视线起点和方向
+        var eyePos = player.getEyePosition(1.0f);
         var viewVector = player.getViewVector(1.0f);
 
         for (Player target : world.players()) {
             // 跳过自己
             if (target == player) continue;
 
-            // 跳过不在生存模式的玩家（死亡、观察者等）
-            if (!GameFunctions.isPlayerAliveAndSurvival(target)) continue;
+            // 跳过死亡的玩家
+            if (!target.isAlive()) continue;
+
+            // 跳过观察者模式
+            if (target.isSpectator()) continue;
+
+            // 跳过正在免疫冷却中的玩家
+            Long lastPulledTime = ropeImmunityMap.get(target.getUUID());
+            if (lastPulledTime != null) {
+                long timeSincePulled = System.currentTimeMillis() - lastPulledTime;
+                if (timeSincePulled < TARGET_IMMUNITY_DURATION * 50) { // 20 tick = 1秒
+                    continue;
+                }
+            }
 
             // 计算距离
             double distance = player.distanceTo(target);
             if (distance > MAX_DISTANCE) continue;
 
-            // 计算向量到目标的向量
-            var toTarget = target.position().subtract(player.position());
+            // 获取目标实体的碰撞箱（稍微扩大一点以提高命中率）
+            var targetBB = target.getBoundingBox().inflate(0.5);
 
-            // 计算向量点积，判断是否在前方视野内
-            double dotProduct = viewVector.dot(toTarget.normalize());
+            // 检查视线是否与目标的碰撞箱相交
+            if (isLineIntersectsBox(eyePos, viewVector, targetBB, distance)) {
+                // 计算目标到视线的垂直距离
+                var toTarget = target.position().subtract(player.position());
+                var toEyePos = target.position().subtract(eyePos);
+                
+                // 计算视线方向上的投影距离
+                double projection = toEyePos.dot(viewVector);
+                var closestPointOnRay = eyePos.add(viewVector.scale(projection));
+                double perpendicularDistance = target.position().distanceTo(closestPointOnRay);
 
-            // 如果目标在前方（点积 > 0.7，大约45度角内）
-            if (dotProduct > 0.7) {
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestPlayer = target;
+                // 如果垂直距离小于2.0格，说明准心对准了目标
+                if (perpendicularDistance < 2.0 && distance < bestDistance) {
+                    bestDistance = distance;
+                    targetedPlayer = target;
                 }
             }
         }
 
-        return closestPlayer;
+        return targetedPlayer;
+    }
+
+    /**
+     * 检查射线是否与方块相交（简化版）
+     */
+    private boolean isLineIntersectsBox(net.minecraft.world.phys.Vec3 rayOrigin,
+                                        net.minecraft.world.phys.Vec3 rayDirection,
+                                        net.minecraft.world.phys.AABB box,
+                                        double maxDistance) {
+        // 使用方块裁剪算法的简化版本
+        double tMin = Double.NEGATIVE_INFINITY;
+        double tMax = Double.POSITIVE_INFINITY;
+
+        // 检查X轴
+        if (Math.abs(rayDirection.x) < 1e-6) {
+            if (rayOrigin.x < box.minX || rayOrigin.x > box.maxX) {
+                return false;
+            }
+        } else {
+            double t1 = (box.minX - rayOrigin.x) / rayDirection.x;
+            double t2 = (box.maxX - rayOrigin.x) / rayDirection.x;
+            tMin = Math.max(tMin, Math.min(t1, t2));
+            tMax = Math.min(tMax, Math.max(t1, t2));
+        }
+
+        // 检查Y轴
+        if (Math.abs(rayDirection.y) < 1e-6) {
+            if (rayOrigin.y < box.minY || rayOrigin.y > box.maxY) {
+                return false;
+            }
+        } else {
+            double t1 = (box.minY - rayOrigin.y) / rayDirection.y;
+            double t2 = (box.maxY - rayOrigin.y) / rayDirection.y;
+            tMin = Math.max(tMin, Math.min(t1, t2));
+            tMax = Math.min(tMax, Math.max(t1, t2));
+        }
+
+        // 检查Z轴
+        if (Math.abs(rayDirection.z) < 1e-6) {
+            if (rayOrigin.z < box.minZ || rayOrigin.z > box.maxZ) {
+                return false;
+            }
+        } else {
+            double t1 = (box.minZ - rayOrigin.z) / rayDirection.z;
+            double t2 = (box.maxZ - rayOrigin.z) / rayDirection.z;
+            tMin = Math.max(tMin, Math.min(t1, t2));
+            tMax = Math.min(tMax, Math.max(t1, t2));
+        }
+
+        // 检查是否相交且在最大距离内
+        return tMax >= tMin && tMin >= 0 && tMin <= maxDistance;
     }
 
     /**

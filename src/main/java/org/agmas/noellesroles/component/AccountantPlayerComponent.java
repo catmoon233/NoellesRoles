@@ -134,8 +134,13 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
     @Override
     public void serverTick() {
         // 处理被动收入 - 只在游戏开始后且玩家是会计时生效
+        boolean shouldSync = false;
         if (passiveIncomeTimer > 0) {
             passiveIncomeTimer--;
+            // 每秒同步一次到客户端，确保HUD实时更新
+            if (passiveIncomeTimer % 20 == 0) {
+                shouldSync = true;
+            }
         } else {
             // 检查游戏是否正在运行
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(player.level());
@@ -147,6 +152,7 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
                 }
             }
             passiveIncomeTimer = PASSIVE_INCOME_INTERVAL;
+            shouldSync = true;
         }
 
         // 处理标记计时器
@@ -156,6 +162,11 @@ public class AccountantPlayerComponent implements RoleComponent, ServerTickingCo
                 // 20秒到期，检查金币变化
                 checkMarkedPlayerBalance();
             }
+        }
+
+        // 如果需要同步，发送数据到客户端
+        if (shouldSync) {
+            sync();
         }
     }
 
