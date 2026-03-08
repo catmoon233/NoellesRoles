@@ -255,6 +255,8 @@
   "announcement.role.noellesroles.maid_sakuya": "女仆咲夜",
   "announcement.goals.maid_sakuya": "女仆之心乃掌中人偶！",
   "title.maid_sakuya.timestopper": "符卡：幻世「The World」",
+  "hud.maid_sakuya.cooldown": "冷却中，剩余%ss",
+  "hud.maid_sakuya.ready": "按下 %s 触发符卡！",
   "=============== ？？？ ===============": "",
   "announcement.role.hoan_meirin": "红美铃",
   "announcement.role.noellesroles.hoan_meirin": "红美铃",
