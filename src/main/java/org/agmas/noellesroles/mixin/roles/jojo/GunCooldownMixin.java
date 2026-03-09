@@ -44,15 +44,22 @@ public class GunCooldownMixin {
         ServerPlayer player = context.player();
         if (!player.isCreative()) {
             var cooldowns = player.getCooldowns();
+            ItemStack mainHandStack = player.getMainHandItem();
 
             var items = new ArrayList<>(MCItemsUtils.getItemsByTag(player.serverLevel(), TMMItemTags.GUNS));
             // Noellesroles.LOGGER.info("itemSize:" + items.size());
             int REVOLVER_COOLDOWN = GameConstants.ITEM_COOLDOWNS.getOrDefault(TMMItems.REVOLVER, 0);
             items.remove(ModItems.FAKE_REVOLVER);
+            if (mainHandStack.is(ModItems.ONCE_REVOLVER)) {
+                items.remove(ModItems.ONCE_REVOLVER);
+            }
+            items.remove(ModItems.PATROLLER_REVOLVER);
+            cooldowns.addCooldown(ModItems.PATROLLER_REVOLVER, 3 * 20);
             items.forEach((item) -> {
-                if (!cooldowns.isOnCooldown(item))
+                if (!cooldowns.isOnCooldown(item)) {
                     cooldowns.addCooldown(item,
                             (Integer) GameConstants.ITEM_COOLDOWNS.getOrDefault(item, REVOLVER_COOLDOWN));
+                }
             });
         }
     }

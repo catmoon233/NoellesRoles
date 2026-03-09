@@ -13,8 +13,6 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.network.tmm.GunShootPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -23,13 +21,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.network.chat.Component;
-import java.util.ArrayList;
-
 import org.agmas.noellesroles.init.ModItems;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +35,7 @@ public class OnceRevolverItem extends Item {
 
     public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player user, InteractionHand hand) {
         ItemStack stack = user.getItemInHand(hand);
+        stack.hurtAndBreak(1, user, EquipmentSlot.MAINHAND);
         GameWorldComponent gameComponent;
         Role role;
         if (world.isClientSide) {
@@ -71,11 +66,8 @@ public class OnceRevolverItem extends Item {
             if (role != null && !role.onUseGun(user)) {
                 return InteractionResultHolder.fail(stack);
             }
-            user.getCooldowns().addCooldown(TMMItems.REVOLVER, TMMConfig.revolverCooldown * 20);
             user.getCooldowns().addCooldown(ModItems.ONCE_REVOLVER, TMMConfig.revolverCooldown * 20);
-            user.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, TMMConfig.revolverCooldown * 20);
         }
-        stack.hurtAndBreak(1, user, EquipmentSlot.MAINHAND);
         return InteractionResultHolder.consume(stack);
     }
 

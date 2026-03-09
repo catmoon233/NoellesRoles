@@ -671,8 +671,7 @@ public class RoleShopHandler {
         ShopEntry.Type.TOOL) {
       public boolean onBuy(@NotNull Player player) {
         player.getCooldowns().addCooldown(TMMItems.BLACKOUT,
-            Math.min((Integer) GameConstants.ITEM_COOLDOWNS
-                .getOrDefault(TMMItems.BLACKOUT, 0), 60));
+            60 * 20);
         boolean triggered = ((WorldBlackoutComponent) WorldBlackoutComponent.KEY
             .get(player.level()))
             .triggerBlackout();

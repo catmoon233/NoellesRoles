@@ -64,7 +64,7 @@ public class PatrollerRevolverItem extends Item {
             if (role != null && !role.onUseGun(user)) {
                 return InteractionResultHolder.fail(stack);
             }
-            user.getCooldowns().addCooldown(TMMItems.REVOLVER, 5 * 20);
+            user.getCooldowns().addCooldown(TMMItems.REVOLVER, 3 * 20);
             user.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, TMMConfig.revolverCooldown * 20);
         }
 
