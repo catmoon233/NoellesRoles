@@ -665,7 +665,7 @@ public class RoleShopHandler {
     柜子区的商店.add(new ShopEntry(TMMItems.LOCKPICK.getDefaultInstance(), 80, ShopEntry.Type.TOOL));
     柜子区的商店.add(new ShopEntry(TMMItems.BODY_BAG.getDefaultInstance(), TMMConfig.bodyBagPrice,
         ShopEntry.Type.TOOL));
-    柜子区的商店.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), TMMConfig.grenadePrice,
+    柜子区的商店.add(new ShopEntry(TMMItems.GRENADE.getDefaultInstance(), 250,
         ShopEntry.Type.TOOL));
     柜子区的商店.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), TMMConfig.blackoutPrice,
         ShopEntry.Type.TOOL) {
