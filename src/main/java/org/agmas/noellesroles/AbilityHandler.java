@@ -11,6 +11,7 @@ import org.agmas.noellesroles.component.PlayerVolumeComponent;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.effects.TimeStopEffect;
 import org.agmas.noellesroles.entity.WheelchairEntity;
+import org.agmas.noellesroles.init.ModEffects;
 import org.agmas.noellesroles.init.ModItems;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
@@ -44,11 +45,15 @@ public class AbilityHandler {
 
     public static void handler(AbilityC2SPacket payload, Context context) {
         // 通用技能服务端处理
+
         NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                 .get(context.player());
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                 .get(context.player().level());
         final ServerPlayer player = context.player();
+        if (player.hasEffect(ModEffects.TIME_STOP) && !TimeStopEffect.canMovePlayers.contains(player.getUUID())) {
+            return;
+        }
         if (gameWorldComponent.isRole(context.player(), ModRoles.MAID_SAKUYA)) {
             if (abilityPlayerComponent.cooldown > 0) {
                 context.player().displayClientMessage(Component.translatable(
@@ -367,12 +372,15 @@ public class AbilityHandler {
     public static void handlerWithTarget(AbilityWithTargetC2SPacket payload, Context context) {
         NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                 .get(context.player());
-
+        
         PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY
                 .get(context.player());
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
                 .get(context.player().level());
         final ServerPlayer player = context.player();
+        if (player.hasEffect(ModEffects.TIME_STOP) && !TimeStopEffect.canMovePlayers.contains(player.getUUID())) {
+            return;
+        }
         var targetPlayer = player.level().getPlayerByUUID(payload.target());
         if (gameWorldComponent.isRole(player, ModRoles.EXAMPLER)) {
             if (abilityPlayerComponent.cooldown > 0) {
