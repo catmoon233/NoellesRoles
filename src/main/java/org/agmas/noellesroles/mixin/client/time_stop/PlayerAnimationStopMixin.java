@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import org.agmas.noellesroles.client.NoellesrolesClient;
+import org.agmas.noellesroles.effects.TimeStopEffect;
 import org.agmas.noellesroles.init.ModEffects;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,6 +38,7 @@ public abstract class PlayerAnimationStopMixin extends LivingEntityRenderer<Abst
     public AbstractClientPlayer modifyRenderedPlayer(AbstractClientPlayer abstractClientPlayer) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && player.hasEffect(ModEffects.TIME_STOP)) {
+            if (TimeStopEffect.canMovePlayers.contains(abstractClientPlayer.getUUID())&&TimeStopEffect.canMovePlayers.contains(player.getUUID()))return abstractClientPlayer;
             AbstractClientPlayer replacement = NoellesrolesClient.lastTimeStopRenderPlayer.get(abstractClientPlayer.getUUID());
             if (replacement != null) {
                 isChangePlayerAnimationStop = true;
