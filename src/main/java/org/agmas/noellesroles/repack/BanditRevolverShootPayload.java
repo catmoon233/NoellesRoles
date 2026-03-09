@@ -21,10 +21,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.utils.MCItemsUtils;
 import org.jetbrains.annotations.NotNull;
 
 public record BanditRevolverShootPayload(int target) implements CustomPacketPayload {
@@ -63,21 +63,18 @@ public record BanditRevolverShootPayload(int target) implements CustomPacketPayl
                     Player target = (Player) var6;
                     if ((double) target.distanceTo(player) < (double) 100) {
                         GameWorldComponent game = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
-                        Item banditrevolver = HSRItems.BANDIT_REVOLVER;
                         boolean backfire = false;
-                        if (game.isInnocent(target) && !player.isCreative() && mainHandStack.is(banditrevolver)) {
+                        if (game.isInnocent(target) && !player.isCreative()) {
                             // \
                             boolean shouldDrop = false;
                             if (game.isRole(player, ModRoles.BANDIT)) {
-                                shouldDrop = player.getRandom().nextFloat() <= 0.7F;
+                                shouldDrop = player.getRandom().nextInt(0, 100) <= 90;
                             } else {
                                 shouldDrop = player.getRandom().nextFloat() <= 0.2F;
                             }
                             if (shouldDrop) {
                                 Scheduler.schedule(() -> {
-                                    if (player.getInventory().contains((s) -> s.is(TMMItemTags.GUNS))) {
-                                        player.getInventory().clearOrCountMatchingItems((s) -> s.is(banditrevolver), 1,
-                                                player.getInventory());
+                                    if (MCItemsUtils.clearItem(player, (s) -> s.is(TMMItemTags.GUNS)) > 0) {
                                         ItemEntity item = player.drop(TMMItems.REVOLVER.getDefaultInstance(), false,
                                                 false);
                                         if (item != null) {
