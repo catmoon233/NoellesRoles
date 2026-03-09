@@ -43,7 +43,7 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
 
     private int wrongGuessCount = 0;
     // private int MAX_WRONG_GUESSES = 10;
-    private int MAX_WRONG_GUESSES = 10;
+    private int MAX_WRONG_GUESSES = 8;
     private boolean rolesInitialized = false;
     // private boolean wasRunning = false;
     public int requiredCorrectCount = 0;
@@ -60,11 +60,6 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         this.wrongGuessCount = 0;
         this.rolesInitialized = false;
         this.MAX_WRONG_GUESSES = 5;
-        if (this.player instanceof ServerPlayer sp) {
-            int player_count = sp.level().players().size();
-            this.MAX_WRONG_GUESSES = (player_count / 2);
-            this.MAX_WRONG_GUESSES = Mth.clamp(5, 20, this.MAX_WRONG_GUESSES);
-        }
         ModComponents.RECORDER.sync(this.player);
     }
 
@@ -72,6 +67,7 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
         var players = player.level().players();
         int totalPlayers = players.size();
         this.requiredCorrectCount = getRequiredCorrectCount(totalPlayers);
+        this.MAX_WRONG_GUESSES = getRequiredCorrectCount(totalPlayers);
         this.sync();
     }
 
