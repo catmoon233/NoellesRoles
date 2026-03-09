@@ -53,7 +53,11 @@ public class GunCooldownMixin {
             if (mainHandStack.is(ModItems.ONCE_REVOLVER)) {
                 items.remove(ModItems.ONCE_REVOLVER);
             }
-            items.remove(ModItems.PATROLLER_REVOLVER);
+            if (mainHandStack.is(ModItems.PATROLLER_REVOLVER)) {
+                items.remove(TMMItems.REVOLVER);
+            } else {
+                items.remove(ModItems.PATROLLER_REVOLVER);
+            }
             cooldowns.addCooldown(ModItems.PATROLLER_REVOLVER, 3 * 20);
             items.forEach((item) -> {
                 if (!cooldowns.isOnCooldown(item)) {
