@@ -9,6 +9,7 @@ import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.replay.GameReplayUtils;
 import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameTimeComponent;
 import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions.WinStatus;
@@ -59,6 +60,23 @@ public class GameFunctionsCommand {
     CommandRegistrationCallback.EVENT.register(
         (dispatcher, registryAccess, environment) -> {
           dispatcher.register(Commands.literal("tmm:game").requires(source -> source.hasPermission(2))
+              .then(Commands.literal("gametime").executes((context) -> {
+                var source = context.getSource();
+                try {
+                  var gameTimeComponent = GameTimeComponent.KEY.get(source.getLevel());
+                  int leftTime = gameTimeComponent.getTime();
+                  float leftTimeSeconds = leftTime / 20;
+                  float leftTimeMinutes = leftTimeSeconds / 60;
+                  float leftTimeSeconds2 = leftTimeSeconds % 60;
+                  source.sendSuccess(() -> Component.translatable("Left Time: %s",
+                      String.format("%02.0f:%02.0f", leftTimeMinutes, leftTimeSeconds2)).withStyle(ChatFormatting.GREEN),
+                      false);
+                } catch (Exception e) {
+                  e.printStackTrace();
+                  source.sendFailure(Component.literal("Error: ").append(e.getMessage()).withStyle(ChatFormatting.RED));
+                }
+                return 1;
+              }))
               .then(Commands.literal("tests")
                   .then(Commands.literal("math").executes((context) -> {
                     ServerPlayNetworking.send(context.getSource().getPlayerOrException(),
@@ -551,7 +569,7 @@ public class GameFunctionsCommand {
     }
 
     // 触发时间停止效果
-    TimeStopEffect.triggerStart(executor, duration, Component.translatable("Test Time Stop!"));
+    TimeStopEffect.tryTriggerStart(executor, duration, Component.translatable("Test Time Stop!"));
 
     source.sendSuccess(() -> Component.translatable("Triggered time stop for %s ticks! Only you can move.", duration)
         .withStyle(ChatFormatting.GOLD), true);

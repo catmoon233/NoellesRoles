@@ -45,7 +45,7 @@ public class ExamplerPlayerWidget extends Button {
             setDisplayText(Component.translatable("hud.general.dead").withStyle(ChatFormatting.DARK_RED));
         } else {
             if (TMMClient.gameComponent != null && TMMClient.gameComponent.getRole(target.getProfile().getId()) != null
-                    && TMMClient.gameComponent.getRole(target.getProfile().getId()).canUseKiller()) {
+                    && TMMClient.gameComponent.isKillerTeam(target.getProfile().getId())) {
                 setDisplayText(Component.translatable("hud.general.killer_friend").withStyle(ChatFormatting.GOLD));
             }
         }

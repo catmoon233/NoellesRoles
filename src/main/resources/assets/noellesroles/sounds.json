@@ -5,6 +5,15 @@
 		],
 		"subtitle": "subtitles.gamber_died"
 	},
+	"noellesroles.to_be_continued": {
+		"sounds": [
+			{
+				"name": "noellesroles:to_be_continued",
+				"stream": true
+			}
+		],
+		"subtitle": "subtitles.to_be_continued"
+	},
 	"noellesroles.gongxifacai": {
 		"sounds": [
 			{

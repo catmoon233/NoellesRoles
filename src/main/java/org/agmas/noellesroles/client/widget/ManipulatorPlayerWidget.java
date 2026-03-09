@@ -50,7 +50,7 @@ public class ManipulatorPlayerWidget extends Button {
         if (targetPlayer.getGameMode() != GameType.ADVENTURE){
             setDisplayText(Component.translatable("hud.general.dead").withStyle(ChatFormatting.DARK_RED));
         }else {
-            if (TMMClient.gameComponent!=null && TMMClient.gameComponent.getRole(targetPlayer.getProfile().getId()) != null && TMMClient.gameComponent.getRole(targetPlayer.getProfile().getId()).canUseKiller()){
+            if (TMMClient.gameComponent!=null && TMMClient.gameComponent.getRole(targetPlayer.getProfile().getId()) != null && TMMClient.gameComponent.isKillerTeam(targetPlayer.getProfile().getId())){
                 setDisplayText(Component.translatable("hud.general.killer_friend").withStyle(ChatFormatting.GOLD));
             }
         }

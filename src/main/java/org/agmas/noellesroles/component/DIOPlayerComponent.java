@@ -249,7 +249,8 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
         this.timeStopCooldown = TIME_STOP_COOLDOWN;
 
         TimeStopEffect.triggerStart(serverPlayer, TIME_STOP_DURATION,
-                Component.translatable("message.noellesroles.time_stop.the_world"));
+                Component.translatable("message.noellesroles.time_stop.the_world").withStyle(ChatFormatting.GOLD,
+                        ChatFormatting.BOLD));
 
         // 播放音效
         Level world = player.level();
@@ -379,9 +380,9 @@ public class DIOPlayerComponent implements RoleComponent, ServerTickingComponent
                 Component.translatable("message.noellesroles.dio.final_carnival_activate")
                         .withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
                 true);
-                
+
         serverPlayer.serverLevel().sendParticles(
-                new DustParticleOptions(new Vector3f(1,0,0), 1f),
+                new DustParticleOptions(new Vector3f(1, 0, 0), 1f),
                 player.getX(),
                 player.getY(),
                 player.getZ(),

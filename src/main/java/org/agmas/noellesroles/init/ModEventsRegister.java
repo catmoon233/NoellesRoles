@@ -63,6 +63,7 @@ import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMGameModes;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameRoundEndComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
@@ -75,6 +76,7 @@ import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.event.AfterShieldAllowPlayerDeathWithKiller;
 import dev.doctor4t.trainmurdermystery.event.AllowPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.CanSeePoison;
+import dev.doctor4t.trainmurdermystery.event.OnGameEnd;
 import dev.doctor4t.trainmurdermystery.event.OnGameTrueStarted;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerDeath;
 import dev.doctor4t.trainmurdermystery.event.OnPlayerDeathWithKiller;
@@ -431,6 +433,31 @@ public class ModEventsRegister {
         PlayerStatsBeforeRefugee.beforeLoadFunc = (player) -> {
             ModComponents.DEATH_PENALTY.get(player).reset();
         };
+        OnGameEnd.EVENT.register((world, gameWorldComponent) -> {
+            GameRoundEndComponent roundEnd = GameRoundEndComponent.KEY.get(world);
+            if (roundEnd.getWinStatus().equals(GameFunctions.WinStatus.TIME)) {
+                int alivePlayers = 0, aliveKillers = 0, aliveGhost = 0;
+                var players = world.players();
+                for (ServerPlayer player : players) {
+                    if (GameFunctions.isPlayerAliveAndSurvival(player)) {
+                        alivePlayers++;
+                        if (gameWorldComponent.isKillerTeam(player)) {
+                            aliveKillers++;
+                        }
+                        if (gameWorldComponent.isRole(player, ModRoles.GHOST)) {
+                            aliveGhost++;
+                        }
+                    }
+                }
+                if (aliveGhost + aliveKillers >= alivePlayers) {
+                    GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(8 * 20, () -> {
+                        players.forEach((p) -> {
+                            p.playNotifySound(NRSounds.TO_BE_CONTINUED, SoundSource.MASTER, 0.5f, 1f);
+                        });
+                    }));
+                }
+            }
+        });
         OnVendingMachinesBuyItems.EVENT.register((player, itemStack) -> {
             var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
             if (itemStack.stack().is(ModItems.ONCE_REVOLVER)) {
