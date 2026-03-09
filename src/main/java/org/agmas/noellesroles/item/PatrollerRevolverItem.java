@@ -2,7 +2,6 @@
 package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.TMM;
-import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
@@ -10,7 +9,6 @@ import dev.doctor4t.trainmurdermystery.client.particle.HandParticle;
 import dev.doctor4t.trainmurdermystery.client.render.TMMRenderLayers;
 import dev.doctor4t.trainmurdermystery.compat.CrosshairaddonsCompat;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import dev.doctor4t.trainmurdermystery.network.tmm.GunShootPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.world.InteractionHand;
@@ -24,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-import org.agmas.noellesroles.init.ModItems;
 import org.jetbrains.annotations.NotNull;
 
 public class PatrollerRevolverItem extends Item {
@@ -57,17 +54,17 @@ public class PatrollerRevolverItem extends Item {
 
             user.setXRot(user.getXRot() - 4.0F);
             spawnHandParticle();
-            user.getCooldowns().addCooldown(TMMItems.REVOLVER, 5 * 20);
         } else {
             gameComponent = (GameWorldComponent) GameWorldComponent.KEY.get(world);
             role = gameComponent.getRole(user);
             if (role != null && !role.onUseGun(user)) {
                 return InteractionResultHolder.fail(stack);
             }
-            user.getCooldowns().addCooldown(TMMItems.REVOLVER, 3 * 20);
-            user.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, TMMConfig.revolverCooldown * 20);
         }
+        // int REVOLVER_COOLDOWN = GameConstants.ITEM_COOLDOWNS.getOrDefault(TMMItems.REVOLVER, 0);
 
+        // user.getCooldowns().addCooldown(TMMItems.REVOLVER, 2 * 20);
+        // user.getCooldowns().addCooldown(ModItems.PATROLLER_REVOLVER, REVOLVER_COOLDOWN / 5);
         return InteractionResultHolder.consume(stack);
     }
 

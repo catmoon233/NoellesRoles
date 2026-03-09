@@ -53,17 +53,16 @@ public class GunCooldownMixin {
             if (mainHandStack.is(ModItems.ONCE_REVOLVER)) {
                 items.remove(ModItems.ONCE_REVOLVER);
             }
+            items.remove(ModItems.PATROLLER_REVOLVER);
             if (mainHandStack.is(ModItems.PATROLLER_REVOLVER)) {
-                items.remove(TMMItems.REVOLVER);
+                cooldowns.addCooldown(ModItems.PATROLLER_REVOLVER, REVOLVER_COOLDOWN / 5);
             } else {
-                items.remove(ModItems.PATROLLER_REVOLVER);
+                cooldowns.addCooldown(ModItems.PATROLLER_REVOLVER, REVOLVER_COOLDOWN / 8);
             }
-            cooldowns.addCooldown(ModItems.PATROLLER_REVOLVER, 3 * 20);
+            // cooldowns.addCooldown(ModItems.PATROLLER_REVOLVER, 3 * 20);
             items.forEach((item) -> {
-                if (!cooldowns.isOnCooldown(item)) {
-                    cooldowns.addCooldown(item,
-                            (Integer) GameConstants.ITEM_COOLDOWNS.getOrDefault(item, REVOLVER_COOLDOWN));
-                }
+                cooldowns.addCooldown(item,
+                        (Integer) GameConstants.ITEM_COOLDOWNS.getOrDefault(item, REVOLVER_COOLDOWN));
             });
         }
     }
