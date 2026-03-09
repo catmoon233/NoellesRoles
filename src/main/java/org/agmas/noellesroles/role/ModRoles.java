@@ -258,7 +258,7 @@ public class ModRoles {
           false, false, Role.MoodType.FAKE,
           Integer.MAX_VALUE, false))
       .setCanSeeCoin(true).setNeutrals(true).setCanPickUpRevolver(false)
-      .setComponentKey(ModComponents.WAYFARER);
+      .setComponentKey(ModComponents.WAYFARER).setCanUseInstinct(false);
   public static Role JESTER = TMMRoles
       .registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
           false, Role.MoodType.FAKE, Integer.MAX_VALUE, true))

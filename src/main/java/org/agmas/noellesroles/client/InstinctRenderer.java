@@ -286,11 +286,19 @@ public class InstinctRenderer {
                                 }
                             }
                         }
-                        if (GameFunctions.isPlayerAliveAndSurvival(self))
-                            return -2;
                     }
-
                 }
+                // JOJO
+                if (TMMClient.gameComponent.isRole(self, ModRoles.JOJO)) {
+                    if (GameFunctions.isPlayerAliveAndSurvival(target_player)) {
+                        if (target_player.distanceTo(self) <= 3) {
+                            if (TMMClient.gameComponent.isRole(target_player, ModRoles.DIO)) {
+                                return ModRoles.DIO.color();
+                            }
+                        }
+                    }
+                }
+
                 var target_role = TMMClient.gameComponent.getRole(target_player);
                 BartenderPlayerComponent bartenderPlayerComponent = BartenderPlayerComponent.KEY.get(target_player);
                 PlayerPoisonComponent playerPoisonComponent = PlayerPoisonComponent.KEY.get(target_player);
@@ -445,7 +453,7 @@ public class InstinctRenderer {
                     }
 
                     if (RoleUtils.compareRole(target_role, ModRoles.PUPPETEER)) {
-                        int entityOffset = target_player.getId() * 7;
+                        // int entityOffset = target_player.getId() * 7;
                         return (ModRoles.PUPPETEER.color());
                     }
                     if (TMMClient.gameComponent.isRole(self, ModRoles.COMMANDER)) {
