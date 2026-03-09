@@ -11,21 +11,30 @@ public class MathProblemsManager {
 
     /**
      * 随机生成一道数学题目
-     * 
+     * @param difficulty 难度。1为简单，2为难。
      * @return 包含题目及选项的 MathProblem 对象
      */
-    public MathProblem generateProblem() {
+    public MathProblem generateProblem(int difficulty) {
+        // forced ? 1 : 2
         // 随机选择题目类型：0 表示加减乘除，1 表示简单求导
-        int type = random.nextInt(50);
-        return type == 0 ? generateDerivativeProblem() : generateArithmeticProblem();
+        int type = random.nextInt(30);
+        if (difficulty == 1) {
+            type = random.nextInt(60);
+        }
+        return type == 0 ? generateDerivativeProblem(difficulty) : generateArithmeticProblem(difficulty);
     }
 
     /**
      * 生成一道加减乘除题目
      */
-    private MathProblem generateArithmeticProblem() {
+    private MathProblem generateArithmeticProblem(int difficulty) {
+        
         int num1 = random.nextInt(-16, 17);
         int num2 = random.nextInt(-16, 17);
+        if(difficulty == 1){
+            num1 = random.nextInt(-10, 12);
+            num2 = random.nextInt(-10, 12);
+        }
         char op = OPERATORS[random.nextInt(OPERATORS.length)];
         int result;
         String opDisplay = "";
@@ -130,10 +139,14 @@ public class MathProblemsManager {
         }
     }
 
-    private MathProblem generateDerivativeProblem() {
+    private MathProblem generateDerivativeProblem(int difficulty) {
         int coefficient = random.nextInt(-10, 10);
-        int exponent = random.nextInt(1, 16);
 
+        int exponent = random.nextInt(1, 16);
+        if (difficulty == 1) {
+            coefficient = random.nextInt(-5, 5);
+            exponent = random.nextInt(1, 5);
+        }
         String function = formatTerm(coefficient, exponent);
 
         int newCoeff = coefficient * exponent;

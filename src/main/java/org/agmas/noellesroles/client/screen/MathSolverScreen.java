@@ -65,7 +65,7 @@ public class MathSolverScreen extends Screen {
         MathProblemsManager manager = new MathProblemsManager();
         int maxT = 0;
         for (int i = 0; i < totalPages; i++) {
-            var newP = manager.generateProblem();
+            var newP = manager.generateProblem(forced ? 1 : 2);
             switch (newP.getType()) {
                 case 1:
                     maxT += 4;

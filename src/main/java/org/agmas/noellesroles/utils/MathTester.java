@@ -8,7 +8,7 @@ public class MathTester {
     public static void main(String[] args) {
         MathProblemsManager manager = new MathProblemsManager();
         for (int i = 0; i < 5; i++) {
-            MathProblem problem = manager.generateProblem();
+            MathProblem problem = manager.generateProblem(1);
             System.out.println("题目：" + problem.getQuestion());
             List<String> options = problem.getOptions();
             for (int j = 0; j < options.size(); j++) {
