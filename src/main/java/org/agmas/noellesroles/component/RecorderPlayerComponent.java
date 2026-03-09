@@ -168,22 +168,7 @@ public class RecorderPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     public int getCorrectGuesses() {
-        int correctGuesses = 0;
-        GameWorldComponent gameWorld = GameWorldComponent.KEY.get(player.level());
-
-        for (Map.Entry<UUID, ResourceLocation> entry : guesses.entrySet()) {
-            UUID targetUuid = entry.getKey();
-            ResourceLocation guessedRoleId = entry.getValue();
-
-            Player target = player.level().getPlayerByUUID(targetUuid);
-            if (target != null) {
-                Role actualRole = gameWorld.getRole(target);
-                if (actualRole != null && actualRole.identifier().equals(guessedRoleId)) {
-                    correctGuesses++;
-                }
-            }
-        }
-        return correctGuesses;
+        return guesses.size();
     }
 
     private void checkWinCondition() {
