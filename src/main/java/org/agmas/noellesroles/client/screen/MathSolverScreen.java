@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MathSolverScreen extends Screen {
     private final List<MathProblem> MathProblems = new ArrayList<>();
-    private final int totalPages = 5;
+    private int totalPages = 5;
     private int maxTime = 20 * 20; // 20s
 
     private int currentIndex = 0;
@@ -45,6 +45,11 @@ public class MathSolverScreen extends Screen {
         currentIndex = -1;
         startTime = 0;
         failed = false;
+        if (forced) {
+            totalPages = 5;
+        } else {
+            totalPages = 10;
+        }
     }
 
     public void startMathSolving() {
