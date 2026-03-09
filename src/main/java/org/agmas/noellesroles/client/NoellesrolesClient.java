@@ -452,7 +452,7 @@ public class NoellesrolesClient implements ClientModInitializer {
                     value.setYBodyRot(p.yBodyRot);
                     value.setYHeadRot(p.getYHeadRot());
 
-                    value.setItemInHand(InteractionHand.MAIN_HAND,p.getItemInHand(InteractionHand.MAIN_HAND));
+                    value.setItemInHand(InteractionHand.MAIN_HAND, p.getItemInHand(InteractionHand.MAIN_HAND));
                     value.setPose(p.getPose());
 
                     lastTimeStopRenderPlayer.put(p.getUUID(), value);
@@ -619,6 +619,24 @@ public class NoellesrolesClient implements ClientModInitializer {
                     // 非炸弹客始终不可见
                     return 0.0F;
                 });
+        // message.tip.skill_disabled
+        OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
+            if (TMMClient.gameComponent != null && minecraft != null && minecraft.player != null) {
+                if (TMMClient.gameComponent.isRunning()) {
+                    if (GameFunctions.isPlayerAliveAndSurvival(minecraft.player)) {
+                        if (!TMMClient.gameComponent.isSkillAvailable) {
+                            //
+                            return new MutableComponentResult(
+                                    Component
+                                            .translatable("message.tip.skill_disabled")
+                                            .withStyle(ChatFormatting.RED));
+                        }
+                    }
+
+                }
+            }
+            return null;
+        });
         OnMessageBelowMoneyRenderer.EVENT.register((minecraft, guiGraphics, deltaTracker) -> {
             if (TMMClient.gameComponent != null && !taskBlocks.isEmpty()) {
                 if (TMMClient.gameComponent.isRunning()) {

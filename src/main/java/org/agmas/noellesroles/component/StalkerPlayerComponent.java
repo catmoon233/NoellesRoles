@@ -293,6 +293,12 @@ public class StalkerPlayerComponent implements RoleComponent, ServerTickingCompo
      * 进入二阶段后盾牌消失
      */
     public void advanceToPhase2() {
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            // player.displayClientMessage(
+            //         Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         this.phase = 2;
         this.energy = 0; // 重置能量，从0开始积累30
         this.immunityUsed = true; // 进入二阶段后盾牌消失

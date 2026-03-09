@@ -24,7 +24,7 @@ import org.agmas.noellesroles.init.ModItems;
 
 public class WheelchairItem extends Item {
    public WheelchairItem() {
-      super(new Item.Properties().stacksTo(1).durability(60));
+      super(new Item.Properties().stacksTo(1).durability(90));
    }
 
    public InteractionResult useOn(UseOnContext useOnContext) {

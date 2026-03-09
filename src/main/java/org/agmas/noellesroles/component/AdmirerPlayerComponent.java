@@ -314,6 +314,8 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
      * 检查是否是活跃的慕恋者
      */
     public boolean isActiveAdmirer() {
+        if (!GameWorldComponent.KEY.get(player.level()).isRole(player, ModRoles.ADMIRER))
+            return false;
         return isAdmirerMarked && !hasTransformed;
     }
 
@@ -342,7 +344,12 @@ public class AdmirerPlayerComponent implements RoleComponent, ServerTickingCompo
         // 检查玩家是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(player))
             return;
-
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            // player.displayClientMessage(
+            //         Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         // 检查绑定对象状态
         checkBoundTarget();
 

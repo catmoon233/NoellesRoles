@@ -54,10 +54,15 @@ public class PatrollerPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     public void onNearbyDeath() {
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            // player.displayClientMessage(
+            //         Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         if (this.hasTriggered)
             return;
         if (player instanceof ServerPlayer serverPlayer) {
-            GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.level());
             if (gameWorldComponent != null) {
                 if (gameWorldComponent.isRole(serverPlayer, ModRoles.PATROLLER)) {
                     serverPlayer.addItem(new ItemStack(ModItems.PATROLLER_REVOLVER));

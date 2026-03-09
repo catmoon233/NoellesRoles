@@ -152,6 +152,12 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     private void stopFindKiller_KillerDead() {
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            player.displayClientMessage(
+                    Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         this.phase = 0;
         this.killer = null;
         this.deathReason = null;
@@ -242,11 +248,16 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
                 return net.minecraft.world.InteractionResult.PASS;
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(level);
             if (gameWorldComponent.isRole(player, ModRoles.WAYFARER)) {
+
                 var wayC = WayfarerPlayerComponent.KEY.get(player);
                 if (wayC.phase != 0) {
                     return InteractionResult.PASS;
                 }
-
+                if (!gameWorldComponent.isSkillAvailable) {
+                    player.displayClientMessage(
+                            Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+                    return InteractionResult.PASS;
+                }
                 if (level.isClientSide)
                     return InteractionResult.SUCCESS;
                 Player targetVictim = level.getPlayerByUUID(be.getPlayerUuid());
@@ -273,6 +284,12 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     public void startPhaseThree(ResourceLocation trueDeathReason) {
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            player.displayClientMessage(
+                    Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         this.phase = 3;
         this.killer = null;
         this.deathReason = null;
@@ -325,11 +342,17 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
     }
 
     public void startPhaseTwo() {
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            player.displayClientMessage(
+                    Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         this.phase = 2;
         this.killer = null;
         // 播放音效：1阶段进2阶段用信标激活的声音
         // player.level().playSound(null, player.blockPosition(),
-        //         SoundEvents.BEACON_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
+        // SoundEvents.BEACON_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
 
         TMMItemUtils.clearItem(player, TMMItems.KNIFE);
         TMMItemUtils.clearItem(player, ModItems.FAKE_KNIFE);
@@ -345,6 +368,12 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
 
     public void startFindKiller(PlayerBodyEntity be, @Nullable Player targetVictim, @NotNull Player targetKiller,
             BodyDeathReasonComponent bodyDeathReasonComponent) {
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            player.displayClientMessage(
+                    Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         boolean hasKey = false;
         boolean hasInited = TMMItemUtils.hasItem(this.player, TMMItems.KEY) > 0;
         if (!hasInited) {
@@ -389,7 +418,7 @@ public class WayfarerPlayerComponent implements RoleComponent, ServerTickingComp
         this.killer = targetKiller.getUUID();
         // 播放音效：0阶段进1阶段用潮涌核心激活的声音
         // player.level().playSound(null, player.blockPosition(),
-        //         SoundEvents.CONDUIT_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
+        // SoundEvents.CONDUIT_ACTIVATE, SoundSource.MASTER, 1.0F, 1.0F);
         this.player.displayClientMessage(Component.translatable("", targetKiller.getDisplayName()), true);
         this.deathReason = ResourceLocation.tryParse(be.getDeathReason());
         this.sync();

@@ -341,6 +341,11 @@ public class ModPacketsReciever {
       final var player = context.player();
       GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
           .get(player.level());
+      if (!gameWorldComponent.isSkillAvailable) {
+        player.displayClientMessage(
+            Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+        return;
+      }
       NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
           .get(player);
 
@@ -520,6 +525,12 @@ public class ModPacketsReciever {
     });
     ServerPlayNetworking.registerGlobalReceiver(ModPackets.INSANE_KILLER_ABILITY_PACKET, (payload, context) -> {
       ServerPlayer player = (ServerPlayer) context.player();
+      var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+      if (!gameWorldComponent.isSkillAvailable) {
+        player.displayClientMessage(
+            Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+        return;
+      }
       InsaneKillerPlayerComponent component = InsaneKillerPlayerComponent.KEY.get(player);
 
       // 检查冷却

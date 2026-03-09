@@ -185,7 +185,10 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return false;
         }
-
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            return false;
+        }
         // 检查冷却（卖物品模式不需要冷却）
         if (this.cooldown > 0 && this.currentMode != MODE_SELL_ITEM) {
             return false;
@@ -270,9 +273,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         pendingNotifications.add(new PendingNotification(
                 targetPlayer,
                 "message.noellesroles.thief.money_stolen",
-                new Object[]{STEAL_MONEY_AMOUNT},
-                NOTIFICATION_DELAY
-        ));
+                new Object[] { STEAL_MONEY_AMOUNT },
+                NOTIFICATION_DELAY));
 
         // 成功偷取，进入冷却
         this.cooldown = ABILITY_COOLDOWN;
@@ -393,9 +395,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
         pendingNotifications.add(new PendingNotification(
                 targetPlayer,
                 "message.noellesroles.thief.item_stolen",
-                new Object[]{itemName},
-                NOTIFICATION_DELAY
-        ));
+                new Object[] { itemName },
+                NOTIFICATION_DELAY));
 
         // 成功偷取，进入冷却
         this.cooldown = ABILITY_COOLDOWN;
@@ -815,7 +816,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
                 PendingNotification notification = iterator.next();
                 notification.delayTicks--;
                 if (notification.delayTicks <= 0) {
-                    if (notification.targetPlayer != null && !GameFunctions.isPlayerEliminated(notification.targetPlayer)) {
+                    if (notification.targetPlayer != null
+                            && !GameFunctions.isPlayerEliminated(notification.targetPlayer)) {
                         notification.targetPlayer.displayClientMessage(
                                 Component.translatable(notification.messageKey, notification.messageArgs)
                                         .withStyle(ChatFormatting.RED),

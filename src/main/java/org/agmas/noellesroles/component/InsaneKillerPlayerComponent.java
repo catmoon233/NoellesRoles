@@ -85,8 +85,15 @@ public class InsaneKillerPlayerComponent
     public static void registerEvent() {
 
         AfterShieldAllowPlayerDeath.EVENT.register(((playerEntity, identifier) -> {
-            if (GameWorldComponent.KEY.get(playerEntity.level()).isRole(playerEntity,
+            var gameWorldComponent = GameWorldComponent.KEY.get(playerEntity.level());
+            if (gameWorldComponent.isRole(playerEntity,
                     ModRoles.THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES)) {
+                if (!gameWorldComponent.isSkillAvailable) {
+                    // player.displayClientMessage(
+                    // Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED),
+                    // true);
+                    return true;
+                }
                 InsaneKillerPlayerComponent insaneKillerPlayerComponent = InsaneKillerPlayerComponent.KEY
                         .get(playerEntity);
                 if (insaneKillerPlayerComponent.getDeathState() == 0) {

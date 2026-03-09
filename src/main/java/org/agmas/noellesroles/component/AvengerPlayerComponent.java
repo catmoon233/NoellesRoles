@@ -229,6 +229,11 @@ public class AvengerPlayerComponent implements RoleComponent, ServerTickingCompo
         if (refugeeC.isAnyRevivals) {
             isRefugeeAlive = true;
         }
+        if (!gameWorld.isSkillAvailable) {
+            // player.displayClientMessage(
+            //         Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         if (!isRefugeeAlive) {
             if (!isTargetAlive()) {
                 // 目标已死亡，激活复仇能力

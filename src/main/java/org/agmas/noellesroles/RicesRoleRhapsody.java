@@ -711,7 +711,6 @@ public class RicesRoleRhapsody implements ModInitializer {
             // 验证是慕恋者
             if (!admirerComp.isActiveAdmirer())
                 return;
-
             // 验证玩家存活
             if (!GameFunctions.isPlayerAliveAndSurvival(context.player()))
                 return;

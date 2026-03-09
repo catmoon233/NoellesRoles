@@ -572,7 +572,6 @@ public class RicesRoleRhapsodyClient implements ClientModInitializer {
     public static void handleAdmirerContinuousInput(Minecraft client) {
         if (client.player == null)
             return;
-
         AdmirerPlayerComponent admirerComp = AdmirerPlayerComponent.KEY.get(client.player);
         if (!admirerComp.isActiveAdmirer())
             return;

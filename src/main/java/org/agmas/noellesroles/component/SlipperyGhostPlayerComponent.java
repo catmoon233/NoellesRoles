@@ -1,6 +1,5 @@
 package org.agmas.noellesroles.component;
 
-import net.minecraft.server.level.ServerPlayer;
 import  org.agmas.noellesroles.role.ModRoles;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;

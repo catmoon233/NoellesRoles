@@ -1,7 +1,10 @@
 package org.agmas.noellesroles.component;
 
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
+
 import org.agmas.noellesroles.init.ModEntities;
+import org.agmas.noellesroles.init.ModItems;
+import org.agmas.noellesroles.repack.HSRItems;
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
 import org.agmas.noellesroles.role.ModRoles;
@@ -9,6 +12,7 @@ import org.agmas.noellesroles.utils.RoleUtils;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -196,7 +200,12 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
     public void collectBody(UUID bodyOwnerUuid, int totalPlayers) {
         if (!canCollectBody())
             return;
-
+        var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+        if (!gameWorldComponent.isSkillAvailable) {
+            player.displayClientMessage(
+                    Component.translatable("message.tip.skill_disabled").withStyle(ChatFormatting.RED), true);
+            return;
+        }
         // 添加到收集列表
         collectedBodies++;
         collectedBodyUuids.add(bodyOwnerUuid);
@@ -608,7 +617,6 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
     public void serverTick() {
         if (!isActivePuppeteer())
             return;
-
         // 检查玩家是否存活
         if (!GameFunctions.isPlayerAliveAndSurvival(player))
             return;
@@ -649,6 +657,24 @@ public class PuppeteerPlayerComponent implements RoleComponent, ServerTickingCom
                 // 时间到，返回本体
                 if (puppetControlTimer <= 0) {
                     returnToBody(true);
+                }
+            }
+        } else {
+            if (player.level().getGameTime() % 60 == 0) {
+                int clearCount = 0;
+                clearCount += TMMItemUtils.clearItem(player, TMMItems.KNIFE);
+                clearCount += TMMItemUtils.clearItem(player, TMMItems.THROWN_GRENADE);
+                clearCount += TMMItemUtils.clearItem(player, ModItems.THROWING_KNIFE);
+                clearCount += TMMItemUtils.clearItem(player, ModItems.ONCE_REVOLVER);
+                clearCount += TMMItemUtils.clearItem(player, ModItems.PATROLLER_REVOLVER);
+                clearCount += TMMItemUtils.clearItem(player, TMMItems.REVOLVER);
+                clearCount += TMMItemUtils.clearItem(player, HSRItems.TOXIN);
+                clearCount += TMMItemUtils.clearItem(player, HSRItems.BANDIT_REVOLVER);
+                if (clearCount > 0) {
+                    player.displayClientMessage(
+                            Component.translatable("message.puppeteer.clear_item", clearCount)
+                                    .withStyle(ChatFormatting.RED),
+                            true);
                 }
             }
         }
