@@ -2,6 +2,7 @@ package org.agmas.noellesroles.mixin.client.roles.bartender;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.block_entity.BeveragePlateBlockEntity;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMParticles;
@@ -32,12 +33,13 @@ public class DefenseVialViewMixin {
                 canSeePoison = role.identifier().getPath().equals(ModRoles.BARTENDER.identifier().getPath())
                         || role.identifier().getPath().equals(ModRoles.POISONER.identifier().getPath());
                 if (!canSeePoison) {
-                    if (world.players().stream().anyMatch((p) -> {
-                        return GameFunctions.isPlayerAliveAndSurvival(p)
-                                && TMMClient.gameComponent.isRole(p, ModRoles.POISONER);
-                    })) {
-                        canSeePoison = true;
-                    }
+                    if (GameWorldComponent.isKillerTeamRoleStatic(role))
+                        if (world.players().stream().anyMatch((p) -> {
+                            return GameFunctions.isPlayerAliveAndSurvival(p)
+                                    && TMMClient.gameComponent.isRole(p, ModRoles.POISONER);
+                        })) {
+                            canSeePoison = true;
+                        }
                 }
                 if (canSeePoison) {
                     world.addParticle(TMMParticles.POISON, true, (double) ((float) pos.getX() + 0.5F),
