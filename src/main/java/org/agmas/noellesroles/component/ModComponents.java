@@ -152,6 +152,10 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
     public static final ComponentKey<MonitorPlayerComponent> MONITOR = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "monitor"),
             MonitorPlayerComponent.class);
+    public static final ComponentKey<TelegrapherPlayerComponent> TELEGRAPHER = ComponentRegistry.getOrCreate(
+            ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "telegrapher"),
+            TelegrapherPlayerComponent.class);
+
     public static final ComponentKey<DefibrillatorComponent> DEFIBRILLATOR = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "defibrillator"),
             DefibrillatorComponent.class);
@@ -383,6 +387,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, MONITOR)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(MonitorPlayerComponent::new);
+
+        // 注册电报员组件 - 存储匿名消息发送次数
+        registry.beginRegistration(Player.class, TELEGRAPHER)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(TelegrapherPlayerComponent::new);
 
         // 注册死亡惩罚组件
         registry.beginRegistration(Player.class, DEATH_PENALTY)

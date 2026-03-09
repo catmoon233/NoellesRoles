@@ -133,6 +133,7 @@ public class ModRoles {
   public static ResourceLocation MAGICIAN_ID = Noellesroles.id("magician");
   public static ResourceLocation CLOCKMAKER_ID = Noellesroles.id("clockmaker");
   public static final ResourceLocation WRITER_ID = Noellesroles.id("writer");
+  public static final ResourceLocation TELEGRAPHER_ID = Noellesroles.id("telegrapher");
   public static final ResourceLocation RESCUER_ID = Noellesroles.id("rescuer");
   public static final ResourceLocation FIREFIGHTER_ID = Noellesroles.id("firefighter");
   public static final ResourceLocation ACCOUNTANT_ID = Noellesroles.id("accountant");
@@ -325,7 +326,7 @@ public class ModRoles {
    * - 标准冲刺时间
    * - 在计分板上显示
    * - 专属商店：书与笔(100金币)
-   * - 0.5%概率刷新
+   * - 2%概率刷新
    */
   // 作家角色 - 乘客阵营
   public static Role WRITER = TMMRoles.registerRole(new NoramlRole(
@@ -337,6 +338,28 @@ public class ModRoles {
       TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
       false // 不隐藏计分板
   )).setCanSeeCoin(true);
+
+  /**
+   * 电报员角色
+   * - 属于乘客阵营 (isInnocent = true)
+   * - 不能使用杀手能力 (canUseKiller = false)
+   * - 真实心情系统
+   * - 标准冲刺时间
+   * - 不隐藏计分板
+   * - 技能：可以发送匿名消息给所有玩家
+   * - 每局最多发送6次
+   * - 2%概率刷新
+   */
+  // 电报员角色 - 乘客阵营
+  public static Role TELEGRAPHER = TMMRoles.registerRole(new NoramlRole(
+      TELEGRAPHER_ID, // 角色 ID
+      new Color(199, 155, 233).getRGB(), // 浅紫色
+      true, // isInnocent = 乘客阵营
+      false, // canUseKiller = 无杀手能力
+      Role.MoodType.REAL, // 真实心情
+      TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
+      false // 不隐藏计分板
+  )).setCanSeeCoin(true).setComponentKey(org.agmas.noellesroles.component.TelegrapherPlayerComponent.KEY);
 
   /**
    * 搜救员角色
