@@ -67,6 +67,10 @@
 			{
 				"name": "noellesroles:jester/zombieempiror_song",
 				"stream": true
+			},
+			{
+				"name": "noellesroles:jester/shake_and_sway",
+				"stream": true
 			}
 		],
 		"subtitle": "subtitles.noellesroles.jester"
