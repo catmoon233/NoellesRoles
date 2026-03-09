@@ -375,6 +375,27 @@ public class RicesRoleRhapsody implements ModInitializer {
             }
         });
 
+        // 处理电报员消息包
+        ServerPlayNetworking.registerGlobalReceiver(TELEGRAPHER_PACKET, (payload, context) -> {
+            GameWorldComponent gameWorld = GameWorldComponent.KEY.get(context.player().level());
+
+            // 验证玩家是电报员
+            if (!gameWorld.isRole(context.player(), ModRoles.TELEGRAPHER))
+                return;
+
+            // 验证玩家存活
+            if (!GameFunctions.isPlayerAliveAndSurvival(context.player()))
+                return;
+
+            // 验证消息不为空
+            if (payload.message() == null || payload.message().trim().isEmpty())
+                return;
+
+            // 获取电报员组件并发送消息
+            TelegrapherPlayerComponent telegrapherComp = ModComponents.TELEGRAPHER.get(context.player());
+            telegrapherComp.sendAnonymousMessage(payload.message());
+        });
+
         // 处理邮差传递包
         ServerPlayNetworking.registerGlobalReceiver(POSTMAN_PACKET, (payload, context) -> {
             // 验证玩家存活
@@ -996,6 +1017,13 @@ public class RicesRoleRhapsody implements ModInitializer {
             // 重置私家侦探组件
             DetectivePlayerComponent detectiveComponent = ModComponents.DETECTIVE.get(player);
             detectiveComponent.reset();
+        }
+
+        // ==================== 电报员角色处理 ====================
+        if (role.equals(ModRoles.TELEGRAPHER)) {
+            // 重置电报员组件
+            TelegrapherPlayerComponent telegrapherComponent = ModComponents.TELEGRAPHER.get(player);
+            telegrapherComponent.reset();
         }
 
         // ==================== 跟踪者角色处理 ====================

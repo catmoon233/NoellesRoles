@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.client;
 
 import org.agmas.noellesroles.client.screen.BroadcasterScreen;
+import org.agmas.noellesroles.client.screen.TelegrapherScreen;
 import org.agmas.noellesroles.packet.AbilityC2SPacket;
 import org.agmas.noellesroles.packet.AbilityWithTargetC2SPacket;
 import org.agmas.noellesroles.packet.VultureEatC2SPacket;
@@ -54,6 +55,13 @@ public class ClientAbilityHandler {
                 return;
             client.execute(() -> {
                 client.setScreen(new BroadcasterScreen());
+            });
+            return;
+        } else if (gameWorldComponent.isRole(Minecraft.getInstance().player, ModRoles.TELEGRAPHER)) {
+            if (!NoellesrolesClient.isPlayerInAdventureMode(client.player))
+                return;
+            client.execute(() -> {
+                client.setScreen(new TelegrapherScreen());
             });
             return;
         }

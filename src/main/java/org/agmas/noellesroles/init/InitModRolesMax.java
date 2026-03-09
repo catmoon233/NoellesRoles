@@ -135,6 +135,9 @@ public class InitModRolesMax {
         // 作家 - 默认为0，在 InitModRolesMax 中动态设置（0.5%概率刷新）
         Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 0);
 
+        // 电报员 - 默认为0，在 InitModRolesMax 中动态设置（0.5%概率刷新）
+        Harpymodloader.setRoleMaximum(ModRoles.TELEGRAPHER_ID, 0);
+
         // 设置角色最大数量
         Harpymodloader.setRoleMaximum(ModRoles.POISONER_ID, 0);
         // 和医生一起生成
@@ -428,6 +431,13 @@ public class InitModRolesMax {
                 Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 1);
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.WRITER_ID, 0);
+            }
+
+            // TELEGRAPHER (电报员) - 0.5%概率生成（与作家相同）
+            if (random.nextInt(0, 100) <= 2) {
+                Harpymodloader.setRoleMaximum(ModRoles.TELEGRAPHER_ID, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.TELEGRAPHER_ID, 0);
             }
             initModifiersCount(players_count);
         });
