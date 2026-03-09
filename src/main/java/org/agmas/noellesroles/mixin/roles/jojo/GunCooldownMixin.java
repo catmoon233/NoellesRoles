@@ -23,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
 @Mixin(GunShootPayload.Receiver.class)
 public class GunCooldownMixin {
     // JOJO 两倍枪冷却
-    @Inject(method = "receive", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "receive", at = @At("TAIL"), cancellable = true)
     public void receive(@NotNull GunShootPayload payload, ServerPlayNetworking.@NotNull Context context,
             CallbackInfo ci) {
         ServerPlayer player = context.player();
