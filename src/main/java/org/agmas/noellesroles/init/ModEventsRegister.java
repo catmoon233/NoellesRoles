@@ -48,6 +48,7 @@ import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
+import org.agmas.noellesroles.roles.hoan_meirin.FistPunchHandler;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.voodoo.VoodooDeathHandler;
@@ -434,6 +435,7 @@ public class ModEventsRegister {
             ModComponents.DEATH_PENALTY.get(player).reset();
         };
         OnGameEnd.EVENT.register((world, gameWorldComponent) -> {
+            FistPunchHandler.PUNCH_RECORDS.clear();
             GameRoundEndComponent roundEnd = GameRoundEndComponent.KEY.get(world);
             if (roundEnd.getWinStatus().equals(GameFunctions.WinStatus.TIME)) {
                 int alivePlayers = 0, aliveKillers = 0, aliveGhost = 0;
@@ -1201,6 +1203,7 @@ public class ModEventsRegister {
         });
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
+            FistPunchHandler.PUNCH_RECORDS.clear();
             var blackoutComponent = WorldBlackoutComponent.KEY.get(serverLevel);
 
             GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(20, () -> {

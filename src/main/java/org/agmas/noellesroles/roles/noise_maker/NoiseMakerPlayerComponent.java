@@ -102,6 +102,8 @@ public class NoiseMakerPlayerComponent implements RoleComponent, ServerTickingCo
             player.level().playSound(null, serverPlayer.blockPosition(), SoundEvents.NOTE_BLOCK_HARP.value(),
                     SoundSource.PLAYERS, 2F, 0F);
             for (ServerPlayer p : serverPlayer.serverLevel().players()) {
+                if (p.isSpectator())
+                    continue;
                 if (p.getUUID().equals(player.getUUID())) {
 
                 } else {

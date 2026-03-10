@@ -135,6 +135,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
     public static final ComponentKey<InsaneKillerPlayerComponent> INSANE_KILLER = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "insane_killer"),
             InsaneKillerPlayerComponent.class);
+
+    public static final ComponentKey<HoanMeirinPlayerComponent> hoan_meirin = ComponentRegistry
+            .getOrCreate(
+                    ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "hoan_meirin"),
+                    HoanMeirinPlayerComponent.class);
     public static final ComponentKey<BetterVigilantePlayerComponent> BETTER_VIGILANTE = ComponentRegistry
             .getOrCreate(
                     ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "better_vigilante"),
@@ -203,8 +208,7 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "dio"),
             DIOPlayerComponent.class);
 
-    public static final ComponentKey<org.agmas.noellesroles.modifier.expedition.ExpeditionComponent> EXPEDITION =
-            org.agmas.noellesroles.modifier.expedition.ExpeditionComponent.KEY;
+    public static final ComponentKey<org.agmas.noellesroles.modifier.expedition.ExpeditionComponent> EXPEDITION = org.agmas.noellesroles.modifier.expedition.ExpeditionComponent.KEY;
 
     public static final ComponentKey<TemporaryEffectPlayerComponent> TEMPORARY_EFFECT = ComponentRegistry.getOrCreate(
             ResourceLocation.fromNamespaceAndPath(Noellesroles.MOD_ID, "temporary_effect"),
@@ -367,6 +371,11 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, BETTER_VIGILANTE)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(BetterVigilantePlayerComponent::new);
+
+        // 注册记录员组件 - 存储猜测记录和可用角色
+        registry.beginRegistration(Player.class, hoan_meirin)
+                .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
+                .end(HoanMeirinPlayerComponent::new);
         // 注册记录员组件 - 存储猜测记录和可用角色
         registry.beginRegistration(Player.class, RECORDER)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
@@ -379,7 +388,7 @@ public class ModComponents implements EntityComponentInitializer, WorldComponent
         registry.beginRegistration(Player.class, BOMBER)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(BomberPlayerComponent::new);
-                
+
         registry.beginRegistration(Player.class, WAYFARER)
                 .respawnStrategy(RespawnCopyStrategy.NEVER_COPY)
                 .end(WayfarerPlayerComponent::new);
