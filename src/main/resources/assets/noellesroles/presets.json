@@ -32,7 +32,8 @@
         "noellesroles:morphling",
         "noellesroles:phantom",
         "noellesroles:swapper",
-        "noellesroles:bandit"
+        "noellesroles:bandit",
+        "noellesroles:locksmith"
       ],
       "disabled": [
         "noellesroles:better_vigilante",
@@ -161,7 +162,8 @@
         "stupid_express:necromancer",
         "noellesroles:best_vigilante",
         "noellesroles:rescuer",
-        "noellesroles:firefighter"
+        "noellesroles:firefighter",
+        "noellesroles:locksmith"
       ],
       "disabled": [
         "noellesroles:thief",
@@ -184,7 +186,13 @@
         "noellesroles:baka",
         "noellesroles:maid_sakuya",
         "noellesroles:exampler",
-        "noellesroles:dio"
+        "noellesroles:dio",
+        "noellesroles:telegrapher",
+        "noellesroles:pachuri",
+        "noellesroles:jojo",
+        "noellesroles:hoan_meirin",
+        "noellesroles:accountant",
+        "noellesroles:alchemist"
       ]
     },
     "modifiers": {
@@ -286,7 +294,14 @@
         "noellesroles:baka",
         "noellesroles:maid_sakuya",
         "noellesroles:exampler",
-        "noellesroles:dio"
+        "noellesroles:dio",
+        "noellesroles:locksmith",
+        "noellesroles:telegrapher",
+        "noellesroles:pachuri",
+        "noellesroles:jojo",
+        "noellesroles:hoan_meirin",
+        "noellesroles:accountant",
+        "noellesroles:alchemist"
       ],
       "disabled": []
     },
