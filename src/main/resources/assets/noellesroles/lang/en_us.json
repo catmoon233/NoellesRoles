@@ -820,5 +820,7 @@
   "item.noellesroles.extinguisher.tooltip.use": "Right Click: Spray target player (Slowness + Blindness for 1.5s, removes arsonist's fuel)",
   "item.noellesroles.extinguisher.tooltip.hold": "Hold Right Click: Continuous spray for up to 5 seconds",
   "item.noellesroles.extinguisher.empty": "Fire extinguisher is empty!",
-  "item.noellesroles.extinguisher.cleaned_fuel": "Cleared the fuel from the target!"
+  "item.noellesroles.extinguisher.cleaned_fuel": "Cleared the fuel from the target!",
+  "item.noellesroles.zhanweifu1": "Zhanweifu1",
+  "item.noellesroles.zhanweifu2": "Zhanweifu2"
 }

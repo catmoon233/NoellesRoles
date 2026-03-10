@@ -425,6 +425,13 @@ public class ModItems {
             new SignedPaperItem(new Item.Properties().stacksTo(1)),
             "signed_paper");
 
+    public static final Item ZHANWEIFU1 = register(
+            new Item(new Item.Properties().stacksTo(64)),
+            "zhanweifu1");
+    public static final Item ZHANWEIFU2 = register(
+            new Item(new Item.Properties().stacksTo(64)),
+            "zhanweifu2");
+
     public static final ItemStack ExamplerPsychoItemStack = TMMItems.PSYCHO_MODE.getDefaultInstance();
 
     static {

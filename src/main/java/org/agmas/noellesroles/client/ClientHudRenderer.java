@@ -496,8 +496,10 @@ public class ClientHudRenderer {
             Component modeText;
             if (thiefComponent.currentMode == ThiefPlayerComponent.MODE_STEAL_MONEY) {
                 modeText = Component.translatable("hud.thief.mode.money").withStyle(ChatFormatting.GOLD);
-            } else {
+            } else if (thiefComponent.currentMode == ThiefPlayerComponent.MODE_STEAL_ITEM) {
                 modeText = Component.translatable("hud.thief.mode.item").withStyle(ChatFormatting.AQUA);
+            } else {
+                modeText = Component.translatable("hud.thief.mode.sell").withStyle(ChatFormatting.LIGHT_PURPLE);
             }
 
             // 显示冷却或就绪状态
