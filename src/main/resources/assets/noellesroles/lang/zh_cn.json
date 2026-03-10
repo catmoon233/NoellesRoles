@@ -492,7 +492,7 @@
   "item.noellesroles.purify_bomb": "净化弹",
   "item.noellesroles.purify_bomb.tooltip": "投掷，落地时取消半径3格内玩家的中毒状态",
   "item.noellesroles.screwdriver": "螺丝刀",
-  "item.noellesroles.screwdriver.tooltip": "右键门修复门\n蹲下右键门可拆下门上道具（道具销毁）",
+  "item.noellesroles.screwdriver.tooltip": "右键门修复门\n蹲下右键门可拆下门上道具（如锁、警报等）",
   "item.noellesroles.reinforcement": "维修工具",
   "item.noellesroles.reinforcement.tooltip": "右键门加固，防御一次撬棍\n蹲下右键解除卡住取出道具",
   "item.noellesroles.alarm_trap": "警报陷阱",
