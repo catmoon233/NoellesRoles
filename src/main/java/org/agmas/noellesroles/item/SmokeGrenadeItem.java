@@ -32,7 +32,8 @@ public class SmokeGrenadeItem extends Item {
         ItemStack itemStack = user.getItemInHand(hand);
         if (user.getCooldowns().isOnCooldown(itemStack.getItem()))
             return InteractionResultHolder.pass(itemStack);
-        user.getCooldowns().addCooldown(itemStack.getItem(), 30 * 20);
+        if (!user.isCreative())
+            user.getCooldowns().addCooldown(itemStack.getItem(), 30 * 20);
 
         // 播放投掷音效
         world.playSound(null, user.getX(), user.getY(), user.getZ(),

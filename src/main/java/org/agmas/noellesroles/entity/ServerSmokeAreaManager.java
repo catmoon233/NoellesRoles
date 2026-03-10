@@ -25,7 +25,7 @@ public class ServerSmokeAreaManager {
     private static final List<SmokeArea> activeAreas = new ArrayList<>();
     
     // 失明效果持续时间
-    private static final int BLINDNESS_DURATION = 60; // 2秒
+    private static final int BLINDNESS_DURATION = 60; // 3秒
     
     /**
      * 创建一个新的烟雾区域
@@ -93,8 +93,8 @@ public class ServerSmokeAreaManager {
             //     spawnSmokeParticles();
             // }
             
-            // 每40tick检查玩家并应用失明
-            if (tickCounter % 40 == 1) {
+            // 每20tick检查玩家并应用失明
+            if (tickCounter % 20 == 1) {
                 applyBlindnessToPlayers();
             }
             
