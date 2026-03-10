@@ -1242,6 +1242,7 @@
   "hud.thief.current_mode": "當前模式: ",
   "hud.thief.mode.money": "偷錢",
   "hud.thief.mode.item": "偷物品",
+  "hud.thief.mode.sell": "賣物品",
   "hud.thief.ready": "按下 %s 使用技能",
   "hud.thief.cooldown": "冷卻中，剩餘 %s 秒",
   "message.monitor.killer_killed": "你察覺到 %s 死去了...",
