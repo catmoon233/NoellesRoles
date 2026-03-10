@@ -96,14 +96,18 @@ public class NoiseMakerPlayerComponent implements RoleComponent, ServerTickingCo
         cooldown = 1200;
         Component msg = Component.translatable("gui.noellesroles.noisemaker.ability").withStyle(ChatFormatting.AQUA,
                 ChatFormatting.BOLD);
+
         if (player instanceof ServerPlayer serverPlayer) {
+            var gameWorldComponent = GameWorldComponent.KEY.get(serverPlayer.level());
             player.level().playSound(null, serverPlayer.blockPosition(), SoundEvents.NOTE_BLOCK_HARP.value(),
                     SoundSource.PLAYERS, 2F, 0F);
             for (ServerPlayer p : serverPlayer.serverLevel().players()) {
                 if (p.getUUID().equals(player.getUUID())) {
 
                 } else {
-                    if(p.distanceTo(player)<=5){
+                    if (p.distanceTo(player) <= 5) {
+                        if (gameWorldComponent.isRole(p, ModRoles.WIND_YAOSE))
+                            continue;
                         p.addEffect(new MobEffectInstance(MobEffects.GLOWING, 120, 0, false, false, false));
                     }
                     p.displayClientMessage(msg, true);

@@ -55,7 +55,7 @@ public class ReinforcementItem extends Item implements AdventureUsable {
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(world);
         boolean isEngineer = gameWorld.isRole(player, ModRoles.ENGINEER);
-        boolean isLockSmith = gameWorld.isRole(player, ModRoles.HOAN_MEIRIN);
+        boolean isLockSmith = gameWorld.isRole(player, ModRoles.LOCKSMITH);
         // 检查是否为门方块
         if (state.getBlock() instanceof SmallDoorBlock) {
 

@@ -60,6 +60,7 @@
     "roles.thief.ThiefsHonorMixin",
     "roles.veteran.VeteranKnifeLeftClickMixin",
     "roles.veteran.VeteranKnifeMixin",
+    "roles.writter.WrittenBookMixin",
     "time_stop.PlayerMixin",
     "time_stop.ServerPacketBlocker"
   ],

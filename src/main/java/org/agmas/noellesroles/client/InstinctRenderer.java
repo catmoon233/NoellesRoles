@@ -43,7 +43,7 @@ import pro.fazeclan.river.stupid_express.role.arsonist.cca.DousedPlayerComponent
 
 public class InstinctRenderer {
     public static void registerInstinctEvents() {
-        // 死亡惩罚
+        // 明星
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
             if (Minecraft.getInstance() == null)
                 return -1;
@@ -210,6 +210,8 @@ public class InstinctRenderer {
             if (!(target instanceof Player targetPlayer)) {
                 return -1;
             }
+            if (targetPlayer.isInvisibleTo(self))
+                return -1;
             if (!TMMClient.gameComponent.isRole(self, ModRoles.AWESOME_BINGLUS)) {
                 return -1;
             }

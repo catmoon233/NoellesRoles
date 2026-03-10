@@ -15,6 +15,7 @@ import org.agmas.noellesroles.role.ModRoles;
 
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.AreasWorldComponent;
 import pro.fazeclan.river.stupid_express.StupidExpress;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
 
@@ -191,6 +192,7 @@ public class InitModRolesMax {
 
     public static void registerDynamic() {
         GameInitializeEvent.EVENT.register((serverLevel, gameWorldComponent, players) -> {
+            var areasWorldComponent = AreasWorldComponent.KEY.get(serverLevel);
             final int players_count = serverLevel.getServer().getPlayerCount();
             {
                 // 杀手中立
@@ -235,10 +237,12 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 0);
             }
-            if (random.nextInt(0, 100) <= EGGS_CHANCE) {
-                Harpymodloader.setRoleMaximum(ModRoles.HOAN_MEIRIN, 1);
-            } else {
-                Harpymodloader.setRoleMaximum(ModRoles.HOAN_MEIRIN, 0);
+            if (areasWorldComponent.canJump) {
+                if (random.nextInt(0, 100) <= EGGS_CHANCE) {
+                    Harpymodloader.setRoleMaximum(ModRoles.HOAN_MEIRIN, 1);
+                } else {
+                    Harpymodloader.setRoleMaximum(ModRoles.HOAN_MEIRIN, 0);
+                }
             }
             if (players_count >= 12 && random.nextInt(0, 100) <= EGGS_CHANCE) {
                 Harpymodloader.setRoleMaximum(ModRoles.PACHURI, 1);
