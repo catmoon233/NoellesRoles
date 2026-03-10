@@ -206,11 +206,11 @@ public class ClientHudRenderer {
             int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
             int xOffset = screenWidth - 10; // 距离右边缘
             var abpc = HoanMeirinPlayerComponent.KEY.get(client.player);
-            {
+            if (abpc.loneyTime > 5 * 20) {
                 // 孤独值
                 var text1 = Component
                         .translatable("hud.hoan_meirin.lonely_value",
-                                Component.literal(String.format("%ds", abpc.loneyTime / 20))
+                                Component.literal(String.format("%ds", (60 - abpc.loneyTime / 20)))
                                         .withStyle(ChatFormatting.RED))
                         .withStyle(ChatFormatting.YELLOW);
                 guiGraphics.drawString(font, text1, xOffset - font.width(text1), yOffset - font.lineHeight * 3 - 12,
