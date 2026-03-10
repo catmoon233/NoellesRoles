@@ -78,7 +78,7 @@ public class ScrewdriverItem extends Item implements AdventureUsable {
                     // 工程师专属：取下门上的道具
                     {
                         // 检查是否有加固
-                        if (isDoorReinforced(doorEntity)) {
+                        if ((isLockSmith || isEngineer) && isDoorReinforced(doorEntity)) {
                             setDoorReinforced(doorEntity, false);
 
                             if (!world.isClientSide) {
@@ -97,7 +97,7 @@ public class ScrewdriverItem extends Item implements AdventureUsable {
                         }
 
                         // 检查是否有警报陷阱
-                        if (AlarmTrapItem.hasDoorAlarmTrap(doorEntity)) {
+                        if ((isLockSmith || isEngineer) && AlarmTrapItem.hasDoorAlarmTrap(doorEntity)) {
                             AlarmTrapItem.setDoorAlarmTrap(doorEntity, false);
 
                             if (!world.isClientSide) {
@@ -159,7 +159,7 @@ public class ScrewdriverItem extends Item implements AdventureUsable {
                             return InteractionResult.FAIL;
                         player.getCooldowns().addCooldown(context.getItemInHand().getItem(), 20 * 30);
                         world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
-                                        TMMSounds.BLOCK_DOOR_TOGGLE, SoundSource.BLOCKS, 0.7f, 1.5f);
+                                TMMSounds.BLOCK_DOOR_TOGGLE, SoundSource.BLOCKS, 0.7f, 1.5f);
                         if (!world.isClientSide) {
                             doorEntity.setBlasted(false);
                             doorEntity.setChanged();

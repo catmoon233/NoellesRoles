@@ -146,8 +146,8 @@ public class NoellesRolesAbilityPlayerComponent
         // 服务端每 tick 减少冷却时间
         if (this.cooldown > 0) {
             this.cooldown--;
-            // 每秒同步一次（而不是每 tick），减少网络压力
-            if (this.cooldown % 20 == 0 || this.cooldown == 0) {
+            // 每5秒同步一次（而不是每 tick），减少网络压力
+            if (this.cooldown % 100 == 0 || this.cooldown == 0) {
                 this.sync();
             }
         }
@@ -187,7 +187,7 @@ public class NoellesRolesAbilityPlayerComponent
     @Override
     public void clientTick() {
         // 客户端也进行冷却计算（用于预测显示）
-        if (this.cooldown > 0) {
+        if (this.cooldown > 1) {
             this.cooldown--;
         }
     }

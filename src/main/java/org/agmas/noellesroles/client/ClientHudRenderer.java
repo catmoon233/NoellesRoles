@@ -8,6 +8,7 @@ import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
 import org.agmas.noellesroles.component.RecorderPlayerComponent;
 import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.ClockmakerPlayerComponent;
+import org.agmas.noellesroles.component.HoanMeirinPlayerComponent;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.role.ModRoles;
 import org.agmas.noellesroles.roles.commander.CommanderHudRender;
@@ -22,6 +23,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffects;
 
 public class ClientHudRenderer {
 
@@ -187,7 +189,62 @@ public class ClientHudRenderer {
             }
             return;
         });
-        
+        HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
+            // 渲染红美铃的提示
+            var client = Minecraft.getInstance();
+            if (client == null)
+                return;
+            if (client.player == null)
+                return;
+            if (TMMClient.gameComponent == null
+                    || !TMMClient.gameComponent.isRole(client.player, ModRoles.HOAN_MEIRIN)) {
+                return;
+            }
+            int screenWidth = guiGraphics.guiWidth();
+            int screenHeight = guiGraphics.guiHeight();
+            var font = client.font;
+            int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
+            int xOffset = screenWidth - 10; // 距离右边缘
+            var abpc = HoanMeirinPlayerComponent.KEY.get(client.player);
+            if (abpc.loneyTime > 5 * 20) {
+                // 孤独值
+                var text1 = Component
+                        .translatable("hud.hoan_meirin.lonely_value",
+                                Component.literal(String.format("%ds", (60 - abpc.loneyTime / 20)))
+                                        .withStyle(ChatFormatting.RED))
+                        .withStyle(ChatFormatting.YELLOW);
+                guiGraphics.drawString(font, text1, xOffset - font.width(text1), yOffset - font.lineHeight * 3 - 12,
+                        Color.WHITE.getRGB());
+
+                var text2 = Component
+                        .translatable("hud.hoan_meirin.lonely_tip")
+                        .withStyle(ChatFormatting.GOLD);
+                guiGraphics.drawString(font, text2, xOffset - font.width(text2), yOffset - font.lineHeight * 2 - 8,
+                        Color.WHITE.getRGB());
+            }
+            if (client.player.hasEffect(MobEffects.LEVITATION)) {
+                var text = Component
+                        .translatable("hud.hoan_meirin.ready_stop",
+                                NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                        .withStyle(ChatFormatting.AQUA);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            } else if (abpc.cooldown > 0) {
+                var text = Component
+                        .translatable("hud.hoan_meirin.cooldown", abpc.cooldown / 20)
+                        .withStyle(ChatFormatting.RED);
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            } else {
+                var text = Component
+                        .translatable("hud.hoan_meirin.ready", NoellesrolesClient.abilityBind.getTranslatedKeyMessage())
+                        .withStyle(ChatFormatting.GREEN);
+
+                guiGraphics.drawString(font, text, xOffset - font.width(text), yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            }
+            return;
+        });
         HudRenderCallback.EVENT.register((guiGraphics, deltaTracker) -> {
             // 渲染风精灵的提示
             var client = Minecraft.getInstance();

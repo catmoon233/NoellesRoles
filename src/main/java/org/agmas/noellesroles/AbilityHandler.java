@@ -4,6 +4,7 @@ import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.BomberPlayerComponent;
 import org.agmas.noellesroles.component.ClockmakerPlayerComponent;
 import org.agmas.noellesroles.component.DIOPlayerComponent;
+import org.agmas.noellesroles.component.HoanMeirinPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.NianShouPlayerComponent;
 import org.agmas.noellesroles.component.NoellesRolesAbilityPlayerComponent;
@@ -372,7 +373,7 @@ public class AbilityHandler {
     public static void handlerWithTarget(AbilityWithTargetC2SPacket payload, Context context) {
         NoellesRolesAbilityPlayerComponent abilityPlayerComponent = (NoellesRolesAbilityPlayerComponent) NoellesRolesAbilityPlayerComponent.KEY
                 .get(context.player());
-        
+
         PlayerShopComponent playerShopComponent = PlayerShopComponent.KEY
                 .get(context.player());
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY
@@ -382,6 +383,28 @@ public class AbilityHandler {
             return;
         }
         var targetPlayer = player.level().getPlayerByUUID(payload.target());
+        if (gameWorldComponent.isRole(player, ModRoles.HOAN_MEIRIN)) {
+            var hmpc = HoanMeirinPlayerComponent.KEY.get(player);
+            if (player.hasEffect(MobEffects.LEVITATION)) {
+                player.removeEffect(MobEffects.LEVITATION);
+                player.displayClientMessage(
+                        Component.translatable("hud.hoan_meirin.ability_stop").withStyle(ChatFormatting.AQUA),
+                        true);
+            } else if (hmpc.cooldown > 0) {
+                player.displayClientMessage(
+                        Component.translatable("message.noellesroles.ability_cooldown").withStyle(ChatFormatting.RED),
+                        true);
+                return;
+            } else {
+                hmpc.setCooldown(60 * 20);
+                player.displayClientMessage(
+                        Component.translatable("hud.hoan_meirin.ability_activated").withStyle(ChatFormatting.GREEN),
+                        true);
+                context.player().addEffect(new MobEffectInstance(MobEffects.LEVITATION,
+                        10 * 20, 1, true, false,
+                        true));
+            }
+        }
         if (gameWorldComponent.isRole(player, ModRoles.EXAMPLER)) {
             if (abilityPlayerComponent.cooldown > 0) {
                 player.displayClientMessage(

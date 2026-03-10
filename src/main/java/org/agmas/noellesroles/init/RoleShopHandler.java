@@ -527,12 +527,6 @@ public class RoleShopHandler {
           ModRoles.PACHURI_ID, SHOP);
     }
     {
-      // HOAN_MERIN商店
-      var SHOP = new ArrayList<ShopEntry>();
-      ShopContent.customEntries.put(
-          ModRoles.HOAN_MEIRIN_ID, SHOP);
-    }
-    {
       // 锁匠商店
       var SHOP = new ArrayList<ShopEntry>();
       SHOP.add(new ShopEntry(
