@@ -74,15 +74,13 @@ public class SmokeGrenadeEntity extends ThrowableItemProjectile {
             
             // 如果直接命中玩家，清空目标san值
             if (directHit && directHitTarget != null && directHitTarget instanceof ServerPlayer serverTarget) {
-
-                
                 // 给予目标额外的失明效果
                 serverTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 100, 0, false, false));
             }
             
             // 生成烟雾区域实体（使用粒子模拟）
             // 创建一个区域效果云或使用定时任务
-            SmokeAreaManager.createSmokeArea(world, this.position(), SMOKE_RADIUS, SMOKE_DURATION_TICKS);
+            ServerSmokeAreaManager.createSmokeArea(world, this.position(), SMOKE_RADIUS, SMOKE_DURATION_TICKS);
             
             // 初始烟雾粒子爆发 - 大幅增强效果（10倍粒子）
             for (int i = 0; i < 150; i++) {

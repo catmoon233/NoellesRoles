@@ -221,6 +221,15 @@ public class NoellesrolesClient implements ClientModInitializer {
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "category.trainmurdermystery.keybinds"));
         taskInstinctBind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.noellesroles.taskinstinct",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, "category.trainmurdermystery.keybinds"));
+        ClientPlayNetworking.registerGlobalReceiver(CreateClientSmokeAreaPacket.ID, (payload, context) -> {
+            ClientSmokeAreaManager.createSmokeArea(context.client().level, payload.position(), payload.radius(),
+                    payload.durationTicks());
+        });
+        ClientTickEvents.END_WORLD_TICK.register((level) -> {
+            if (level == null)
+                return;
+            ClientSmokeAreaManager.tick();
+        });
         ClientPlayNetworking.registerGlobalReceiver(ProblemScreenOpenC2SPacket.ID, (payload, context) -> {
             var client = context.client();
             client.execute(() -> {

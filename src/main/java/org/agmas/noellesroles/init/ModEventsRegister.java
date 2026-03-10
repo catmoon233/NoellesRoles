@@ -36,7 +36,7 @@ import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.effects.TimeStopEffect;
 import org.agmas.noellesroles.entity.HallucinationAreaManager;
 import org.agmas.noellesroles.entity.PuppeteerBodyEntity;
-import org.agmas.noellesroles.entity.SmokeAreaManager;
+import org.agmas.noellesroles.entity.ServerSmokeAreaManager;
 import org.agmas.noellesroles.entity.WheelchairEntity;
 import org.agmas.noellesroles.events.OnVendingMachinesBuyItems;
 import org.agmas.noellesroles.game.ChairWheelRaceGame;
@@ -1123,7 +1123,7 @@ public class ModEventsRegister {
         });
         ServerTickEvents.END_SERVER_TICK.register(((server) -> {
             // 更新烟雾区域和迷幻区域
-            SmokeAreaManager.tick();
+            ServerSmokeAreaManager.tick();
             HallucinationAreaManager.tick();
 
             GameWorldComponent gameWorldComponent = GameWorldComponent.KEY.get(server.overworld());

@@ -30,12 +30,10 @@ public class SlipperyGhostPlayerComponent implements RoleComponent, ServerTickin
     
     // 物品使用冷却
     private int blankCartridgeCooldown = 0;  // 空包弹冷却：10秒 = 200 ticks
-    private int smokeGrenadeCooldown = 0;    // 烟雾弹冷却：30秒 = 600 ticks
     private int blackoutCooldown = 0;        // 关灯冷却：2分钟 = 2400 ticks
     
     // 冷却时间常量
     private static final int BLANK_CARTRIDGE_COOLDOWN = 200;   // 10秒
-    private static final int SMOKE_GRENADE_COOLDOWN = 600;     // 30秒
     private static final int BLACKOUT_COOLDOWN = 2400;         // 2分钟
     
     public SlipperyGhostPlayerComponent(Player player) {
@@ -76,9 +74,6 @@ public class SlipperyGhostPlayerComponent implements RoleComponent, ServerTickin
         if (blankCartridgeCooldown > 0) {
             blankCartridgeCooldown--;
         }
-        if (smokeGrenadeCooldown > 0) {
-            smokeGrenadeCooldown--;
-        }
         if (blackoutCooldown > 0) {
             blackoutCooldown--;
         }
@@ -91,7 +86,6 @@ public class SlipperyGhostPlayerComponent implements RoleComponent, ServerTickin
     public void reset() {
         this.tickCounter = 0;
         this.blankCartridgeCooldown = 0;
-        this.smokeGrenadeCooldown = 0;
         this.blackoutCooldown = 0;
         sync();
     }
@@ -120,28 +114,6 @@ public class SlipperyGhostPlayerComponent implements RoleComponent, ServerTickin
      */
     public void setBlankCartridgeCooldown() {
         this.blankCartridgeCooldown = BLANK_CARTRIDGE_COOLDOWN;
-        sync();
-    }
-    
-    /**
-     * 检查烟雾弹是否在冷却中
-     */
-    public boolean isSmokeGrenadeOnCooldown() {
-        return smokeGrenadeCooldown > 0;
-    }
-    
-    /**
-     * 获取烟雾弹剩余冷却时间（秒）
-     */
-    public int getSmokeGrenadeCooldownSeconds() {
-        return (smokeGrenadeCooldown + 19) / 20;
-    }
-    
-    /**
-     * 设置烟雾弹冷却
-     */
-    public void setSmokeGrenadeCooldown() {
-        this.smokeGrenadeCooldown = SMOKE_GRENADE_COOLDOWN;
         sync();
     }
     
@@ -178,7 +150,6 @@ public class SlipperyGhostPlayerComponent implements RoleComponent, ServerTickin
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("TickCounter", tickCounter);
         tag.putInt("BlankCartridgeCooldown", blankCartridgeCooldown);
-        tag.putInt("SmokeGrenadeCooldown", smokeGrenadeCooldown);
         tag.putInt("BlackoutCooldown", blackoutCooldown);
     }
     
@@ -186,7 +157,6 @@ public class SlipperyGhostPlayerComponent implements RoleComponent, ServerTickin
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.tickCounter = tag.getInt("TickCounter");
         this.blankCartridgeCooldown = tag.getInt("BlankCartridgeCooldown");
-        this.smokeGrenadeCooldown = tag.getInt("SmokeGrenadeCooldown");
         this.blackoutCooldown = tag.getInt("BlackoutCooldown");
     }
 }

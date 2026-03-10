@@ -4,7 +4,10 @@ import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import net.minecraft.core.particles.ParticleTypes;
+
+import org.agmas.noellesroles.packet.CreateClientSmokeAreaPacket;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,18 +19,21 @@ import net.minecraft.world.phys.Vec3;
  * 烟雾区域管理器
  * 用于管理烟雾弹产生的持续烟雾效果区域
  */
-public class SmokeAreaManager {
+public class ServerSmokeAreaManager {
     
     // 所有活跃的烟雾区域
     private static final List<SmokeArea> activeAreas = new ArrayList<>();
     
     // 失明效果持续时间
-    private static final int BLINDNESS_DURATION = 40; // 2秒
+    private static final int BLINDNESS_DURATION = 60; // 2秒
     
     /**
      * 创建一个新的烟雾区域
      */
     public static void createSmokeArea(ServerLevel world, Vec3 position, double radius, int durationTicks) {
+        for (ServerPlayer player : world.players()) {
+            ServerPlayNetworking.send(player, new CreateClientSmokeAreaPacket(position, radius, durationTicks));
+        }
         activeAreas.add(new SmokeArea(world, position, radius, durationTicks));
     }
     
@@ -82,48 +88,17 @@ public class SmokeAreaManager {
                 return true;
             }
             
-            // 每3tick生成粒子效果（更频繁）
-            if (tickCounter % 3 == 0) {
-                spawnSmokeParticles();
-            }
+            // // 每3tick生成粒子效果（更频繁）
+            // if (tickCounter % 3 == 0) {
+            //     spawnSmokeParticles();
+            // }
             
-            // 每10tick检查玩家并应用失明
-            if (tickCounter % 10 == 0) {
+            // 每40tick检查玩家并应用失明
+            if (tickCounter % 40 == 1) {
                 applyBlindnessToPlayers();
             }
             
             return false;
-        }
-        
-        /**
-         * 生成烟雾粒子
-         */
-        private void spawnSmokeParticles() {
-            // 大幅增加粒子数量以获得超浓密的烟雾效果（从25增加到250，10倍）
-            for (int i = 0; i < 250; i++) {
-                double offsetX = (world.random.nextDouble() - 0.5) * radius * 2;
-                double offsetY = world.random.nextDouble() * 3.5;  // 增加高度范围
-                double offsetZ = (world.random.nextDouble() - 0.5) * radius * 2;
-                
-                // 主要烟雾粒子（增加数量）
-                world.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                        center.x + offsetX, center.y + offsetY, center.z + offsetZ,
-                        2, 0.1, 0.1, 0.1, 0.03);
-                        
-                // 大量添加大型烟雾粒子
-                if (i % 3 == 0) {
-                    world.sendParticles(ParticleTypes.LARGE_SMOKE,
-                            center.x + offsetX, center.y + offsetY, center.z + offsetZ,
-                            2, 0.15, 0.15, 0.15, 0.04);
-                }
-                
-                // 添加普通烟雾粒子
-                if (i % 5 == 0) {
-                    world.sendParticles(ParticleTypes.SMOKE,
-                            center.x + offsetX, center.y + offsetY, center.z + offsetZ,
-                            1, 0.12, 0.12, 0.12, 0.035);
-                }
-            }
         }
         
         /**

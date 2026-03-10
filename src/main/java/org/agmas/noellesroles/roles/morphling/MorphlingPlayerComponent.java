@@ -59,6 +59,13 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
     }
 
     public void clientTick() {
+        if (this.morphTicks != 0) {
+            if (this.morphTicks > 0) {
+                this.morphTicks--;
+            } else {
+                this.morphTicks++;
+            }
+        }
     }
 
     public void serverTick() {
@@ -85,15 +92,17 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
 
                 if (--this.morphTicks == 0) {
                     this.stopMorph();
+                    return;
                 }
             } else if (this.morphTicks < 0) {
                 this.morphTicks++;
                 if (this.morphTicks == 0) {
                     KEY.syncWith((ServerPlayer) player, (ComponentProvider) player, this, this);
+                    return;
                 }
             }
 
-            if (tickR % 20 == 0) {
+            if (tickR % 200 == 0) {
                 KEY.syncWith((ServerPlayer) player, (ComponentProvider) player, this, this);
             }
         }
@@ -122,9 +131,8 @@ public class MorphlingPlayerComponent implements RoleComponent, ServerTickingCom
 
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("morphTicks", this.morphTicks);
-        if (disguise == null)
-            disguise = player.getUUID();
-        tag.putUUID("disguise", this.disguise);
+        if (disguise != null)
+            tag.putUUID("disguise", this.disguise);
     }
 
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
