@@ -261,6 +261,7 @@ public class LootInfoScreen extends AbstractPixelScreen {
         } catch (Exception e) {
             curPool = null;
             poolSketch = null;
+            viewPoolBtn = null;
         }
 
         int poolBtnX = centerX - totalWidth / 2 + ((poolBtnWidth + poolBtnEdgeWidth) - poolBtnWidth) / 2;
@@ -324,8 +325,10 @@ public class LootInfoScreen extends AbstractPixelScreen {
         if (!initialized) {
             if (animationTimeLineManager.isFinished()) {
                 initialized = true;
-                viewPoolBtn.active = true;
-                startPoolBtn.active = true;
+                if (viewPoolBtn != null)
+                   viewPoolBtn.active = true;
+                if (startPoolBtn != null)
+                    startPoolBtn.active = true;
                 for (PoolButton poolButton : poolButtons)
                     poolButton.active = true;
             } else
