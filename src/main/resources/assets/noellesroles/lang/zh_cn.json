@@ -281,7 +281,7 @@
   "message.hoan_meirin.tip_for_loney":"你感到有一点孤独了...",
   "death_reason.noellesroles.hoan_meirin_lonely": "孤独而终",
   "death_reason.noellesroles.hoan_meirin_attack": "功夫",
-  "message.hoan_meirin_attack.3": "💀 第3拳！一击毙命！",
+  "message.hoan_meirin_attack.3": "💀 一击毙命！",
   "message.hoan_meirin_attack.general":"拳击 %s",
   "hud.hoan_meirin.lonely_tip":"请跑到人群当中去避免孤独死去！",
   "hud.hoan_meirin.lonely_value":"你将在 %s 后因为孤独死去。",
