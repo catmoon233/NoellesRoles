@@ -20,7 +20,6 @@ public class ClientSmokeAreaManager {
     // 所有活跃的烟雾区域
     private static final List<SmokeArea> activeAreas = new ArrayList<>();
 
-
     /**
      * 创建一个新的烟雾区域
      */
@@ -95,21 +94,25 @@ public class ClientSmokeAreaManager {
             // 大幅增加粒子数量以获得超浓密的烟雾效果（从25增加到250，10倍）
             for (int i = 0; i < 250; i++) {
                 double offsetX = (world.random.nextDouble() - 0.5) * radius * 2;
-                double offsetY = world.random.nextDouble() * 3.5; // 增加高度范围
+                double offsetY = -1d + world.random.nextDouble() * 4.5; // 增加高度范围
                 double offsetZ = (world.random.nextDouble() - 0.5) * radius * 2;
 
                 // 主要烟雾粒子（增加数量）
-                // ParticleEffect parameters, boolean alwaysSpawn, double x, double y, double z, double velocityX, double velocityY, double velocityZ
-                world.addAlwaysVisibleParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, true, center.x + offsetX, center.y + offsetY, center.z + offsetZ,0.1, 0.1, 0.1 );
+                // ParticleEffect parameters, boolean alwaysSpawn, double x, double y, double z,
+                // double velocityX, double velocityY, double velocityZ
+                world.addAlwaysVisibleParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, true, center.x + offsetX,
+                        center.y + offsetY, center.z + offsetZ, 0.1, 0.1, 0.1);
 
                 // 大量添加大型烟雾粒子
                 if (i % 3 == 0) {
-                    world.addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, true, center.x + offsetX, center.y + offsetY, center.z + offsetZ,0.15, 0.15, 0.15 );
+                    world.addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, true, center.x + offsetX,
+                            center.y + offsetY, center.z + offsetZ, 0.15, 0.15, 0.15);
                 }
 
                 // 添加普通烟雾粒子
                 if (i % 5 == 0) {
-                    world.addAlwaysVisibleParticle(ParticleTypes.SMOKE, true, center.x + offsetX, center.y + offsetY, center.z + offsetZ,0.12, 0.12, 0.12 );
+                    world.addAlwaysVisibleParticle(ParticleTypes.SMOKE, true, center.x + offsetX, center.y + offsetY,
+                            center.z + offsetZ, 0.12, 0.12, 0.12);
                 }
             }
         }
