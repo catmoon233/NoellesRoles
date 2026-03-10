@@ -99,9 +99,15 @@ public class NoiseMakerPlayerComponent implements RoleComponent, ServerTickingCo
         if (player instanceof ServerPlayer serverPlayer) {
             player.level().playSound(null, serverPlayer.blockPosition(), SoundEvents.NOTE_BLOCK_HARP.value(),
                     SoundSource.PLAYERS, 2F, 0F);
-            for (Player p : serverPlayer.level().players()) {
-                if (p instanceof ServerPlayer sp)
-                    sp.displayClientMessage(msg, true);
+            for (ServerPlayer p : serverPlayer.serverLevel().players()) {
+                if (p.getUUID().equals(player.getUUID())) {
+
+                } else {
+                    if(p.distanceTo(player)<=5){
+                        p.addEffect(new MobEffectInstance(MobEffects.GLOWING, 120, 0, false, false, false));
+                    }
+                    p.displayClientMessage(msg, true);
+                }
             }
             serverPlayer.displayClientMessage(msg, true);
         }

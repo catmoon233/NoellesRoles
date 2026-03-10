@@ -481,6 +481,8 @@ public class ThiefPlayerComponent implements RoleComponent, ServerTickingCompone
             return true; // 空包弹
         if (stack.is(ModItems.SMOKE_GRENADE))
             return true; // 烟雾弹
+        if (stack.is(ModItems.SCREWDRIVER))
+            return true; // 加固门道具
         if (stack.is(ModItems.REINFORCEMENT))
             return true; // 加固门道具
         if (stack.is(ModItems.ALARM_TRAP))

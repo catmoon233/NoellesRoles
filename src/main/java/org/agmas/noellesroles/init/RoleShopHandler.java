@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.init;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.TMMConfig;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerPsychoComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerShopComponent;
 import dev.doctor4t.trainmurdermystery.cca.WorldBlackoutComponent;
@@ -32,10 +34,12 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
+import net.minecraft.world.item.component.WrittenBookContent;
 import pro.fazeclan.river.stupid_express.constants.SERoles;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.network.Filterable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import org.agmas.noellesroles.utils.RoleUtils;
@@ -472,6 +476,89 @@ public class RoleShopHandler {
     {
       ShopContent.customEntries.put(
           ModRoles.SLIPPERY_GHOST_ID, SLIPPERY_GHOST_SHOP);
+    }
+    {
+      // PACHURI 商店
+      var displayStack = Items.WRITTEN_BOOK.getDefaultInstance();
+      String title = "\u00a7d\u00a7lPachuri Knowledge Book";
+      displayStack.set(DataComponents.WRITTEN_BOOK_CONTENT,
+          new WrittenBookContent(new Filterable<String>(title, Optional.of(title)), "System", 1, List.of(), true));
+      var SHOP = new ArrayList<ShopEntry>();
+      SHOP.add(new ShopEntry(
+          displayStack,
+          200,
+          ShopEntry.Type.TOOL) {
+        @Override
+        public boolean onBuy(Player player) {
+          var itemStack = Items.WRITTEN_BOOK.getDefaultInstance();
+          var players = player.level().players();
+          var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+          Collections.shuffle(players);
+          int count = 1;
+          var contents = new ArrayList<Filterable<Component>>();
+          {
+            var fstct = Component.translatable("%s\n%s", Component.translatable("item.written_book.role_title")
+                .withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD),
+                Component.translatable("item.written_book.role_intro")
+                    .withStyle(ChatFormatting.GRAY));
+            var fstcontent = new Filterable<Component>(fstct, Optional.of(fstct));
+            contents.add(fstcontent);
+          }
+          for (int i = 0; i < count; i++) {
+            var p = players.get(i);
+            var ct = Component.translatable("%s\n%s", Component.translatable("item.written_book.per_role_title", i + 1)
+                .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.GOLD),
+                Component
+                    .translatable("item.written_book.per_role_content",
+                        p.getDisplayName().copy().withStyle(ChatFormatting.GRAY),
+                        RoleUtils.getRoleOrModifierNameWithColor(gameWorldComponent.getRole(p)))
+                    .withStyle(ChatFormatting.AQUA));
+            var content = new Filterable<Component>(ct, Optional.of(ct));
+            contents.add(content);
+          }
+          String title = "\u00a7d\u00a7lPachuri Knowledge Book";
+
+          itemStack.set(DataComponents.WRITTEN_BOOK_CONTENT,
+              new WrittenBookContent(new Filterable<String>(title, Optional.of(title)), "System", 1, contents, true));
+          return RoleUtils.insertStackInFreeSlot(player, itemStack);
+        }
+      });
+      ShopContent.customEntries.put(
+          ModRoles.PACHURI_ID, SHOP);
+    }
+    {
+      // HOAN_MERIN商店
+      var SHOP = new ArrayList<ShopEntry>();
+      ShopContent.customEntries.put(
+          ModRoles.HOAN_MEIRIN_ID, SHOP);
+    }
+    {
+      // 锁匠商店
+      var SHOP = new ArrayList<ShopEntry>();
+      SHOP.add(new ShopEntry(
+          ModItems.SCREWDRIVER.getDefaultInstance(),
+          100,
+          ShopEntry.Type.TOOL));
+      SHOP.add(new ShopEntry(
+          ModItems.MASTER_KEY_P.getDefaultInstance(),
+          100,
+          ShopEntry.Type.TOOL));
+      ShopContent.customEntries.put(
+          ModRoles.LOCKSMITH_ID, SHOP);
+    }
+    {
+      // 船长商店
+      var SHOP = new ArrayList<ShopEntry>();
+      SHOP.add(new ShopEntry(
+          ModItems.SCREWDRIVER.getDefaultInstance(),
+          100,
+          ShopEntry.Type.TOOL));
+      SHOP.add(new ShopEntry(
+          ModItems.MASTER_KEY.getDefaultInstance(),
+          400,
+          ShopEntry.Type.TOOL));
+      ShopContent.customEntries.put(
+          ModRoles.CONDUCTOR_ID, SHOP);
     }
     {
       ShopContent.customEntries.put(

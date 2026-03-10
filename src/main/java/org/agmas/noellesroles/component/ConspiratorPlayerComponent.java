@@ -110,7 +110,7 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
             return false;
         for (TargetInfo targetInfo : targetList) {
             if (targetInfo.targetPlayer.equals(targetUuid)) {
-                if(targetInfo.guessCorrect && targetInfo.deathCountdown > 0){
+                if (targetInfo.guessCorrect && targetInfo.deathCountdown > 0) {
                     return true;
                 }
             }
@@ -185,6 +185,20 @@ public class ConspiratorPlayerComponent implements RoleComponent, ServerTickingC
                         Component.translatable("message.noellesroles.conspirator.cursed")
                                 .withStyle(ChatFormatting.DARK_PURPLE),
                         true);
+                // 触发私家侦探被动
+                if (gameWorld.isRole(target, ModRoles.DETECTIVE)) {
+                    target.displayClientMessage(
+                            Component
+                                    .translatable("message.noellesroles.conspirator.cursed.known",
+                                            this.player.getDisplayName())
+                                    .withStyle(ChatFormatting.DARK_PURPLE),
+                            true);
+                }
+                for (ServerPlayer p : targetServer.serverLevel().players()) {
+                    if (gameWorld.isRole(p, ModRoles.DETECTIVE)) {
+                        DetectivePlayerComponent.KEY.get(p).triggerConspiratorInstinct(5 * 20);
+                    }
+                }
             }
 
             this.sync();

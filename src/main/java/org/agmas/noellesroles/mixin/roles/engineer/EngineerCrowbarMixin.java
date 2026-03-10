@@ -13,7 +13,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import org.agmas.noellesroles.entity.LockEntity;
 import org.agmas.noellesroles.entity.LockEntityManager;
 import org.agmas.noellesroles.item.AlarmTrapItem;
 import org.agmas.noellesroles.item.ReinforcementItem;
@@ -44,7 +43,7 @@ public class EngineerCrowbarMixin {
 
         if (entity instanceof DoorBlockEntity door && !door.isBlasted()) {
             // 首先检查警报陷阱 - 无论是否有加固都会触发
-            boolean alarmTriggered = AlarmTrapItem.triggerAlarmTrap(door, world);
+            AlarmTrapItem.triggerAlarmTrap(door, world);
 
             // 然后检查加固
             if (ReinforcementItem.consumeReinforcement(door)) {

@@ -163,6 +163,7 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
           if (gameWorldComponent != null) {
             if (GameFunctions.isPlayerAliveAndSurvival(player)) {
               if (gameWorldComponent.isRole(player, ModRoles.NOISEMAKER)) {
+                event.cancel();
                 player.level().players().forEach((p) -> {
                   if (p.getUUID() != player.getUUID()) {
                     double rangeMultiplier = 2;
@@ -182,7 +183,7 @@ public class NoellesrolesVoiceChatPlugin implements VoicechatPlugin {
                   }
                 });
               }
-              CommanderHandler.vcparanoidEvent(gameWorldComponent, player, event);
+              else CommanderHandler.vcparanoidEvent(gameWorldComponent, player, event);
             }
           }
         }

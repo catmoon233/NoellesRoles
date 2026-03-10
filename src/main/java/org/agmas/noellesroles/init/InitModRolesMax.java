@@ -13,8 +13,6 @@ import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.config.NoellesRolesConfig;
 import org.agmas.noellesroles.role.ModRoles;
 
-import com.google.common.collect.Lists;
-
 import dev.doctor4t.trainmurdermystery.api.Role;
 import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import pro.fazeclan.river.stupid_express.StupidExpress;
@@ -36,6 +34,8 @@ public class InitModRolesMax {
 
         // 工程师每局只能有 1 个
         Harpymodloader.setRoleMaximum(ModRoles.ENGINEER_ID, 1);
+        Harpymodloader.setRoleMaximum(ModRoles.LOCKSMITH_ID, 0);
+        Harpymodloader.setOccupationRole(ModRoles.ENGINEER, ModRoles.LOCKSMITH);
 
         // 拳击手每局只能有 1 个
         Harpymodloader.setRoleMaximum(ModRoles.BOXER_ID, 1);
@@ -155,6 +155,8 @@ public class InitModRolesMax {
         Harpymodloader.setRoleMaximum(ModRoles.DIO, 0);
         Harpymodloader.setRoleMaximum(ModRoles.BETTER_VIGILANTE, 0);
         Harpymodloader.setRoleMaximum(ModRoles.BAKA, 0);
+        Harpymodloader.setRoleMaximum(ModRoles.HOAN_MEIRIN, 0);
+        Harpymodloader.setRoleMaximum(ModRoles.PACHURI, 0);
         Harpymodloader.setRoleMaximum(ModRoles.EXAMPLER, 0);
         Harpymodloader.setRoleMaximum(ModRoles.MANIPULATOR, 0);
         Harpymodloader.setRoleMaximum(ModRoles.EXECUTIONER_ID, NoellesRolesConfig.HANDLER.instance().executionerMax);
@@ -233,7 +235,16 @@ public class InitModRolesMax {
             } else {
                 Harpymodloader.setRoleMaximum(ModRoles.BAKA_ID, 0);
             }
-
+            if (random.nextInt(0, 100) <= EGGS_CHANCE) {
+                Harpymodloader.setRoleMaximum(ModRoles.HOAN_MEIRIN, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.HOAN_MEIRIN, 0);
+            }
+            if (players_count >= 12 && random.nextInt(0, 100) <= EGGS_CHANCE) {
+                Harpymodloader.setRoleMaximum(ModRoles.PACHURI, 1);
+            } else {
+                Harpymodloader.setRoleMaximum(ModRoles.PACHURI, 0);
+            }
             if (random.nextInt(0, 100) <= 25) {
                 Harpymodloader.setRoleMaximum(ModRoles.MAGICIAN_ID, 1);
             } else {
@@ -362,7 +373,7 @@ public class InitModRolesMax {
                 // 判断是否为特警可用地图 (areas1, areas3, areas4, areas7, areas10)
                 boolean isSwastMap = false;
                 String[] swastMaps = NoellesRolesConfig.HANDLER.instance().swastMaps.split(Pattern.quote("|"));
-                if (swastMaps!=null && swastMaps.length > 0) {
+                if (swastMaps != null && swastMaps.length > 0) {
                     isSwastMap = Arrays.asList(swastMaps).contains(currentMap);
                 }
 

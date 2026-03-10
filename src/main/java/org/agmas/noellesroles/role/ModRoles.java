@@ -149,8 +149,10 @@ public class ModRoles {
   public static ResourceLocation GAMBLER_ID = Noellesroles.id("gambler");
   public static ResourceLocation POISONER_ID = Noellesroles.id("poisoner");
   public static ResourceLocation BAKA_ID = Noellesroles.id("baka");
+  public static ResourceLocation PACHURI_ID = Noellesroles.id("pachuri");
   public static ResourceLocation MAID_SAKUYA_ID = Noellesroles.id("maid_sakuya");
   public static ResourceLocation HOAN_MEIRIN_ID = Noellesroles.id("hoan_meirin");
+  public static ResourceLocation LOCKSMITH_ID = Noellesroles.id("locksmith");
   public static ResourceLocation EXAMPLER_ID = Noellesroles.id("exampler");
 
   public static ResourceLocation THE_INSANE_DAMNED_PARANOID_KILLER_OF_DOOM_DEATH_DESTRUCTION_AND_WAFFLES_ID = Noellesroles
@@ -225,7 +227,24 @@ public class ModRoles {
           true, false, Role.MoodType.REAL,
           TMMRoles.CIVILIAN.getMaxSprintTime(), false))
       .setCanSeeCoin(true);
-
+  // 好人：锁匠
+  public static Role LOCKSMITH  = TMMRoles.registerRole(
+      new NormalRole(LOCKSMITH_ID, new Color(100,200,200).getRGB(),
+          true, false, Role.MoodType.REAL,
+          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+      .setCanSeeCoin(true);
+  // 红美铃
+  public static Role HOAN_MEIRIN  = TMMRoles.registerRole(
+      new NormalRole(HOAN_MEIRIN_ID, new Color(243,140,132).getRGB(),
+          true, false, Role.MoodType.REAL,
+          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+      .setCanSeeCoin(true);
+  // 好人：帕秋莉 Patchouli Knowledge
+  public static Role PACHURI  = TMMRoles.registerRole(
+      new NormalRole(PACHURI_ID, new Color(184,144,182).getRGB(),
+          true, false, Role.MoodType.REAL,
+          TMMRoles.CIVILIAN.getMaxSprintTime(), false))
+      .setCanSeeCoin(true);
   public static Role OLDMAN = TMMRoles.registerRole(
       new NormalRole(OLDMAN_ID, new Color(112, 146, 190).getRGB(),
           true, false, Role.MoodType.REAL,
@@ -1252,29 +1271,4 @@ public class ModRoles {
   public static boolean isNeutralRole(Role role) {
     return !role.isInnocent() && !role.canUseKiller();
   }
-
-  // public static void initShowMoneyRolesList() {
-  // // 显示金币的职业的列表
-  // SHOW_MONEY_ROLES.clear();
-  // SHOW_MONEY_ROLES.add(BARTENDER);
-  // SHOW_MONEY_ROLES.add(ModRoles.RECALLER);
-  // SHOW_MONEY_ROLES.add(ModRoles.EXECUTIONER);
-  // SHOW_MONEY_ROLES.add(ModRoles.JESTER);
-  // SHOW_MONEY_ROLES.add(ModRoles.NOISEMAKER);
-  // SHOW_MONEY_ROLES.add(ModRoles.BROADCASTER);
-  // SHOW_MONEY_ROLES.add(ModRoles.AWESOME_BINGLUS);
-  // SHOW_MONEY_ROLES.add(ModRoles.PUPPETEER);
-  // SHOW_MONEY_ROLES.add(ModRoles.AVENGER);
-  // SHOW_MONEY_ROLES.add(ModRoles.BOXER);
-  // SHOW_MONEY_ROLES.add(ModRoles.SLIPPERY_GHOST);
-  // SHOW_MONEY_ROLES.add(ModRoles.CONSPIRATOR);
-  // SHOW_MONEY_ROLES.add(ModRoles.DETECTIVE);
-  // SHOW_MONEY_ROLES.add(ModRoles.POSTMAN);
-  // SHOW_MONEY_ROLES.add(ModRoles.PSYCHOLOGIST);
-  // SHOW_MONEY_ROLES.add(ModRoles.PHOTOGRAPHER);
-  // SHOW_MONEY_ROLES.add(ModRoles.ENGINEER);
-  // SHOW_MONEY_ROLES.add(ModRoles.GHOST);
-  // SHOW_MONEY_ROLES.add(ModRoles.PATROLLER);
-  // SHOW_MONEY_ROLES.add(ModRoles.GLITCH_ROBOT);
-  // }
 }

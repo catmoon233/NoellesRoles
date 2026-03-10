@@ -9,11 +9,11 @@ import org.agmas.noellesroles.role.ModRoles;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
+import dev.doctor4t.trainmurdermystery.block.TrainDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,7 +24,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -56,12 +55,14 @@ public class ReinforcementItem extends Item implements AdventureUsable {
 
         GameWorldComponent gameWorld = GameWorldComponent.KEY.get(world);
         boolean isEngineer = gameWorld.isRole(player, ModRoles.ENGINEER);
-
+        boolean isLockSmith = gameWorld.isRole(player, ModRoles.HOAN_MEIRIN);
         // 检查是否为门方块
         if (state.getBlock() instanceof SmallDoorBlock) {
+
             BlockPos lowerPos = state.getValue(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
 
             if (world.getBlockEntity(lowerPos) instanceof SmallDoorBlockEntity doorEntity) {
+
                 // 蹲下右键：工程师专属功能 - 解除卡住状态或取下道具
                 if (player.isShiftKeyDown()) {
                     // 优先检查是否要解除卡住状态
@@ -81,7 +82,7 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                     }
 
                     // 工程师专属：取下门上的道具
-                    if (isEngineer) {
+                    if (isEngineer || isLockSmith) {
                         // 检查是否有加固
                         if (isDoorReinforced(doorEntity)) {
                             setDoorReinforced(doorEntity, false);
@@ -94,7 +95,11 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                                                 .withStyle(ChatFormatting.GREEN),
                                         true);
                                 // 返还加固物品
-                                player.addItem(new ItemStack(ModItems.REINFORCEMENT));
+                                if (isLockSmith) {
+                                    player.drop(new ItemStack(ModItems.REINFORCEMENT), true);
+                                } else if (isEngineer) {
+                                    player.addItem(new ItemStack(ModItems.REINFORCEMENT));
+                                }
                             }
                             return InteractionResult.SUCCESS;
                         }
@@ -111,7 +116,11 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                                                 .withStyle(ChatFormatting.GREEN),
                                         true);
                                 // 返还警报陷阱物品
-                                player.addItem(new ItemStack(ModItems.ALARM_TRAP));
+                                if (isLockSmith) {
+                                    player.drop(new ItemStack(ModItems.ALARM_TRAP), true);
+                                } else if (isEngineer) {
+                                    player.addItem(new ItemStack(ModItems.ALARM_TRAP));
+                                }
                             }
                             return InteractionResult.SUCCESS;
                         }
@@ -133,7 +142,11 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                                     lockItem.setResistance(lockEntity.getResistance());
                                 }
                                 LockEntityManager.getInstance().removeLockEntity(lowerPos.above(), lockEntity);
-                                player.addItem(itemStack);
+                                if (isLockSmith) {
+                                    player.drop(itemStack, true);
+                                } else if (isEngineer) {
+                                    player.addItem(itemStack);
+                                }
                                 // 取消锁门：包括临近的门
                                 LockEntityManager.lockNearByDoors(doorEntity, world, false);
                             }
@@ -163,13 +176,41 @@ public class ReinforcementItem extends Item implements AdventureUsable {
                 // 普通右键：加固门
                 // 门已被撬棍破坏，无法加固
                 if (doorEntity.isBlasted()) {
-                    if (!world.isClientSide) {
-                        player.displayClientMessage(
-                                Component.translatable("message.noellesroles.engineer.already_broken")
-                                        .withStyle(ChatFormatting.RED),
-                                true);
+                    if (isLockSmith) {
+                        if (player.getCooldowns().isOnCooldown(context.getItemInHand().getItem()))
+                            return InteractionResult.FAIL;
+                        player.getCooldowns().addCooldown(context.getItemInHand().getItem(), 20 * 30);
+                        world.playSound(null, lowerPos.getX() + 0.5, lowerPos.getY() + 1, lowerPos.getZ() + 0.5,
+                                TMMSounds.BLOCK_DOOR_TOGGLE, SoundSource.BLOCKS, 0.7f, 1.5f);
+                        if (!world.isClientSide) {
+                            doorEntity.setBlasted(false);
+                            doorEntity.setChanged();
+                            player.displayClientMessage(
+                                    Component.translatable("message.noellesroles.locksmith.fix")
+                                            .withStyle(ChatFormatting.GREEN),
+                                    true);
+                        }
+                        return InteractionResult.SUCCESS;
+                    } else {
+                        if (!world.isClientSide) {
+                            player.displayClientMessage(
+                                    Component.translatable("message.noellesroles.engineer.already_broken")
+                                            .withStyle(ChatFormatting.RED),
+                                    true);
+                        }
                     }
                     return InteractionResult.FAIL;
+                }
+
+                // 检查门是否支持
+                if (!(state.getBlock() instanceof TrainDoorBlock)) {
+                    if (doorEntity.getKeyName().isEmpty()) {
+                        player.displayClientMessage(
+                                Component.translatable("message.noellesroles.engineer.not_support_door")
+                                        .withStyle(ChatFormatting.RED),
+                                true);
+                        return InteractionResult.FAIL;
+                    }
                 }
 
                 // 检查门是否已被加固
@@ -250,11 +291,5 @@ public class ReinforcementItem extends Item implements AdventureUsable {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        tooltip.add(Component.translatable("item.noellesroles.reinforcement.tooltip")
-                .withStyle(ChatFormatting.GRAY));
     }
 }

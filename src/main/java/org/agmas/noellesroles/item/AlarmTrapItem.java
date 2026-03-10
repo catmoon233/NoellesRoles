@@ -2,6 +2,7 @@ package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.block.SmallDoorBlock;
+import dev.doctor4t.trainmurdermystery.block.TrainDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
@@ -47,9 +48,20 @@ public class AlarmTrapItem extends Item implements AdventureUsable {
 
         // 检查是否为门方块
         if (state.getBlock() instanceof SmallDoorBlock) {
+
             BlockPos lowerPos = state.getValue(SmallDoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
 
             if (world.getBlockEntity(lowerPos) instanceof SmallDoorBlockEntity doorEntity) {
+                // 检查门是否支持
+                if (!(state.getBlock() instanceof TrainDoorBlock)) {
+                    if (doorEntity.getKeyName().isEmpty()) {
+                        player.displayClientMessage(
+                                Component.translatable("message.noellesroles.engineer.not_support_door")
+                                        .withStyle(ChatFormatting.RED),
+                                true);
+                        return InteractionResult.FAIL;
+                    }
+                }
                 // 检查门是否已被破坏
                 if (doorEntity.isBlasted()) {
                     if (!world.isClientSide) {
@@ -74,7 +86,6 @@ public class AlarmTrapItem extends Item implements AdventureUsable {
 
                 // 放置警报陷阱
                 setDoorAlarmTrap(doorEntity, true);
-
 
                 if (!world.isClientSide) {
                     TMM.REPLAY_MANAGER.recordItemUse(player.getUUID(),

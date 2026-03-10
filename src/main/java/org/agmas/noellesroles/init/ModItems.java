@@ -217,6 +217,10 @@ public class ModItems {
             new ReinforcementItem(new Item.Properties().stacksTo(16)),
             "reinforcement");
 
+    public static final Item SCREWDRIVER = register(
+            new ScrewdriverItem(new Item.Properties().stacksTo(16)),
+            "screwdriver");
+
     /**
      * 警报陷阱
      * - 工程师专属物品
@@ -469,6 +473,7 @@ public class ModItems {
         TMMItems.INVISIBLE_ITEMS.add(ModItems.ALARM_TRAP);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.HALLUCINATION_BOTTLE);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.REINFORCEMENT);
+        TMMItems.INVISIBLE_ITEMS.add(ModItems.SCREWDRIVER);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.CONSPIRACY_PAGE);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.LETTER_ITEM);
         TMMItems.INVISIBLE_ITEMS.add(ModItems.DEFIBRILLATOR);

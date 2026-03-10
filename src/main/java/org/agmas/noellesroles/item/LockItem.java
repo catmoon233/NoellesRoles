@@ -1,6 +1,7 @@
 package org.agmas.noellesroles.item;
 
 import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.block.TrainDoorBlock;
 import dev.doctor4t.trainmurdermystery.block_entity.DoorBlockEntity;
 import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import dev.doctor4t.trainmurdermystery.util.AdventureUsable;
@@ -75,9 +76,20 @@ public class LockItem extends Item implements AdventureUsable {
         if (!(entity instanceof DoorBlockEntity))
             entity = world.getBlockEntity(context.getClickedPos().below());
         Player player = context.getPlayer();
-        if (entity instanceof DoorBlockEntity door && player != null) {
+        if (entity instanceof DoorBlockEntity doorEntity && player != null) {
             // 检查门是否已被破坏
-            if (door.isBlasted()) {
+            // 检查门是否支持
+            var state = entity.getBlockState();
+            if (!(state.getBlock() instanceof TrainDoorBlock)) {
+                if (doorEntity.getKeyName().isEmpty()) {
+                    player.displayClientMessage(
+                            Component.translatable("message.noellesroles.engineer.not_support_door")
+                                    .withStyle(ChatFormatting.RED),
+                            true);
+                    return InteractionResult.FAIL;
+                }
+            }
+            if (doorEntity.isBlasted()) {
                 if (!world.isClientSide) {
                     player.displayClientMessage(
                             Component.translatable("message.noellesroles.engineer.already_broken_lock")
@@ -86,7 +98,7 @@ public class LockItem extends Item implements AdventureUsable {
                 }
                 return InteractionResult.FAIL;
             }
-            if (LockEntityManager.isDoorLocked(door)) {
+            if (LockEntityManager.isDoorLocked(doorEntity)) {
                 if (!world.isClientSide) {
                     player.displayClientMessage(Component.translatable("message.noellesroles.engineer.already_locked")
                             .withStyle(ChatFormatting.RED), true);
@@ -96,7 +108,7 @@ public class LockItem extends Item implements AdventureUsable {
 
             // 判定玩家点击的方向：只允许在门的正反面点击
             Direction clickedFace = context.getClickedFace();
-            Direction doorFacing = door.getFacing();
+            Direction doorFacing = doorEntity.getFacing();
             if (clickedFace != doorFacing && clickedFace != doorFacing.getOpposite()) {
                 return InteractionResult.PASS;
             }
@@ -107,12 +119,12 @@ public class LockItem extends Item implements AdventureUsable {
             if (!world.isClientSide) {
                 LockEntity lockEntity = new LockEntity(ModEntities.LOCK_ENTITY, world, length);
                 lockEntity.setResistance(resistance);
-                lockEntity.setPos(getLockEntityPos(context, door));
+                lockEntity.setPos(getLockEntityPos(context, doorEntity));
                 lockEntity.setXRot(0.f);
-                lockEntity.setYRot(door.getFacing().toYRot());
+                lockEntity.setYRot(doorEntity.getFacing().toYRot());
                 world.addFreshEntity(lockEntity);
                 // 在门上方一格记录锁
-                LockEntityManager.getInstance().addLockEntity(door.getBlockPos().above(), lockEntity);
+                LockEntityManager.getInstance().addLockEntity(doorEntity.getBlockPos().above(), lockEntity);
                 if (!player.isCreative()) {
                     // 回放记录
                     // if (TMM.REPLAY_MANAGER != null) {
@@ -123,7 +135,7 @@ public class LockItem extends Item implements AdventureUsable {
                     player.getItemInHand(context.getHand()).shrink(1);
                 }
                 // 锁门：包括临近的门
-                LockEntityManager.lockNearByDoors(door, world, true);
+                LockEntityManager.lockNearByDoors(doorEntity, world, true);
                 return InteractionResult.SUCCESS;
             }
         }

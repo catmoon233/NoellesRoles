@@ -4,6 +4,7 @@ import org.agmas.harpymodloader.component.WorldModifierComponent;
 import org.agmas.noellesroles.component.AdmirerPlayerComponent;
 import org.agmas.noellesroles.component.AwesomePlayerComponent;
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
+import org.agmas.noellesroles.component.DetectivePlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.MagicianPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
@@ -194,7 +195,7 @@ public class InstinctRenderer {
                 return (Color.GRAY.getRGB());
             }
         });
-        // 失忆患者
+        // 记者
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
             if (Minecraft.getInstance() == null)
                 return -1;
@@ -227,7 +228,33 @@ public class InstinctRenderer {
             }
             return -1;
         });
-        // 记者
+        // 侦探
+        OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
+            if (Minecraft.getInstance() == null)
+                return -1;
+            var self = Minecraft.getInstance().player;
+            if (self == null)
+                return -1;
+            if (GameFunctions.isPlayerSpectatingOrCreative(self))
+                return -1;
+            if (TMMClient.gameComponent == null) {
+                return -1;
+            }
+            if (!(target instanceof Player targetPlayer)) {
+                return -1;
+            }
+            if (!TMMClient.gameComponent.isRole(targetPlayer, ModRoles.CONSPIRATOR)) {
+                return -1;
+            }
+            if (!TMMClient.gameComponent.isRole(self, ModRoles.DETECTIVE)) {
+                return -1;
+            }
+            var awpc = DetectivePlayerComponent.KEY.get(self);
+            if (awpc.conspiratorInstinctTime <= 0)
+                return -1;
+            return ModRoles.DETECTIVE.color();
+        });
+        // 失忆
         OnGetInstinctHighlight.EVENT.register((target, hasInstinct) -> {
             if (Minecraft.getInstance() == null)
                 return -1;
@@ -496,11 +523,11 @@ public class InstinctRenderer {
                     } else if (target_role.isNeutralForKiller()) {
                         return Color.ORANGE.getRGB();
                     } else {
-                        // if (TMMClient.gameComponent.isRole(self, ModRoles.BOMBER)){
-                        // if(target_player.getMainHandItem().is(ModItems.BOMB)){
-                        // return ModRoles.BOMBER.color();
-                        // }
-                        // }
+                        if (TMMClient.gameComponent.isRole(self, ModRoles.DIO)) {
+                            if (RoleUtils.compareRole(target_role, ModRoles.JOJO)) {
+                                return Color.CYAN.getRGB();
+                            }
+                        }
                         if (TMMClient.gameComponent.isRole(target_player, ModRoles.GAMBLER)) {
                             return -2;
                         }

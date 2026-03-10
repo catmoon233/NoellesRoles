@@ -245,8 +245,10 @@ public class RoleUtils {
      * @return 返回是否相等
      */
     public static boolean compareRole(Role role_a, Role role_b) {
-        if(role_a == null && role_b == null) return true;
-        if(role_a == null || role_b == null) return false;
+        if (role_a == null && role_b == null)
+            return true;
+        if (role_a == null || role_b == null)
+            return false;
         return role_a.equals(role_b);
     }
 
@@ -288,12 +290,14 @@ public class RoleUtils {
     }
 
     public static MutableComponent getRoleOrModifierNameWithColor(Object role) {
+        if (role == null)
+            return Component.translatable("Unknown");
         if (role instanceof Role r) {
             return getRoleName(r).withColor(0xff000000 | r.color());
         } else if (role instanceof Modifier m) {
             return m.getName(true);
         } else {
-            return Component.literal("Unknown");
+            return Component.translatable("Unknown");
         }
     }
 
