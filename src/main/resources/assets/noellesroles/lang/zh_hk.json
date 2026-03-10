@@ -1199,6 +1199,8 @@
   "item.noellesroles.life_and_death_shape.tooltip": "擁有此簽名時，當你視野範圍內有明星時，你將獲得速度 I\n擁有此簽名的玩家可以讓明星抵擋自己受到的一次傷害。\n明星必須在玩家受傷的時候存活才能生效。",
   "item.noellesroles.shisiye": "十四夜",
   "item.noellesroles.shisiye.tooltip": "來自幻想鄉的酒水，售價440圓\n飲用後獲得：速度X 20s",
+  "item.noellesroles.zhanweifu1": "佔位符1",
+  "item.noellesroles.zhanweifu2": "佔位符2",
   "block.noellesroles.vending_machines": "自動售貨機",
   "announcement.role.magician": "魔術師",
   "announcement.goals.magician": "用你的魔術技巧迷惑殺手，保護乘客！",
