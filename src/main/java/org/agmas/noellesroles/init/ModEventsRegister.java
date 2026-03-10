@@ -22,6 +22,7 @@ import org.agmas.noellesroles.component.BloodFeudistPlayerComponent;
 import org.agmas.noellesroles.component.DeathPenaltyComponent;
 import org.agmas.noellesroles.component.DefibrillatorComponent;
 import org.agmas.noellesroles.component.GlitchRobotPlayerComponent;
+import org.agmas.noellesroles.component.HoanMeirinPlayerComponent;
 import org.agmas.noellesroles.component.InsaneKillerPlayerComponent;
 import org.agmas.noellesroles.component.ModComponents;
 import org.agmas.noellesroles.component.MonitorPlayerComponent;
@@ -48,7 +49,7 @@ import org.agmas.noellesroles.roles.commander.CommanderHandler;
 import org.agmas.noellesroles.roles.conspirator.ConspiratorKilledPlayer;
 import org.agmas.noellesroles.roles.executioner.ExecutionerPlayerComponent;
 import org.agmas.noellesroles.roles.fortuneteller.FortunetellerPlayerComponent;
-import org.agmas.noellesroles.roles.hoan_meirin.FistPunchHandler;
+import org.agmas.noellesroles.roles.hoan_meirin.HoanMeirinFistPunchHandler;
 import org.agmas.noellesroles.roles.manipulator.ManipulatorPlayerComponent;
 import org.agmas.noellesroles.roles.thief.ThiefPlayerComponent;
 import org.agmas.noellesroles.roles.voodoo.VoodooDeathHandler;
@@ -430,12 +431,13 @@ public class ModEventsRegister {
     private static boolean isEnabled = false;
 
     public static void registerEvents() {
+        HoanMeirinFistPunchHandler.register();
         VoodooDeathHandler.registerEvents();
         PlayerStatsBeforeRefugee.beforeLoadFunc = (player) -> {
             ModComponents.DEATH_PENALTY.get(player).reset();
         };
         OnGameEnd.EVENT.register((world, gameWorldComponent) -> {
-            FistPunchHandler.PUNCH_RECORDS.clear();
+            HoanMeirinFistPunchHandler.PUNCH_RECORDS.clear();
             GameRoundEndComponent roundEnd = GameRoundEndComponent.KEY.get(world);
             if (roundEnd.getWinStatus().equals(GameFunctions.WinStatus.TIME)) {
                 int alivePlayers = 0, aliveKillers = 0, aliveGhost = 0;
@@ -584,6 +586,7 @@ public class ModEventsRegister {
                                 || deathReason.getPath().equals("nunchuck_hit")
                                 || deathReason.getPath().equals("bat_hit")
                                 || deathReason.getPath().equals("gun_shot")
+                                || deathReason.getPath().equals("hoan_meirin_attack")
                                 || deathReason.getPath().equals("arrow")
                                 || deathReason.getPath().equals("knife_stab")
                                 || deathReason.getPath().equals("fell_out_of_train")
@@ -916,6 +919,10 @@ public class ModEventsRegister {
                 var tpc = DIOPlayerComponent.KEY.get(player);
                 tpc.reset();
             }
+            if (role.identifier().equals(ModRoles.HOAN_MEIRIN.identifier())) {
+                var tpc = HoanMeirinPlayerComponent.KEY.get(player);
+                tpc.reset();
+            }
             if (role.identifier().equals(ModRoles.MAID_SAKUYA.identifier())) {
                 PlayerShopComponent.KEY.get(player).setBalance(100);
             }
@@ -1203,7 +1210,7 @@ public class ModEventsRegister {
         });
 
         OnGameTrueStarted.EVENT.register((serverLevel) -> {
-            FistPunchHandler.PUNCH_RECORDS.clear();
+            HoanMeirinFistPunchHandler.PUNCH_RECORDS.clear();
             var blackoutComponent = WorldBlackoutComponent.KEY.get(serverLevel);
 
             GameFunctions.serverAsynTaskLists.add(new ServerTaskInfoClasses.SchedulerTask(20, () -> {

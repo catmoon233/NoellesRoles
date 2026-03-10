@@ -55,6 +55,28 @@ public class AbilityHandler {
         if (player.hasEffect(ModEffects.TIME_STOP) && !TimeStopEffect.canMovePlayers.contains(player.getUUID())) {
             return;
         }
+        if (gameWorldComponent.isRole(player, ModRoles.HOAN_MEIRIN)) {
+            var hmpc = HoanMeirinPlayerComponent.KEY.get(player);
+            if (player.hasEffect(MobEffects.LEVITATION)) {
+                player.removeEffect(MobEffects.LEVITATION);
+                player.displayClientMessage(
+                        Component.translatable("hud.hoan_meirin.ability_stop").withStyle(ChatFormatting.AQUA),
+                        true);
+            } else if (hmpc.cooldown > 0) {
+                player.displayClientMessage(
+                        Component.translatable("message.noellesroles.ability_cooldown").withStyle(ChatFormatting.RED),
+                        true);
+                return;
+            } else {
+                hmpc.setCooldown(60 * 20);
+                player.displayClientMessage(
+                        Component.translatable("hud.hoan_meirin.ability_activated").withStyle(ChatFormatting.GREEN),
+                        true);
+                context.player().addEffect(new MobEffectInstance(MobEffects.LEVITATION,
+                        10 * 20, 1, true, false,
+                        true));
+            }
+        }
         if (gameWorldComponent.isRole(context.player(), ModRoles.MAID_SAKUYA)) {
             if (abilityPlayerComponent.cooldown > 0) {
                 context.player().displayClientMessage(Component.translatable(
@@ -383,28 +405,7 @@ public class AbilityHandler {
             return;
         }
         var targetPlayer = player.level().getPlayerByUUID(payload.target());
-        if (gameWorldComponent.isRole(player, ModRoles.HOAN_MEIRIN)) {
-            var hmpc = HoanMeirinPlayerComponent.KEY.get(player);
-            if (player.hasEffect(MobEffects.LEVITATION)) {
-                player.removeEffect(MobEffects.LEVITATION);
-                player.displayClientMessage(
-                        Component.translatable("hud.hoan_meirin.ability_stop").withStyle(ChatFormatting.AQUA),
-                        true);
-            } else if (hmpc.cooldown > 0) {
-                player.displayClientMessage(
-                        Component.translatable("message.noellesroles.ability_cooldown").withStyle(ChatFormatting.RED),
-                        true);
-                return;
-            } else {
-                hmpc.setCooldown(60 * 20);
-                player.displayClientMessage(
-                        Component.translatable("hud.hoan_meirin.ability_activated").withStyle(ChatFormatting.GREEN),
-                        true);
-                context.player().addEffect(new MobEffectInstance(MobEffects.LEVITATION,
-                        10 * 20, 1, true, false,
-                        true));
-            }
-        }
+
         if (gameWorldComponent.isRole(player, ModRoles.EXAMPLER)) {
             if (abilityPlayerComponent.cooldown > 0) {
                 player.displayClientMessage(

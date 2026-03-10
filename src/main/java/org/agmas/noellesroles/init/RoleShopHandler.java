@@ -486,13 +486,16 @@ public class RoleShopHandler {
       var SHOP = new ArrayList<ShopEntry>();
       SHOP.add(new ShopEntry(
           displayStack,
-          200,
+          125,
           ShopEntry.Type.TOOL) {
         @Override
         public boolean onBuy(Player player) {
           var itemStack = Items.WRITTEN_BOOK.getDefaultInstance();
           var players = player.level().players();
           var gameWorldComponent = GameWorldComponent.KEY.get(player.level());
+          players.removeIf((p) -> {
+            return gameWorldComponent.getRole(p) == null;
+          });
           Collections.shuffle(players);
           int count = 1;
           var contents = new ArrayList<Filterable<Component>>();

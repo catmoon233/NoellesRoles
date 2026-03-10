@@ -206,6 +206,14 @@ public class ClientHudRenderer {
             int yOffset = screenHeight - 10 - font.lineHeight; // 右下角
             int xOffset = screenWidth - 10; // 距离右边缘
             var abpc = HoanMeirinPlayerComponent.KEY.get(client.player);
+            {
+                var text = Component
+                        .translatable("hud.hoan_meirin.armor",
+                                abpc.armor)
+                        .withStyle(ChatFormatting.GOLD);
+                guiGraphics.drawString(font, text, 10, yOffset - font.lineHeight - 4,
+                        Color.WHITE.getRGB());
+            }
             if (abpc.loneyTime > 5 * 20) {
                 // 孤独值
                 var text1 = Component

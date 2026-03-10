@@ -4,16 +4,22 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 
 import org.agmas.noellesroles.Noellesroles;
 import org.agmas.noellesroles.role.ModRoles;
+import org.agmas.noellesroles.roles.hoan_meirin.HoanMeirinFistPunchHandler;
 import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
+
+import dev.doctor4t.trainmurdermystery.DeathInfo;
+import dev.doctor4t.trainmurdermystery.TMM;
 import dev.doctor4t.trainmurdermystery.api.RoleComponent;
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-
+import dev.doctor4t.trainmurdermystery.index.TMMSounds;
 import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
@@ -45,6 +51,7 @@ public class HoanMeirinPlayerComponent
     // 技能冷却时间（tick）
     public int cooldown = 100;
     public int loneyTime = 0;
+    public int armor = 0;
 
     /**
      * 构造函数
@@ -61,6 +68,7 @@ public class HoanMeirinPlayerComponent
     public void reset() {
         this.cooldown = 0;
         this.loneyTime = 0;
+        this.armor = 1;
         this.sync();
     }
 
@@ -115,6 +123,8 @@ public class HoanMeirinPlayerComponent
             int nearByPlayerCount = 0;
             for (var p : this.player.level().players()) {
                 if (!GameFunctions.isPlayerAliveAndSurvival(p))
+                    continue;
+                if (p.getUUID().equals(player.getUUID()))
                     continue;
                 if (p.distanceTo(player) <= 5) {
                     nearByPlayerCount++;
@@ -183,11 +193,31 @@ public class HoanMeirinPlayerComponent
     public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         tag.putInt("cooldown", this.cooldown);
         tag.putInt("loneyTime", this.loneyTime);
+        tag.putInt("armor", this.armor);
     }
 
     @Override
     public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.Provider registryLookup) {
         this.cooldown = tag.contains("cooldown") ? tag.getInt("cooldown") : 0;
-        this.loneyTime = tag.contains("loneyTime") ? tag.getInt("loneyTime") : -1;
+        this.loneyTime = tag.contains("loneyTime") ? tag.getInt("loneyTime") : 0;
+        this.armor = tag.contains("armor") ? tag.getInt("armor") : 0;
+    }
+
+    public boolean triggerArmor(Player victim, Player killer, ResourceLocation deathReason) {
+        if (this.armor > 0) {
+            boolean cantDefend = TMM.canStickArmor.stream()
+                    .anyMatch((pre) -> pre.test(new DeathInfo(victim, killer, deathReason)));
+            if (cantDefend) {
+                return false;
+            }
+            this.armor--;
+            this.sync();
+            player.level().playSound(null, player.blockPosition(), TMMSounds.ITEM_PSYCHO_ARMOUR, SoundSource.MASTER,
+                    5.0F, 1.0F);
+            TMM.REPLAY_MANAGER.breakArmor(player.getUUID());
+            HoanMeirinFistPunchHandler.applyShockwave(player);
+            return true;
+        }
+        return false;
     }
 }

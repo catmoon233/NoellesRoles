@@ -81,6 +81,7 @@ public abstract class PlayerResetMixin {
         SkinSplitPersonalityComponent.KEY.get(player).sync();
         (PlayerVolumeComponent.KEY.get(player)).clear();
         (WayfarerPlayerComponent.KEY.get(player)).clear();
+        (HoanMeirinPlayerComponent.KEY.get(player)).clear();
 
         ((MorphlingPlayerComponent) MorphlingPlayerComponent.KEY.get(player)).reset();
         ((VoodooPlayerComponent) VoodooPlayerComponent.KEY.get(player)).reset();
