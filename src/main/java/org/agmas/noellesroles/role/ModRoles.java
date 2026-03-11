@@ -282,7 +282,7 @@ public class ModRoles {
   public static Role JESTER = TMMRoles
       .registerRole(new NoramlRole(JESTER_ID, new Color(186, 85, 211).getRGB(), false,
           false, Role.MoodType.FAKE, Integer.MAX_VALUE, true))
-      .setNeutralForKiller(true).setCanSeeTeammateKiller(false);
+      .setNeutralForKiller(true).setCanSeeTeammateKiller(false).setCanUseInstinct(true);
   public static Role CONDUCTOR = TMMRoles
       .registerRole(new NoramlRole(CONDUCTOR_ID, new Color(184, 134, 11).getRGB(), true,
           false, Role.MoodType.REAL, TMMRoles.CIVILIAN.getMaxSprintTime(), false));
@@ -934,8 +934,8 @@ public class ModRoles {
    */
   public static void init() {
     TMMRoles.LOOSE_END.setCanUseInstinct(true);
-    ModRoles.RECORDER.setCanUseInstinct(true);
-    ModRoles.JESTER.setCanUseInstinct(true);
+    // ModRoles.RECORDER;
+    // ModRoles.JESTER.setCanUseInstinct(true);
     // ==================== 注册乘客阵营角色 ====================
     // 复仇者角色 - 乘客阵营
     AVENGER = TMMRoles.registerRole(new NoramlRole(
@@ -1143,7 +1143,7 @@ public class ModRoles {
         Role.MoodType.FAKE, // 假心情
         TMMRoles.CIVILIAN.getMaxSprintTime(), // 标准冲刺时间
         true // 隐藏计分板
-    )).setComponentKey(RecorderPlayerComponent.KEY);
+    )).setComponentKey(RecorderPlayerComponent.KEY).setCanUseInstinct(true);
 
     // 故障机器人角色 - 乘客阵营
     GLITCH_ROBOT = TMMRoles.registerRole(new NoramlRole(

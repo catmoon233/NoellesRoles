@@ -47,6 +47,7 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven { url = 'https://maven.maxhenkel.de/releases' }
     maven {
         name = "Gegy"
         url = uri("https://maven.gegy.dev")
