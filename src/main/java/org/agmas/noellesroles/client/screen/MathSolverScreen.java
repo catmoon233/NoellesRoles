@@ -40,7 +40,6 @@ public class MathSolverScreen extends Screen {
         super(Component.translatable("screen.math_solver.title"));
         this.forced = forced;
         this.maxTrial = maxTrial;
-        resetProblems();
         hasStarted = false;
         currentIndex = -1;
         startTime = 0;
@@ -50,6 +49,7 @@ public class MathSolverScreen extends Screen {
         } else {
             totalPages = 10;
         }
+        resetProblems();
     }
 
     public void startMathSolving() {
