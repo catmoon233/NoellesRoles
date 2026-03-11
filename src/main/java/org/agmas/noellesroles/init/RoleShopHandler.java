@@ -540,6 +540,10 @@ public class RoleShopHandler {
           ModItems.MASTER_KEY_P.getDefaultInstance(),
           100,
           ShopEntry.Type.TOOL));
+      SHOP.add(new ShopEntry(
+          TMMItems.IRON_DOOR_KEY.getDefaultInstance(),
+          100,
+          ShopEntry.Type.TOOL));
       ShopContent.customEntries.put(
           ModRoles.LOCKSMITH_ID, SHOP);
     }

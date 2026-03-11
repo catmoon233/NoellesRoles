@@ -66,6 +66,9 @@ public class TimeStopEffect extends MobEffect {
         serverPlayer.serverLevel().players().forEach(
                 player -> {
                     player.stopUsingItem();
+                    if (player.isSleeping()) {
+                        player.stopSleeping();
+                    }
                     player.playNotifySound(NRSounds.TIME_STOP, SoundSource.PLAYERS, 1.0F, 1.0F);
 
                     BroadcastCommand.BroadcastMessage(player, broadcastMessage);
@@ -82,7 +85,7 @@ public class TimeStopEffect extends MobEffect {
                             canMovePlayers.add(player.getUUID());
                         }
                         // if (gameWorldComponent.isRole(player, ModRoles.JOJO)) {
-                        //     canMovePlayers.add(player.getUUID());
+                        // canMovePlayers.add(player.getUUID());
                         // }
                         if (gameWorldComponent.isRole(player, ModRoles.CLOCKMAKER)) {
                             canMovePlayers.add(player.getUUID());
