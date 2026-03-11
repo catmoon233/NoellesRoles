@@ -933,6 +933,9 @@ public class ModRoles {
    * 在模组初始化时调用
    */
   public static void init() {
+    TMMRoles.LOOSE_END.setCanUseInstinct(true);
+    ModRoles.RECORDER.setCanUseInstinct(true);
+    ModRoles.JESTER.setCanUseInstinct(true);
     // ==================== 注册乘客阵营角色 ====================
     // 复仇者角色 - 乘客阵营
     AVENGER = TMMRoles.registerRole(new NoramlRole(

@@ -1,7 +1,6 @@
 package org.agmas.noellesroles.mixin.client;
 
 import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.api.TMMRoles;
 import dev.doctor4t.trainmurdermystery.client.TMMClient;
 
 import org.agmas.noellesroles.component.BetterVigilantePlayerComponent;
@@ -36,30 +35,13 @@ public abstract class InstinctMixin {
             cir.cancel();
             return;
         }
-        // var deathPenalty = org.agmas.noellesroles.component.ModComponents.DEATH_PENALTY.get(player);
-        // 检查死亡惩罚
-        // if (deathPenalty != null)
-        //     if (deathPenalty.hasPenalty()) {
-        //         cir.setReturnValue(false);
-        //         cir.cancel();
-        //         return;
-        //     }
-
         GameWorldComponent gameWorldComponent = (GameWorldComponent) GameWorldComponent.KEY.get(player.level());
-        if (gameWorldComponent.isRole(player, ModRoles.JESTER)
-                || gameWorldComponent.isRole(player, TMMRoles.LOOSE_END)
-                || gameWorldComponent.isRole(player, ModRoles.RECORDER)) {
-            if (instinctKeybind.isDown()) {
-                cir.setReturnValue(true);
-                cir.cancel();
-            }
-        } else if (gameWorldComponent.isRole(player, ModRoles.BETTER_VIGILANTE)) {
+        if (gameWorldComponent.isRole(player, ModRoles.BETTER_VIGILANTE)) {
             var betterC = BetterVigilantePlayerComponent.KEY.get(player);
             if (betterC.lastStandActivated) {
                 cir.setReturnValue(true);
                 cir.cancel();
             }
-
         }
     }
 
