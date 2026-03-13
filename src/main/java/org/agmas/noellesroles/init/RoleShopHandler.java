@@ -97,6 +97,8 @@ public class RoleShopHandler {
   public static ArrayList<ShopEntry> SWAST_SHOP = new ArrayList<>();
   // ==================== 武术教官商店 ====================
   public static ArrayList<ShopEntry> MARTIAL_ARTS_INSTRUCTOR_SHOP = new ArrayList<>();
+  // ==================== 马晨絮商店 ====================
+  public static ArrayList<ShopEntry> MA_CHEN_XU_SHOP = new ArrayList<>();
 
   /**
    * 初始化框架角色商店
@@ -710,6 +712,10 @@ public class RoleShopHandler {
           ModRoles.MARTIAL_ARTS_INSTRUCTOR_ID, MARTIAL_ARTS_INSTRUCTOR_SHOP);
     }
 
+    // 马晨絮商店
+    {
+      ShopContent.customEntries.put(ModRoles.MA_CHEN_XU.getIdentifier(), MA_CHEN_XU_SHOP);
+    }
     // 故障机器人商店
     {
       List<ShopEntry> glitchRobotShop = new ArrayList<>();
@@ -1181,6 +1187,70 @@ public class RoleShopHandler {
     SWAST_SHOP.add(new ShopEntry(
         TMMItems.IRON_DOOR_KEY.getDefaultInstance(),
         75,
+        ShopEntry.Type.TOOL));
+
+    // 马晨絮商店
+    // 刀 - 130金币
+    MA_CHEN_XU_SHOP.add(new ShopEntry(
+        TMMItems.KNIFE.getDefaultInstance(),
+        130,
+        ShopEntry.Type.WEAPON));
+
+    // 开锁器 - 100金币
+    MA_CHEN_XU_SHOP.add(new ShopEntry(
+        TMMItems.LOCKPICK.getDefaultInstance(),
+        100,
+        ShopEntry.Type.TOOL));
+
+    // 下雨[狂热] - 250金币
+    ItemStack frenzyRainItem = Items.BARRIER.getDefaultInstance();
+    frenzyRainItem.set(DataComponents.ITEM_NAME,
+        Component.translatable("item.noellesroles.ma_chen_xu.frenzy_rain")
+            .withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+    var frenzyRainLore = new ArrayList<Component>();
+    frenzyRainLore.add(Component.translatable("item.noellesroles.ma_chen_xu.frenzy_rain.lore1")
+        .withStyle(ChatFormatting.GRAY));
+    frenzyRainLore.add(Component.translatable("item.noellesroles.ma_chen_xu.frenzy_rain.lore2")
+        .withStyle(ChatFormatting.GRAY));
+    frenzyRainLore.add(Component.translatable("item.noellesroles.ma_chen_xu.frenzy_rain.lore3")
+        .withStyle(ChatFormatting.GRAY));
+    frenzyRainItem.set(DataComponents.LORE, new ItemLore(frenzyRainLore));
+
+    MA_CHEN_XU_SHOP.add(new ShopEntry(frenzyRainItem, 250, ShopEntry.Type.TOOL) {
+      @Override
+      public boolean onBuy(@NotNull Player player) {
+        var component = org.agmas.noellesroles.component.ModComponents.MA_CHEN_XU.get(player);
+        if (component != null) {
+          component.useFrenzyRain();
+          return true;
+        }
+        return false;
+      }
+    });
+
+    // 关灯 - 120金币
+    MA_CHEN_XU_SHOP.add(new ShopEntry(TMMItems.BLACKOUT.getDefaultInstance(), 120, ShopEntry.Type.TOOL) {
+      public boolean onBuy(@NotNull Player player) {
+        return PlayerShopComponent.useBlackout(player);
+      }
+    });
+
+    // 手枪 - 320金币
+    MA_CHEN_XU_SHOP.add(new ShopEntry(
+        TMMItems.REVOLVER.getDefaultInstance(),
+        320,
+        ShopEntry.Type.WEAPON));
+
+    // 手雷 - 330金币
+    MA_CHEN_XU_SHOP.add(new ShopEntry(
+        TMMItems.GRENADE.getDefaultInstance(),
+        330,
+        ShopEntry.Type.WEAPON));
+
+    // 撬棍 - 80金币
+    MA_CHEN_XU_SHOP.add(new ShopEntry(
+        TMMItems.CROWBAR.getDefaultInstance(),
+        80,
         ShopEntry.Type.TOOL));
   }
 }

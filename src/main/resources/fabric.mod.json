@@ -90,7 +90,8 @@
       "noellesroles:temporary_effect",
       "noellesroles:awesome",
       "noellesroles:accountant",
-      "noellesroles:alchemist"
+      "noellesroles:alchemist",
+      "noellesroles:ma_chen_xu"
     ]
   },
   "mixins": [

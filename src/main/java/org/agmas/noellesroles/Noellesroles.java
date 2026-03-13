@@ -226,6 +226,9 @@ public class Noellesroles implements ModInitializer {
 
         // 注册药水效果
         ModEffects.init();
+
+        // 注册实体
+        ModEntities.init();
     }
 
     /**

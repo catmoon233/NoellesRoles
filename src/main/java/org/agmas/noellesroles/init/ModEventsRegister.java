@@ -432,6 +432,7 @@ public class ModEventsRegister {
 
     public static void registerEvents() {
         HoanMeirinFistPunchHandler.register();
+        org.agmas.noellesroles.event.MaChenXuEventHandler.register();
         VoodooDeathHandler.registerEvents();
         PlayerStatsBeforeRefugee.beforeLoadFunc = (player) -> {
             ModComponents.DEATH_PENALTY.get(player).reset();
